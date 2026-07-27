@@ -130,6 +130,9 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .info-box.good{background:#dcfce7;border-color:#86efac;color:#166534}
 .info-box.err{background:#fee2e2;border-color:#fca5a5;color:#b91c1c}
 .section-lbl{font-size:10.5px;font-weight:600;color:var(--text2);padding-bottom:3px;border-bottom:1px solid var(--border);margin-bottom:3px}
+.tpl-team-card{border:1px solid var(--border2);border-radius:7px;padding:7px 9px;cursor:pointer;transition:border-color .12s,background .12s}
+.tpl-team-card:hover{border-color:var(--purple)}
+.tpl-team-card-on{border-color:var(--purple);background:#f5f3ff}
 .a-list{display:flex;flex-direction:column;gap:4px}
 .a-item{display:flex;align-items:center;gap:5px}
 .a-item input{flex:1;font-size:10.5px;padding:4px 7px;border-radius:5px;border:1px solid var(--border2)}
@@ -358,6 +361,11 @@ table.pft tr:hover td{background:var(--bg2)}
 .doc-month-title{font-size:11px;font-weight:700;color:var(--text)}
 .doc-month-count{font-size:9.5px;color:var(--text3)}
 .doc-month-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.doc-month-subgroups{display:flex;flex-direction:column;gap:14px}
+.doc-subfolder-hdr{display:flex;align-items:center;gap:6px;padding:2px 2px 6px;border-bottom:1px dashed var(--border);cursor:pointer;user-select:none}
+.doc-subfolder-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.02em}
+.doc-subfolder-count{font-size:9px;color:var(--text3)}
+.doc-subfolder-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:8px}
 .doc-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px}
 .doc-card-top{display:flex;align-items:flex-start;gap:8px}
 .doc-cat-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
@@ -957,6 +965,21 @@ function checkPassword(email, password) {
   if (user.passwordHash !== hash) return null;
   return user;
 }
+const DEFAULT_PASSWORD_PLAINTEXT = 'bemobi@2026';
+function isUsingDefaultPassword(email) {
+  const u = USER_REGISTRY.find(x => x.email.toLowerCase() === email.toLowerCase());
+  return !!u && u.passwordHash === hashPassword(email, DEFAULT_PASSWORD_PLAINTEXT);
+}
+// Checa se o usuário logado ainda está com a senha padrão e, se estiver, força
+// a troca antes de liberar o uso normal da ferramenta. Chamado depois que o
+// registro de usuários (com hashes já atualizados) foi carregado do Firestore,
+// para não disparar um falso positivo com dados desatualizados do snapshot local.
+function checkForcePasswordChange() {
+  if (!currentUser) return;
+  const modal = document.getElementById('forced-pwd-modal');
+  if (modal && modal.classList.contains('open')) return;
+  if (isUsingDefaultPassword(currentUser.email)) openForcedPwdChangeModal();
+}
 
 // ── LOGIN ──────────────────────────────────────────────────────────────────
 function togglePwd() {
@@ -1302,6 +1325,42 @@ function doChangePwd() {
   const u = USER_REGISTRY.find(x => x.email === currentUser.email);
   if (u) { u.passwordHash = hashPassword(currentUser.email, newPwd); persistUsers(); }
   closeM('change-pwd-modal');
+  alert('✓ Senha alterada com sucesso!');
+}
+
+// ── FORCED PASSWORD CHANGE (senha padrão) ──────────────────────────────────
+// Modal sem botão de fechar/cancelar e sem fechamento por clique fora — o
+// usuário precisa definir uma nova senha antes de continuar usando a ferramenta.
+function openForcedPwdChangeModal() {
+  const modal = getOrBuildModal('forced-pwd-modal', 'Troca de Senha Obrigatória', `
+    <div class="info-box" style="margin-bottom:8px">Sua conta ainda está com a senha padrão inicial. Por segurança, defina uma nova senha para continuar usando a ferramenta.</div>
+    <div class="fg"><label>Nova senha</label><input type="password" id="fpwd-new" style="width:100%;border:1px solid var(--border2);border-radius:6px;padding:6px 9px;font-size:11px"></div>
+    <div class="fg"><label>Confirmar nova senha</label><input type="password" id="fpwd-confirm" style="width:100%;border:1px solid var(--border2);border-radius:6px;padding:6px 9px;font-size:11px"></div>
+    <div id="fpwd-err" style="display:none;color:var(--red);font-size:10.5px;margin-top:4px"></div>`,
+    `<button class="btn-s" onclick="doForcedPwdChange()" style="width:100%">Salvar nova senha e continuar</button>`
+  );
+  modal.classList.add('mover-forced');
+  const clsBtn = modal.querySelector('.mcls');
+  if (clsBtn) clsBtn.style.display = 'none';
+  document.getElementById('fpwd-new').value = '';
+  document.getElementById('fpwd-confirm').value = '';
+  document.getElementById('fpwd-err').style.display = 'none';
+  openM('forced-pwd-modal');
+}
+
+function doForcedPwdChange() {
+  const newPwd  = document.getElementById('fpwd-new').value;
+  const confirm = document.getElementById('fpwd-confirm').value;
+  const err     = document.getElementById('fpwd-err');
+  err.style.display = 'none';
+  if (newPwd.length < 6) { err.textContent='Mínimo 6 caracteres.';err.style.display='';return; }
+  if (newPwd === DEFAULT_PASSWORD_PLAINTEXT) { err.textContent='A nova senha não pode ser igual à senha padrão.';err.style.display='';return; }
+  if (newPwd !== confirm) { err.textContent='Senhas não coincidem.';err.style.display='';return; }
+  const u = USER_REGISTRY.find(x => x.email.toLowerCase() === currentUser.email.toLowerCase());
+  if (u) { u.passwordHash = hashPassword(currentUser.email, newPwd); persistUsers(); }
+  const modal = document.getElementById('forced-pwd-modal');
+  modal.classList.remove('mover-forced');
+  closeM('forced-pwd-modal');
   alert('✓ Senha alterada com sucesso!');
 }
 
@@ -2859,7 +2918,7 @@ function openUpdatesProject(key){
   if(glDate){glChip.style.display='';glVal.textContent=fmtBRFull(glDate)+(p.golive?' (Jira)':' (local)');}
   else glChip.style.display='none';
   document.getElementById('upd-composer').style.display=isEditorOrAbove()?'':'none';
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',decisions:[],minutes:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
   renderScopeLinkChip(key);
   renderUpdates(key);renderUpdatesProjectList();
 }
@@ -3268,7 +3327,7 @@ function prepareProjectContext(key){
   // Update browser URL so this page can be shared/bookmarked
   const schedUrl=window.location.href.split('?')[0]+'?project='+key;
   history.replaceState(null,'',schedUrl);
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',decisions:[],minutes:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
   collapsed.clear();viewOffset=0;selectedMs.clear();
   document.getElementById('se-title').textContent=p.summary.length>35?p.summary.slice(0,35)+'…':p.summary;
   const jl=document.getElementById('se-jira-lnk');jl.style.display='';
@@ -3422,6 +3481,7 @@ function editClientName(){
   const val=prompt('Nome do cliente:',sched.clientName||'');
   if(val===null)return;
   sched.clientName=val.trim();
+  sched.clientNameManual=true; // marca como definido manualmente — próximo Sync Jira não sobrescreve
   logChange(curKey,sched.clientName?'Cliente atualizado':'Cliente removido','#5b21b6');
   persistSchedule(curKey);
   renderResumoDashboard();
@@ -3693,7 +3753,29 @@ function toggleDocsMonth(ym){
   if(docsMonthOpen.has(ym))docsMonthOpen.delete(ym);else docsMonthOpen.add(ym);
   renderDocsLibrary();
 }
+// Estado de abertura das subpastas (Unificada / Por Segmento-Região) dentro de cada mês —
+// funciona igual ao dos meses: clique fecha/abre, e abre sozinha na primeira vez que aparece.
+let docsSubOpen=new Set();
+let docsSubSeen=new Set();
+function toggleDocsSubfolder(key){
+  if(docsSubOpen.has(key))docsSubOpen.delete(key);else docsSubOpen.add(key);
+  renderDocsLibrary();
+}
 // Agrupa os itens (já ordenados do mais recente pro mais antigo) em "pastas" por mês.
+function docSubfolderHtml(key,label,items){
+  if(!items.length)return'';
+  if(!docsSubSeen.has(key)){docsSubSeen.add(key);docsSubOpen.add(key);}
+  const open=docsSubOpen.has(key);
+  return `<div class="doc-subfolder">
+    <div class="doc-subfolder-hdr" onclick="toggleDocsSubfolder('${key}')">
+      <i class="ti ti-folder${open?'-open':''}" style="font-size:11px;color:var(--text3)"></i>
+      <span class="doc-subfolder-title">${label}</span>
+      <span class="doc-subfolder-count">${items.length} priorizaç${items.length!==1?'ões':'ão'}</span>
+      <i class="ti ti-chevron-${open?'up':'down'}" style="margin-left:auto;font-size:11px;color:var(--text3)"></i>
+    </div>
+    <div class="doc-subfolder-body" style="display:${open?'grid':'none'}">${items.map(docCardHtml).join('')}</div>
+  </div>`;
+}
 function renderPriorityHistoryFolders(items){
   const groups=[];const byYm={};
   items.forEach(it=>{
@@ -3707,6 +3789,9 @@ function renderPriorityHistoryFolders(items){
   }
   return groups.map(g=>{
     const open=docsMonthOpen.has(g.ym);
+    const unified=g.items.filter(it=>it.scopeLabel==='Geral');
+    const scoped=g.items.filter(it=>it.scopeLabel!=='Geral');
+    const subgroupsHtml=docSubfolderHtml(g.ym+':unificada','Priorização Unificada',unified)+docSubfolderHtml(g.ym+':segreg','Por Segmento/Região',scoped);
     return `<div class="doc-month-folder">
       <div class="doc-month-hdr" onclick="toggleDocsMonth('${g.ym}')">
         <i class="ti ti-folder${open?'-open':''}" style="font-size:14px;color:var(--purple)"></i>
@@ -3714,7 +3799,7 @@ function renderPriorityHistoryFolders(items){
         <span class="doc-month-count">${g.items.length} priorizaç${g.items.length!==1?'ões':'ão'}</span>
         <i class="ti ti-chevron-${open?'up':'down'}" style="margin-left:auto;font-size:12px;color:var(--text3)"></i>
       </div>
-      <div class="doc-month-body" style="display:${open?'grid':'none'}">${g.items.map(docCardHtml).join('')}</div>
+      <div class="doc-month-subgroups" style="display:${open?'flex':'none'}">${subgroupsHtml}</div>
     </div>`;
   }).join('');
 }
@@ -3724,7 +3809,7 @@ function renderDocsLibrary(){
   const q=(document.getElementById('docs-search')?.value||'').toLowerCase().trim();
   if(curDocCat==='priorizacao'){
     const histItems=PRIORITY_HISTORY.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(h=>({
-      id:h.id, category:'priorizacao', isPriorityHistory:true, _date:h.date,
+      id:h.id, category:'priorizacao', isPriorityHistory:true, _date:h.date, scopeLabel:h.scopeLabel||'Geral',
       title:(h.scopeLabel&&h.scopeLabel!=='Geral'?'Priorização':'Priorização Unificada')+((h.scopeLabel&&h.scopeLabel!=='Geral')?' — '+h.scopeLabel:'')+' — '+fmtBRFull(h.date),
       description:`${h.count} projeto${h.count!==1?'s':''} · salvo por ${h.savedBy}`,
       tags:[]
@@ -4658,8 +4743,8 @@ function cloneTask(msId,taskId){const sched=schedules[curKey];const t=sched.task
 //  MODALS
 // ═══════════════════════════════════════════
 function openM(id){document.getElementById(id).classList.add('open');}
-function closeM(id){document.getElementById(id).classList.remove('open');}
-document.addEventListener('click',function(e){if(e.target.classList.contains('mover'))e.target.classList.remove('open');});
+function closeM(id){const el=document.getElementById(id);if(el&&el.classList.contains('mover-forced'))return;el.classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target.classList.contains('mover')&&!e.target.classList.contains('mover-forced'))e.target.classList.remove('open');});
 function addA(listId){const list=document.getElementById(listId);const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" placeholder="Nome" class="a-n" list="assignee-suggestions" autocomplete="off"><select class="a-t"><option value="internal">Interno</option><option value="external">Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);}
 function getAs(listId){return Array.from(document.getElementById(listId).querySelectorAll('.a-item')).map(r=>({name:r.querySelector('.a-n').value.trim(),type:r.querySelector('.a-t').value})).filter(a=>a.name);}
 function setAs(listId,assignees){const list=document.getElementById(listId);list.innerHTML='';(assignees||[]).forEach(a=>{const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" class="a-n" value="${a.name}" list="assignee-suggestions" autocomplete="off"><select class="a-t"><option value="internal" ${a.type==='internal'?'selected':''}>Interno</option><option value="external" ${a.type==='external'?'selected':''}>Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);});}
@@ -5220,33 +5305,58 @@ function saveCal(){const sc=schedules[curKey];sc.calendar=document.getElementByI
 const TEMPLATES={checkout:{name:'Default Checkout',milestones:[{name:'Levantamento e Escopo',color:'#6366f1',days:14,tasks:[{name:'Alinhamento comercial'},{name:'Levantamento funcional'},{name:'Documentação de escopo'},{name:'Aprovação do cliente'}]},{name:'Desenvolvimento',color:'#06b6d4',days:30,tasks:[{name:'Dev backend'},{name:'Dev frontend'},{name:'Testes unitários'}]},{name:'Homologação',color:'#10b981',days:14,tasks:[{name:'Config ambiente HML'},{name:'Testes integrados QA'},{name:'Homologação cliente'},{name:'Ajustes pós-hom.'}]},{name:'Go Live',color:'#22c55e',days:7,tasks:[{name:'Deploy produção'},{name:'Monitoramento'},{name:'Comunicação'}]}]},recorrencia:{name:'Default Recorrência',milestones:[{name:'Discovery',color:'#8b5cf6',days:10,tasks:[{name:'Mapeamento do fluxo'},{name:'Definição de parâmetros'},{name:'Validação com produto'}]},{name:'Desenvolvimento',color:'#06b6d4',days:35,tasks:[{name:'Engine de recorrência'},{name:'Integração meios de pagamento'},{name:'Gestão de falhas'}]},{name:'Homologação & Go Live',color:'#10b981',days:14,tasks:[{name:'Testes ciclo completo'},{name:'Validação cliente'},{name:'Go Live'}]}]},grace:{name:'Default Grace Period',milestones:[{name:'Escopo Grace',color:'#f59e0b',days:10,tasks:[{name:'Definição de regras'},{name:'Mapeamento de impactos'},{name:'Aprovação produto'}]},{name:'Implementação',color:'#06b6d4',days:21,tasks:[{name:'Dev engine grace'},{name:'Testes edge cases'}]},{name:'Validação & Entrega',color:'#22c55e',days:10,tasks:[{name:'QA completo'},{name:'Homologação cliente'},{name:'Go Live'}]}]}};
 // ── ATIVIDADES PADRÃO POR TIME (ponto de partida — ajustar conforme o time real) ──
 const TEAM_ACTIVITIES={
-  'Checkout':['Levantamento de requisitos de pagamento','Configuração do gateway/checkout','Testes do fluxo de pagamento','Homologação com adquirente/PSP','Deploy em produção'],
-  'CorePayments':['Mapeamento das regras de pagamento','Integração com o core de pagamentos','Testes de conciliação financeira','Validação de compliance (PCI)','Go live monitorado'],
-  'Financial Services':['Levantamento de requisitos financeiros','Configuração de taxas/split de pagamento','Testes de faturamento','Validação fiscal/contábil','Homologação com o financeiro'],
-  'Partners/Batch':['Mapeamento da integração com o parceiro','Configuração do job em lote (batch)','Testes de carga do batch','Validação com o parceiro','Go live'],
-  'Prevention':['Definição das regras antifraude','Configuração do motor de prevenção','Testes de cenários de fraude','Validação com o time de risco','Monitoramento pós go-live'],
-  'POS':['Levantamento de requisitos de POS','Integração com o terminal','Testes de campo','Homologação com loja piloto','Rollout'],
-  'Grace':['Definição das regras de carência','Mapeamento de impactos','Implementação da engine de grace','Testes de casos extremos','Homologação e go live'],
-  'Command Center':['Levantamento de métricas','Configuração de dashboards','Integração de alertas','Validação com a operação','Go live'],
-  'BillPaymentsCheckout(GM)':['Levantamento de requisitos de pagamento de contas','Integração com o checkout de boletos/contas','Testes do fluxo de pagamento','Homologação com o cliente','Go live'],
-  'BillPaymentsManager(Invoices)':['Levantamento de regras de faturas','Integração com o gestor de faturas','Testes de emissão/baixa de faturas','Homologação','Go live'],
-  'Dados(DAE/DA)':['Levantamento de requisitos de dados','Modelagem/pipeline de dados','Testes de qualidade de dados','Validação com o time de dados','Publicação/disponibilização'],
-  'PaymentsLATAM':['Levantamento de requisitos regionais','Adequação a meios de pagamento locais','Testes por país/região','Homologação local','Go live regional'],
-  'Logística':['Levantamento de requisitos logísticos','Integração com operador logístico','Testes de rastreamento/entrega','Homologação','Go live'],
-  'RCI':['Levantamento de requisitos','Implementação','Testes integrados','Homologação com cliente','Go live'],
-  'RP':['Levantamento de requisitos','Implementação','Testes integrados','Homologação com cliente','Go live'],
-  'Recarga':['Levantamento de requisitos de recarga','Integração com operadora','Testes do fluxo de recarga','Homologação','Go live'],
-  'SaasCampanhas':['Levantamento de requisitos da campanha','Configuração da régua/campanha','Testes de disparo','Validação com marketing/produto','Go live'],
-  'Wave':['Levantamento de requisitos','Implementação na plataforma Wave','Testes integrados','Homologação com cliente','Go live'],
-  'INFRA':['Levantamento de requisitos de infraestrutura','Provisionamento de ambiente','Testes de carga/performance','Validação de segurança','Go live'],
-  'LOOP':['Levantamento de requisitos','Implementação','Testes integrados','Homologação com cliente','Go live'],
-  'Plimpag':['Levantamento de requisitos','Implementação','Testes integrados','Homologação com cliente','Go live'],
+  'Partners/Batch':['Cadastro das hierarquias','Criação do login no Omniboard'],
+  'Prevention':['Cadastro das hierarquias','Configuração das regras de antifraude'],
+  'Wave/Grace':['Cadastro das hierarquias','Criação do número no Whatsapp','Disponibilização do BM para integração via WABAID','Criação e aprovação de jornada de negócios','Especificação do flow','Configuração do flow','Mapeamento de KPIs','Integração com API do barramento Bemobi','Criação das réguas de campanha'],
+  'LOOP':['Cadastro das hierarquias'],
+  'Recarga':['Cadastro das hierarquias'],
+  'CorePayments':['Cadastro das hierarquias'],
+  'BillPaymentsCheckout(GM)':['Cadastro das hierarquias','Configuração da API de baixa'],
+  'BillPaymentsManager(Invoices)':['Cadastro das hierarquias','API de listagem de fatura','API de baixa','Fluxo de reabertura de fatura','API de listagem de contrato (POS e às vezes whatsapp)','API de login (POS)'],
+  'POS':['Cadastro das hierarquias','Definição visual','Configuração dos métodos de pagamento','Publicação do APK na Cielo'],
+  'RCI':['Cadastro das hierarquias','Integração API de callback','Migração de base de cartões (opcional)','Migração da base de clientes recorrentes (opcional)','Configuração da API de invoices de elegibilidade','Expor API de agendamento de cobrança','Expor API de cancelamento de cobrança','Configuração da régua de comunicação da recorrência','Configuração de réguas do motor de recorrência (pré-reserva e retentativa)','Relatório de recorrência'],
+  'RP':['Cadastro das hierarquias'],
+  'Checkout':['Cadastro das hierarquias','Cadastro de credenciais','Configuração de meios de pagamento','Configuração de domínio c-name url do checkout','Configuração de domínio do cliente apple pay'],
+  'Financial Services':['Configuração das taxas e regras de repasse','Cadastro das hierarquias'],
+  'PaymentsLATAM':['Cadastro das hierarquias'],
+  'Dados(DAE/DA)':['Cadastro das hierarquias','Revisão dos dashboards e relatórios'],
+  'SaasCampanhas':['Cadastro das hierarquias','Configuração da empresa na plataforma','Integração API campanhas','Configuração do workspace no Kafka','Cadastro das réguas','Criação dos templates','Configuração das regras de notificação','Configuração do c-name para o domínio de email'],
+  'Logística':['Cadastro das hierarquias','Preparação de chips','Preparação de bobinas','Preparação de labels','Preparação dos POS','Preparo para envio','Envio dos POS','Treinamento'],
+  'Plimpag':['Cadastro das hierarquias'],
+  'Provider':['Cadastro das hierarquias'],
+  'INFRA':['Cadastro das hierarquias'],
+  'Command Center':['Cadastro das hierarquias','Criação do portal de chamados','Definição de SLA por tipo de chamado','Alinhamento do processo de abertura de chamados no cliente']
 };
 const TEAM_ACTIVITIES_DEFAULT=['Levantamento de escopo','Desenvolvimento','Testes','Homologação com cliente','Go Live'];
 function getAllTeams(){return[...new Set(PROJECTS.flatMap(p=>p.times||[]))].sort();}
-function getTeamActivities(team){return TEAM_ACTIVITIES[team]||TEAM_ACTIVITIES_DEFAULT;}
+function getTemplateTeams(){
+  const raw=getAllTeams();
+  const merged=raw.filter(t=>t!=='Wave'&&t!=='Grace');
+  if(raw.includes('Wave')||raw.includes('Grace'))merged.push('Wave/Grace');
+  return merged.sort();
+}
+function normTeamName_(s){return (s||'').replace(/\s+\(/g,'(').replace(/\s+/g,' ').trim().toLowerCase();}
+function getTeamActivities(team){
+  if(TEAM_ACTIVITIES[team])return TEAM_ACTIVITIES[team];
+  const norm=normTeamName_(team);
+  const foundKey=Object.keys(TEAM_ACTIVITIES).find(k=>normTeamName_(k)===norm);
+  return foundKey?TEAM_ACTIVITIES[foundKey]:TEAM_ACTIVITIES_DEFAULT;
+}
+let selectedTplTeam='';
+function teamCardsHtml(teams,selected){
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px">${teams.map(t=>{
+    const n=getTeamActivities(t).length;
+    const on=t===selected?' tpl-team-card-on':'';
+    return `<div class="tpl-team-card${on}" onclick="selectTplTeam('${t.replace(/'/g,"\\'")}')"><div style="font-size:11px;font-weight:600">${t}</div><div style="font-size:9.5px;color:var(--text3);margin-top:2px">${n} atividade${n!==1?'s':''}</div></div>`;
+  }).join('')}</div>`;
+}
+function selectTplTeam(team){
+  selectedTplTeam=team;
+  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(getAllTeams(),selectedTplTeam);
+  renderTeamActivities();
+}
 function renderTeamActivities(){
-  const team=document.getElementById('tpl-team-select').value;
+  const team=selectedTplTeam;
   const box=document.getElementById('tpl-team-activities');
   if(!team){box.innerHTML='';document.getElementById('tpl-team-add-btn').style.display='none';return;}
   const acts=getTeamActivities(team);
@@ -5254,7 +5364,7 @@ function renderTeamActivities(){
   document.getElementById('tpl-team-add-btn').style.display='';
 }
 function addTeamActivities(){
-  const team=document.getElementById('tpl-team-select').value;if(!team)return;
+  const team=selectedTplTeam;if(!team)return;
   const acts=getTeamActivities(team);
   const checked=Array.from(document.querySelectorAll('.tpl-act-chk:checked')).map(cb=>acts[parseInt(cb.value)]);
   if(!checked.length){alert('Selecione ao menos uma atividade.');return;}
@@ -5268,14 +5378,13 @@ function addTeamActivities(){
   closeM('tpl-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
 }
 function openTemplateModal(){
-  const teams=getAllTeams();
-  const modal=getOrBuildModal('tpl-modal','Modelos de Cronograma',`<div class="info-box">Adiciona etapas e tarefas padrão com datas calculadas a partir de hoje.</div><div style="display:flex;flex-direction:column;gap:7px;margin-top:4px">${Object.entries(TEMPLATES).map(([k,t])=>`<div style="border:1px solid var(--border2);border-radius:7px;padding:10px;cursor:pointer" onclick="applyTemplate('${k}')" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='var(--border2)'"><div style="font-size:11.5px;font-weight:600;margin-bottom:2px">${t.name}</div><div style="font-size:10px;color:var(--text3)">${t.milestones.length} etapas · ${t.milestones.reduce((a,m)=>a+m.tasks.length,0)} tarefas</div><div style="display:flex;gap:4px;margin-top:5px">${t.milestones.map(m=>`<span style="font-size:8.5px;background:${m.color}22;color:${m.color};padding:1px 6px;border-radius:10px">${m.name}</span>`).join('')}</div></div>`).join('')}</div>
-    <div class="section-lbl" style="margin-top:14px">Modelos por time</div>
-    <div class="info-box" style="margin-top:4px">Escolha um time para carregar as atividades padrão dele — depois marque quais você quer incluir no cronograma. (Ponto de partida: ajuste as atividades de cada time conforme a realidade da sua equipe.)</div>
-    <div class="fg" style="margin-top:6px"><select id="tpl-team-select" onchange="renderTeamActivities()"><option value="">Selecione um time...</option>${teams.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>
-    <div id="tpl-team-activities" style="margin-top:4px"></div>`,
+  const teams=getTemplateTeams();
+  const modal=getOrBuildModal('tpl-modal','Modelos de Cronograma',`<div class="info-box">Clique em um time para carregar as atividades macro dele — depois marque quais você quer incluir no cronograma.</div>
+    <div id="tpl-team-cards" style="margin-top:6px">${teamCardsHtml(teams,'')}</div>
+    <div id="tpl-team-activities" style="margin-top:8px"></div>`,
     `<button class="btn-c" onclick="closeM('tpl-modal')">Cancelar</button><button class="btn-s" id="tpl-team-add-btn" style="display:none" onclick="addTeamActivities()">Incluir selecionadas</button>`);
-  document.getElementById('tpl-team-select').value='';
+  selectedTplTeam='';
+  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(teams,'');
   document.getElementById('tpl-team-activities').innerHTML='';
   document.getElementById('tpl-team-add-btn').style.display='none';
   openM('tpl-modal');
@@ -5982,7 +6091,7 @@ function initFirebase() {
 }
 
 const GAS_URL='https://script.google.com/macros/s/AKfycbyfLKNtWMYbUdhWmkzNgLF25ZgFruphvxiCKHChHWgLnKLhcJpYlAEraz6RRGJSgoJA0A/exec';
-const JIRA_SYNC_FIELDS='summary,status,issuetype,duedate,created,customfield_28494,customfield_28488,customfield_28489,customfield_28594,customfield_29150,customfield_27831,customfield_29719,customfield_29858,customfield_29851';
+const JIRA_SYNC_FIELDS='summary,status,issuetype,duedate,created,customfield_28494,customfield_28488,customfield_28489,customfield_28594,customfield_29150,customfield_27831,customfield_29719,customfield_29858,customfield_29851,customfield_28200';
 const JIRA_JQL='project = VMO AND issuetype in (Comercial, Produtos, Tarefa) ORDER BY customfield_28488 ASC';
 
 // ── PERSISTENCE ──────────────────────────────────────────
@@ -6005,6 +6114,7 @@ async function persistSchedule(key) {
         scopeLink:     schedules[key].scopeLink     || null,
         scopeSummary:  schedules[key].scopeSummary  || '',
         clientName:    schedules[key].clientName    || '',
+        clientNameManual: schedules[key].clientNameManual || false,
         decisions:     schedules[key].decisions     || [],
         minutes:       schedules[key].minutes       || [],
         updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
@@ -6061,6 +6171,7 @@ async function autoLoadOnLogin() {
             scopeLink:     raw.scopeLink     || null,
             scopeSummary:  raw.scopeSummary  || '',
             clientName:    raw.clientName    || '',
+            clientNameManual: raw.clientNameManual || false,
             decisions:     raw.decisions     || [],
             minutes:       raw.minutes       || [],
             updates:       schedules[doc.id]?.updates || [],
@@ -6073,7 +6184,7 @@ async function autoLoadOnLogin() {
         try {
           const raw = JSON.parse(JSON.stringify(doc.data()));
           if (schedules[doc.id]) schedules[doc.id].updates = raw.updates || [];
-          else schedules[doc.id] = { milestones:[], tasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, scopeSummary:'', clientName:'', decisions:[], minutes:[] };
+          else schedules[doc.id] = { milestones:[], tasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[] };
         } catch(e) { console.warn('Error loading updates', doc.id, e); }
       });
       // Load users
@@ -6105,6 +6216,7 @@ async function autoLoadOnLogin() {
       setSyncTxt('idle', '');
     }
   }
+  checkForcePasswordChange();
   // Step 2: Render immediately with what we have
   renderKPI();
   renderPortfolio();
@@ -6342,6 +6454,7 @@ function persistProjects(){
   }).catch(e=>console.warn('persistProjects error:',e));
 }
 function applyJiraSync(freshProjects){
+  const clientNameTouched=[];
   freshProjects.forEach(fp=>{
     const idx=PROJECTS.findIndex(p=>p.key===fp.key);
     if(idx>=0){
@@ -6366,6 +6479,16 @@ function applyJiraSync(freshProjects){
     } else {
       PROJECTS.push(fp);
     }
+    // "Nome do Cliente" (customfield_28200) vive no cronograma (schedules), não em PROJECTS —
+    // só aplica se o Jira mandou um valor preenchido, e só se ninguém já definiu manualmente
+    // pelo lápis do Resumo dos Projetos (ver editClientName/clientNameManual).
+    if(fp.clientName){
+      if(!schedules[fp.key])schedules[fp.key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
+      if(!schedules[fp.key].clientNameManual&&schedules[fp.key].clientName!==fp.clientName){
+        schedules[fp.key].clientName=fp.clientName;
+        clientNameTouched.push(fp.key);
+      }
+    }
   });
   // Re-sort by Nova Prioridade after sync
   PROJECTS.sort((a,b)=>(a.priority??9999)-(b.priority??9999));
@@ -6373,6 +6496,7 @@ function applyJiraSync(freshProjects){
   document.getElementById('badge-pf').textContent=PROJECTS.length;
   showSyncSuccess(freshProjects.length);
   persistProjects();
+  clientNameTouched.forEach(k=>persistSchedule(k));
 }
 
 // ── Reordenar prioridade livremente, arrastando (como numa planilha) ──
@@ -6672,6 +6796,7 @@ function parseSyncJson(){
       golive:i.fields.duedate||null, // "Data limite" (campo nativo do Jira) — fonte do Go Live
       segment:i.fields.customfield_29858?.value||'Produtos',
       region:i.fields.customfield_29851?.value||null,
+      clientName:i.fields.customfield_28200||null, // "Nome do Cliente"
       created:(i.fields.created||'').slice(0,10),
       times:(i.fields.customfield_29719||[]).map(t=>t.value).filter(Boolean),
     }));
