@@ -352,6 +352,12 @@ table.pft tr:hover td{background:var(--bg2)}
 .docs-search i{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3)}
 #docs-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 #docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.doc-month-folder{grid-column:1/-1;display:flex;flex-direction:column;gap:10px}
+.doc-month-hdr{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;user-select:none}
+.doc-month-hdr:hover{border-color:var(--purple)}
+.doc-month-title{font-size:11px;font-weight:700;color:var(--text)}
+.doc-month-count{font-size:9.5px;color:var(--text3)}
+.doc-month-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .doc-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:7px}
 .doc-card-top{display:flex;align-items:flex-start;gap:8px}
 .doc-cat-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
@@ -831,6 +837,7 @@ table.pft tr:hover td{background:var(--bg2)}
     <button class="fbtn" data-doccat="documentos" onclick="setDocCat('documentos',this)">📄 Documentos</button>
     <button class="fbtn" data-doccat="planilhas" onclick="setDocCat('planilhas',this)">📊 Planilhas</button>
     <button class="fbtn" data-doccat="priorizacao" onclick="setDocCat('priorizacao',this)">📌 Histórico de Priorização</button>
+    <select id="docs-month-filter" class="fbtn" style="display:none;cursor:pointer" onchange="docsMonthFilter=this.value;renderDocsLibrary()"></select>
   </div>
   <div id="docs-grid"></div>
 </div>
@@ -849,6 +856,7 @@ table.pft tr:hover td{background:var(--bg2)}
   <div class="tip-r" id="tip-dep-row" style="display:none"><span>Depende de</span><span class="tip-v" id="tip-dep"></span></div>
   <div id="tip-al"></div>
 </div>
+<datalist id="assignee-suggestions"></datalist>
 
 <script>
 // VMO v4 — Tainah Andrade · Bemobi · 2026
@@ -2073,6 +2081,7 @@ function renderKPI(){
       </div>
       <div class="kc2" style="background:#dbeafe;border-color:#bfdbfe;cursor:pointer" title="Filtrar: novos projetos" onclick="filterByStatus('Novos projetos')">
         <div style="font-size:20px;font-weight:700;color:#2563eb;line-height:1">${novosCount}</div>
+        <div style="font-size:8.5px;color:#2563eb;opacity:.75;font-weight:600">${activeProjects.length?Math.round(novosCount/activeProjects.length*100):0}%</div>
         <div style="font-size:9px;color:#2563eb;margin-top:2px;font-weight:500">🆕 Novos projetos</div>
       </div>
       <div style="width:1px;background:var(--border);margin:0 4px;align-self:stretch"></div>
@@ -2093,6 +2102,7 @@ function renderKPI(){
       </div>
       <div class="kc2 alert-kc${alertFilter==='stale'?' alert-kc-on':''}" style="background:#ffedd5;border-color:#fdba74;cursor:pointer" title="Filtrar: sem nenhuma atualização publicada na aba Atualizações há 7+ dias" onclick="filterByAlert('stale',this)">
         <div style="font-size:20px;font-weight:700;color:#c2410c;line-height:1">${staleCount}</div>
+        <div style="font-size:8.5px;color:#c2410c;opacity:.75;font-weight:600">${activeProjects.length?Math.round(staleCount/activeProjects.length*100):0}%</div>
         <div style="font-size:9px;color:#c2410c;margin-top:2px;font-weight:500">🟠 Sem Atualização</div>
       </div>
     </div></div>`+
@@ -3637,45 +3647,102 @@ function setDocCat(cat,el){
   curDocCat=cat;
   document.querySelectorAll('#docs-filters .fbtn').forEach(b=>b.classList.remove('on'));
   if(el)el.classList.add('on');
+  const monthFilterEl=document.getElementById('docs-month-filter');
+  if(monthFilterEl)monthFilterEl.style.display=(cat==='priorizacao')?'':'none';
   renderDocsLibrary();
+}
+const PT_MONTHS_=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function monthLabelPT(ym){
+  const parts=ym.split('-');const y=parts[0];const m=parseInt(parts[1],10)-1;
+  const name=PT_MONTHS_[m]||ym;
+  return name.charAt(0).toUpperCase()+name.slice(1)+' de '+y;
+}
+let docsMonthFilter='all';
+let docsMonthOpen=new Set();
+let docsMonthOpenInit=false;
+function populateDocsMonthFilterOptions(){
+  const sel=document.getElementById('docs-month-filter');if(!sel)return;
+  const months=[...new Set(PRIORITY_HISTORY.map(h=>h.date.slice(0,7)))].sort().reverse();
+  const prev=docsMonthFilter;
+  sel.innerHTML='<option value="all">Todos os meses</option>'+months.map(ym=>`<option value="${ym}">${monthLabelPT(ym)}</option>`).join('');
+  docsMonthFilter=months.includes(prev)||prev==='all'?prev:'all';
+  sel.value=docsMonthFilter;
+}
+function docCardHtml(d){
+  const meta=DOC_CAT_META[d.category]||DOC_CAT_META.documentos;
+  const footer=d.isPriorityHistory
+    ? `<button class="btn-c" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center" onclick="openPriorityHistoryModal('${d.id}')"><i class="ti ti-eye" style="font-size:10px"></i> Ver lista</button>
+       ${isAdmin()?`<button class="rm" onclick="removePriorityHistorySnapshot('${d.id}')" title="Remover">×</button>`:''}`
+    : `<a class="btn-c" href="${d.link}" target="_blank" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center"><i class="ti ti-external-link" style="font-size:10px"></i> Abrir</a>
+       ${isAdmin()?`<button class="btn-c" style="font-size:9.5px;padding:4px 8px" onclick="openDocModal('${d.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:10px"></i></button>
+       <button class="rm" onclick="removeDocItem('${d.id}')" title="Remover">×</button>`:''}`;
+  return `<div class="doc-card">
+      <div class="doc-card-top">
+        <div class="doc-cat-icon" style="background:${meta.bg}">${meta.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="doc-title">${d.title}</div>
+          <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;color:${meta.color};margin-top:2px">${meta.label}</div>
+        </div>
+      </div>
+      <div class="doc-desc">${d.description}</div>
+      <div class="doc-tags">${(d.tags||[]).map(t=>`<span class="doc-tag">#${t}</span>`).join('')}</div>
+      <div class="doc-card-ftr">${footer}</div>
+    </div>`;
+}
+function toggleDocsMonth(ym){
+  if(docsMonthOpen.has(ym))docsMonthOpen.delete(ym);else docsMonthOpen.add(ym);
+  renderDocsLibrary();
+}
+// Agrupa os itens (já ordenados do mais recente pro mais antigo) em "pastas" por mês.
+function renderPriorityHistoryFolders(items){
+  const groups=[];const byYm={};
+  items.forEach(it=>{
+    const ym=it._date.slice(0,7);
+    if(!byYm[ym]){byYm[ym]={ym,items:[]};groups.push(byYm[ym]);}
+    byYm[ym].items.push(it);
+  });
+  if(!docsMonthOpenInit){
+    docsMonthOpenInit=true;
+    if(groups[0])docsMonthOpen.add(groups[0].ym);
+  }
+  return groups.map(g=>{
+    const open=docsMonthOpen.has(g.ym);
+    return `<div class="doc-month-folder">
+      <div class="doc-month-hdr" onclick="toggleDocsMonth('${g.ym}')">
+        <i class="ti ti-folder${open?'-open':''}" style="font-size:14px;color:var(--purple)"></i>
+        <span class="doc-month-title">${monthLabelPT(g.ym)}</span>
+        <span class="doc-month-count">${g.items.length} priorizaç${g.items.length!==1?'ões':'ão'}</span>
+        <i class="ti ti-chevron-${open?'up':'down'}" style="margin-left:auto;font-size:12px;color:var(--text3)"></i>
+      </div>
+      <div class="doc-month-body" style="display:${open?'grid':'none'}">${g.items.map(docCardHtml).join('')}</div>
+    </div>`;
+  }).join('');
 }
 function renderDocsLibrary(){
   const grid=document.getElementById('docs-grid');if(!grid)return;
   const addBtn=document.getElementById('docs-add-btn');if(addBtn)addBtn.style.display=isAdmin()?'':'none';
   const q=(document.getElementById('docs-search')?.value||'').toLowerCase().trim();
-  const histItems=PRIORITY_HISTORY.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(h=>({
-    id:h.id, category:'priorizacao', isPriorityHistory:true,
-    title:'Priorização'+((h.scopeLabel&&h.scopeLabel!=='Geral')?' — '+h.scopeLabel:'')+' — '+fmtBRFull(h.date),
-    description:`${h.count} projeto${h.count!==1?'s':''} · salvo por ${h.savedBy}`,
-    tags:[]
-  }));
+  if(curDocCat==='priorizacao'){
+    const histItems=PRIORITY_HISTORY.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(h=>({
+      id:h.id, category:'priorizacao', isPriorityHistory:true, _date:h.date,
+      title:(h.scopeLabel&&h.scopeLabel!=='Geral'?'Priorização':'Priorização Unificada')+((h.scopeLabel&&h.scopeLabel!=='Geral')?' — '+h.scopeLabel:'')+' — '+fmtBRFull(h.date),
+      description:`${h.count} projeto${h.count!==1?'s':''} · salvo por ${h.savedBy}`,
+      tags:[]
+    }));
+    populateDocsMonthFilterOptions();
+    let items=histItems;
+    if(docsMonthFilter!=='all')items=items.filter(d=>d._date.slice(0,7)===docsMonthFilter);
+    if(q)items=items.filter(d=>d.title.toLowerCase().includes(q)||(d.description||'').toLowerCase().includes(q));
+    if(!items.length){grid.innerHTML='<div class="doc-empty">Nenhuma priorização encontrada. Tente outro mês ou busca.</div>';return;}
+    grid.innerHTML=renderPriorityHistoryFolders(items);
+    return;
+  }
   let items;
-  if(curDocCat==='priorizacao')items=histItems;
-  else if(curDocCat==='all')items=DOCS_LIBRARY.slice().concat(histItems);
+  if(curDocCat==='all')items=DOCS_LIBRARY.slice();
   else items=DOCS_LIBRARY.filter(d=>d.category===curDocCat);
   if(q)items=items.filter(d=>d.title.toLowerCase().includes(q)||(d.description||'').toLowerCase().includes(q)||(d.tags||[]).some(t=>t.toLowerCase().includes(q)));
   if(!items.length){grid.innerHTML='<div class="doc-empty">Nenhum material encontrado. Tente outra busca ou categoria.</div>';return;}
-  grid.innerHTML=items.map(d=>{
-    const meta=DOC_CAT_META[d.category]||DOC_CAT_META.documentos;
-    const footer=d.isPriorityHistory
-      ? `<button class="btn-c" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center" onclick="openPriorityHistoryModal('${d.id}')"><i class="ti ti-eye" style="font-size:10px"></i> Ver lista</button>
-         ${isAdmin()?`<button class="rm" onclick="removePriorityHistorySnapshot('${d.id}')" title="Remover">×</button>`:''}`
-      : `<a class="btn-c" href="${d.link}" target="_blank" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center"><i class="ti ti-external-link" style="font-size:10px"></i> Abrir</a>
-         ${isAdmin()?`<button class="btn-c" style="font-size:9.5px;padding:4px 8px" onclick="openDocModal('${d.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:10px"></i></button>
-         <button class="rm" onclick="removeDocItem('${d.id}')" title="Remover">×</button>`:''}`;
-    return `<div class="doc-card">
-        <div class="doc-card-top">
-          <div class="doc-cat-icon" style="background:${meta.bg}">${meta.icon}</div>
-          <div style="flex:1;min-width:0">
-            <div class="doc-title">${d.title}</div>
-            <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;color:${meta.color};margin-top:2px">${meta.label}</div>
-          </div>
-        </div>
-        <div class="doc-desc">${d.description}</div>
-        <div class="doc-tags">${(d.tags||[]).map(t=>`<span class="doc-tag">#${t}</span>`).join('')}</div>
-        <div class="doc-card-ftr">${footer}</div>
-      </div>`;
-  }).join('');
+  grid.innerHTML=items.map(docCardHtml).join('');
 }
 let editDocId=null;
 function openDocModal(id){
@@ -3740,31 +3807,39 @@ function openPriorityHistoryModal(id){
   ];
   const theadHtml=cols.map(c=>`<th style="padding:5px 8px;font-size:9px;text-align:${c.align};${c.w?`width:${c.w}`:''}">${c.label}</th>`).join('');
   const rowsHtml=h.rows.map(r=>`<tr>${cols.map(c=>`<td style="padding:5px 8px;font-size:10px;text-align:${c.align};white-space:nowrap">${c.get(r)}</td>`).join('')}</tr>`).join('');
-  const modalTitle='Priorização'+((h.scopeLabel&&h.scopeLabel!=='Geral')?' — '+h.scopeLabel:'')+' — '+fmtBRFull(h.date);
-  const modal=getOrBuildModal('priority-history-modal',modalTitle,
-    `<div style="font-size:10px;color:var(--text3);margin-bottom:8px">${h.count} projeto${h.count!==1?'s':''} · salvo por ${h.savedBy} em ${new Date(h.savedAt).toLocaleString('pt-BR')}</div>
+  const modalTitle=(h.scopeLabel&&h.scopeLabel!=='Geral'?'Priorização':'Priorização Unificada')+((h.scopeLabel&&h.scopeLabel!=='Geral')?' — '+h.scopeLabel:'')+' — '+fmtBRFull(h.date);
+  const bodyHtml=`<div style="font-size:10px;color:var(--text3);margin-bottom:8px">${h.count} projeto${h.count!==1?'s':''} · salvo por ${h.savedBy} em ${new Date(h.savedAt).toLocaleString('pt-BR')}</div>
      <div style="max-height:420px;overflow-y:auto;overflow-x:auto;border:1px solid var(--border);border-radius:8px">
        <table style="width:100%;border-collapse:collapse">
          <thead><tr style="background:var(--bg2);position:sticky;top:0">${theadHtml}</tr></thead>
          <tbody>${rowsHtml}</tbody>
        </table>
-     </div>`,
-    `<button class="btn-c" onclick="exportPriorityHistoryXlsx('${h.id}')"><i class="ti ti-file-spreadsheet" style="font-size:10px"></i> Baixar Excel</button>
-     <button class="btn-c" onclick="closeM('priority-history-modal')">Fechar</button>`
-  );
+     </div>`;
+  const footerHtml=`<button class="btn-c" onclick="exportPriorityHistoryXlsx('${h.id}')"><i class="ti ti-file-spreadsheet" style="font-size:10px"></i> Baixar Excel</button>
+     <button class="btn-c" onclick="closeM('priority-history-modal')">Fechar</button>`;
+  // getOrBuildModal só usa title/body/footer na PRIMEIRA vez que constrói o modal (id fixo é
+  // reaproveitado entre snapshots diferentes) — por isso título/corpo/rodapé são sempre
+  // reescritos manualmente abaixo, senão o modal ficaria "preso" no primeiro snapshot aberto.
+  const modal=getOrBuildModal('priority-history-modal',modalTitle,bodyHtml,footerHtml);
+  const titleEl=modal.querySelector('.mhdr h3');if(titleEl)titleEl.textContent=modalTitle;
+  const bodyEl=modal.querySelector('.mbody');if(bodyEl)bodyEl.innerHTML=bodyHtml;
+  const ftrEl=modal.querySelector('.mftr');if(ftrEl)ftrEl.innerHTML=footerHtml;
   openM('priority-history-modal');
 }
 function exportPriorityHistoryXlsx(id){
   const h=PRIORITY_HISTORY.find(x=>x.id===id);if(!h)return;
   const ddmm=fmtBR(h.date).slice(0,5);
+  const isScoped=h.scopeLabel&&h.scopeLabel!=='Geral';
+  const baseName=isScoped?'Priorizacao':'Priorizacao_Unificada';
+  const sheetName=isScoped?'Priorização':'Priorização Unificada';
   const header=['Prioridade Anterior',`Prioridade Atual (${ddmm})`,'Mudanças','Projeto','GP Alocado','Status','Expectativa de Entrega','Data de Go Live','Data Estimada (Cronograma)'];
   const rows=[header];
   h.rows.forEach(r=>rows.push(priorityRowToArray(r)));
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:14},{wch:16},{wch:10},{wch:52},{wch:22},{wch:22},{wch:16},{wch:14},{wch:16}];
-  XLSX.utils.book_append_sheet(wb,ws,'Priorização');
-  XLSX.writeFile(wb,`VMO_Historico_Priorizacao_${h.date}.xlsx`);
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  XLSX.writeFile(wb,`VMO_${baseName}_${h.date}.xlsx`);
 }
 function removePriorityHistorySnapshot(id){
   if(!isAdmin()){alert('Apenas administradores podem remover históricos de priorização.');return;}
@@ -4585,9 +4660,25 @@ function cloneTask(msId,taskId){const sched=schedules[curKey];const t=sched.task
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.addEventListener('click',function(e){if(e.target.classList.contains('mover'))e.target.classList.remove('open');});
-function addA(listId){const list=document.getElementById(listId);const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" placeholder="Nome" class="a-n"><select class="a-t"><option value="internal">Interno</option><option value="external">Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);}
+function addA(listId){const list=document.getElementById(listId);const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" placeholder="Nome" class="a-n" list="assignee-suggestions" autocomplete="off"><select class="a-t"><option value="internal">Interno</option><option value="external">Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);}
 function getAs(listId){return Array.from(document.getElementById(listId).querySelectorAll('.a-item')).map(r=>({name:r.querySelector('.a-n').value.trim(),type:r.querySelector('.a-t').value})).filter(a=>a.name);}
-function setAs(listId,assignees){const list=document.getElementById(listId);list.innerHTML='';(assignees||[]).forEach(a=>{const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" class="a-n" value="${a.name}"><select class="a-t"><option value="internal" ${a.type==='internal'?'selected':''}>Interno</option><option value="external" ${a.type==='external'?'selected':''}>Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);});}
+function setAs(listId,assignees){const list=document.getElementById(listId);list.innerHTML='';(assignees||[]).forEach(a=>{const row=document.createElement('div');row.className='a-item';row.innerHTML=`<input type="text" class="a-n" value="${a.name}" list="assignee-suggestions" autocomplete="off"><select class="a-t"><option value="internal" ${a.type==='internal'?'selected':''}>Interno</option><option value="external" ${a.type==='external'?'selected':''}>Externo</option></select><button class="rm" onclick="this.parentNode.remove()">×</button>`;list.appendChild(row);});}
+// Preenche o <datalist> com nomes de responsáveis já usados neste projeto (em qualquer
+// etapa/tarefa), mais o GP e os stakeholders cadastrados — pra sugerir nomes já digitados
+// em vez de precisar redigitar toda vez que adiciona um responsável novo.
+function populateAssigneeDatalist(){
+  const dl=document.getElementById('assignee-suggestions');if(!dl)return;
+  const names=new Set();
+  const sched=schedules[curKey];
+  if(sched){
+    (sched.milestones||[]).forEach(m=>(m.assignees||[]).forEach(a=>{if(a.name)names.add(a.name.trim());}));
+    (sched.tasks||[]).forEach(t=>(t.assignees||[]).forEach(a=>{if(a.name)names.add(a.name.trim());}));
+    (sched.stakeholders||[]).forEach(s=>{if(s.name)names.add(s.name.trim());});
+  }
+  const p=PROJECTS.find(x=>x.key===curKey);
+  if(p&&p.gp&&p.gp!=='—')p.gp.split(',').forEach(n=>{if(n.trim())names.add(n.trim());});
+  dl.innerHTML=[...names].sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+}
 // ── Links de tarefa (multi-link) — detecta automaticamente links internos (domínio one-bemobi) ──
 function isInternalLink(url){
   if(!url)return false;
@@ -4631,12 +4722,38 @@ function setLinks(listId,links){
 function getOrBuildModal(id,title,body,footer){if(document.getElementById(id))return document.getElementById(id);const div=document.createElement('div');div.className='mover';div.id=id;div.innerHTML=`<div class="mbox" style="width:510px"><div class="mhdr"><h3>${title}</h3><button class="mcls" onclick="closeM('${id}')">×</button></div><div class="mbody">${body}</div><div class="mftr">${footer}</div></div>`;document.body.appendChild(div);return div;}
 
 // Milestone
-function openMsModal(id){editMsId=id;const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;
-  const modal=getOrBuildModal('ms-modal','Etapa',`<div class="fg"><label>Nome *</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="ms-start"></div><div class="fg"><label>Prazo</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>Data real de fim</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">Responsáveis</div><div class="a-list" id="ms-a-list"></div><button class="add-a" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row" style="margin-top:3px"><div class="fg"><label>Status</label><select id="ms-status"><option value="not_started">Não iniciado</option><option value="in_progress">Em andamento</option><option value="done">Concluído</option><option value="blocked">Bloqueado</option><option value="cancelled">Cancelado</option></select></div><div class="fg"><label>Cor</label><select id="ms-color"><option value="#6366f1">Índigo</option><option value="#8b5cf6">Violeta</option><option value="#06b6d4">Ciano</option><option value="#10b981">Verde</option><option value="#f59e0b">Âmbar</option><option value="#ef4444">Vermelho</option><option value="#3b82f6">Azul</option><option value="#ec4899">Rosa</option></select></div></div>`,
+function openMsModal(id){editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;
+  const modal=getOrBuildModal('ms-modal','Etapa',`<div class="fg"><label>Nome *</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="ms-start"></div><div class="fg"><label>Prazo</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>Data real de fim</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">Responsáveis</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="Adiciona esse(s) responsável(is) em todas as tarefas desta etapa, sem remover quem já estiver atribuído"><i class="ti ti-copy" style="font-size:10px"></i> Aplicar a todas as tarefas</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>Status</label><select id="ms-status"><option value="not_started">Não iniciado</option><option value="in_progress">Em andamento</option><option value="done">Concluído</option><option value="blocked">Bloqueado</option><option value="cancelled">Cancelado</option></select></div><div class="fg"><label>Cor</label><select id="ms-color"><option value="#6366f1">Índigo</option><option value="#8b5cf6">Violeta</option><option value="#06b6d4">Ciano</option><option value="#10b981">Verde</option><option value="#f59e0b">Âmbar</option><option value="#ef4444">Vermelho</option><option value="#3b82f6">Azul</option><option value="#ec4899">Rosa</option></select></div></div>`,
   `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">Excluir</button><button class="btn-c" onclick="closeM('ms-modal')">Cancelar</button><button class="btn-s" onclick="saveMs()">Salvar</button>`);
-  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=ms?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr;document.getElementById('ms-er-info').textContent=autoEr?`Calculado automaticamente (${fmtBR(autoEr)}).`:`Preencha manualmente se necessário.`;document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');openM('ms-modal');}
+  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=ms?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=ms?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr;document.getElementById('ms-er-info').textContent=autoEr?`Calculado automaticamente (${fmtBR(autoEr)}).`:`Preencha manualmente se necessário.`;document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');openM('ms-modal');}
 function saveMs(){const name=document.getElementById('ms-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];const data={name,start:document.getElementById('ms-start').value,deadline:document.getElementById('ms-deadline').value,endReal:document.getElementById('ms-endreal').value,status:document.getElementById('ms-status').value,color:document.getElementById('ms-color').value,assignees:getAs('ms-a-list')};if(editMsId){const ms=sched.milestones.find(m=>m.id===editMsId);const old=JSON.parse(JSON.stringify(ms));Object.assign(ms,data);if(old.deadline!==data.deadline)logChange(curKey,`Etapa "${name}": prazo ${fmtBR(old.deadline)} → ${fmtBR(data.deadline)}`,'#d97706');}else{const newMs={id:uid(),...data};sched.milestones.push(newMs);if(!sched.baseline)sched.baseline={milestones:[JSON.parse(JSON.stringify(newMs))],tasks:JSON.parse(JSON.stringify(sched.tasks))};else sched.baseline.milestones.push(JSON.parse(JSON.stringify(newMs)));logChange(curKey,`Etapa "${name}" criada`,'#6924E1');}closeM('ms-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);persistSchedule(curKey);}
 function deleteMs(){if(!confirm('Excluir etapa e suas tarefas?'))return;const sched=schedules[curKey];sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
+// Copia o(s) responsável(is) atualmente preenchido(s) na etapa para todas as tarefas dela —
+// só ADICIONA quem ainda não estiver na tarefa, nunca remove um responsável já atribuído.
+function applyMsAssigneesToTasks(){
+  if(!editMsId){alert('Salve a etapa antes de aplicar os responsáveis às tarefas.');return;}
+  const msAssignees=getAs('ms-a-list');
+  if(!msAssignees.length){alert('Adicione ao menos um responsável à etapa antes de aplicar.');return;}
+  const sched=schedules[curKey];
+  const tasks=(sched.tasks||[]).filter(t=>t.msId===editMsId);
+  if(!tasks.length){alert('Essa etapa ainda não tem tarefas cadastradas.');return;}
+  const names=msAssignees.map(a=>a.name).join(', ');
+  if(!confirm(`Adicionar ${msAssignees.length>1?'os responsáveis':'o responsável'} "${names}" em todas as ${tasks.length} tarefa${tasks.length!==1?'s':''} desta etapa? Quem já estiver atribuído em alguma tarefa não será removido.`))return;
+  let touched=0;
+  tasks.forEach(t=>{
+    if(!t.assignees)t.assignees=[];
+    let added=false;
+    msAssignees.forEach(ma=>{
+      const already=t.assignees.some(ta=>(ta.name||'').trim().toLowerCase()===ma.name.trim().toLowerCase());
+      if(!already){t.assignees.push({name:ma.name,type:ma.type});added=true;}
+    });
+    if(added)touched++;
+  });
+  logChange(curKey,`Responsável(is) da etapa aplicado(s) a ${tasks.length} tarefa(s)`,'#0369a1');
+  renderSchedule();
+  persistSchedule(curKey);
+  alert(touched?`Responsável(is) adicionado(s) em ${touched} tarefa${touched!==1?'s':''}.`:'Todas as tarefas desta etapa já tinham esse(s) responsável(is).');
+}
 // ── GERENCIAMENTO DE LINHAS DE ETAPAS (seleção, exclusão em lote, reordenar) ──
 function toggleMsSelect(msId,checked){
   if(checked)selectedMs.add(msId);else selectedMs.delete(msId);
@@ -4976,7 +5093,7 @@ function renderScoringView(){
 }
 
 // Task
-function openTaskModal(msId,taskId){editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;
+function openTaskModal(msId,taskId){editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;
   const modal=getOrBuildModal('task-modal','Tarefa',`<div class="fg"><label>Nome *</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="t-start"></div><div class="fg"><label>Prazo</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>Data real de fim</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">Responsáveis</div><div class="a-list" id="t-a-list"></div><button class="add-a" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row"><div class="fg"><label>Status</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">Não iniciada</option><option value="in_progress">Em andamento</option><option value="done">Concluída</option><option value="blocked">Bloqueada</option><option value="cancelled">Cancelada</option></select></div><div class="fg"><label>Progresso (%)</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> Tarefa crítica — atraso pode impactar a data final do projeto</label></div><div class="fg"><label>Depende de (números da coluna #, separados por vírgula. Ex: 3, 4, 7)</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>Tipo de dependência</label><select id="t-deptype"><option value="TI">TI — Término para Início (mais comum)</option><option value="II">II — Início para Início</option><option value="TT">TT — Término para Término</option><option value="IT">IT — Início para Término</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>Como se relaciona?</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">🔒 Bloqueia</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">⚡ Paralelo</button></div></div></div><div class="fg"><label>Links (Jira, Confluence, etc.)</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar link</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>Observações</label><textarea id="t-notes" rows="2"></textarea></div>`,
   `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">Excluir</button><button class="btn-c" onclick="closeM('task-modal')">Cancelar</button><button class="btn-s" onclick="saveTask()">Salvar</button>`);
   document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:ds(addD(TODAY,14));document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-del-btn').style.display=t?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);
