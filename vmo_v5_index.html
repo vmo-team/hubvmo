@@ -916,6 +916,26 @@ let USER_REGISTRY = [
   { email:'guilherme.facchinetti@bemobi.com', passwordHash: btoa('guilherme.facchinetti@bemobi.com:bemobi@2026'), name:'Guilherme Facchinetti', active:true },
 ];
 
+// Carrega/mescla o registro de usuários (com hashes de senha atualizados) do Firestore.
+// Precisa rodar ANTES da validação de login (doLoginManual), e não só depois — senão o
+// login continuaria aceitando a senha antiga porque USER_REGISTRY ainda estaria com o
+// snapshot hardcoded (com a senha padrão) no momento em que a senha é conferida.
+let userRegistryLoadPromise = null;
+async function loadUserRegistryFromFirestore() {
+  if (!(firebaseReady && db)) return;
+  try {
+    const snapUsers = await db.collection('app_config').doc('users').get();
+    if (snapUsers.exists) {
+      const saved = snapUsers.data().registry || [];
+      saved.forEach(u => {
+        const idx = USER_REGISTRY.findIndex(x => x.email === u.email);
+        if (idx >= 0) USER_REGISTRY[idx] = { ...USER_REGISTRY[idx], ...u };
+        else USER_REGISTRY.push(u);
+      });
+    }
+  } catch(e) { console.error('loadUserRegistryFromFirestore error:', e); }
+}
+
 // ── ROLE RESOLUTION ───────────────────────────────────────────────────────
 function resolveRole(email) {
   const e = email.toLowerCase();
@@ -989,7 +1009,8 @@ function togglePwd() {
   else { inp.type = 'password'; ico.className = 'ti ti-eye'; }
 }
 
-function doLoginManual() {
+async function doLoginManual() {
+  if (userRegistryLoadPromise) { try { await userRegistryLoadPromise; } catch(e) {} }
   const email    = (document.getElementById('login-email')?.value    || '').trim().toLowerCase();
   const password = (document.getElementById('login-password')?.value || '').trim();
 
@@ -1194,6 +1215,7 @@ window.addEventListener('load', function() {
     }
   }catch(e){}
   initFirebase();
+  userRegistryLoadPromise = loadUserRegistryFromFirestore();
   // Close profile menu when clicking outside
   document.addEventListener('click', function(e) {
     const profile = document.getElementById('tn-profile');
@@ -6187,16 +6209,8 @@ async function autoLoadOnLogin() {
           else schedules[doc.id] = { milestones:[], tasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[] };
         } catch(e) { console.warn('Error loading updates', doc.id, e); }
       });
-      // Load users
-      const snapUsers = await db.collection('app_config').doc('users').get();
-      if (snapUsers.exists) {
-        const saved = snapUsers.data().registry || [];
-        saved.forEach(u => {
-          const idx = USER_REGISTRY.findIndex(x => x.email === u.email);
-          if (idx >= 0) USER_REGISTRY[idx] = { ...USER_REGISTRY[idx], ...u };
-          else USER_REGISTRY.push(u);
-        });
-      }
+      // Load users (compartilha a mesma lógica usada no pré-carregamento antes do login)
+      await loadUserRegistryFromFirestore();
       // Load docs library
       const snapDocs = await db.collection('app_config').doc('docs_library').get();
       if (snapDocs.exists) {
