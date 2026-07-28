@@ -315,6 +315,9 @@ table.pft tr:hover td{background:var(--bg2)}
 .upd-card-body{padding:10px 11px;font-size:11px;color:var(--text);line-height:1.7;white-space:pre-wrap}
 .upd-card-body ul{padding-left:15px}.upd-card-body li{margin-bottom:2px}
 .upd-tags{display:flex;gap:5px;padding:7px 11px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.upd-tag{text-transform:uppercase;letter-spacing:.2px}
+.upd-target-date-chip{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:3px;white-space:nowrap;font-weight:500}
+.upd-hdr-tagbox{display:flex;align-items:center;gap:7px;flex-shrink:0;margin-left:auto}
 .upd-tag{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
 .upd-tag.risk{background:#fee2e2;color:#b91c1c}.upd-tag.ok{background:#dcfce7;color:#166534}
 .upd-tag.info{background:#dbeafe;color:#1d4ed8}.upd-tag.warn{background:#fef9c3;color:#854d0e}
@@ -651,6 +654,7 @@ table.pft tr:hover td{background:var(--bg2)}
             <option value="info">ℹ️ Informativo</option>
             <option value="date">📅 Mudança de data</option>
           </select>
+          <label style="font-size:9px;color:var(--text3);display:flex;align-items:center;gap:4px;margin-left:8px">Data prevista <input type="date" id="upd-target-date" style="font-size:9.5px;padding:2px 5px;border:1px solid var(--border2);border-radius:4px"></label>
         </div>
         <textarea id="composer-text" placeholder="Highlights, tradeoffs, mudanças de data desta semana..."></textarea>
         <div class="composer-footer">
@@ -3012,12 +3016,14 @@ function renderUpdates(key){
     const isAdminUser=isAdmin();
     const card=document.createElement('div');card.className='upd-card';
     const initials=u.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const tagsHtml=u.tag?`<div class="upd-tags"><span class="upd-tag ${u.tag}">${tagLabel[u.tag]||u.tag}</span>${u.includeEmail?'<span class="upd-tag info" style="font-size:9px;padding:2px 7px;border-radius:10px">📧 Email</span>':''}${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}
-    </div>`:`<div class="upd-tags">${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}</div>`;
+    const tagsHtml=`<div class="upd-tags">${u.includeEmail?'<span class="upd-tag info" style="font-size:9px;padding:2px 7px;border-radius:10px">📧 Email</span>':''}${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}
+    </div>`;
+    const tagBoxHtml=u.tag?`<div class="upd-hdr-tagbox"><span class="upd-tag ${u.tag}">${tagLabel[u.tag]||u.tag}</span>${u.targetDate?`<span class="upd-target-date-chip">para <i class="ti ti-calendar" style="font-size:9px"></i> ${fmtBR(u.targetDate)}</span>`:''}</div>`:'';
     card.innerHTML=`
       <div class="upd-card-hdr">
         <div class="upd-avatar">${initials}</div>
-        <div><div class="upd-author">${u.author}</div><div class="upd-meta">${u.when}${u.health?' · '+healthBadge(u.health):''}</div></div>
+        <div style="flex:1;min-width:0"><div class="upd-author">${u.author}</div><div class="upd-meta">${u.when}${u.health?' · '+healthBadge(u.health):''}</div></div>
+        ${tagBoxHtml}
       </div>
       <div class="upd-card-body">${u.body.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/_(.*?)_/g,'<i>$1</i>').replace(/• /g,'<br>• ')}</div>
       ${tagsHtml}
@@ -3042,9 +3048,9 @@ function submitUpdate(){
   const body=document.getElementById('composer-text').value.trim();if(!body){alert('Escreva a atualização');return;}
   const sc=schedules[curUpdKey];if(!sc.updates)sc.updates=[];
   const p=PROJECTS.find(x=>x.key===curUpdKey);const st=getStats(curUpdKey);
-  const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag:document.getElementById('upd-status-tag').value,includeEmail:document.getElementById('include-email').checked,health:st.health,reactions:{}};
+  const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag:document.getElementById('upd-status-tag').value,targetDate:document.getElementById('upd-target-date').value||null,includeEmail:document.getElementById('include-email').checked,health:st.health,reactions:{}};
   sc.updates.push(newUpd);
-  document.getElementById('composer-text').value='';document.getElementById('upd-status-tag').value='';
+  document.getElementById('composer-text').value='';document.getElementById('upd-status-tag').value='';document.getElementById('upd-target-date').value='';
   logChange(curUpdKey,'Atualização publicada','#6924E1');renderUpdates(curUpdKey);renderUpdatesProjectList();persistUpdates(curUpdKey);persistUpdates(curUpdKey);
   syncUpdateToJira(curUpdKey,newUpd);
 }
@@ -6307,6 +6313,17 @@ async function autoSyncProjectsFromJira() {
             PROJECTS.push(fp);
           }
         });
+        // Remove da memória qualquer projeto que NÃO está no cache do Firestore — isso é o
+        // que faz uma remoção confirmada (ver applyJiraSync/staleProjects) "colar" de verdade
+        // entre recarregamentos. Sem isso, o array PROJECTS estático embutido neste HTML (que
+        // sempre traz TODOS os projetos de quando o arquivo foi gerado) reintroduzia de volta
+        // qualquer projeto já removido a cada novo carregamento da página — o Firestore é a
+        // fonte de verdade aqui, só confiamos nele porque só é atualizado por persistProjects()
+        // (nunca fica vazio "por acidente" de um sync incompleto).
+        if (cached.length) {
+          const cachedKeys = new Set(cached.map(fp => fp.key));
+          removeProjectsByKeys(new Set(PROJECTS.filter(p => !cachedKeys.has(p.key)).map(p => p.key)));
+        }
         renderKPI(); renderPortfolio(); renderUpdatesProjectList();
         document.getElementById('badge-pf').textContent = PROJECTS.length;
       }
