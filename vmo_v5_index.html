@@ -6378,7 +6378,7 @@ async function syncFromJira(){
       clearTimeout(timer);
       const d=await r.json();
       if(d.ok&&d.projects&&d.projects.length){
-        applyJiraSync(d.projects);
+        applyJiraSync(d.projects,{interactive:true});
         setSyncTxt('ok',`✓ ${d.projects.length} projetos atualizados`);
         setTimeout(()=>setSyncTxt('idle',''),5000);
         // Also sync schedule URLs to Jira for all projects with schedules
@@ -6447,7 +6447,7 @@ function openFileSyncModal(){
         <button class="btn-s" style="margin-top:6px;font-size:10px" onclick="
           const raw=document.getElementById('sync-json-paste-2').value.trim();
           if(!raw){alert('Cole o JSON primeiro');return;}
-          try{const d=JSON.parse(raw);if(d.ok&&d.projects){applyJiraSync(d.projects);closeM('file-sync-modal');alert('✓ '+d.projects.length+' projetos sincronizados!');}else{alert('JSON inválido');}}
+          try{const d=JSON.parse(raw);if(d.ok&&d.projects){applyJiraSync(d.projects,{interactive:true});closeM('file-sync-modal');alert('✓ '+d.projects.length+' projetos sincronizados!');}else{alert('JSON inválido');}}
           catch(e){alert('Erro: '+e.message);}
         ">Aplicar JSON</button>
       </div>
@@ -6475,7 +6475,11 @@ function persistProjects(){
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   }).catch(e=>console.warn('persistProjects error:',e));
 }
-function applyJiraSync(freshProjects){
+function removeProjectsByKeys(keysSet){
+  for(let i=PROJECTS.length-1;i>=0;i--){ if(keysSet.has(PROJECTS[i].key)) PROJECTS.splice(i,1); }
+}
+function applyJiraSync(freshProjects,opts={}){
+  const interactive=!!opts.interactive;
   const clientNameTouched=[];
   freshProjects.forEach(fp=>{
     const idx=PROJECTS.findIndex(p=>p.key===fp.key);
@@ -6512,6 +6516,13 @@ function applyJiraSync(freshProjects){
       }
     }
   });
+  // Detecta projetos que sumiram da busca do Jira (a JQL traz TODAS as issues do projeto VMO
+  // nesses tipos, sem filtro de status — se uma key local não aparece mais no resultado fresco,
+  // é sinal forte de que a issue foi excluída no Jira). Só oferece remover em syncs manuais
+  // (interactive=true) — o sync automático em background nunca remove nada sozinho, pra evitar
+  // sumir projetos por causa de um sync incompleto/instável.
+  const freshKeys=new Set(freshProjects.map(p=>p.key));
+  const staleProjects=PROJECTS.filter(p=>!freshKeys.has(p.key));
   // Re-sort by Nova Prioridade after sync
   PROJECTS.sort((a,b)=>(a.priority??9999)-(b.priority??9999));
   renderKPI();renderPortfolio();renderUpdatesProjectList();
@@ -6519,6 +6530,18 @@ function applyJiraSync(freshProjects){
   showSyncSuccess(freshProjects.length);
   persistProjects();
   clientNameTouched.forEach(k=>persistSchedule(k));
+  if(interactive&&staleProjects.length){
+    const list=staleProjects.map(p=>`${p.key} — ${p.summary}`).join('\n');
+    if(confirm(`${staleProjects.length} projeto(s) não foram encontrados na busca mais recente do Jira (provavelmente excluído(s) lá):\n\n${list}\n\nDeseja remover esses projetos do HUB VMO também?`)){
+      const staleKeys=new Set(staleProjects.map(p=>p.key));
+      removeProjectsByKeys(staleKeys);
+      renderKPI();renderPortfolio();renderUpdatesProjectList();
+      document.getElementById('badge-pf').textContent=PROJECTS.length;
+      persistProjects();
+      if(firebaseReady&&db){staleKeys.forEach(k=>{db.collection('schedules').doc(k).delete().catch(e=>console.warn('delete schedule error',k,e));});}
+    }
+  }
+  return {staleProjects};
 }
 
 // ── Reordenar prioridade livremente, arrastando (como numa planilha) ──
@@ -6823,7 +6846,7 @@ function parseSyncJson(){
       times:(i.fields.customfield_29719||[]).map(t=>t.value).filter(Boolean),
     }));
     parsed.sort((a,b)=>(a.priority??9999)-(b.priority??9999));
-    applyJiraSync(parsed);
+    applyJiraSync(parsed,{interactive:true});
     closeM('sync-modal');
   }catch(e){alert('Erro ao parsear JSON: '+e.message);}
 }
