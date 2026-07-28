@@ -3042,9 +3042,23 @@ function submitUpdate(){
   const body=document.getElementById('composer-text').value.trim();if(!body){alert('Escreva a atualização');return;}
   const sc=schedules[curUpdKey];if(!sc.updates)sc.updates=[];
   const p=PROJECTS.find(x=>x.key===curUpdKey);const st=getStats(curUpdKey);
-  sc.updates.push({id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag:document.getElementById('upd-status-tag').value,includeEmail:document.getElementById('include-email').checked,health:st.health,reactions:{}});
+  const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag:document.getElementById('upd-status-tag').value,includeEmail:document.getElementById('include-email').checked,health:st.health,reactions:{}};
+  sc.updates.push(newUpd);
   document.getElementById('composer-text').value='';document.getElementById('upd-status-tag').value='';
   logChange(curUpdKey,'Atualização publicada','#6924E1');renderUpdates(curUpdKey);renderUpdatesProjectList();persistUpdates(curUpdKey);persistUpdates(curUpdKey);
+  syncUpdateToJira(curUpdKey,newUpd);
+}
+// Espelha toda atualização publicada na aba Atualizações como comentário na issue do Jira
+// correspondente — fire-and-forget (não bloqueia a UI nem trava a publicação se o Jira falhar).
+async function syncUpdateToJira(key,update){
+  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:')return;
+  const comment=`[HUB VMO] ${update.author} · ${update.when}: ${update.body}`;
+  try{
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'addJiraComment',issueKey:key,comment})});
+    const d=await r.json();
+    if(!d.ok)console.warn('syncUpdateToJira:',key,d.error);
+  }catch(e){console.warn('syncUpdateToJira error:',key,e.message);}
 }
 function fmtText(t){const ta=document.getElementById('composer-text');if(t==='bold')ta.value+='**negrito**';else if(t==='italic')ta.value+='_itálico_';else if(t==='list')ta.value+='\n• ';}
 
