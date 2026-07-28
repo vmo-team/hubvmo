@@ -462,6 +462,7 @@ table.pft tr:hover td{background:var(--bg2)}
 .ghm{display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600;color:var(--navy);border-right:1px solid var(--border2);flex-shrink:0}
 .days-row{display:flex;height:16px}
 .ghd{display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--text3);border-right:.5px solid var(--border);flex-shrink:0;position:relative}
+.ghd.wd{font-weight:700}
 .ghd.we{background:rgba(239,68,68,.05);color:#ef4444}.ghd.tod{background:rgba(239,68,68,.2);color:#ef4444;font-weight:700}
 .ghd.wk-start{font-weight:700;color:var(--text2);border-left:1.5px solid var(--border2)}
 .ghd.wk-start.we{color:#ef4444}
@@ -4547,10 +4548,11 @@ function renderGhdr(){
   groups.forEach(g=>{const el=document.createElement('div');el.className='ghm';el.style.width=g.w+'px';el.textContent=g.lbl;mr.appendChild(el);});
   units.forEach((u,i)=>{
     const el=document.createElement('div');const we=isWE(u);const tod=zoom==='day'&&u.getTime()===TODAY.getTime();
+    const wd=zoom==='day'&&!we;
     // Início de semana (segunda-feira): marcado com negrito + linha vertical, em vez de repetir o
     // dia da semana por extenso em toda coluna — ajuda a "contar semanas" de relance sem poluir.
     const wkStart=zoom==='day'&&u.getDay()===1;
-    el.className='ghd'+(we?' we':'')+(tod?' tod':'')+(wkStart?' wk-start':'');el.style.width=_ganttLayout.widths[i]+'px';
+    el.className='ghd'+(we?' we':'')+(tod?' tod':'')+(wkStart?' wk-start':'')+(wd?' wd':'');el.style.width=_ganttLayout.widths[i]+'px';
     let lbl2;
     if(showSeqNums){lbl2=getSeqLabel(u,i);}
     else if(zoom==='day')lbl2=u.getDate();
@@ -5364,49 +5366,55 @@ function getTeamActivities(team){
   const foundKey=Object.keys(TEAM_ACTIVITIES).find(k=>normTeamName_(k)===norm);
   return foundKey?TEAM_ACTIVITIES[foundKey]:TEAM_ACTIVITIES_DEFAULT;
 }
-let selectedTplTeam='';
-function teamCardsHtml(teams,selected){
+let selectedTplTeams=new Set();
+function teamCardsHtml(teams,selectedSet){
   return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px">${teams.map(t=>{
     const n=getTeamActivities(t).length;
-    const on=t===selected?' tpl-team-card-on':'';
+    const on=selectedSet.has(t)?' tpl-team-card-on':'';
     return `<div class="tpl-team-card${on}" onclick="selectTplTeam('${t.replace(/'/g,"\\'")}')"><div style="font-size:11px;font-weight:600">${t}</div><div style="font-size:9.5px;color:var(--text3);margin-top:2px">${n} atividade${n!==1?'s':''}</div></div>`;
   }).join('')}</div>`;
 }
 function selectTplTeam(team){
-  selectedTplTeam=team;
-  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(getAllTeams(),selectedTplTeam);
+  if(selectedTplTeams.has(team))selectedTplTeams.delete(team);else selectedTplTeams.add(team);
+  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(getTemplateTeams(),selectedTplTeams);
   renderTeamActivities();
 }
 function renderTeamActivities(){
-  const team=selectedTplTeam;
   const box=document.getElementById('tpl-team-activities');
-  if(!team){box.innerHTML='';document.getElementById('tpl-team-add-btn').style.display='none';return;}
-  const acts=getTeamActivities(team);
-  box.innerHTML=acts.map((a,i)=>`<label style="display:flex;align-items:center;gap:6px;padding:5px 2px;font-size:10.5px;cursor:pointer"><input type="checkbox" class="tpl-act-chk" value="${i}" checked> ${a}</label>`).join('');
+  if(!selectedTplTeams.size){box.innerHTML='';document.getElementById('tpl-team-add-btn').style.display='none';return;}
+  box.innerHTML=Array.from(selectedTplTeams).map(team=>{
+    const acts=getTeamActivities(team);
+    return `<div style="margin-top:6px"><div style="font-size:10.5px;font-weight:600;color:var(--text2);padding:4px 2px;border-bottom:1px solid var(--border);margin-bottom:2px">${team}</div>${acts.map((a,i)=>`<label style="display:flex;align-items:center;gap:6px;padding:5px 2px;font-size:10.5px;cursor:pointer"><input type="checkbox" class="tpl-act-chk" data-team="${team.replace(/"/g,'&quot;')}" value="${i}" checked> ${a}</label>`).join('')}</div>`;
+  }).join('');
   document.getElementById('tpl-team-add-btn').style.display='';
 }
 function addTeamActivities(){
-  const team=selectedTplTeam;if(!team)return;
-  const acts=getTeamActivities(team);
-  const checked=Array.from(document.querySelectorAll('.tpl-act-chk:checked')).map(cb=>acts[parseInt(cb.value)]);
-  if(!checked.length){alert('Selecione ao menos uma atividade.');return;}
+  if(!selectedTplTeams.size)return;
   const sched=schedules[curKey];
-  const msId=uid();let d=new Date(TODAY);
-  sched.milestones.push({id:msId,name:`Atividades — ${team}`,start:ds(d),deadline:ds(addD(d,checked.length*5)),endReal:'',color:'#0d9488',status:'not_started',assignees:[]});
-  checked.forEach((name,i)=>{
-    sched.tasks.push({id:uid(),msId,name,start:ds(addD(d,i*5)),deadline:ds(addD(d,i*5+4)),origDeadline:ds(addD(d,i*5+4)),endReal:'',assignees:[],depId:'',depIds:[],depType:'TI',depMode:'blocked',status:'not_started',notes:'',jiraLink:'',jiraLinkStatus:''});
+  let totalAdded=0;const teamsAdded=[];
+  selectedTplTeams.forEach(team=>{
+    const acts=getTeamActivities(team);
+    const checked=Array.from(document.querySelectorAll('.tpl-act-chk:checked')).filter(cb=>cb.dataset.team===team).map(cb=>acts[parseInt(cb.value)]);
+    if(!checked.length)return;
+    const msId=uid();let d=new Date(TODAY);
+    sched.milestones.push({id:msId,name:`Atividades — ${team}`,start:ds(d),deadline:ds(addD(d,checked.length*5)),endReal:'',color:'#0d9488',status:'not_started',assignees:[]});
+    checked.forEach((name,i)=>{
+      sched.tasks.push({id:uid(),msId,name,start:ds(addD(d,i*5)),deadline:ds(addD(d,i*5+4)),origDeadline:ds(addD(d,i*5+4)),endReal:'',assignees:[],depId:'',depIds:[],depType:'TI',depMode:'blocked',status:'not_started',notes:'',jiraLink:'',jiraLinkStatus:''});
+    });
+    totalAdded+=checked.length;teamsAdded.push(team);
   });
-  logChange(curKey,`${checked.length} atividade(s) do time "${team}" incluída(s)`,'#0d9488');
+  if(!totalAdded){alert('Selecione ao menos uma atividade.');return;}
+  logChange(curKey,`${totalAdded} atividade(s) de ${teamsAdded.length} time(s) incluída(s): ${teamsAdded.join(', ')}`,'#0d9488');
   closeM('tpl-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
 }
 function openTemplateModal(){
   const teams=getTemplateTeams();
-  const modal=getOrBuildModal('tpl-modal','Modelos de Cronograma',`<div class="info-box">Clique em um time para carregar as atividades macro dele — depois marque quais você quer incluir no cronograma.</div>
-    <div id="tpl-team-cards" style="margin-top:6px">${teamCardsHtml(teams,'')}</div>
+  const modal=getOrBuildModal('tpl-modal','Modelos de Cronograma',`<div class="info-box">Clique em um ou mais times para carregar as atividades macro deles — depois marque quais você quer incluir no cronograma.</div>
+    <div id="tpl-team-cards" style="margin-top:6px">${teamCardsHtml(teams,new Set())}</div>
     <div id="tpl-team-activities" style="margin-top:8px"></div>`,
     `<button class="btn-c" onclick="closeM('tpl-modal')">Cancelar</button><button class="btn-s" id="tpl-team-add-btn" style="display:none" onclick="addTeamActivities()">Incluir selecionadas</button>`);
-  selectedTplTeam='';
-  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(teams,'');
+  selectedTplTeams=new Set();
+  document.getElementById('tpl-team-cards').innerHTML=teamCardsHtml(teams,selectedTplTeams);
   document.getElementById('tpl-team-activities').innerHTML='';
   document.getElementById('tpl-team-add-btn').style.display='none';
   openM('tpl-modal');
