@@ -3051,14 +3051,19 @@ function submitUpdate(){
 // Espelha toda atualização publicada na aba Atualizações como comentário na issue do Jira
 // correspondente — fire-and-forget (não bloqueia a UI nem trava a publicação se o Jira falhar).
 async function syncUpdateToJira(key,update){
-  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:')return;
+  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:'){
+    console.log('[syncUpdateToJira] pulado — GAS_URL não configurado ou página aberta via file://');
+    return;
+  }
   const comment=`[HUB VMO] ${update.author} · ${update.when}: ${update.body}`;
+  console.log('[syncUpdateToJira] enviando comentário para',key,'→',comment);
   try{
     const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({action:'addJiraComment',issueKey:key,comment})});
     const d=await r.json();
-    if(!d.ok)console.warn('syncUpdateToJira:',key,d.error);
-  }catch(e){console.warn('syncUpdateToJira error:',key,e.message);}
+    if(d.ok)console.log('[syncUpdateToJira] OK — comentário adicionado em',key);
+    else console.warn('[syncUpdateToJira] FALHOU:',key,d.error||d);
+  }catch(e){console.warn('[syncUpdateToJira] erro de rede/parse:',key,e.message);}
 }
 function fmtText(t){const ta=document.getElementById('composer-text');if(t==='bold')ta.value+='**negrito**';else if(t==='italic')ta.value+='_itálico_';else if(t==='list')ta.value+='\n• ';}
 
