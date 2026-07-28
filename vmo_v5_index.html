@@ -383,6 +383,7 @@ table.pft tr:hover td{background:var(--bg2)}
 .upd-react-row{display:flex;gap:6px;padding:6px 11px;border-top:1px solid var(--border);align-items:center}
 .upd-react-btn{font-size:12px;background:transparent;border:none;cursor:pointer;padding:1px 4px;border-radius:5px;transition:background .1s}
 .upd-react-btn:hover{background:var(--bg2)}
+.upd-react-btn.on{background:#ede9fe;color:#6d28d9}
 #upd-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:8px;color:var(--text3);padding:40px}
 #upd-empty i{font-size:36px;opacity:.3}
 #upd-composer{background:var(--bg);border-top:1px solid var(--border);padding:11px 14px;flex-shrink:0}
@@ -3027,11 +3028,13 @@ function renderUpdates(key){
       </div>
       <div class="upd-card-body">${u.body.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/_(.*?)_/g,'<i>$1</i>').replace(/• /g,'<br>• ')}</div>
       ${tagsHtml}
-      <div class="upd-react-row">
-        <button class="upd-react-btn" onclick="reactUpd('${key}','${u.id}','like')">👍 <span>${u.reactions?.like||0}</span></button>
-        <button class="upd-react-btn" onclick="reactUpd('${key}','${u.id}','celebrate')">🎉</button>
-        <button class="upd-react-btn" onclick="reactUpd('${key}','${u.id}','love')">❤️</button>
-      </div>`;
+      <div class="upd-react-row">${['like','celebrate','love'].map(em=>{
+        const emoji={like:'👍',celebrate:'🎉',love:'❤️'}[em];
+        const list=reactionList(u,em);
+        const mine=isReactedByMe(u,em);
+        const count=list.length;
+        return `<button class="upd-react-btn${mine?' on':''}" onclick="reactUpd('${key}','${u.id}','${em}')">${emoji}${count?` <span>${count}</span>`:''}</button>`;
+      }).join('')}</div>`;
     feed.insertBefore(card,feed.firstChild);
   });
 }
@@ -3041,7 +3044,28 @@ function deleteUpdate(key,uid2){
   const sc=schedules[key];sc.updates=(sc.updates||[]).filter(u=>u.id!==uid2);
   logChange(key,'Atualização apagada','#dc2626');renderUpdates(key);renderUpdatesProjectList();persistUpdates(key);persistUpdates(key);
 }
-function reactUpd(key,uid2,emoji){const sc=schedules[key];const u=(sc?.updates||[]).find(x=>x.id===uid2);if(!u)return;if(!u.reactions)u.reactions={};u.reactions[emoji]=(u.reactions[emoji]||0)+1;renderUpdates(key);}
+// Reações agora guardam QUEM reagiu (lista de e-mails), não só um contador — isso é o que
+// permite alternar (toggle): clicar de novo remove a própria reação, em vez de só somar +1
+// pra sempre. reactionList() migra silenciosamente o formato antigo (um número solto) para
+// lista vazia, já que não dá pra saber retroativamente quem tinha clicado antes.
+function reactionList(u,emoji){
+  if(!u.reactions)u.reactions={};
+  if(!Array.isArray(u.reactions[emoji]))u.reactions[emoji]=[];
+  return u.reactions[emoji];
+}
+function isReactedByMe(u,emoji){
+  const me=currentUser?.email||currentUser?.name;
+  if(!me)return false;
+  return reactionList(u,emoji).includes(me);
+}
+function reactUpd(key,uid2,emoji){
+  const sc=schedules[key];const u=(sc?.updates||[]).find(x=>x.id===uid2);if(!u)return;
+  const me=currentUser?.email||currentUser?.name;if(!me)return;
+  const list=reactionList(u,emoji);
+  const idx=list.indexOf(me);
+  if(idx>=0)list.splice(idx,1);else list.push(me);
+  renderUpdates(key);persistUpdates(key);
+}
 function submitUpdate(){
   if(!curUpdKey)return;
   if(!isEditorOrAbove()){alert('Apenas editores e administradores podem publicar atualizações.');return;}
