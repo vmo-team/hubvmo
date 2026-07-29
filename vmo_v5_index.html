@@ -1280,9 +1280,17 @@ function renderUserRegistry() {
     const roleLabel = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo' }[role] || role;
     const div = document.createElement('div');
     div.style.cssText = 'display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--bg2);border-radius:6px;font-size:10.5px';
+    const editableRoles = ['admin','editor','viewer'];
+    const roleSelectHtml = editableRoles.includes(role)
+      ? `<select onchange="changeUserRole(${i},this.value)" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:${role==='admin'?'#ede9fe':role==='editor'?'#dbeafe':'#f1f5f9'};color:${role==='admin'?'#6d28d9':role==='editor'?'#1d4ed8':'#475569'};padding:2px 4px;font-weight:600">
+           <option value="viewer" ${role==='viewer'?'selected':''}>Visualizador</option>
+           <option value="editor" ${role==='editor'?'selected':''}>Editor</option>
+           <option value="admin"  ${role==='admin' ?'selected':''}>Admin</option>
+         </select>`
+      : `<span class="spill" style="background:#f1f5f9;color:#475569">${roleLabel}</span>`;
     div.innerHTML = `
       <div style="flex:1"><b>${u.name}</b> <span style="color:var(--text3);font-size:9.5px">${u.email}</span></div>
-      <span class="spill" style="background:${role==='admin'?'#ede9fe':role==='editor'?'#dbeafe':'#f1f5f9'};color:${role==='admin'?'#6d28d9':role==='editor'?'#1d4ed8':'#475569'}">${roleLabel}</span>
+      ${roleSelectHtml}
       <span style="font-size:9px;padding:2px 6px;border-radius:8px;background:${u.active?'#dcfce7':'#fee2e2'};color:${u.active?'#166534':'#b91c1c'}">${u.active?'Ativo':'Inativo'}</span>
       <button onclick="toggleUserActive(${i})" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">${u.active?'Desativar':'Ativar'}</button>
       <button onclick="resetUserPassword(${i})" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">Reset senha</button>
@@ -1303,13 +1311,26 @@ function addUserToRegistry() {
   if (!pwd || pwd.length < 6) { alert('Senha mínima de 6 caracteres.'); return; }
   if (USER_REGISTRY.find(u => u.email === email)) { alert('Email já cadastrado.'); return; }
   USER_REGISTRY.push({ email, name, passwordHash: hashPassword(email, pwd), active: true });
-  persistUsers();
-  // If editor/admin, add to lists
+  // Precisa acontecer ANTES do persistUsers() — o objeto salvo no Firestore lê EDITOR_EMAILS/
+  // ADMIN_EMAILS no momento da chamada (não depois), então se o push rodasse só depois o papel
+  // escolhido aqui nunca era realmente persistido (o e-mail ficava de fora da lista salva).
   if (role === 'editor' && !EDITOR_EMAILS.includes(email)) EDITOR_EMAILS.push(email);
   if (role === 'admin'  && !ADMIN_EMAILS.includes(email))  ADMIN_EMAILS.push(email);
+  persistUsers();
   renderUserRegistry();
   document.getElementById('new-user-email').value = '';
   document.getElementById('new-user-name').value  = '';
+}
+// Permite corrigir/alterar o papel de um usuário já cadastrado (ex.: alguém cadastrado antes
+// dessa correção, cujo papel de Editor/Admin nunca tinha sido salvo de verdade).
+function changeUserRole(idx, newRole) {
+  const u = USER_REGISTRY[idx]; if (!u) return;
+  const i1 = ADMIN_EMAILS.indexOf(u.email);  if (i1 >= 0) ADMIN_EMAILS.splice(i1, 1);
+  const i2 = EDITOR_EMAILS.indexOf(u.email); if (i2 >= 0) EDITOR_EMAILS.splice(i2, 1);
+  if (newRole === 'admin')  ADMIN_EMAILS.push(u.email);
+  if (newRole === 'editor') EDITOR_EMAILS.push(u.email);
+  persistUsers();
+  renderUserRegistry();
 }
 
 function toggleUserActive(idx) {
