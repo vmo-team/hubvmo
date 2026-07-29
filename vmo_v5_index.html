@@ -932,12 +932,18 @@ async function loadUserRegistryFromFirestore() {
   try {
     const snapUsers = await db.collection('app_config').doc('users').get();
     if (snapUsers.exists) {
-      const saved = snapUsers.data().registry || [];
+      const data = snapUsers.data();
+      const saved = data.registry || [];
       saved.forEach(u => {
         const idx = USER_REGISTRY.findIndex(x => x.email === u.email);
         if (idx >= 0) USER_REGISTRY[idx] = { ...USER_REGISTRY[idx], ...u };
         else USER_REGISTRY.push(u);
       });
+      // Restaura quem foi cadastrado como Editor/Admin em qualquer sessão anterior — sem isso
+      // o papel de um usuário cadastrado pelo "Gerenciar usuários" só "colava" na aba de quem
+      // cadastrou, e voltava a Visualizador/Externo pra todo mundo mais (ver persistUsers()).
+      (data.editorEmails || []).forEach(e => { if (!EDITOR_EMAILS.includes(e)) EDITOR_EMAILS.push(e); });
+      (data.adminEmails  || []).forEach(e => { if (!ADMIN_EMAILS.includes(e))  ADMIN_EMAILS.push(e);  });
     }
   } catch(e) { console.error('loadUserRegistryFromFirestore error:', e); }
 }
@@ -6385,9 +6391,16 @@ async function autoSyncProjectsFromJira() {
 async function persistUsers() {
   if (!firebaseReady || !db) return;
   try {
+    // EDITOR_EMAILS/ADMIN_EMAILS são const's hardcoded no arquivo — quando um admin cadastra
+    // alguém como Editor/Admin pelo "Gerenciar usuários", isso só existia na memória da aba
+    // aberta naquele momento. Sem persistir aqui, o papel "voltava" pra Visualizador (ou pior,
+    // Externo) assim que a pessoa cadastrada dava reload/logava numa aba nova, mesmo com o
+    // usuário certinho no registro — o role vinha desses arrays, não do registro em si.
     await db.collection('app_config').doc('users').set({
-      registry:  USER_REGISTRY,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      registry:     USER_REGISTRY,
+      editorEmails: EDITOR_EMAILS,
+      adminEmails:  ADMIN_EMAILS,
+      updatedAt:    firebase.firestore.FieldValue.serverTimestamp(),
     });
   } catch(e) { console.error('persistUsers error:', e); }
 }
