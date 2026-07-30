@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -962,10 +963,30 @@ function resolveRole(email) {
 }
 
 // ── PERMISSION CHECKS ─────────────────────────────────────────────────────
+// Normaliza nome/username pra comparar "GP Alocado" (vem do Jira, texto livre) com o nome/e-mail
+// do usuário logado, ignorando acento, caixa e espaços — e aceitando também o formato
+// "username.sobrenome" que aparece em alguns registros mais antigos do Jira (ex.: "felipe.soave"),
+// comparando com o "local part" do e-mail (antes do @) nesse caso.
+function normPersonKey_(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.\s]+/g, ' ').trim();
+}
+function isGPOfProject(user, project) {
+  if (!user || !project) return false;
+  const gpRaw = project.gp;
+  if (!gpRaw || gpRaw === '—') return true; // projeto sem GP definido — não faz sentido travar a edição de ninguém
+  const gpNames = gpRaw.split(',').map(s => normPersonKey_(s));
+  const uName = normPersonKey_(user.name);
+  const uHandle = normPersonKey_((user.email || '').split('@')[0]);
+  return gpNames.some(g => g && (g === uName || g === uHandle));
+}
 function canEdit(projectKey) {
   if (!currentUser) return false;
   const r = currentUser.role;
-  if (r === 'admin' || r === 'editor') return true;
+  if (r === 'admin') return true;
+  if (r === 'editor') {
+    const p = PROJECTS.find(x => x.key === projectKey);
+    return isGPOfProject(currentUser, p);
+  }
   if (r === 'external') {
     const sc = schedules[projectKey];
     return (sc?.access || []).some(a => a.email === currentUser.email && a.role === 'editor');
@@ -3311,6 +3332,7 @@ function openEmailModal(){
       <input type="text" id="email-sh-role" placeholder="Papel (opcional)" style="width:105px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px">
       <button class="btn-s" onclick="addStakeholderFromEmailModal()">+</button>
     </div>
+    <div style="font-size:9px;color:var(--text3);margin:-2px 0 6px">💡 Papel <b>Editor</b> — concede acesso para editar o cronograma. Papel <b>Visualizador</b>/outro — só informativo.</div>
     <div id="email-sh-list" style="max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-bottom:4px"></div>
     <div class="fg" style="margin-top:8px"><label>Adicionar destinatário avulso (só para este envio, não fica salvo)</label><input type="email" id="email-extra" placeholder="outro@bemobi.com"></div>
     <div id="email-preview" style="margin-top:10px;display:none">
@@ -3369,6 +3391,7 @@ function addStakeholderFromEmailModal(){
   if(!res.ok){alert(res.error);return;}
   nameEl.value='';emailEl.value='';roleEl.value='';
   refreshEmailStakeholders();
+  if(res.accessBlocked)alert('Stakeholder cadastrado. O papel "Editor" concederia acesso de edição do cronograma, mas só administradores podem fazer essa concessão — peça a um admin para liberar em "Gerenciar Acessos".');
 }
 function collectEmailStakeholderRecipients(){
   const checked=checkedEmailProjectKeys();
@@ -4729,7 +4752,7 @@ function renderRows(){
       const depLbl=depLineNums?`<span style="font-size:8.5px;color:var(--text3);font-weight:600;white-space:nowrap" title="${depTooltip}${t.depType?' ['+DEP_LABELS[t.depType]+']':''}">${depLineNums}${t.depType?'<span style="font-size:7.5px;opacity:.7"> ['+t.depType+']</span>':''}</span>`:'—';
       const taskLinks2=getTaskLinks(t);
       const linkKeyOf=u=>{const k=String(u||'').split('/').filter(Boolean).pop()||'';return k;};
-      const linkIconOf=u=>/\/browse\//i.test(String(u||''))?'ti-brand-jira':'ti-link';
+      const linkIconOf=u=>/\/browse\//i.test(String(u||''))?'ti-brand-jira':(isSlackLink(u)?'ti-brand-slack':'ti-link');
       const primaryLink2=taskLinks2[0]||null;
       const primaryKey2=primaryLink2?linkKeyOf(primaryLink2.url):'';
       const jiraLinkHtml=primaryLink2?`<a href="${primaryLink2.url}" target="_blank" title="Abrir ${primaryKey2}" style="font-size:8.5px;color:var(--blue);display:flex;align-items:center;gap:3px;padding:2px 5px;background:#e8ecfd;border-radius:4px;font-weight:600;white-space:nowrap;overflow:hidden"><i class="ti ${linkIconOf(primaryLink2.url)}" style="font-size:10px"></i><span style="overflow:hidden;text-overflow:ellipsis">${primaryKey2.length>10?primaryKey2.slice(0,10)+'…':primaryKey2}</span>${taskLinks2.length>1?`<span style="opacity:.7">+${taskLinks2.length-1}</span>`:''}${primaryLink2.status?` <span class="spill ${JIRA_SC[primaryLink2.status]||'s-bkl'}" style="font-size:7px">${primaryLink2.status.slice(0,6)}</span>`:''}</a>`:'—';
@@ -5034,15 +5057,27 @@ function populateAssigneeDatalist(){
   if(p&&p.gp&&p.gp!=='—')p.gp.split(',').forEach(n=>{if(n.trim())names.add(n.trim());});
   dl.innerHTML=[...names].sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');
 }
-// ── Links de tarefa (multi-link) — detecta automaticamente links internos (domínio one-bemobi) ──
+// ── Links de tarefa (multi-link) — detecta automaticamente links internos (domínio one-bemobi ou Slack) ──
 function isInternalLink(url){
   if(!url)return false;
   const s=String(url).trim();
   try{
     const u=new URL(s);
-    return u.hostname.toLowerCase().replace(/^www\./,'').startsWith('one-bemobi');
+    const h=u.hostname.toLowerCase().replace(/^www\./,'');
+    return h.startsWith('one-bemobi')||h.endsWith('.slack.com')||h==='slack.com';
   }catch(e){
-    return /^(https?:\/\/)?(www\.)?one-bemobi/i.test(s);
+    return /^(https?:\/\/)?(www\.)?(one-bemobi|[\w-]+\.slack\.com|slack\.com)/i.test(s);
+  }
+}
+function isSlackLink(url){
+  if(!url)return false;
+  const s=String(url).trim();
+  try{
+    const u=new URL(s);
+    const h=u.hostname.toLowerCase().replace(/^www\./,'');
+    return h.endsWith('.slack.com')||h==='slack.com';
+  }catch(e){
+    return /^(https?:\/\/)?(www\.)?([\w-]+\.slack\.com|slack\.com)/i.test(s);
   }
 }
 function getTaskLinks(t){
@@ -5614,8 +5649,15 @@ const TEAM_ACTIVITIES_DEFAULT=['Levantamento de escopo','Desenvolvimento','Teste
 function getAllTeams(){return[...new Set(PROJECTS.flatMap(p=>p.times||[]))].sort();}
 function getTemplateTeams(){
   const raw=getAllTeams();
-  const merged=raw.filter(t=>t!=='Wave'&&t!=='Grace');
-  if(raw.includes('Wave')||raw.includes('Grace'))merged.push('Wave/Grace');
+  // BUG CORRIGIDO: se o Jira já trouxer "Wave/Grace" como um valor único (em vez de "Wave" e
+  // "Grace" separados) em ALGUNS projetos — enquanto outros ainda usam os valores antigos
+  // separados — o card "Wave/Grace" era adicionado duas vezes: uma vinda direto do valor bruto
+  // "Wave/Grace" (que não batia com o filtro 'Wave'/'Grace' exatos) e outra pelo merge abaixo.
+  // Agora trata "Wave/Grace" também como um alias a ser removido antes do merge, então só existe
+  // uma entrada final não importa a combinação de valores que vier do Jira.
+  const hasWaveGrace=raw.includes('Wave')||raw.includes('Grace')||raw.includes('Wave/Grace');
+  const merged=raw.filter(t=>t!=='Wave'&&t!=='Grace'&&t!=='Wave/Grace');
+  if(hasWaveGrace)merged.push('Wave/Grace');
   return merged.sort();
 }
 function normTeamName_(s){return (s||'').replace(/\s+\(/g,'(').replace(/\s+/g,' ').trim().toLowerCase();}
@@ -5656,7 +5698,7 @@ function addTeamActivities(){
     const checked=Array.from(document.querySelectorAll('.tpl-act-chk:checked')).filter(cb=>cb.dataset.team===team).map(cb=>acts[parseInt(cb.value)]);
     if(!checked.length)return;
     const msId=uid();let d=new Date(TODAY);
-    sched.milestones.push({id:msId,name:`Atividades — ${team}`,start:ds(d),deadline:ds(addD(d,checked.length*5)),endReal:'',color:'#0d9488',status:'not_started',assignees:[]});
+    sched.milestones.push({id:msId,name:team,start:ds(d),deadline:ds(addD(d,checked.length*5)),endReal:'',color:'#0d9488',status:'not_started',assignees:[]});
     checked.forEach((name,i)=>{
       sched.tasks.push({id:uid(),msId,name,start:ds(addD(d,i*5)),deadline:ds(addD(d,i*5+4)),origDeadline:ds(addD(d,i*5+4)),endReal:'',assignees:[],depId:'',depIds:[],depType:'TI',depMode:'blocked',status:'not_started',notes:'',jiraLink:'',jiraLinkStatus:''});
     });
@@ -5795,6 +5837,7 @@ function openStakeholdersModal(){
       <input type="text" id="sh-role" placeholder="Papel (opcional)" style="width:120px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px">
       <button class="btn-s" onclick="addStakeholder()">+</button>
     </div>
+    <div style="font-size:9px;color:var(--text3);margin-top:4px;line-height:1.4">💡 Papel <b>Editor</b> — pode inserir, editar e excluir etapas/tarefas deste cronograma. Papel <b>Visualizador</b> (ou qualquer outro texto, ex.: Cliente, Gerente) — só acompanha, sem edição.</div>
     <div class="section-lbl" style="margin-top:8px">Cadastrados</div>
     <div id="stakeholders-list" style="max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
     <div class="section-lbl" style="margin-top:10px">Enviar atualização por e-mail</div>
@@ -5811,16 +5854,45 @@ function renderStakeholdersList(){
   const sched=schedules[curKey];const list=document.getElementById('stakeholders-list');if(!sched||!list)return;
   list.innerHTML='';
   (sched.stakeholders||[]).forEach(st=>{
+    // Mesmo mecanismo do "Gerenciar Acessos" (sched.access com role 'editor') — só pra mostrar,
+    // ao lado do stakeholder, se essa pessoa também tem permissão de editar o cronograma.
+    const hasEditAccess=(sched.access||[]).some(a=>a.email.toLowerCase()===st.email.toLowerCase()&&a.role==='editor');
     const div=document.createElement('div');
     div.style.cssText='display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg2);border-radius:5px';
     div.innerHTML=`<div style="flex:1;min-width:0">
-        <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email}${st.role?' <span style="font-weight:400;color:var(--text3)">· '+st.role+'</span>':''}</div>
+        <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email}${st.role?' <span style="font-weight:400;color:var(--text3)">· '+st.role+'</span>':''}${hasEditAccess?' <span style="font-weight:600;color:#166534;font-size:9px">· ✏️ Editor do cronograma</span>':''}</div>
         <div style="font-size:9.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.email}</div>
       </div>
+      ${isAdmin()?(hasEditAccess?`<button class="btn-c" style="font-size:8.5px;padding:2px 6px" onclick="revokeExternalEditAccess('${st.email.replace(/'/g,"\'")}')" title="Remover acesso de edição">Remover edição</button>`:`<button class="btn-c" style="font-size:8.5px;padding:2px 6px" onclick="grantExternalEditAccess('${st.email.replace(/'/g,"\'")}')" title="Dar acesso de edição">Dar edição</button>`):''}
       <button class="rm" onclick="removeStakeholder('${st.id}')">×</button>`;
     list.appendChild(div);
   });
   if(!list.children.length)list.innerHTML='<div style="font-size:10.5px;color:var(--text3);padding:4px">Nenhum stakeholder cadastrado ainda.</div>';
+}
+// Atalho pra dar/remover acesso de edição do cronograma direto da lista de Stakeholders, sem
+// precisar abrir "Gerenciar Acessos" — usa exatamente o mesmo mecanismo (sched.access com
+// role 'editor'), então canEdit() reconhece a pessoa automaticamente pra este projeto.
+function grantExternalEditAccess(email){
+  if(!isAdmin()){alert('Apenas administradores podem conceder acesso de edição.');return false;}
+  const sched=schedules[curKey];if(!sched)return false;
+  if(!sched.access)sched.access=[];
+  const existing=sched.access.find(a=>a.email.toLowerCase()===email.toLowerCase());
+  if(existing)existing.role='editor';
+  else sched.access.push({email,role:'editor'});
+  if(!globalAccess[curKey])globalAccess[curKey]=[];
+  if(!globalAccess[curKey].find(a=>a.email.toLowerCase()===email.toLowerCase()))globalAccess[curKey].push({email,role:'editor'});
+  logChange(curKey,`Acesso de edição concedido a ${email} (via Stakeholders)`,'#166534');
+  persistSchedule(curKey);
+  renderStakeholdersList();
+  return true;
+}
+function revokeExternalEditAccess(email){
+  if(!isAdmin()){alert('Apenas administradores podem remover acesso de edição.');return;}
+  const sched=schedules[curKey];if(!sched||!sched.access)return;
+  sched.access=sched.access.filter(a=>a.email.toLowerCase()!==email.toLowerCase());
+  logChange(curKey,`Acesso de edição removido de ${email} (via Stakeholders)`,'#dc2626');
+  persistSchedule(curKey);
+  renderStakeholdersList();
 }
 // Núcleo compartilhado — usado tanto pelo modal de Stakeholders do Cronograma
 // quanto pelo bloco de Stakeholders dentro do Email Executivo Semanal.
@@ -5831,8 +5903,26 @@ function addStakeholderToProject(key,name,email,role){
   if(sched.stakeholders.find(s=>s.email.toLowerCase()===email.toLowerCase()))return{ok:false,error:'Esse e-mail já está cadastrado para este projeto.'};
   sched.stakeholders.push({id:uid(),name:name||email,email,role,addedAt:nowStr()});
   logChange(key,`Stakeholder adicionado: ${name||email}`,'#0369a1');
+  // Papel "Editor" digitado no cadastro concede automaticamente acesso de edição
+  // do cronograma deste projeto (mesmo mecanismo de "Gerenciar Acessos"). Só quem
+  // já é admin pode conceder — se não for, o stakeholder é cadastrado normalmente
+  // mas o acesso não é liberado (accessBlocked avisa o chamador disso).
+  let accessGranted=false,accessBlocked=false;
+  if((role||'').trim().toLowerCase()==='editor'){
+    if(isAdmin()){
+      if(!sched.access)sched.access=[];
+      const existing=sched.access.find(a=>a.email.toLowerCase()===email.toLowerCase());
+      if(existing)existing.role='editor';else sched.access.push({email,role:'editor'});
+      if(!globalAccess[key])globalAccess[key]=[];
+      if(!globalAccess[key].find(a=>a.email.toLowerCase()===email.toLowerCase()))globalAccess[key].push({email,role:'editor'});
+      logChange(key,`Acesso de edição concedido a ${email} (papel Editor em Stakeholders)`,'#166534');
+      accessGranted=true;
+    }else{
+      accessBlocked=true;
+    }
+  }
   persistSchedule(key);
-  return{ok:true};
+  return{ok:true,accessGranted,accessBlocked};
 }
 function removeStakeholderFromProject(key,id){
   const sched=schedules[key];if(!sched)return false;
@@ -5844,10 +5934,12 @@ function removeStakeholderFromProject(key,id){
 }
 function addStakeholder(){
   const nameEl=document.getElementById('sh-name');const emailEl=document.getElementById('sh-email');const roleEl=document.getElementById('sh-role');
-  const res=addStakeholderToProject(curKey,nameEl.value.trim(),emailEl.value.trim(),roleEl.value.trim());
+  const email=emailEl.value.trim();
+  const res=addStakeholderToProject(curKey,nameEl.value.trim(),email,roleEl.value.trim());
   if(!res.ok){alert(res.error);return;}
   nameEl.value='';emailEl.value='';roleEl.value='';
   renderStakeholdersList();
+  if(res.accessBlocked)alert('Stakeholder cadastrado. O papel "Editor" concederia acesso de edição do cronograma, mas só administradores podem fazer essa concessão — peça a um admin para liberar em "Gerenciar Acessos" ou nesta mesma lista.');
 }
 function removeStakeholder(id){
   const sched=schedules[curKey];const st=(sched.stakeholders||[]).find(s=>s.id===id);if(!st)return;
@@ -6105,8 +6197,16 @@ async function previewImport(){
       const buf=await file.arrayBuffer();
       const wb=XLSX.read(buf,{type:'array',cellDates:true});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
-      importedData=parseProjectRows(rows);
+      // Acha a linha de cabeçalho de verdade em vez de assumir que é sempre a primeira linha da
+      // planilha — muita planilha real tem 1-2 linhas de título do projeto antes do cabeçalho
+      // (ex.: "Cronograma Detalhado — Projeto Enel" numa linha isolada), o que fazia o
+      // sheet_to_json ler os títulos como se fossem nomes de coluna e nenhuma linha de dado
+      // batia com nada reconhecível.
+      const headerRow=findGenericHeaderRow_(ws);
+      const rows=xlsxRowsSmart_(ws,headerRow);
+      const nameCol0=findNameColIndex_(ws,headerRow);
+      const boldFlags=await getBoldRowFlags_(file,headerRow,nameCol0);
+      importedData=parseProjectRows(rows,boldFlags);
       // Fallback: a planilha pode não ter uma linha de cabeçalho simples reconhecível pelo
       // parser genérico acima (ex.: o template de Cronograma padrão da Bemobi, com título do
       // projeto numa linha, cabeçalho espalhado em 2-3 linhas e Etapas marcadas por um número
@@ -6371,12 +6471,103 @@ function parseCSV(text){
   }).filter(r=>Object.values(r).some(v=>v));
 }
 
+// Varre as ~10 primeiras linhas da planilha e devolve o índice (0-based) da que mais parece
+// ser a linha de cabeçalho de verdade — a que tem mais células reconhecidas por normalizeKey().
+// Sem isso, sheet_to_json() sempre assume que a linha 1 é o cabeçalho, e planilhas com título
+// do projeto numa linha isolada antes do cabeçalho real (comum em cronogramas manuais) não
+// batiam com NENHUMA coluna esperada.
+// Monta os "rows" (um objeto por linha, chaveado pelo texto do cabeçalho) direto das células da
+// planilha, em vez de usar XLSX.utils.sheet_to_json({raw:false}) — que formata datas usando o
+// formato de número da célula e, se esse formato não incluir o ano (comum em planilhas com
+// cabeçalho "Data Início"/"Data Fim" mostrando só "22/06"), devolvia uma data sem ano, que o
+// new Date() do parseDate() "aceitava" silenciosamente e calculava errado (ex.: ano 2001).
+// Aqui, célula de data usa o valor real (objeto Date, sem ambiguidade); as demais usam o texto
+// já formatado pela própria planilha (cell.w, ex.: "50%"), preservando o comportamento anterior
+// pra números/percentuais.
+function xlsxRowsSmart_(ws,headerRow){
+  if(!ws['!ref'])return[];
+  const range=XLSX.utils.decode_range(ws['!ref']);
+  const headers=[];
+  for(let c=range.s.c;c<=range.e.c;c++){
+    const cell=ws[XLSX.utils.encode_cell({r:headerRow,c})];
+    headers[c]=cell&&cell.v!=null?String(cell.v).trim():'';
+  }
+  const rows=[];
+  for(let r=headerRow+1;r<=range.e.r;r++){
+    const obj={};let any=false;
+    for(let c=range.s.c;c<=range.e.c;c++){
+      const h=headers[c];if(!h)continue;
+      const cell=ws[XLSX.utils.encode_cell({r,c})];
+      let val='';
+      if(cell){
+        if(cell.t==='d')val=cell.v;
+        else val=(cell.w!=null?cell.w:cell.v);
+        if(val!=null&&val!=='')any=true;
+      }
+      obj[h]=val==null?'':val;
+    }
+    if(any){obj.__xlsxRow=r+1;rows.push(obj);}
+  }
+  return rows;
+}
+// Acha o índice (0-based) da coluna de nome/tarefa, pra depois cruzar com negrito via ExcelJS.
+function findNameColIndex_(ws,headerRow){
+  if(!ws['!ref'])return -1;
+  const range=XLSX.utils.decode_range(ws['!ref']);
+  for(let c=range.s.c;c<=range.e.c;c++){
+    const cell=ws[XLSX.utils.encode_cell({r:headerRow,c})];
+    if(cell&&cell.v!=null&&normalizeKey(String(cell.v))==='name')return c;
+  }
+  return -1;
+}
+// SheetJS (biblioteca gratuita usada pra ler valores) não expõe formatação de fonte (negrito),
+// só a versão paga. Por isso, quando a planilha não tem uma coluna explícita de "Nível" pra
+// separar Etapa de Tarefa (caso comum em cronogramas montados à mão, ex.: Enel — onde a etapa
+// aparece em negrito e a tarefa não), usamos a ExcelJS (também gratuita, via CDN) só pra ler o
+// negrito da coluna de nome, linha a linha. Se a lib não carregar ou o arquivo não abrir por
+// algum motivo, retorna null e o importador cai de volta no comportamento anterior.
+async function getBoldRowFlags_(file,headerRow0,nameCol0){
+  if(typeof ExcelJS==='undefined'||nameCol0<0)return null;
+  try{
+    const buf=await file.arrayBuffer();
+    const wb=new ExcelJS.Workbook();
+    await wb.xlsx.load(buf);
+    const ws=wb.worksheets[0];if(!ws)return null;
+    const flags={};
+    const nameColExcel=nameCol0+1;
+    const headerRowExcel=headerRow0+1;
+    ws.eachRow({includeEmpty:false},(row,rowNumber)=>{
+      if(rowNumber<=headerRowExcel)return;
+      const cell=row.getCell(nameColExcel);
+      flags[rowNumber]=!!(cell&&cell.font&&cell.font.bold);
+    });
+    return flags;
+  }catch(e){return null;}
+}
+function findGenericHeaderRow_(ws){
+  if(!ws['!ref'])return 0;
+  const range=XLSX.utils.decode_range(ws['!ref']);
+  let bestRow=range.s.r,bestScore=-1;
+  for(let r=range.s.r;r<=Math.min(range.s.r+10,range.e.r);r++){
+    let score=0;
+    for(let c=range.s.c;c<=range.e.c;c++){
+      const cell=ws[XLSX.utils.encode_cell({r,c})];
+      if(cell&&cell.v!=null&&normalizeKey(String(cell.v)))score++;
+    }
+    if(score>bestScore){bestScore=score;bestRow=r;}
+  }
+  return bestScore>0?bestRow:range.s.r;
+}
 function normalizeKey(key){
   const k=(key||'').toLowerCase().trim();
-  if(['nome','tarefa','task','name','activity'].includes(k))return'name';
+  if(['nome','tarefa','task','name','activity','etapa'].includes(k))return'name';
   if(['início','inicio','start','data início','data de início'].includes(k))return'start';
   if(['fim','finish','end','término','termino','data fim','data de fim','data término'].includes(k))return'end';
   if(['% concluído','% concluido','% complete','percentual','percent complete','conclusão'].includes(k))return'pct';
+  // "status" como texto livre (ex.: "Concluído"/"Em refinamento"/"Não iniciado") — comum em
+  // planilhas mantidas manualmente que não usam % de conclusão. Cuidado: só o rótulo EXATO
+  // "status" cai aqui — "status detalhado" (uma coluna de observação, não de status) fica de fora.
+  if(['status','situação','situacao'].includes(k))return'statustxt';
   if(['predecessoras','predecessors','dependências','dependencias','deps'].includes(k))return'deps';
   if(['recursos','resources','assigned to','responsável','responsavel','resource names'].includes(k))return'resources';
   if(['nível','nivel','level','outline level','wbs level'].includes(k))return'level';
@@ -6384,7 +6575,7 @@ function normalizeKey(key){
   return null;
 }
 
-function parseProjectRows(rows){
+function parseProjectRows(rows,boldFlags){
   if(!rows.length)return{milestones:[],tasks:[]};
   // Map column names
   const colMap={};
@@ -6393,18 +6584,31 @@ function parseProjectRows(rows){
   const get=(row,col)=>colMap[col]?row[colMap[col]]||'':'';
   const parseDate=(s)=>{
     if(!s)return'';
-    // Handle various date formats
-    const d=new Date(s);
-    if(!isNaN(d))return d.toISOString().slice(0,10);
-    // DD/MM/YYYY
-    const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(s instanceof Date)return isNaN(s)?'':s.toISOString().slice(0,10);
+    const str=String(s).trim();if(!str)return'';
+    // Tenta DD/MM/AAAA (formato usado nas planilhas da equipe) ANTES do new Date() genérico —
+    // new Date('22/06/2026') pode "aceitar" a data ambígua e calcular um resultado errado (em
+    // vez de falhar), então testar esse formato primeiro evita datas silenciosamente incorretas.
+    const m=str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
     if(m){const[,d2,mo,y]=m;const yr=y.length===2?'20'+y:y;return`${yr}-${mo.padStart(2,'0')}-${d2.padStart(2,'0')}`;}
+    const d=new Date(str);
+    if(!isNaN(d))return d.toISOString().slice(0,10);
     return'';
   };
 
   // Detect milestones by level or by rows without start/end (summary tasks)
   const milestones=[];const tasks=[];
   let curMsId=null;let msIdx=0;
+
+  // Sem coluna de "Nível" explícita, tenta usar negrito (via ExcelJS) como sinal de hierarquia —
+  // só confia nisso se a planilha realmente tiver as duas variações (linhas em negrito E sem
+  // negrito); senão pode ser só um efeito de formatação e não um sinal de hierarquia real.
+  const hasLevelCol=!!colMap['level'];
+  let useBoldHierarchy=false;
+  if(boldFlags&&!hasLevelCol){
+    const vals=rows.map(r=>r.__xlsxRow!=null?boldFlags[r.__xlsxRow]:undefined).filter(v=>v!==undefined);
+    useBoldHierarchy=vals.some(v=>v===true)&&vals.some(v=>v===false);
+  }
 
   rows.forEach((row,i)=>{
     const name=get(row,'name');if(!name)return;
@@ -6415,12 +6619,19 @@ function parseProjectRows(rows){
     const pct=parseInt(pctRaw)||0;
     const deps=get(row,'deps');
     const resources=(get(row,'resources')||'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
-    const status=pct>=100?'done':pct>0?'in_progress':'not_started';
+    // Prefere uma coluna de status em texto (ex.: "Concluído"), quando existir, sobre o cálculo
+    // por %  — muita planilha mantida manualmente não tem % de conclusão, só o status descritivo.
+    const statusTxtRaw=get(row,'statustxt');
+    const status=statusTxtRaw?cronoMapStatus_(statusTxtRaw):(pct>=100?'done':pct>0?'in_progress':'not_started');
 
-    // Level 1 or no start/end = milestone (summary task in MS Project)
-    if(level===1||(i===0)||(!start&&!end&&level<=1)){
+    // Level 1 or no start/end = milestone (summary task in MS Project). Quando não há coluna de
+    // nível mas dá pra confiar no negrito, o negrito decide (etapa=negrito, tarefa=sem negrito).
+    const isMilestoneRow=useBoldHierarchy
+      ? !!(row.__xlsxRow!=null&&boldFlags[row.__xlsxRow])
+      : (level===1||(i===0)||(!start&&!end&&level<=1));
+    if(isMilestoneRow){
       const msId=uid();curMsId=msId;msIdx++;
-      milestones.push({id:msId,name,start,deadline:end,endReal:pct>=100?end:'',
+      milestones.push({id:msId,name,start,deadline:end,endReal:status==='done'?end:'',
         color:['#6366f1','#06b6d4','#10b981','#f59e0b','#8b5cf6','#ef4444'][msIdx%6],
         status,assignees:resources.map(r=>({name:r,type:'internal'}))});
     } else {
@@ -6430,7 +6641,7 @@ function parseProjectRows(rows){
         milestones.push({id:msId,name:'Importado',start,deadline:end,endReal:'',color:'#6366f1',status:'not_started',assignees:[]});
       }
       tasks.push({id:uid(),msId:curMsId||milestones[0]?.id,name,start,deadline:end,
-        endReal:pct>=100?end:'',assignees:resources.map(r=>({name:r,type:'internal'})),
+        endReal:status==='done'?end:'',assignees:resources.map(r=>({name:r,type:'internal'})),
         depId:'',depIds:[],depType:'TI',depMode:'blocked',
         status,notes:'',jiraLink:'',jiraLinkStatus:'',
         _deps:deps,_pct:pct});
