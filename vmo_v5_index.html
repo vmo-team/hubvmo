@@ -228,6 +228,9 @@ table.pft th{background:var(--bg2);border-bottom:1px solid var(--border);padding
 table.pft td{padding:4px 8px;border-bottom:.5px solid var(--border);vertical-align:middle;max-width:360px;overflow:hidden}
 table.pft .spill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
 table.pft tr:hover td{background:var(--bg2)}
+table.pft tr.pf-row-gray td{background:#eceff3}
+table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
+#prio-kpi .sec-hdr{position:sticky;z-index:9;box-shadow:0 1px 0 var(--border)}
 .prio-badge{font-size:9px;padding:1px 5px;background:#fef3c7;color:#92400e;border-radius:4px;font-weight:700;white-space:nowrap}
 .prio-grip{font-size:13px;color:var(--text3);cursor:grab}
 .prio-grip:active{cursor:grabbing}
@@ -658,9 +661,10 @@ table.pft tr:hover td{background:var(--bg2)}
           <label style="font-size:9px;color:var(--text3);display:flex;align-items:center;gap:4px;margin-left:8px">Data prevista <input type="date" id="upd-target-date" style="font-size:9.5px;padding:2px 5px;border:1px solid var(--border2);border-radius:4px"></label>
         </div>
         <textarea id="composer-text" placeholder="Highlights, tradeoffs, mudanças de data desta semana..."></textarea>
+        <div id="upd-edit-banner" style="display:none;align-items:center;gap:8px;padding:5px 10px;background:#fef9c3;color:#854d0e;font-size:9.5px;font-weight:600"><i class="ti ti-pencil" style="font-size:10px"></i> Editando atualização publicada <button class="btn-c" style="font-size:8.5px;padding:1px 6px;margin-left:auto;border:none" onclick="cancelEditUpdate()">Cancelar edição</button></div>
         <div class="composer-footer">
           <label class="email-toggle"><input type="checkbox" id="include-email" checked> Incluir no email semanal</label>
-          <button class="tn-btn pri" style="margin-left:8px;font-size:10px" onclick="submitUpdate()"><i class="ti ti-send" style="font-size:9px"></i> Publicar</button>
+          <button class="tn-btn pri" id="upd-submit-btn" style="margin-left:8px;font-size:10px" onclick="submitUpdate()"><i class="ti ti-send" style="font-size:9px"></i> Publicar</button>
         </div>
       </div>
     </div>
@@ -1368,7 +1372,7 @@ function openChangePwdModal() {
   openM('change-pwd-modal');
 }
 
-function doChangePwd() {
+async function doChangePwd() {
   const old     = document.getElementById('pwd-old').value;
   const newPwd  = document.getElementById('pwd-new').value;
   const confirm = document.getElementById('pwd-confirm').value;
@@ -1377,8 +1381,24 @@ function doChangePwd() {
   if (!checkPassword(currentUser.email, old)) { err.textContent='Senha atual incorreta.';err.style.display='';return; }
   if (newPwd.length < 6)  { err.textContent='Mínimo 6 caracteres.';err.style.display='';return; }
   if (newPwd !== confirm) { err.textContent='Senhas não coincidem.';err.style.display='';return; }
-  const u = USER_REGISTRY.find(x => x.email === currentUser.email);
-  if (u) { u.passwordHash = hashPassword(currentUser.email, newPwd); persistUsers(); }
+  // BUG CORRIGIDO: comparação de e-mail aqui era case-sensitive (diferente de checkPassword/
+  // isUsingDefaultPassword/doForcedPwdChange, que já ignoravam maiúsculas/minúsculas) — se o
+  // e-mail da sessão viesse com uma letra maiúscula diferente do registro, "u" ficava undefined
+  // e a troca era silenciosamente ignorada, mas o alerta de sucesso aparecia do mesmo jeito.
+  const u = USER_REGISTRY.find(x => x.email.toLowerCase() === currentUser.email.toLowerCase());
+  if (!u) { err.textContent='Não foi possível localizar seu usuário no registro. Recarregue a página e tente de novo.';err.style.display='';return; }
+  const prevHash = u.passwordHash;
+  u.passwordHash = hashPassword(currentUser.email, newPwd);
+  const saveBtn = document.querySelector('#change-pwd-modal .btn-s');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Salvando...'; }
+  const ok = await persistUsers();
+  if (!ok) {
+    u.passwordHash = prevHash;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Salvar nova senha'; }
+    err.textContent = 'Não foi possível salvar a nova senha agora (sem conexão com o servidor). Tente novamente em instantes.';
+    err.style.display = '';
+    return;
+  }
   closeM('change-pwd-modal');
   alert('✓ Senha alterada com sucesso!');
 }
@@ -1403,7 +1423,7 @@ function openForcedPwdChangeModal() {
   openM('forced-pwd-modal');
 }
 
-function doForcedPwdChange() {
+async function doForcedPwdChange() {
   const newPwd  = document.getElementById('fpwd-new').value;
   const confirm = document.getElementById('fpwd-confirm').value;
   const err     = document.getElementById('fpwd-err');
@@ -1412,7 +1432,22 @@ function doForcedPwdChange() {
   if (newPwd === DEFAULT_PASSWORD_PLAINTEXT) { err.textContent='A nova senha não pode ser igual à senha padrão.';err.style.display='';return; }
   if (newPwd !== confirm) { err.textContent='Senhas não coincidem.';err.style.display='';return; }
   const u = USER_REGISTRY.find(x => x.email.toLowerCase() === currentUser.email.toLowerCase());
-  if (u) { u.passwordHash = hashPassword(currentUser.email, newPwd); persistUsers(); }
+  if (!u) { err.textContent='Não foi possível localizar seu usuário no registro. Recarregue a página e tente de novo.';err.style.display='';return; }
+  const prevHash = u.passwordHash;
+  u.passwordHash = hashPassword(currentUser.email, newPwd);
+  const saveBtn = document.querySelector('#forced-pwd-modal .btn-s');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Salvando...'; }
+  const ok = await persistUsers();
+  if (!ok) {
+    // Reverte em memória — sem isso a sessão atual "acha" que já trocou, mas no próximo
+    // login (que confia no que está salvo) a senha padrão continuaria valendo, e o aviso
+    // voltaria a aparecer sem explicação nenhuma.
+    u.passwordHash = prevHash;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Salvar nova senha e continuar'; }
+    err.textContent = 'Não foi possível salvar a nova senha agora (sem conexão com o servidor). Tente novamente em instantes.';
+    err.style.display = '';
+    return;
+  }
   const modal = document.getElementById('forced-pwd-modal');
   modal.classList.remove('mover-forced');
   closeM('forced-pwd-modal');
@@ -1458,6 +1493,8 @@ function diffD(a,b){return Math.round((b-a)/86400000);}
 function addD(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
 function isWE(d){return d.getDay()===0||d.getDay()===6;}
 function uid(){return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+// Escapa HTML pra uso seguro dentro de atributos/innerHTML (usado nos campos manuais do Portfólio e no modal de mudança de status).
+function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function nowStr(){return new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 const SL={not_started:'Não iniciada',in_progress:'Em andamento',done:'Concluída',blocked:'Bloqueada',cancelled:'Cancelada'};
 const SC={not_started:'ts-not_started',in_progress:'ts-in_progress',done:'ts-done',blocked:'ts-blocked',cancelled:'ts-cancelled'};
@@ -1847,6 +1884,86 @@ function setF(f,el){
   }
   showView('prioridades');
 }
+// ── Campos manuais do Portfólio (não vêm do Jira, editados direto no HUB) ──
+// TPV Previsto, Receita Líquida Prevista, Driver Estratégico/Regulatório e Driver Data.
+// Como o Jira nunca preenche esses campos, applyJiraSync() nem precisa saber deles — ficam
+// só no objeto do projeto (PROJECTS) e são persistidos via persistProjects() como qualquer outro campo.
+function manualFieldCellHtml(p,field,label){
+  const val=p[field];
+  const canEd=isEditorOrAbove();
+  return `<div style="display:flex;align-items:center;gap:3px;overflow:hidden">
+    <span style="font-size:9.5px;color:${val?'var(--text2)':'var(--text3)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(val||'')}">${val?escHtml(val):'—'}</span>
+    ${canEd?`<button class="btn-c" style="font-size:8px;padding:0 4px;border:none;flex-shrink:0" onclick="event.stopPropagation();editManualField('${p.key}','${field}','${label}')" title="Editar ${label}"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}
+  </div>`;
+}
+function editManualField(key,field,label){
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem alterar este campo.');return;}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  const cur=p[field]||'';
+  getOrBuildModal('edit-manual-field-modal','Editar '+label,`
+    <div class="info-box" style="margin-bottom:8px">Campo preenchido manualmente no HUB — não vem do Jira e não é sobrescrito por nenhum sync.</div>
+    <input id="edit-manual-field-input" type="text" value="${escHtml(cur)}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+  `,`<button class="btn-c" onclick="closeM('edit-manual-field-modal')">Cancelar</button><button class="btn-s" onclick="saveManualField('${key}','${field}','${label}')">Salvar</button>`);
+  openM('edit-manual-field-modal');
+  setTimeout(()=>{const inp=document.getElementById('edit-manual-field-input');if(inp)inp.focus();},50);
+}
+function saveManualField(key,field,label){
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  const val=document.getElementById('edit-manual-field-input').value.trim();
+  p[field]=val||null;
+  logChange(key,label+' atualizado manualmente','#0369a1');
+  persistProjects();
+  closeM('edit-manual-field-modal');
+  renderPortfolio();
+}
+// ── Mudar status do projeto direto no HUB (aplica transição real de workflow no Jira) ──
+// Diferente dos outros campos manuais, status NÃO é livre — Jira só aceita as transições
+// válidas a partir do estado atual da issue, então buscamos a lista real via GAS antes de deixar
+// escolher, e só depois de confirmado no Jira é que atualizamos o valor local (PROJECTS[].status).
+function openChangeStatusModal(key){
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem mudar o status do projeto.');return;}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  getOrBuildModal('change-status-modal','Mudar Status — '+key,`
+    <div class="info-box" style="margin-bottom:8px">Status atual: <b>${escHtml(p.status)}</b>. A mudança escolhida abaixo é aplicada também no Jira (transição real de workflow) — só aparecem as transições que o Jira permite a partir do status atual.</div>
+    <div id="cs-loading" style="font-size:10.5px;color:var(--text3)">Buscando transições disponíveis no Jira...</div>
+    <select id="cs-select" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px;display:none"></select>
+  `,`<button class="btn-c" onclick="closeM('change-status-modal')">Cancelar</button><button class="btn-s" id="cs-save-btn" style="display:none" onclick="applyStatusChange('${key}')">Aplicar</button>`);
+  openM('change-status-modal');
+  loadJiraTransitions(key);
+}
+async function loadJiraTransitions(key){
+  const loading=document.getElementById('cs-loading');const sel=document.getElementById('cs-select');const btn=document.getElementById('cs-save-btn');
+  if(!loading||!sel||!btn)return;
+  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){loading.textContent='Integração com Jira não configurada (GAS_URL ausente).';return;}
+  try{
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getJiraTransitions',issueKey:key})});
+    const d=await r.json();
+    if(!document.getElementById('cs-loading'))return; // modal foi fechado enquanto buscava
+    if(!d.ok){loading.textContent='Erro ao buscar transições: '+(d.error||'—');return;}
+    if(!d.transitions||!d.transitions.length){loading.textContent='Nenhuma transição disponível para esse projeto no momento.';return;}
+    sel.innerHTML=d.transitions.map(t=>`<option value="${t.id}">${escHtml(t.name)}${t.toStatus?' → '+escHtml(t.toStatus):''}</option>`).join('');
+    loading.style.display='none';sel.style.display='';btn.style.display='';
+  }catch(e){if(document.getElementById('cs-loading'))loading.textContent='Falha de rede ao buscar transições.';}
+}
+async function applyStatusChange(key){
+  const sel=document.getElementById('cs-select');if(!sel||!sel.options.length)return;
+  const opt=sel.options[sel.selectedIndex];if(!opt)return;
+  const transitionId=opt.value;
+  const btn=document.getElementById('cs-save-btn');btn.disabled=true;btn.textContent='Aplicando...';
+  try{
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'transitionJiraIssue',issueKey:key,transitionId})});
+    const d=await r.json();
+    if(!d.ok){alert('Falha ao mudar status no Jira: '+(d.error||'—'));btn.disabled=false;btn.textContent='Aplicar';return;}
+    const p=PROJECTS.find(x=>x.key===key);
+    if(p&&d.newStatus){
+      logChange(key,'Status alterado para "'+d.newStatus+'" (via Jira)','#0369a1');
+      p.status=d.newStatus;
+      persistProjects();
+    }
+    closeM('change-status-modal');
+    renderPortfolio();
+  }catch(e){alert('Falha de rede ao aplicar mudança de status.');btn.disabled=false;btn.textContent='Aplicar';}
+}
 function renderPortfolio(){
   // Sort PROJECTS by priority (ascending, nulls last)
   PROJECTS.sort((a,b)=>{
@@ -1917,6 +2034,7 @@ function renderPortfolio(){
     const pAtRisco=getAtRiscoAlert(p.key);
     const alertBadges=(pCrit?`<span style="font-size:7.5px;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Caminho crítico: +${pCrit.slip}d — gargalo: ${pCrit.bottleneckName}">🔴 Caminho Crítico</span>`:'')+(pStale?`<span style="font-size:7.5px;font-weight:700;color:#c2410c;background:#ffedd5;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Sem nenhuma atualização publicada há ${pStale.days} dias">🟠 Sem atualização ${pStale.days}d</span>`:'')+(pAtRisco?`<span style="font-size:7.5px;font-weight:700;color:#92400e;background:#fef3c7;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Fim estimado do cronograma (${fmtBR(pAtRisco.goLiveLocal)}) diverge do Go Live no Jira (${fmtBR(pAtRisco.goLiveJira)})">⚠ Em Risco</span>`:'');
     const tr=document.createElement('tr');
+    if(GRAY_HL_STATUSES.has(p.status))tr.classList.add('pf-row-gray');
     tr.innerHTML=`
       <td style="text-align:center;padding:2px">${dragEnabled?'<i class=\"ti ti-grip-vertical prio-grip\" title=\"Arraste a linha para reordenar livremente\"></i>':''}</td>
       <td style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
@@ -1928,7 +2046,7 @@ function renderPortfolio(){
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
       </div></td>
       <td><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
-      <td><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${p.status}">${p.status}</span></td>
+      <td><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span>${isEditorOrAbove()?`<button class="btn-c" style="font-size:8px;padding:0 4px;border:none;flex-shrink:0" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')" title="Mudar status (aplica no Jira)"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}</div></td>
       <td><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
       <td><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle" title="'+t+'">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
       <td><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
@@ -1936,6 +2054,10 @@ function renderPortfolio(){
       <td>${healthBadge(st.health,st.lateTasks)}</td>
       <td>${st.has&&st.tasks>0?`<div style="display:flex;align-items:center;gap:4px"><div class="prog-track" style="width:55px"><div class="prog-fill" style="width:${st.prog}%;background:#6924E1"></div></div><span style="font-size:9.5px;color:var(--text3)">${st.prog}%</span></div>`:'—'}</td>
       <td>${(()=>{const sr=computeProjectScoring(p);return sr?`<b style="color:${sr.cls.color};font-size:10px">${sr.score.toFixed(2)} ${sr.cls.emoji}</b>`:'<span style="color:var(--text3);font-size:10px">—</span>';})()}</td>
+      <td>${manualFieldCellHtml(p,'tpvPrevisto','TPV Previsto')}</td>
+      <td>${manualFieldCellHtml(p,'receitaLiquidaPrevista','Receita Líquida Prevista')}</td>
+      <td>${manualFieldCellHtml(p,'driverEstReg','Driver Estratégico/Regulatório')}</td>
+      <td>${manualFieldCellHtml(p,'driverData','Driver Data')}</td>
       <td><button class="pf-act ${st.has?'':'pri'}" onclick="openProjectSchedule('${p.key}')">${st.has?'Ver cronograma':'Criar cronograma'}</button></td>`;
     if(dragEnabled){
       tr.draggable=true;
@@ -2099,6 +2221,8 @@ function secHdr(sec, iconBg, iconColor, iconClass, title, subtitle, extraRight='
 }
 
 const DELIVERED_STATUS='Pós produção';
+// Status que recebem destaque cinza na tabela de Prioridades (igual planilha de referência da reunião de priorização).
+const GRAY_HL_STATUSES=new Set(['PROCESSO DE ROLLOUT','Aguardando Produção','Homologação']);
 // Ordem fixa do funil, usada na seção "Por Etapa"
 const ETAPA_ORDER=['NEG. COMERCIAL / PRÉ VENDA','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','Aguardando Produção','PROCESSO DE ROLLOUT','Pós produção','CANCELADO'];
 function renderKPI(){
@@ -2651,7 +2775,12 @@ function syncPrioTableHeaderOffset(){
     const table=document.getElementById('prio-table');
     if(!topbar||!table)return;
     const h=topbar.offsetHeight;
-    table.querySelectorAll('th').forEach(th=>{th.style.top=h+'px';});
+    // O título "Portfólio de Projetos" (secHdr) também fica sticky, logo abaixo da barra de
+    // filtros — e o cabeçalho de colunas (th) some deslocado mais um pouco, logo abaixo dele.
+    const secHdrEl=document.querySelector('#prio-kpi .sec-hdr');
+    let extra=0;
+    if(secHdrEl){secHdrEl.style.top=h+'px';extra=secHdrEl.offsetHeight;}
+    table.querySelectorAll('th').forEach(th=>{th.style.top=(h+extra)+'px';});
   };
   // Espera o layout assentar (largura da barra de filtros pode mudar com o conteúdo dos dropdowns)
   requestAnimationFrame(apply);
@@ -2692,6 +2821,10 @@ function renderPrioridadesShell(activeCount){
       <th style="width:90px" data-col="saude">Saúde Cron.</th>
       <th style="width:85px" data-col="prog">Progresso</th>
       <th style="width:75px" data-col="score">Score <i class="ti ti-info-circle" style="font-size:11px;cursor:pointer;color:var(--text3)" title="Nota de 1 a 3 que prioriza projetos combinando critérios próprios por tipo (Comercial ou Produtos/TI). Clique para ver o detalhe do cálculo." onclick="event.stopPropagation();openScoringInfoModal()"></i></th>
+      <th style="width:100px" data-col="tpv" title="Preenchido manualmente no HUB — não vem do Jira">TPV Previsto</th>
+      <th style="width:120px" data-col="receita" title="Preenchido manualmente no HUB — não vem do Jira">Receita Líq. Prevista</th>
+      <th style="width:140px" data-col="driveresg" title="Preenchido manualmente no HUB — não vem do Jira">Driver Estrat./Regul.</th>
+      <th style="width:110px" data-col="driverdata" title="Preenchido manualmente no HUB — não vem do Jira">Driver Data</th>
       <th style="width:110px" data-col="acao">Ação</th>
     </tr></thead><tbody id="pf-body"></tbody></table>
     </div>`;
@@ -2963,6 +3096,7 @@ function renderUpdatesProjectList(){
   });
 }
 function openUpdatesProject(key){
+  if(editingUpdateId&&key!==curUpdKey)cancelEditUpdate(); // trocar de projeto cancela edição em andamento
   curUpdKey=key;const p=PROJECTS.find(x=>x.key===key);
   document.getElementById('upd-proj-title').textContent=p.summary;
   const jl=document.getElementById('upd-jira-lnk');jl.style.display='';
@@ -3044,13 +3178,14 @@ function renderUpdates(key){
     const isAdminUser=isAdmin();
     const card=document.createElement('div');card.className='upd-card';
     const initials=u.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const tagsHtml=`<div class="upd-tags">${u.includeEmail?'<span class="upd-tag info" style="font-size:9px;padding:2px 7px;border-radius:10px">📧 Email</span>':''}${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}
+    const canEditUpd=isEditorOrAbove();
+    const tagsHtml=`<div class="upd-tags">${u.includeEmail?'<span class="upd-tag info" style="font-size:9px;padding:2px 7px;border-radius:10px">📧 Email</span>':''}${canEditUpd?`<button class="upd-del-btn" onclick="editUpdate('${key}','${u.id}')" style="color:var(--blue)">✏️ Editar</button>`:''}${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}
     </div>`;
     const tagBoxHtml=u.tag?`<div class="upd-hdr-tagbox"><span class="upd-tag ${u.tag}">${tagLabel[u.tag]||u.tag}</span>${u.targetDate?`<span class="upd-target-date-chip">para <i class="ti ti-calendar" style="font-size:9px"></i> ${fmtBR(u.targetDate)}</span>`:''}</div>`:'';
     card.innerHTML=`
       <div class="upd-card-hdr">
         <div class="upd-avatar">${initials}</div>
-        <div style="flex:1;min-width:0"><div class="upd-author">${u.author}</div><div class="upd-meta">${u.when}${u.health?' · '+healthBadge(u.health):''}</div></div>
+        <div style="flex:1;min-width:0"><div class="upd-author">${u.author}</div><div class="upd-meta">${u.when}${u.editedAt?' · <span title="Editado em '+u.editedAt+'">editado</span>':''}${u.health?' · '+healthBadge(u.health):''}</div></div>
         ${tagBoxHtml}
       </div>
       <div class="upd-card-body">${u.body.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/_(.*?)_/g,'<i>$1</i>').replace(/• /g,'<br>• ')}</div>
@@ -3093,17 +3228,52 @@ function reactUpd(key,uid2,emoji){
   if(idx>=0)list.splice(idx,1);else list.push(me);
   renderUpdates(key);persistUpdates(key);
 }
+// Quando editingUpdateId aponta para uma atualização existente, submitUpdate() sobrescreve
+// ela em vez de criar uma nova (tag, data prevista e texto) — ver editUpdate()/cancelEditUpdate().
+let editingUpdateId=null;
 function submitUpdate(){
   if(!curUpdKey)return;
   if(!isEditorOrAbove()){alert('Apenas editores e administradores podem publicar atualizações.');return;}
   const body=document.getElementById('composer-text').value.trim();if(!body){alert('Escreva a atualização');return;}
   const sc=schedules[curUpdKey];if(!sc.updates)sc.updates=[];
+  const tag=document.getElementById('upd-status-tag').value;
+  const targetDate=document.getElementById('upd-target-date').value||null;
+  const includeEmail=document.getElementById('include-email').checked;
+  if(editingUpdateId){
+    const u=sc.updates.find(x=>x.id===editingUpdateId);
+    if(!u){cancelEditUpdate();return;}
+    u.body=body;u.tag=tag;u.targetDate=targetDate;u.includeEmail=includeEmail;u.editedAt=nowStr();
+    logChange(curUpdKey,'Atualização editada','#0369a1');
+    cancelEditUpdate();
+    renderUpdates(curUpdKey);renderUpdatesProjectList();persistUpdates(curUpdKey);
+    return;
+  }
   const p=PROJECTS.find(x=>x.key===curUpdKey);const st=getStats(curUpdKey);
-  const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag:document.getElementById('upd-status-tag').value,targetDate:document.getElementById('upd-target-date').value||null,includeEmail:document.getElementById('include-email').checked,health:st.health,reactions:{}};
+  const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag,targetDate,includeEmail,health:st.health,reactions:{}};
   sc.updates.push(newUpd);
   document.getElementById('composer-text').value='';document.getElementById('upd-status-tag').value='';document.getElementById('upd-target-date').value='';
   logChange(curUpdKey,'Atualização publicada','#6924E1');renderUpdates(curUpdKey);renderUpdatesProjectList();persistUpdates(curUpdKey);persistUpdates(curUpdKey);
   syncUpdateToJira(curUpdKey,newUpd);
+}
+function editUpdate(key,uid2){
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem editar atualizações.');return;}
+  const sc=schedules[key];const u=(sc?.updates||[]).find(x=>x.id===uid2);if(!u)return;
+  editingUpdateId=uid2;
+  const ta=document.getElementById('composer-text');if(ta)ta.value=u.body;
+  const tagSel=document.getElementById('upd-status-tag');if(tagSel)tagSel.value=u.tag||'';
+  const dateInp=document.getElementById('upd-target-date');if(dateInp)dateInp.value=u.targetDate||'';
+  const emailChk=document.getElementById('include-email');if(emailChk)emailChk.checked=u.includeEmail!==false;
+  const banner=document.getElementById('upd-edit-banner');if(banner)banner.style.display='flex';
+  const btn=document.getElementById('upd-submit-btn');if(btn)btn.innerHTML='<i class="ti ti-check" style="font-size:9px"></i> Salvar edição';
+  if(ta)ta.scrollIntoView({block:'center'});
+}
+function cancelEditUpdate(){
+  editingUpdateId=null;
+  const ta=document.getElementById('composer-text');if(ta)ta.value='';
+  const tagSel=document.getElementById('upd-status-tag');if(tagSel)tagSel.value='';
+  const dateInp=document.getElementById('upd-target-date');if(dateInp)dateInp.value='';
+  const banner=document.getElementById('upd-edit-banner');if(banner)banner.style.display='none';
+  const btn=document.getElementById('upd-submit-btn');if(btn)btn.innerHTML='<i class="ti ti-send" style="font-size:9px"></i> Publicar';
 }
 // Espelha toda atualização publicada na aba Atualizações como comentário na issue do Jira
 // correspondente — fire-and-forget (não bloqueia a UI nem trava a publicação se o Jira falhar).
@@ -4904,7 +5074,20 @@ function setLinks(listId,links){
   if(!(links||[]).length)addLinkRow(listId,null);
 }
 
-function getOrBuildModal(id,title,body,footer){if(document.getElementById(id))return document.getElementById(id);const div=document.createElement('div');div.className='mover';div.id=id;div.innerHTML=`<div class="mbox" style="width:510px"><div class="mhdr"><h3>${title}</h3><button class="mcls" onclick="closeM('${id}')">×</button></div><div class="mbody">${body}</div><div class="mftr">${footer}</div></div>`;document.body.appendChild(div);return div;}
+// BUG CORRIGIDO: antes, se o modal já existia no DOM (de uma vez anterior em que foi aberto),
+// a função devolvia o div "como estava" e NUNCA atualizava título/corpo/rodapé — então reabrir
+// o mesmo modal pra editar OUTRO item (ex.: outro documento em Documentos Úteis, outro campo
+// manual do Portfólio) mostrava os campos antigos preenchidos, e editar "por cima" deles
+// sobrescrevia o item errado com os dados velhos. Agora sempre atualiza o conteúdo; só reaproveita
+// o nó (sem recriar/reanexar ao body) quando ele já existe.
+function getOrBuildModal(id,title,body,footer){
+  let div=document.getElementById(id);
+  const isNew=!div;
+  if(isNew){div=document.createElement('div');div.className='mover';div.id=id;}
+  div.innerHTML=`<div class="mbox" style="width:510px"><div class="mhdr"><h3>${title}</h3><button class="mcls" onclick="closeM('${id}')">×</button></div><div class="mbody">${body}</div><div class="mftr">${footer}</div></div>`;
+  if(isNew)document.body.appendChild(div);
+  return div;
+}
 
 // Milestone
 function openMsModal(id){editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;
@@ -5912,24 +6095,147 @@ async function previewImport(){
     if(file.name.toLowerCase().endsWith('.xml')){
       const text=await file.text();
       importedData=parseProjectXML(text);
-    } else {
-      let rows=[];
-      if(file.name.toLowerCase().endsWith('.csv')){
-        const text=await file.text();
-        rows=parseCSV(text);
-      } else {
-        // XLSX via SheetJS
-        const buf=await file.arrayBuffer();
-        const wb=XLSX.read(buf,{type:'array',cellDates:true});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
-      }
+    } else if(file.name.toLowerCase().endsWith('.csv')){
+      const text=await file.text();
+      const rows=parseCSV(text);
       if(!rows.length){alert('Nenhum dado encontrado no arquivo.');return;}
       importedData=parseProjectRows(rows);
+    } else {
+      // XLSX via SheetJS
+      const buf=await file.arrayBuffer();
+      const wb=XLSX.read(buf,{type:'array',cellDates:true});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+      importedData=parseProjectRows(rows);
+      // Fallback: a planilha pode não ter uma linha de cabeçalho simples reconhecível pelo
+      // parser genérico acima (ex.: o template de Cronograma padrão da Bemobi, com título do
+      // projeto numa linha, cabeçalho espalhado em 2-3 linhas e Etapas marcadas por um número
+      // numa coluna à esquerda do título — ver parseCronogramaTemplateXlsx). Só tenta esse
+      // reconhecimento dedicado se o genérico não achou nada, pra não mudar comportamento de
+      // quem já importa hoje com sucesso.
+      if(!importedData||(!importedData.milestones.length&&!importedData.tasks.length)){
+        importedData=parseCronogramaTemplateXlsx(wb);
+      }
     }
-    if(!importedData||(!importedData.milestones.length&&!importedData.tasks.length)){alert('Nenhum dado encontrado no arquivo.');return;}
+    if(!importedData||(!importedData.milestones.length&&!importedData.tasks.length)){alert('Nenhum dado encontrado no arquivo. Confira se a planilha tem uma coluna de nome/tarefa reconhecível (veja os formatos aceitos acima).');return;}
     showImportPreview(importedData);
   }catch(e){alert('Erro ao ler arquivo: '+e.message);}
+}
+
+// ── IMPORT: reconhecimento dedicado do template de Cronograma padrão da Bemobi ──
+// Estrutura observada (aba geralmente chamada "Cronograma Projeto"): título do projeto numa
+// linha isolada, cabeçalho espalhado em 2-3 linhas (ex.: "STATUS" fica numa linha abaixo do
+// rótulo principal, por causa da célula mesclada de "SLA"), Etapas marcadas por um NÚMERO na
+// coluna imediatamente à esquerda da coluna de título (ex.: 1, 2, 3...), enquanto Tarefas têm
+// texto solto nessa mesma coluna (ex.: "Fase 1 (Odonto)") ou nada — nunca um número.
+function normHeaderTxt_(s){
+  return String(s==null?'':s).toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // remove acentos
+    .replace(/\s+/g,' ').trim();
+}
+function cronoCellVal_(ws,r,c){
+  const addr=XLSX.utils.encode_cell({r,c});
+  const cell=ws[addr];
+  if(!cell)return '';
+  if(cell.t==='d')return cell.v; // Date object (cellDates:true na leitura do workbook)
+  return cell.v==null?'':cell.v;
+}
+function cronoMapStatus_(raw){
+  const n=normHeaderTxt_(raw);
+  if(!n)return 'not_started';
+  if(/REALIZAD|CONCLUID|FEITO|DONE|ENTREGUE/.test(n))return 'done';
+  if(/ANDAMENTO|PROGRESSO|EXECU|DESENVOLV/.test(n))return 'in_progress';
+  if(/BLOQUE/.test(n))return 'blocked';
+  if(/CANCEL/.test(n))return 'cancelled';
+  return 'not_started';
+}
+function cronoToISODate_(v){
+  if(!v)return '';
+  if(v instanceof Date && !isNaN(v))return v.toISOString().slice(0,10);
+  const s=String(v).trim();if(!s)return '';
+  const d=new Date(s);if(!isNaN(d))return d.toISOString().slice(0,10);
+  const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if(m){const[,d2,mo,y]=m;const yr=y.length===2?'20'+y:y;return`${yr}-${mo.padStart(2,'0')}-${d2.padStart(2,'0')}`;}
+  return '';
+}
+function parseCronogramaTemplateXlsx(wb){
+  // Prefere uma aba chamada "Cronograma..."; senão tenta todas até achar uma que reconheça algo.
+  const sheetNames=wb.SheetNames.slice().sort((a,b)=>{
+    const pa=/CRONOGRAMA/i.test(a)?0:1, pb=/CRONOGRAMA/i.test(b)?0:1;
+    return pa-pb;
+  });
+  for(const sheetName of sheetNames){
+    const ws=wb.Sheets[sheetName];
+    if(!ws['!ref'])continue;
+    const range=XLSX.utils.decode_range(ws['!ref']);
+    // Acha a linha de cabeçalho: primeira linha (dentre as ~15 primeiras) com alguma célula
+    // contendo "TAREFA" ou "TÍTULO".
+    let headerRow=-1;
+    for(let r=range.s.r;r<=Math.min(range.s.r+15,range.e.r);r++){
+      for(let c=range.s.c;c<=range.e.c;c++){
+        const n=normHeaderTxt_(cronoCellVal_(ws,r,c));
+        if(n.includes('TAREFA')||n.includes('TITULO')){headerRow=r;break;}
+      }
+      if(headerRow>=0)break;
+    }
+    if(headerRow<0)continue; // essa aba não parece ter esse layout — tenta a próxima
+    // O rótulo de cada coluna pode estar espalhado em até 3 linhas (linha principal + até 2
+    // linhas de sub-rótulo, por causa de células mescladas como "SLA"/"dias" ou "STATUS").
+    const bandRows=[headerRow,headerRow+1,headerRow+2];
+    let nameCol=-1,startCol=-1,endCol=-1,ownerCol=-1,statusCol=-1,notesCol=-1,linksCol=-1;
+    for(let c=range.s.c;c<=range.e.c;c++){
+      const label=bandRows.map(r=>normHeaderTxt_(cronoCellVal_(ws,r,c))).filter(Boolean).join(' ');
+      if(!label)continue;
+      if(nameCol<0&&(label.includes('TAREFA')||label.includes('TITULO')))nameCol=c;
+      else if(startCol<0&&label.includes('INICIO'))startCol=c;
+      else if(endCol<0&&(label.includes('CONCLUSAO')||label.includes('PREVISAO')||label.includes('TERMINO')||label.includes('FIM')))endCol=c;
+      else if(ownerCol<0&&(label.includes('PROPRIETARIO')||label.includes('RESPONSAVEL DA TAREFA')))ownerCol=c;
+      else if(notesCol<0&&label.includes('DETALHADO'))notesCol=c;
+      else if(statusCol<0&&label==='STATUS')statusCol=c;
+      else if(linksCol<0&&label.includes('LINKS'))linksCol=c;
+    }
+    if(nameCol<0)continue;
+    const markerCol=nameCol>range.s.c?nameCol-1:-1; // coluna do número da Etapa, à esquerda do título
+    const dataStartRow=headerRow+3; // pula as até 2 linhas extras de sub-rótulo do cabeçalho
+
+    const milestones=[];const tasks=[];
+    let curMsId=null;let msIdx=0;
+    for(let r=dataStartRow;r<=range.e.r;r++){
+      const name=String(cronoCellVal_(ws,r,nameCol)||'').trim();
+      if(!name)continue;
+      const markerVal=markerCol>=0?cronoCellVal_(ws,r,markerCol):'';
+      const isMilestone=typeof markerVal==='number';
+      const start=startCol>=0?cronoToISODate_(cronoCellVal_(ws,r,startCol)):'';
+      const end=endCol>=0?cronoToISODate_(cronoCellVal_(ws,r,endCol)):'';
+      const ownerRaw=ownerCol>=0?String(cronoCellVal_(ws,r,ownerCol)||'').trim():'';
+      // Só separa por quebra de linha explícita — nomes colados sem separador claro (ex.:
+      // "Gabriel Oliveira Felipe Fragoso") ficam como um responsável só, pra não arriscar
+      // cortar um nome ao meio.
+      const resources=ownerRaw?ownerRaw.split(/\n+/).map(s=>s.trim()).filter(Boolean):[];
+      const statusRaw=statusCol>=0?cronoCellVal_(ws,r,statusCol):'';
+      const status=cronoMapStatus_(statusRaw);
+      const notes=notesCol>=0?String(cronoCellVal_(ws,r,notesCol)||'').trim():'';
+      const linksRaw=linksCol>=0?String(cronoCellVal_(ws,r,linksCol)||'').trim():'';
+
+      if(isMilestone){
+        const msId=uid();msIdx++;curMsId=msId;
+        milestones.push({id:msId,name,start,deadline:end,endReal:status==='done'?end:'',
+          color:['#6366f1','#06b6d4','#10b981','#f59e0b','#8b5cf6','#ef4444'][msIdx%6],
+          status,assignees:resources.map(r2=>({name:r2,type:'internal'}))});
+      } else {
+        if(!curMsId){
+          const msId=uid();curMsId=msId;
+          milestones.push({id:msId,name:'Importado',start,deadline:end,endReal:'',color:'#6366f1',status:'not_started',assignees:[]});
+        }
+        tasks.push({id:uid(),msId:curMsId,name,start,deadline:end,
+          endReal:status==='done'?end:'',assignees:resources.map(r2=>({name:r2,type:'internal'})),
+          depId:'',depIds:[],depType:'TI',depMode:'blocked',
+          status,notes,jiraLink:linksRaw,jiraLinkStatus:''});
+      }
+    }
+    if(milestones.length||tasks.length)return{milestones,tasks};
+  }
+  return{milestones:[],tasks:[]};
 }
 
 // ── IMPORT FROM MS PROJECT XML (MSPDI) ───────────────────────
@@ -6409,8 +6715,13 @@ async function autoSyncProjectsFromJira() {
   }
 }
 
+// Devolve true/false (em vez de engolir o erro em silêncio) — quem chama (ex.: troca de senha)
+// precisa saber se realmente gravou antes de dizer "sucesso" pro usuário. Antes, uma falha aqui
+// (Firebase indisponível, sem permissão, sem rede) só aparecia no console — a tela mostrava
+// "✓ Senha alterada com sucesso!" mesmo quando a gravação tinha falhado, e a senha padrão
+// continuava valendo no próximo login, pedindo a troca de novo pra sempre.
 async function persistUsers() {
-  if (!firebaseReady || !db) return;
+  if (!firebaseReady || !db) { console.warn('persistUsers: Firebase indisponível — nada foi salvo.'); return false; }
   try {
     // EDITOR_EMAILS/ADMIN_EMAILS são const's hardcoded no arquivo — quando um admin cadastra
     // alguém como Editor/Admin pelo "Gerenciar usuários", isso só existia na memória da aba
@@ -6423,7 +6734,8 @@ async function persistUsers() {
       adminEmails:  ADMIN_EMAILS,
       updatedAt:    firebase.firestore.FieldValue.serverTimestamp(),
     });
-  } catch(e) { console.error('persistUsers error:', e); }
+    return true;
+  } catch(e) { console.error('persistUsers error:', e); return false; }
 }
 async function persistDocsLibrary() {
   if (!firebaseReady || !db) return;
