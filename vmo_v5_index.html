@@ -127,6 +127,18 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .btn-d{background:transparent;border:1px solid #fca5a5;color:var(--red);padding:6px 13px;border-radius:6px;font-size:11px;cursor:pointer;margin-right:auto}
 .hint{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4}
 .info-box{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:10.5px;color:var(--text2);line-height:1.6}
+.cs-dd{position:relative}
+.cs-dd-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-size:10.5px;font-weight:600;text-transform:uppercase;cursor:pointer;box-sizing:border-box}
+.cs-dd-btn:hover{border-color:var(--purple)}
+.cs-dd.open .cs-dd-btn{border-color:var(--purple);color:var(--purple)}
+.cs-dd-icon{font-size:11px;transition:transform .15s;flex-shrink:0}
+.cs-dd.open .cs-dd-icon{transform:rotate(180deg)}
+.cs-dd-menu{display:none;margin-top:4px;border:1px solid var(--border2);border-radius:8px;background:#fff;box-shadow:0 6px 24px rgba(11,27,115,.12);max-height:240px;overflow-y:auto}
+.cs-dd.open .cs-dd-menu{display:block}
+.cs-opt{display:block;width:100%;padding:7px 12px;border:none;border-bottom:1px solid var(--border);background:#fff;color:var(--text);font-size:10.5px;font-weight:600;text-transform:uppercase;cursor:pointer;text-align:left;box-sizing:border-box}
+.cs-opt:last-child{border-bottom:none}
+.cs-opt:hover{background:var(--bg2)}
+.cs-opt.sel{color:var(--purple);background:#f5f3ff}
 .info-box.warn{background:#fef9c3;border-color:#fde047;color:#854d0e}
 .info-box.good{background:#dcfce7;border-color:#86efac;color:#166534}
 .info-box.err{background:#fee2e2;border-color:#fca5a5;color:#b91c1c}
@@ -220,6 +232,7 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .cal-item{font-size:9px;padding:4px 7px;border-radius:4px;cursor:pointer;font-weight:500;line-height:1.4;word-break:break-word}
 .cal-item.on-track{background:#ede9fe;color:#6d28d9}.cal-item.alert{background:#fef9c3;color:#854d0e}
 .cal-item.off-track{background:#fee2e2;color:#b91c1c}.cal-item.no-sched{background:#f1f5f9;color:#64748b}
+.cal-item.delivered{background:#dcfce7;color:#166534}
 
 /* Portfolio table */
 table.pft{width:100%;border-collapse:separate;border-spacing:0;font-size:9.5px;table-layout:fixed}
@@ -326,6 +339,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .upd-tag.risk{background:#fee2e2;color:#b91c1c}.upd-tag.ok{background:#dcfce7;color:#166534}
 .upd-tag.info{background:#dbeafe;color:#1d4ed8}.upd-tag.warn{background:#fef9c3;color:#854d0e}
 .upd-tag.date{background:#f0f9ff;color:#0369a1}
+.upd-tag.pending{background:#f1f5f9;color:#475569}.upd-tag.done{background:#f1f5f9;color:#475569}
 .upd-del-btn{font-size:9px;background:transparent;border:1px solid #fca5a5;color:var(--red);padding:1px 6px;border-radius:4px;cursor:pointer;margin-left:auto}
 .upd-del-btn:hover{background:#fee2e2}
 
@@ -653,11 +667,11 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
           <button class="ct-btn" onclick="fmtText('list')"><i class="ti ti-list"></i></button>
           <select id="upd-status-tag" class="cf-status" style="width:auto;font-size:9.5px;padding:2px 6px;margin-left:5px">
             <option value="">Sem tag</option>
-            <option value="ok">✅ No prazo</option>
-            <option value="warn">⚠️ Em alerta</option>
-            <option value="risk">🔴 Em risco</option>
-            <option value="info">ℹ️ Informativo</option>
-            <option value="date">📅 Mudança de data</option>
+            <option value="pending">⚪ Pendente</option>
+            <option value="ok">✅ Nos trilhos</option>
+            <option value="warn">⚠️ Em risco</option>
+            <option value="risk">🔴 Fora dos trilhos</option>
+            <option value="done">🎉 Concluído</option>
           </select>
           <label style="font-size:9px;color:var(--text3);display:flex;align-items:center;gap:4px;margin-left:8px">Data prevista <input type="date" id="upd-target-date" style="font-size:9.5px;padding:2px 5px;border:1px solid var(--border2);border-radius:4px"></label>
         </div>
@@ -1573,6 +1587,7 @@ function initFilters(){
   // Close dropdowns on outside click
   document.addEventListener('click',function(e){
     document.querySelectorAll('.ms-dd.open').forEach(dd=>{if(!dd.contains(e.target))dd.classList.remove('open');});
+    document.querySelectorAll('.cs-dd.open').forEach(dd=>{if(!dd.contains(e.target))dd.classList.remove('open');});
   });
 }
 
@@ -1947,14 +1962,27 @@ function openChangeStatusModal(key){
   getOrBuildModal('change-status-modal','Mudar Status — '+key,`
     <div class="info-box" style="margin-bottom:8px">Status atual: <b>${escHtml(p.status)}</b>. A mudança escolhida abaixo é aplicada também no Jira (transição real de workflow) — só aparecem as transições que o Jira permite a partir do status atual.</div>
     <div id="cs-loading" style="font-size:10.5px;color:var(--text3)">Buscando transições disponíveis no Jira...</div>
-    <select id="cs-select" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px;display:none"></select>
+    <div class="cs-dd" id="cs-dd" style="display:none">
+      <button type="button" class="cs-dd-btn" onclick="toggleCsDD()"><span id="cs-dd-label"></span><i class="ti ti-chevron-down cs-dd-icon"></i></button>
+      <div class="cs-dd-menu" id="cs-select-list"></div>
+    </div>
   `,`<button class="btn-c" onclick="closeM('change-status-modal')">Cancelar</button><button class="btn-s" id="cs-save-btn" style="display:none" onclick="applyStatusChange('${key}')">Aplicar</button>`);
+  csSelectedTransitionId=null;
   openM('change-status-modal');
   loadJiraTransitions(key);
 }
+let csSelectedTransitionId=null;
+function toggleCsDD(){const dd=document.getElementById('cs-dd');if(dd)dd.classList.toggle('open');}
+function selectCsTransition(id){
+  csSelectedTransitionId=id;
+  const opt=document.querySelector(`#cs-select-list .cs-opt[data-tid="${id}"]`);
+  document.querySelectorAll('#cs-select-list .cs-opt').forEach(el=>el.classList.toggle('sel',el.dataset.tid===id));
+  const lbl=document.getElementById('cs-dd-label');if(lbl&&opt)lbl.textContent=opt.textContent;
+  const dd=document.getElementById('cs-dd');if(dd)dd.classList.remove('open');
+}
 async function loadJiraTransitions(key){
-  const loading=document.getElementById('cs-loading');const sel=document.getElementById('cs-select');const btn=document.getElementById('cs-save-btn');
-  if(!loading||!sel||!btn)return;
+  const loading=document.getElementById('cs-loading');const dd=document.getElementById('cs-dd');const list=document.getElementById('cs-select-list');const btn=document.getElementById('cs-save-btn');
+  if(!loading||!dd||!list||!btn)return;
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){loading.textContent='Integração com Jira não configurada (GAS_URL ausente).';return;}
   try{
     const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getJiraTransitions',issueKey:key})});
@@ -1962,14 +1990,23 @@ async function loadJiraTransitions(key){
     if(!document.getElementById('cs-loading'))return; // modal foi fechado enquanto buscava
     if(!d.ok){loading.textContent='Erro ao buscar transições: '+(d.error||'—');return;}
     if(!d.transitions||!d.transitions.length){loading.textContent='Nenhuma transição disponível para esse projeto no momento.';return;}
-    sel.innerHTML=d.transitions.map(t=>`<option value="${t.id}">${escHtml(t.name)}${t.toStatus?' → '+escHtml(t.toStatus):''}</option>`).join('');
-    loading.style.display='none';sel.style.display='';btn.style.display='';
+    // O Jira pode ter mais de uma transição levando pro MESMO status (ex.: "Reabrir" e "Voltar"
+    // ambas indo para "Homologação") — mostra cada status só uma vez na lista, usando a
+    // primeira transição encontrada para aquele status.
+    const seen=new Set();const uniqTransitions=[];
+    d.transitions.forEach(t=>{
+      const label=t.toStatus||t.name;
+      if(seen.has(label))return;
+      seen.add(label);uniqTransitions.push({id:t.id,label});
+    });
+    list.innerHTML=uniqTransitions.map((t,i)=>`<button type="button" class="cs-opt${i===0?' sel':''}" data-tid="${t.id}" onclick="selectCsTransition('${t.id}')">${escHtml(t.label)}</button>`).join('');
+    csSelectedTransitionId=uniqTransitions[0].id;
+    const lbl=document.getElementById('cs-dd-label');if(lbl)lbl.textContent=uniqTransitions[0].label;
+    loading.style.display='none';dd.style.display='';btn.style.display='';
   }catch(e){if(document.getElementById('cs-loading'))loading.textContent='Falha de rede ao buscar transições.';}
 }
 async function applyStatusChange(key){
-  const sel=document.getElementById('cs-select');if(!sel||!sel.options.length)return;
-  const opt=sel.options[sel.selectedIndex];if(!opt)return;
-  const transitionId=opt.value;
+  const transitionId=csSelectedTransitionId;if(!transitionId)return;
   const btn=document.getElementById('cs-save-btn');btn.disabled=true;btn.textContent='Aplicando...';
   try{
     const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'transitionJiraIssue',issueKey:key,transitionId})});
@@ -2980,7 +3017,7 @@ let calColExpanded=new Set();
 // (pedido: tirar Backlog, Pausado e Cancelado da visão de calendário) — mantém a lista focada
 // em projetos que realmente vão ser entregues.
 const CAL_EXCLUDE_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO']);
-function isCalEligible_(p){return p.status!==DELIVERED_STATUS&&!CAL_EXCLUDE_STATUS.has(p.status);}
+function isCalEligible_(p){return !CAL_EXCLUDE_STATUS.has(p.status);}
 function toggleCalCol(lbl){if(calColExpanded.has(lbl))calColExpanded.delete(lbl);else calColExpanded.add(lbl);renderCalendar();}
 // Próximas Entregas agrupadas por Categoria = Segmento de mercado (Jira: Segmento/Segment).
 // Projetos comerciais entram no segmento cadastrado (Utilities/Education/Telco/Health/Others);
@@ -3014,7 +3051,7 @@ function renderCalendarByCategory(grid){
     col.innerHTML='<div class="cal-col-hdr" style="text-transform:uppercase">'+s+' · '+list.length+'</div><div class="cal-items"></div>';
     const items=col.querySelector('.cal-items');
     toShow.forEach(x=>{
-      const cls=x.health==='on-track'?'on-track':x.health==='alert'?'alert':x.health==='off-track'?'off-track':'no-sched';
+      const cls=x.p.status===DELIVERED_STATUS?'delivered':(x.health==='on-track'?'on-track':x.health==='alert'?'alert':x.health==='off-track'?'off-track':'no-sched');
       const el=document.createElement('div');el.className='cal-item '+cls;
       el.innerHTML='<b>'+x.p.key+'</b> · '+x.p.summary+'<br><span style="font-size:8px;opacity:.75">'+(x.isJira?'Go Live: ':'Fim cron.: ')+fmtBR(x.dLbl)+'</span>';
       el.onclick=()=>openProject(x.p.key);
@@ -3097,14 +3134,14 @@ function renderCalendar(){
     PROJECTS.filter(isCalEligible_).forEach(p=>{
       const glDate=p.golive;
       if(glDate){const d=pd(glDate);if(d>=b.s&&d<=b.e){
-        const st=getStats(p.key);const cls=st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched';
+        const st=getStats(p.key);const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
         bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">Go Live: '+fmtBR(glDate)+(p.gp&&p.gp!=='—'?' · GP: '+p.gp.split(' ')[0]:'')+'</span>',cls});
       }}
     });
     PROJECTS.filter(isCalEligible_).forEach(p=>{
       if(p.golive)return;const st=getStats(p.key);if(!st.has||!st.goLiveLocal)return;const d=pd(st.goLiveLocal);
       if(d>=b.s&&d<=b.e){
-        const cls=st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched';
+        const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
         bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">Fim cron.: '+fmtBR(ds(d))+'</span>',cls});
       }
     });
@@ -3227,7 +3264,7 @@ function renderUpdates(key){
   Array.from(feed.children).filter(c=>c.id!=='upd-empty').forEach(c=>c.remove());
   if(!updates.length){document.getElementById('upd-empty').style.display='flex';return;}
   document.getElementById('upd-empty').style.display='none';
-  const tagLabel={ok:'✅ No prazo',warn:'⚠️ Em alerta',risk:'🔴 Em risco',info:'ℹ️ Informativo',date:'📅 Mudança de data'};
+  const tagLabel={pending:'⚪ Pendente',ok:'✅ Nos trilhos',warn:'⚠️ Em risco',risk:'🔴 Fora dos trilhos',done:'🎉 Concluído',info:'ℹ️ Informativo',date:'📅 Mudança de data'};
   updates.forEach(u=>{
     const isAdminUser=isAdmin();
     const card=document.createElement('div');card.className='upd-card';
@@ -3445,7 +3482,7 @@ function buildEmailBody(){
     if(glDate)body+=`   Go Live: ${fmtBRFull(glDate)}\n`;
     if(sc&&sc.scopeLink)body+=`   Escopo detalhado: ${sc.scopeLink}\n`;
     body+=`   Cronograma completo: ${window.location.href.split('?')[0]}?project=${key}\n`;
-    upds.forEach(u=>{body+=`\n   [${u.when}] ${u.author}${u.tag?' — '+{ok:'✅ No prazo',warn:'⚠️ Em alerta',risk:'🔴 Em risco',info:'ℹ️ Informativo',date:'📅 Mudança de data'}[u.tag]:''}\n   ${u.body.replace(/<br>/g,'\n   ').replace(/<[^>]+>/g,'')}\n`;});
+    upds.forEach(u=>{body+=`\n   [${u.when}] ${u.author}${u.tag?' — '+{pending:'⚪ Pendente',ok:'✅ Nos trilhos',warn:'⚠️ Em risco',risk:'🔴 Fora dos trilhos',done:'🎉 Concluído',info:'ℹ️ Informativo',date:'📅 Mudança de data'}[u.tag]:''}\n   ${u.body.replace(/<br>/g,'\n   ').replace(/<[^>]+>/g,'')}\n`;});
     body+=`\n${'─'.repeat(50)}\n\n`;
   });
   body+=`VMO · Bemobi · ${window.location.href.split('?')[0]}`;
@@ -3460,7 +3497,7 @@ function buildEmailHtml(){
     'off-track':{lbl:'✗ Fora dos trilhos',bg:'#fee2e2',fg:'#b91c1c'},
     'none':{lbl:'Sem cronograma',bg:'#f1f5f9',fg:'#475569'},
   };
-  const tagMeta={ok:{lbl:'✅ No prazo',bg:'#dcfce7',fg:'#166534'},warn:{lbl:'⚠️ Em alerta',bg:'#fef9c3',fg:'#854d0e'},risk:{lbl:'🔴 Em risco',bg:'#fee2e2',fg:'#b91c1c'},info:{lbl:'ℹ️ Informativo',bg:'#e0f2fe',fg:'#0369a1'},date:{lbl:'📅 Mudança de data',bg:'#ede9fe',fg:'#5b21b6'}};
+  const tagMeta={pending:{lbl:'⚪ Pendente',bg:'#f1f5f9',fg:'#475569'},ok:{lbl:'✅ Nos trilhos',bg:'#dcfce7',fg:'#166534'},warn:{lbl:'⚠️ Em risco',bg:'#fef9c3',fg:'#854d0e'},risk:{lbl:'🔴 Fora dos trilhos',bg:'#fee2e2',fg:'#b91c1c'},done:{lbl:'🎉 Concluído',bg:'#f1f5f9',fg:'#475569'},info:{lbl:'ℹ️ Informativo',bg:'#e0f2fe',fg:'#0369a1'},date:{lbl:'📅 Mudança de data',bg:'#ede9fe',fg:'#5b21b6'}};
   const baseUrl=window.location.href.split('?')[0];
   const cardsHtml=checked.map(key=>{
     const p=PROJECTS.find(x=>x.key===key);if(!p)return'';
@@ -3911,7 +3948,7 @@ async function fetchScopeFromConfluence(){
 }
 function renderResumoUpdatesList(){
   const sched=schedules[curKey];const list=document.getElementById('rsm-updates-list');if(!list)return;
-  const tagLabel={ok:'✅ No prazo',warn:'⚠️ Em alerta',risk:'🔴 Em risco',info:'ℹ️ Informativo',date:'📅 Mudança de data'};
+  const tagLabel={pending:'⚪ Pendente',ok:'✅ Nos trilhos',warn:'⚠️ Em risco',risk:'🔴 Fora dos trilhos',done:'🎉 Concluído',info:'ℹ️ Informativo',date:'📅 Mudança de data'};
   const recent=(sched.updates||[]).slice().reverse().slice(0,3);
   list.innerHTML=recent.length?recent.map(u=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:var(--purple)"></div><div style="min-width:0"><div style="font-size:10px;color:var(--text2)">${u.body.length>110?u.body.slice(0,110)+'…':u.body}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${u.author} · ${u.when}${u.tag?' · '+(tagLabel[u.tag]||u.tag):''}</div></div></div>`).join(''):'<div class="rsm-empty">Nenhuma atualização publicada ainda.</div>';
 }
