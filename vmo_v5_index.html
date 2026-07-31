@@ -1949,9 +1949,10 @@ function setF(f,el){
 function manualFieldCellHtml(p,field,label){
   const val=p[field];
   const canEd=isEditorOrAbove();
+  // Continua editável pra quem tem permissão (clicando no valor abre o mesmo modal de antes),
+  // só sem o ícone de lápis do lado — o cursor de "mãozinha" já indica que dá pra clicar.
   return `<div style="display:flex;align-items:center;gap:3px;overflow:hidden">
-    <span style="font-size:9.5px;color:${val?'var(--text2)':'var(--text3)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(val||'')}">${val?escHtml(val):'—'}</span>
-    ${canEd?`<button class="btn-c" style="font-size:8px;padding:0 4px;border:none;flex-shrink:0" onclick="event.stopPropagation();editManualField('${p.key}','${field}','${label}')" title="Editar ${label}"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}
+    <span style="font-size:9.5px;color:${val?'var(--text2)':'var(--text3)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap${canEd?';cursor:pointer':''}" title="${canEd?`Editar ${label}`:escHtml(val||'')}"${canEd?` onclick="event.stopPropagation();editManualField('${p.key}','${field}','${label}')"`:''}>${val?escHtml(val):'—'}</span>
   </div>`;
 }
 function editManualField(key,field,label){
@@ -2126,7 +2127,7 @@ function renderPortfolio(){
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
       </div></td>
       <td><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
-      <td><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span>${isEditorOrAbove()?`<button class="btn-c" style="font-size:8px;padding:0 4px;border:none;flex-shrink:0" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')" title="Mudar status (aplica no Jira)"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}</div></td>
+      <td><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
       <td><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
       <td><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle" title="'+t+'">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
       <td><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
@@ -5633,7 +5634,12 @@ function renderScoringView(){
   rows.forEach((r,i)=>{
     const tr=document.createElement('tr');tr.style.cursor='pointer';tr.onclick=()=>openProject(r.p.key);
     const notApplicable=!SCORING_TYPES[r.p.type];
-    const scoreCell=notApplicable?'<span style="color:var(--text3)">—</span>':(r.res?`<b style="color:${r.res.cls.color}">${r.res.score.toFixed(2)}</b>`:'<span style="color:var(--text3)">—</span>');
+    // Clicando no valor do Score (preenchido ou não) abre o modal de scoring direto, sem
+    // precisar entrar no cronograma do projeto antes — só pra quem tem permissão de editar
+    // aquele projeto especificamente (mesma regra usada dentro do próprio modal).
+    const canEditScore=!notApplicable&&canEdit(r.p.key);
+    const scoreClickAttrs=canEditScore?` onclick="event.stopPropagation();if(prepareProjectContext('${r.p.key}'))openScoringModal();" title="Clique para ${r.res?'editar':'preencher'} o scoring"`:'';
+    const scoreCell=notApplicable?'<span style="color:var(--text3)">—</span>':(r.res?`<b style="color:${r.res.cls.color}${canEditScore?';cursor:pointer':''}"${scoreClickAttrs}>${r.res.score.toFixed(2)}</b>`:`<span style="color:var(--text3)${canEditScore?';cursor:pointer':''}"${scoreClickAttrs}>—</span>`);
     const clsCell=notApplicable?'<span style="color:var(--text3);font-size:10px">Não aplicável</span>':(r.res?`${r.res.cls.emoji} ${r.res.cls.label}`:'<span style="color:var(--text3);font-size:10px">Não preenchido</span>');
     const ic=r.p.type==='Produtos'?'#7c3aed':'#0369a1';const ib=r.p.type==='Produtos'?'#ede9fe':'#e0f2fe';
     tr.innerHTML=`
