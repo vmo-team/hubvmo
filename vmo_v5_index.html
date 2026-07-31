@@ -965,11 +965,14 @@ async function loadUserRegistryFromFirestore() {
         if (idx >= 0) USER_REGISTRY[idx] = { ...USER_REGISTRY[idx], ...u };
         else USER_REGISTRY.push(u);
       });
-      // Restaura quem foi cadastrado como Editor/Admin em qualquer sessão anterior — sem isso
-      // o papel de um usuário cadastrado pelo "Gerenciar usuários" só "colava" na aba de quem
-      // cadastrou, e voltava a Visualizador/Externo pra todo mundo mais (ver persistUsers()).
-      (data.editorEmails || []).forEach(e => { if (!EDITOR_EMAILS.includes(e)) EDITOR_EMAILS.push(e); });
-      (data.adminEmails  || []).forEach(e => { if (!ADMIN_EMAILS.includes(e))  ADMIN_EMAILS.push(e);  });
+      // Sincroniza (não só "soma") com o que foi persistido em qualquer sessão anterior. Antes
+      // isso só ADICIONAVA e-mails vindos do Firestore, nunca removia — então revogar alguém
+      // (inclusive um dos admins pré-configurados abaixo, que sempre voltam a existir no array
+      // hardcoded a cada reload) nunca "colava" de verdade: o e-mail revogado continuava no
+      // array local pra sempre. Uma vez que o Firestore já tem um snapshot salvo, ele passa a
+      // ser a fonte da verdade — o array local é substituído pelo conteúdo persistido.
+      if (Array.isArray(data.editorEmails)) { EDITOR_EMAILS.length = 0; data.editorEmails.forEach(e => { if (!EDITOR_EMAILS.includes(e)) EDITOR_EMAILS.push(e); }); }
+      if (Array.isArray(data.adminEmails))  { ADMIN_EMAILS.length = 0;  data.adminEmails.forEach(e  => { if (!ADMIN_EMAILS.includes(e))  ADMIN_EMAILS.push(e);  }); }
     }
   } catch(e) { console.error('loadUserRegistryFromFirestore error:', e); }
 }
@@ -1263,7 +1266,7 @@ function toggleSidenav(){
   if(ic)ic.className=collapsed?'ti ti-layout-sidebar-left-expand':'ti ti-layout-sidebar-left-collapse';
   try{localStorage.setItem('vmo_sidenav_collapsed', collapsed?'1':'0');}catch(e){}
 }
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
   // Restore sidenav collapse preference
   try{
     if(localStorage.getItem('vmo_sidenav_collapsed')==='1'){
@@ -1283,8 +1286,11 @@ window.addEventListener('load', function() {
   // Try to restore session
   const session = loadSession();
   if (session) {
-    // Restore session immediately — Firebase will validate after load
-    // (users added via UI are in Firebase, not hardcoded)
+    // Espera o registro de usuários carregar do Firestore ANTES de resolver o papel — sem
+    // isso, uma sessão restaurada (reload/nova aba) calculava o papel a partir dos arrays
+    // ainda "vazios"/hardcoded do início do arquivo, ignorando qualquer promoção ou revogação
+    // feita depois (a pessoa via seu papel antigo até deslogar e logar de novo manualmente).
+    if (userRegistryLoadPromise) { try { await userRegistryLoadPromise; } catch(e) {} }
     finalizeLogin(session.email, session.name, null, false);
     return;
   }
