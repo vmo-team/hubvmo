@@ -223,7 +223,7 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 
 /* Portfolio table */
 table.pft{width:100%;border-collapse:separate;border-spacing:0;font-size:9.5px;table-layout:fixed}
-table.pft th{background:var(--bg2);border-bottom:1px solid var(--border);padding:5px 8px;text-align:left;font-size:9px;font-weight:600;color:var(--text3);position:sticky;top:0;z-index:2;white-space:nowrap;box-shadow:0 1px 0 var(--border);will-change:transform}
+table.pft th{background:var(--bg2);border-bottom:1px solid var(--border);padding:5px 8px;text-align:left;font-size:9px;font-weight:600;color:var(--text3);position:sticky;top:0;z-index:2;white-space:nowrap;box-shadow:0 1px 0 var(--border);will-change:transform;transform:translateZ(0)}
 .pft-col-resize{position:absolute;right:-3px;top:0;bottom:0;width:6px;cursor:col-resize;user-select:none;z-index:3}
 .pft-col-resize:hover,.pft-col-resize.active{background:rgba(105,36,225,.35)}
 table.pft td{padding:4px 8px;border-bottom:.5px solid var(--border);vertical-align:middle;max-width:360px;overflow:hidden}
@@ -231,7 +231,7 @@ table.pft .spill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-spa
 table.pft tr:hover td{background:var(--bg2)}
 table.pft tr.pf-row-gray td{background:#eceff3}
 table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
-#prio-kpi .sec-hdr{position:sticky;z-index:9;box-shadow:0 1px 0 var(--border)}
+#prio-kpi .sec-hdr{position:sticky;top:44px;z-index:9;box-shadow:0 1px 0 var(--border);will-change:transform;transform:translateZ(0)}
 .prio-badge{font-size:9px;padding:1px 5px;background:#fef3c7;color:#92400e;border-radius:4px;font-weight:700;white-space:nowrap}
 .prio-grip{font-size:13px;color:var(--text3);cursor:grab}
 .prio-grip:active{cursor:grabbing}
@@ -604,7 +604,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 
 <!-- ══ PRIORIDADES ══ -->
 <div class="view" id="view-prioridades" style="overflow-y:auto;overflow-x:auto">
-  <div id="pf-topbar" style="position:sticky;top:0;left:0;z-index:10;background:var(--bg);display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;will-change:transform">
+  <div id="pf-topbar" style="position:sticky;top:0;left:0;z-index:10;background:var(--bg);display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;will-change:transform;transform:translateZ(0)">
     <div class="sb2"><i class="ti ti-search"></i><input id="pf-search" type="text" placeholder="Buscar projeto..." oninput="renderPortfolio()"></div>
     <div class="filter-sep"></div>
     <button class="fbtn on" onclick="setF('all',this)" id="fbtn-all">Todos</button>
@@ -2791,20 +2791,21 @@ function renderCargaTrabalho(){
 // mesmo tempo (top:0), então sem esse ajuste um cobre o outro ao rolar a página para baixo.
 // Aqui a gente desloca o cabeçalho da tabela para logo abaixo da barra de filtros.
 function syncPrioTableHeaderOffset(){
-  const apply=()=>{
-    const topbar=document.getElementById('pf-topbar');
-    const table=document.getElementById('prio-table');
-    if(!topbar||!table)return;
-    const h=topbar.offsetHeight;
-    // O título "Portfólio de Projetos" (secHdr) também fica sticky, logo abaixo da barra de
-    // filtros — e o cabeçalho de colunas (th) some deslocado mais um pouco, logo abaixo dele.
-    const secHdrEl=document.querySelector('#prio-kpi .sec-hdr');
-    let extra=0;
-    if(secHdrEl){secHdrEl.style.top=h+'px';extra=secHdrEl.offsetHeight;}
-    table.querySelectorAll('th').forEach(th=>{th.style.top=(h+extra)+'px';});
-  };
-  // Espera o layout assentar (largura da barra de filtros pode mudar com o conteúdo dos dropdowns)
-  requestAnimationFrame(apply);
+  const topbar=document.getElementById('pf-topbar');
+  const table=document.getElementById('prio-table');
+  if(!topbar||!table)return;
+  // Roda de forma SÍNCRONA (sem requestAnimationFrame) — ler offsetHeight já força o navegador
+  // a calcular o layout na hora, então não precisa esperar o próximo frame. Isso evita uma
+  // janela (mesmo que de 1 frame) em que o título ".sec-hdr" fica com "top" desatualizado ou
+  // ainda não definido, e por isso não gruda no lugar certo — que é a causa de uma linha da
+  // tabela aparecer "vazando" por cima do cabeçalho ao rolar.
+  const h=topbar.offsetHeight;
+  // O título "Portfólio de Projetos" (secHdr) também fica sticky, logo abaixo da barra de
+  // filtros — e o cabeçalho de colunas (th) some deslocado mais um pouco, logo abaixo dele.
+  const secHdrEl=document.querySelector('#prio-kpi .sec-hdr');
+  let extra=0;
+  if(secHdrEl){secHdrEl.style.top=h+'px';extra=secHdrEl.offsetHeight;}
+  table.querySelectorAll('th').forEach(th=>{th.style.top=(h+extra)+'px';});
 }
 window.addEventListener('resize',()=>{if(document.getElementById('view-prioridades')?.classList.contains('active'))syncPrioTableHeaderOffset();});
 // Alguns navegadores (principalmente Chrome/Windows) tem um bug de renderizacao onde o cabecalho
@@ -2812,8 +2813,16 @@ window.addEventListener('resize',()=>{if(document.getElementById('view-prioridad
 // ate um repaint forcado). Forcamos esse repaint a cada scroll, tocando em 'top' com o mesmo valor.
 let _pftScrollRAF=null;
 function forcePrioHeaderRepaint(){
-  const table=document.getElementById('prio-table');if(!table)return;
-  table.querySelectorAll('th').forEach(th=>{const t=th.style.top;th.style.top='';th.offsetHeight;th.style.top=t;});
+  const table=document.getElementById('prio-table');
+  // O bug de repaint (Chrome/Windows) durante scroll lateral acontecia só com o cabeçalho de
+  // colunas (th) sendo "descolado" de novo — mas o título "Portfólio de Projetos" (.sec-hdr) e
+  // a barra de filtros (#pf-topbar) são sticky do MESMO jeito e sofrem o mesmo bug; sem forçar
+  // o repaint deles também, sobrava justamente a área onde eles ficam (bem no topo da tabela)
+  // com o desenho antigo — dando a impressão de uma linha de projeto "vazando" por cima.
+  const kick=el=>{if(!el)return;const t=el.style.top;el.style.top='';el.offsetHeight;el.style.top=t;};
+  if(table)table.querySelectorAll('th').forEach(kick);
+  kick(document.querySelector('#prio-kpi .sec-hdr'));
+  kick(document.getElementById('pf-topbar'));
 }
 (function(){
   const view=document.getElementById('view-prioridades');
@@ -2855,6 +2864,25 @@ function renderPrioridadesShell(activeCount){
   if(body)body.classList.toggle('collapsed',!sectionState.prioridades);
   if(ch)ch.style.transform=sectionState.prioridades?'':'rotate(180deg)';
   initPftResize('prio-table','vmo_prio_colw');
+  observePrioHeaderResize();
+}
+// A barra de filtros (#pf-topbar) e o título "Portfólio de Projetos" (.sec-hdr) podem mudar de
+// altura sem disparar um resize da janela — o exemplo mais comum é os chips de filtro ativo
+// (GP, time, saúde do cronograma etc.) quebrando pra uma segunda linha quando você aplica mais
+// de um filtro. Sem re-sincronizar nesse momento, o cabeçalho da tabela ficava com o offset
+// (top) desatualizado — colado numa posição errada — e uma linha de projeto aparecia vazando
+// por cima da linha de títulos das colunas. Um ResizeObserver cobre isso automaticamente,
+// sem precisar chamar syncPrioTableHeaderOffset() manualmente em cada lugar que muda filtro.
+let _prioHdrObs=null;
+function observePrioHeaderResize(){
+  if(typeof ResizeObserver==='undefined')return;
+  if(_prioHdrObs)_prioHdrObs.disconnect();
+  const topbar=document.getElementById('pf-topbar');
+  const secHdrEl=document.querySelector('#prio-kpi .sec-hdr');
+  if(!topbar&&!secHdrEl)return;
+  _prioHdrObs=new ResizeObserver(()=>syncPrioTableHeaderOffset());
+  if(topbar)_prioHdrObs.observe(topbar);
+  if(secHdrEl)_prioHdrObs.observe(secHdrEl);
 }
 // ── COLUNAS REDIMENSIONÁVEIS (arrastar borda do cabeçalho) ──
 function initPftResize(tableId,storageKey){
@@ -2948,6 +2976,11 @@ function initSections(){
 // ── CALENDAR ──
 let calModeVal='month';
 let calColExpanded=new Set();
+// Projetos que não representam uma entrega futura de verdade ficam fora de "Próximas Entregas"
+// (pedido: tirar Backlog, Pausado e Cancelado da visão de calendário) — mantém a lista focada
+// em projetos que realmente vão ser entregues.
+const CAL_EXCLUDE_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO']);
+function isCalEligible_(p){return p.status!==DELIVERED_STATUS&&!CAL_EXCLUDE_STATUS.has(p.status);}
 function toggleCalCol(lbl){if(calColExpanded.has(lbl))calColExpanded.delete(lbl);else calColExpanded.add(lbl);renderCalendar();}
 // Próximas Entregas agrupadas por Categoria = Segmento de mercado (Jira: Segmento/Segment).
 // Projetos comerciais entram no segmento cadastrado (Utilities/Education/Telco/Health/Others);
@@ -2955,7 +2988,7 @@ function toggleCalCol(lbl){if(calColExpanded.has(lbl))calColExpanded.delete(lbl)
 const SEGMENT_ORDER=['Utilities','Education','Telco','Health','Others','Produtos'];
 let calCatExpanded=new Set(); // segmentos que o usuário expandiu para ver além do mês atual
 function renderCalendarByCategory(grid){
-  const withDate=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS).map(p=>{
+  const withDate=PROJECTS.filter(isCalEligible_).map(p=>{
     const st=getStats(p.key);
     const d=p.golive||st.goLiveLocal;
     return d?{p,d:pd(d),dLbl:d,isJira:!!p.golive,health:st.health}:null;
@@ -3004,7 +3037,7 @@ function renderCalendar(){
   if(calModeVal==='category'){grid.style.display='flex';grid.style.flexWrap='';grid.style.gridTemplateColumns='';renderCalendarByCategory(grid);return;}
   // Collect ALL relevant dates (Go Live from Jira + local schedule end dates)
   const allDates=[];
-  PROJECTS.forEach(p=>{
+  PROJECTS.filter(isCalEligible_).forEach(p=>{
     if(p.golive)allDates.push(pd(p.golive));
     const st=getStats(p.key);if(st.goLiveLocal)allDates.push(pd(st.goLiveLocal));
   });
@@ -3049,7 +3082,7 @@ function renderCalendar(){
     toRender=buckets;
   } else {
     const filledBuckets=buckets.filter(b=>{
-      return PROJECTS.some(p=>{
+      return PROJECTS.filter(isCalEligible_).some(p=>{
         const d1=p.golive?pd(p.golive):null;const st=getStats(p.key);const d2=st.goLiveLocal?pd(st.goLiveLocal):null;
         return (d1&&d1>=b.s&&d1<=b.e)||(d2&&!p.golive&&d2>=b.s&&d2<=b.e);
       });
@@ -3061,14 +3094,14 @@ function renderCalendar(){
     // Junta os dois tipos de data (Go Live do Jira + fim de cronograma local) num único array,
     // ordena por data crescente e mostra só os 5 primeiros (com "+N mais" pra expandir).
     const bucketItems=[];
-    PROJECTS.forEach(p=>{
+    PROJECTS.filter(isCalEligible_).forEach(p=>{
       const glDate=p.golive;
       if(glDate){const d=pd(glDate);if(d>=b.s&&d<=b.e){
         const st=getStats(p.key);const cls=st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched';
         bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">Go Live: '+fmtBR(glDate)+(p.gp&&p.gp!=='—'?' · GP: '+p.gp.split(' ')[0]:'')+'</span>',cls});
       }}
     });
-    PROJECTS.forEach(p=>{
+    PROJECTS.filter(isCalEligible_).forEach(p=>{
       if(p.golive)return;const st=getStats(p.key);if(!st.has||!st.goLiveLocal)return;const d=pd(st.goLiveLocal);
       if(d>=b.s&&d<=b.e){
         const cls=st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched';
