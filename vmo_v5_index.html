@@ -3270,6 +3270,38 @@ function renderUpdates(key){
     const card=document.createElement('div');card.className='upd-card';
     const initials=u.author.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const canEditUpd=isEditorOrAbove();
+    if(u.id===editingUpdateId){
+      // Edição fica embutida no lugar da própria atualização já publicada, em vez de reabrir
+      // o composer lá embaixo — evita a sensação de "estou escrevendo uma atualização nova".
+      card.innerHTML=`
+        <div class="upd-card-hdr">
+          <div class="upd-avatar">${initials}</div>
+          <div style="flex:1;min-width:0"><div class="upd-author">${u.author}</div><div class="upd-meta">${u.when}</div></div>
+        </div>
+        <div style="padding:10px 11px;background:#fffbeb">
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <select id="inline-edit-tag" class="cf-status" style="width:auto;font-size:9.5px;padding:2px 6px">
+              <option value=""${!u.tag?' selected':''}>Sem tag</option>
+              <option value="pending"${u.tag==='pending'?' selected':''}>⚪ Pendente</option>
+              <option value="ok"${u.tag==='ok'?' selected':''}>✅ Nos trilhos</option>
+              <option value="warn"${u.tag==='warn'?' selected':''}>⚠️ Em risco</option>
+              <option value="risk"${u.tag==='risk'?' selected':''}>🔴 Fora dos trilhos</option>
+              <option value="done"${u.tag==='done'?' selected':''}>🎉 Concluído</option>
+            </select>
+            <label style="font-size:9px;color:var(--text3);display:flex;align-items:center;gap:4px">Data prevista <input type="date" id="inline-edit-date" value="${u.targetDate||''}" style="font-size:9.5px;padding:2px 5px;border:1px solid var(--border2);border-radius:4px"></label>
+          </div>
+          <textarea id="inline-edit-textarea" style="width:100%;min-height:110px;border:1px solid var(--border2);border-radius:6px;padding:8px;font-size:11px;font-family:inherit;box-sizing:border-box;resize:vertical">${escHtml(u.body)}</textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:8px">
+            <label style="font-size:9.5px;color:var(--text3);display:flex;align-items:center;gap:5px"><input type="checkbox" id="inline-edit-email"${u.includeEmail!==false?' checked':''}> Incluir no email semanal</label>
+            <div style="display:flex;gap:6px">
+              <button class="btn-c" onclick="cancelEditUpdate()">Cancelar</button>
+              <button class="btn-s" onclick="saveInlineEdit('${key}','${u.id}')"><i class="ti ti-check" style="font-size:9px"></i> Salvar edição</button>
+            </div>
+          </div>
+        </div>`;
+      feed.insertBefore(card,feed.firstChild);
+      return;
+    }
     const tagsHtml=`<div class="upd-tags">${u.includeEmail?'<span class="upd-tag info" style="font-size:9px;padding:2px 7px;border-radius:10px">📧 Email</span>':''}${canEditUpd?`<button class="upd-del-btn" onclick="editUpdate('${key}','${u.id}')" style="color:var(--blue)">✏️ Editar</button>`:''}${isAdminUser?`<button class="upd-del-btn" onclick="deleteUpdate('${key}','${u.id}')">🗑 Apagar</button>`:''}
     </div>`;
     const tagBoxHtml=u.tag?`<div class="upd-hdr-tagbox"><span class="upd-tag ${u.tag}">${tagLabel[u.tag]||u.tag}</span>${u.targetDate?`<span class="upd-target-date-chip">para <i class="ti ti-calendar" style="font-size:9px"></i> ${fmtBR(u.targetDate)}</span>`:''}</div>`:'';
@@ -3319,8 +3351,9 @@ function reactUpd(key,uid2,emoji){
   if(idx>=0)list.splice(idx,1);else list.push(me);
   renderUpdates(key);persistUpdates(key);
 }
-// Quando editingUpdateId aponta para uma atualização existente, submitUpdate() sobrescreve
-// ela em vez de criar uma nova (tag, data prevista e texto) — ver editUpdate()/cancelEditUpdate().
+// editingUpdateId aponta pra atualização que está sendo editada NO PRÓPRIO card (inline) —
+// ver renderUpdates() (monta o formulário de edição no lugar do card) e saveInlineEdit().
+// O composer lá embaixo é só pra publicar atualização NOVA — não é mais reaproveitado na edição.
 let editingUpdateId=null;
 function submitUpdate(){
   if(!curUpdKey)return;
@@ -3330,15 +3363,6 @@ function submitUpdate(){
   const tag=document.getElementById('upd-status-tag').value;
   const targetDate=document.getElementById('upd-target-date').value||null;
   const includeEmail=document.getElementById('include-email').checked;
-  if(editingUpdateId){
-    const u=sc.updates.find(x=>x.id===editingUpdateId);
-    if(!u){cancelEditUpdate();return;}
-    u.body=body;u.tag=tag;u.targetDate=targetDate;u.includeEmail=includeEmail;u.editedAt=nowStr();
-    logChange(curUpdKey,'Atualização editada','#0369a1');
-    cancelEditUpdate();
-    renderUpdates(curUpdKey);renderUpdatesProjectList();persistUpdates(curUpdKey);
-    return;
-  }
   const p=PROJECTS.find(x=>x.key===curUpdKey);const st=getStats(curUpdKey);
   const newUpd={id:uid(),author:currentUser?.name||'Usuário',when:nowStr(),ts:Date.now(),project:p?.summary||curUpdKey,body,tag,targetDate,includeEmail,health:st.health,reactions:{}};
   sc.updates.push(newUpd);
@@ -3350,21 +3374,25 @@ function editUpdate(key,uid2){
   if(!isEditorOrAbove()){alert('Apenas editores e administradores podem editar atualizações.');return;}
   const sc=schedules[key];const u=(sc?.updates||[]).find(x=>x.id===uid2);if(!u)return;
   editingUpdateId=uid2;
-  const ta=document.getElementById('composer-text');if(ta)ta.value=u.body;
-  const tagSel=document.getElementById('upd-status-tag');if(tagSel)tagSel.value=u.tag||'';
-  const dateInp=document.getElementById('upd-target-date');if(dateInp)dateInp.value=u.targetDate||'';
-  const emailChk=document.getElementById('include-email');if(emailChk)emailChk.checked=u.includeEmail!==false;
-  const banner=document.getElementById('upd-edit-banner');if(banner)banner.style.display='flex';
-  const btn=document.getElementById('upd-submit-btn');if(btn)btn.innerHTML='<i class="ti ti-check" style="font-size:9px"></i> Salvar edição';
-  if(ta)ta.scrollIntoView({block:'center'});
+  renderUpdates(key);
+  const ta=document.getElementById('inline-edit-textarea');if(ta)ta.scrollIntoView({block:'center'});
 }
 function cancelEditUpdate(){
   editingUpdateId=null;
-  const ta=document.getElementById('composer-text');if(ta)ta.value='';
-  const tagSel=document.getElementById('upd-status-tag');if(tagSel)tagSel.value='';
-  const dateInp=document.getElementById('upd-target-date');if(dateInp)dateInp.value='';
-  const banner=document.getElementById('upd-edit-banner');if(banner)banner.style.display='none';
-  const btn=document.getElementById('upd-submit-btn');if(btn)btn.innerHTML='<i class="ti ti-send" style="font-size:9px"></i> Publicar';
+  if(curUpdKey)renderUpdates(curUpdKey);
+}
+function saveInlineEdit(key,uid2){
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem editar atualizações.');return;}
+  const sc=schedules[key];const u=(sc?.updates||[]).find(x=>x.id===uid2);if(!u){cancelEditUpdate();return;}
+  const body=document.getElementById('inline-edit-textarea').value.trim();
+  if(!body){alert('Escreva a atualização');return;}
+  const tag=document.getElementById('inline-edit-tag').value;
+  const targetDate=document.getElementById('inline-edit-date').value||null;
+  const includeEmail=document.getElementById('inline-edit-email').checked;
+  u.body=body;u.tag=tag;u.targetDate=targetDate;u.includeEmail=includeEmail;u.editedAt=nowStr();
+  logChange(key,'Atualização editada','#0369a1');
+  editingUpdateId=null;
+  renderUpdates(key);renderUpdatesProjectList();persistUpdates(key);
 }
 // Espelha toda atualização publicada na aba Atualizações como comentário na issue do Jira
 // correspondente — fire-and-forget (não bloqueia a UI nem trava a publicação se o Jira falhar).
