@@ -319,6 +319,10 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .upd-proj-key{font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:600;flex-shrink:0}
 .upd-proj-name{font-size:10px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .upd-count{font-size:9px;background:var(--purple);color:#fff;padding:1px 5px;border-radius:10px;flex-shrink:0}
+.upd-sort-btn{font-size:9px;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:4px;padding:2px 6px;cursor:pointer}
+.upd-sort-btn.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+.upd-recent-chip{font-size:8px;font-weight:700;color:#166534;background:#dcfce7;padding:1px 5px;border-radius:8px;flex-shrink:0;white-space:nowrap}
+.upd-never-chip{font-size:8px;font-weight:600;color:#c2410c;background:#ffedd5;padding:1px 5px;border-radius:8px;flex-shrink:0;white-space:nowrap}
 #upd-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 #upd-proj-hdr{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--bg);flex-wrap:wrap}
 #upd-proj-hdr h2{font-size:12px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -513,7 +517,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .bar-late{box-shadow:0 0 0 2px #dc2626!important}.bar-early{box-shadow:0 0 0 2px #16a34a!important}.bar-critical{outline:1.5px dashed #1f2937;outline-offset:2px}
 .has-external{border-left:3px solid #f59e0b!important}
 .has-external .td:first-child::after{content:"↗";font-size:8px;color:#d97706;margin-left:2px}
-.gbar-baseline{position:absolute;height:3px;top:25px;border-radius:2px;opacity:.45;pointer-events:none}
+.gbar-baseline{position:absolute;height:9px;top:23px;border-radius:3px;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(17,24,39,.16),rgba(17,24,39,.16) 3px,rgba(17,24,39,.32) 3px,rgba(17,24,39,.32) 6px)!important;border:1.5px dashed rgba(17,24,39,.65);box-sizing:border-box;z-index:1}
 #tip{position:fixed;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;font-size:10.5px;pointer-events:none;z-index:9999;max-width:260px;display:none;box-shadow:0 6px 24px rgba(11,27,115,.15)}
 .tip-t{font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.4}
 .tip-r{display:flex;justify-content:space-between;gap:11px;color:var(--text3);margin-top:2px;font-size:10px}
@@ -656,6 +660,12 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div id="upd-sidebar-hdr">
       <div style="display:flex;align-items:center;gap:6px"><h3><i class="ti ti-speakerphone" style="font-size:12px;color:var(--purple)"></i> Atualizações</h3><button class="tn-btn pri" style="margin-left:auto;font-size:9.5px;padding:3px 8px" onclick="openEmailModal()"><i class="ti ti-mail" style="font-size:9px"></i> Email</button></div>
       <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="upd-search" placeholder="Buscar projeto..." oninput="renderUpdatesProjectList()"></div>
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+        <span style="font-size:9px;color:var(--text3);flex-shrink:0">Ordenar:</span>
+        <button class="upd-sort-btn" id="upd-sort-az" onclick="setUpdSort('az')">A-Z</button>
+        <button class="upd-sort-btn" id="upd-sort-recent" onclick="setUpdSort('recent')">Última atualização</button>
+        <button class="upd-sort-btn" id="upd-sort-priority" onclick="setUpdSort('priority')">Prioridade</button>
+      </div>
     </div>
     <div id="upd-proj-list"></div>
   </div>
@@ -829,7 +839,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div id="se-left"><div class="tbl-hdr" id="tbl-hdr"></div><div id="tbl-rows"></div></div>
     <div class="resize-handle" id="resize-handle"></div>
     <div id="se-right">
-      <div class="gh-wrap"><div class="month-row" id="month-row"></div><div class="days-row" id="days-row"></div></div>
+      <div id="baseline-legend" style="display:none;align-items:center;gap:8px;padding:5px 12px;background:#fef9c3;border-bottom:1px solid #fde68a;font-size:10px;color:#854d0e"><i class="ti ti-git-compare" style="font-size:12px"></i><span>Comparando com o <b>planejamento original</b>:</span><span style="display:flex;align-items:center;gap:4px"><span style="width:14px;height:8px;background:var(--purple);border-radius:2px;display:inline-block"></span> Atual</span><span style="display:flex;align-items:center;gap:4px"><span style="width:14px;height:8px;border-radius:2px;display:inline-block;border:1.5px dashed rgba(17,24,39,.65);background:repeating-linear-gradient(45deg,rgba(17,24,39,.16),rgba(17,24,39,.16) 2px,rgba(17,24,39,.32) 2px,rgba(17,24,39,.32) 4px)"></span> Original</span><button class="btn-c" style="margin-left:auto;padding:2px 8px;font-size:9.5px" onclick="toggleBaseline()">Ocultar comparação</button></div><div class="gh-wrap"><div class="month-row" id="month-row"></div><div class="days-row" id="days-row"></div></div>
       <div class="chart-rows" id="chart-rows"></div>
     </div>
   </div>
@@ -1516,6 +1526,8 @@ let selectedMs = new Set();
 let progressTouched = false;
 let pfFilter = new Set(['all']);
 let alertFilter = null; // null | 'critical' | 'stale' | 'atrisco' — filtro dos cards de Alertas (mutuamente exclusivo com os outros filtros)
+const UPD_SORT_KEY='vmo_upd_sort';
+let updSortMode = localStorage.getItem(UPD_SORT_KEY) || 'recent'; // 'az' | 'recent' — ordenação da lista de projetos na aba Atualizações
 let calMode = 'month';
 let zoom = 'month';
 let DW = 22;
@@ -1955,13 +1967,15 @@ function getCriticalPathAlert(key){
 function getStaleAlert(key){
   const p=PROJECTS.find(x=>x.key===key);if(!p)return null;
   if([DELIVERED_STATUS,'CANCELADO','PAUSADO','BACKLOG'].includes(p.status))return null;
-  const sched=schedules[key];
-  if(!sched||!sched.milestones||!sched.milestones.length)return null; // sem cronograma, não dá pra medir
+  // Um projeto que NUNCA publicou nenhuma atualização é o caso mais óbvio de "sem atualização" —
+  // antes isso era ignorado (só contava quem já tinha atualizado uma vez e parou), deixando de
+  // fora exatamente os projetos que nunca tiveram nada publicado. Também não depende mais de ter
+  // cronograma: a aba Atualizações funciona independente de existir um cronograma montado.
   const lastTs=getLastPublishedUpdateDate(key);
-  if(lastTs==null)return null; // nunca publicou nenhuma atualização — sem referência de tempo confiável ainda
+  if(lastTs==null)return{days:null,never:true};
   const days=Math.floor((Date.now()-lastTs)/86400000);
   if(days<STALE_DAYS_THRESHOLD)return null;
-  return{days};
+  return{days,never:false};
 }
 // Gatilho 3 — "em risco": a data de fim estimado do CRONOGRAMA (última etapa) diverge da data
 // de Go Live oficial registrada no Jira. Isso sinaliza que o cronograma interno e o compromisso
@@ -2210,15 +2224,21 @@ function renderPortfolio(){
     const glDate=p.golive||st.goLiveLocal;
     const glOverdue=glDate&&pd(glDate)<TODAY&&p.status!=='CANCELADO'&&p.status!=='Pós produção';
     const pCrit=getCriticalPathAlert(p.key);
-    const pStale=getStaleAlert(p.key);
     const pAtRisco=getAtRiscoAlert(p.key);
-    const alertBadges=(pCrit?`<span style="font-size:7.5px;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Caminho crítico: +${pCrit.slip}d — gargalo: ${pCrit.bottleneckName}">🔴 Caminho Crítico</span>`:'')+(pStale?`<span style="font-size:7.5px;font-weight:700;color:#c2410c;background:#ffedd5;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Sem nenhuma atualização publicada há ${pStale.days} dias">🟠 Sem atualização ${pStale.days}d</span>`:'')+(pAtRisco?`<span style="font-size:7.5px;font-weight:700;color:#92400e;background:#fef3c7;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Fim estimado do cronograma (${fmtBR(pAtRisco.goLiveLocal)}) diverge do Go Live no Jira (${fmtBR(pAtRisco.goLiveJira)})">⚠ Em Risco</span>`:'');
+    // Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial ficam num "balde" (998/999/1000/99)
+    // sem prioridade individual real — nunca deve mostrar um número sequencial fabricado pra
+    // esses, mesmo com filtro ativo (senão parecem ter um ranking fino que não existe de verdade).
+    const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status);
+    // A aba Prioridades não mostra mais o selo de "Sem Atualização"/"Nunca atualizado" — esse
+    // sinal já vive na Visão Geral (card de Alertas) e dentro do próprio cronograma do projeto;
+    // aqui na Prioridades ele só poluía a lista sem servir pra priorizar nada.
+    const alertBadges=(pCrit?`<span style="font-size:7.5px;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Caminho crítico: +${pCrit.slip}d — gargalo: ${pCrit.bottleneckName}">🔴 Caminho Crítico</span>`:'')+(pAtRisco?`<span style="font-size:7.5px;font-weight:700;color:#92400e;background:#fef3c7;padding:1px 4px;border-radius:3px;white-space:nowrap" title="Fim estimado do cronograma (${fmtBR(pAtRisco.goLiveLocal)}) diverge do Go Live no Jira (${fmtBR(pAtRisco.goLiveJira)})">⚠ Em Risco</span>`:'');
     const tr=document.createElement('tr');
     if(GRAY_HL_STATUSES.has(p.status))tr.classList.add('pf-row-gray');
     tr.innerHTML=`
       <td data-col="drag" style="text-align:center;padding:2px">${dragEnabled?'<i class=\"ti ti-grip-vertical prio-grip\" title=\"Arraste a linha para reordenar livremente\"></i>':''}</td>
       <td data-col="ultprio" style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
-      <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)">${(filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum))}</td>
+      <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)" title="${bucketedPrio?('Status '+p.status+' não participa do ranking numerado'):''}">${bucketedPrio?(p.priority!=null?Math.trunc(p.priority):'—'):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)))}</td>
       <td data-col="variacao" style="text-align:center;font-size:9px;font-weight:600;white-space:nowrap;color:${(!filtersActive)&&/⬆/.test(p.priorityVariation||'')?'var(--green)':(!filtersActive)&&/⬇/.test(p.priorityVariation||'')?'var(--red)':'var(--text3)'}" title="Variação de prioridade (Jira)">${(!filtersActive)&&p.priorityVariation?p.priorityVariation:'—'}</td>
       <td data-col="proj"><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProjectSchedule('${p.key}')">
         <span style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;flex-shrink:0">${p.key}</span>
@@ -2330,7 +2350,8 @@ function getPrioridadesExportRows(){
 function buildPriorityRowData(p,idx,filtersActive,scopedReorder){
   const st=getStats(p.key);
   const rowNum=scopedReorder?idx:idx+1;
-  const novaPrioridade=(filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum));
+  const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status);
+  const novaPrioridade=bucketedPrio?(p.priority!=null?Math.trunc(p.priority):null):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)));
   return {
     lastPriority: (!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):null,
     priority: novaPrioridade,
@@ -3303,17 +3324,49 @@ function renderCalendar(){
 }
 
 const UPD_HIDDEN_STATUS=new Set(['CANCELADO','PAUSADO','BACKLOG','Pós produção']);
+function setUpdSort(mode){updSortMode=mode;try{localStorage.setItem(UPD_SORT_KEY,mode);}catch(e){}renderUpdatesProjectList();}
 function renderUpdatesProjectList(){
+  const azBtn=document.getElementById('upd-sort-az'),recentBtn=document.getElementById('upd-sort-recent'),prioBtn=document.getElementById('upd-sort-priority');
+  if(azBtn)azBtn.classList.toggle('on',updSortMode==='az');
+  if(recentBtn)recentBtn.classList.toggle('on',updSortMode==='recent');
+  if(prioBtn)prioBtn.classList.toggle('on',updSortMode==='priority');
   const q=(document.getElementById('upd-search')?.value||'').toLowerCase();
   const list=document.getElementById('upd-proj-list');list.innerHTML='';
-  PROJECTS.forEach(p=>{
-    if(UPD_HIDDEN_STATUS.has(p.status))return;
-    if(q&&!p.summary.toLowerCase().includes(q)&&!p.key.toLowerCase().includes(q))return;
-    const sc=schedules[p.key];
-    const count=(sc?.updates||[]).length;
+  let visible=PROJECTS.filter(p=>{
+    if(UPD_HIDDEN_STATUS.has(p.status))return false;
+    if(q&&!p.summary.toLowerCase().includes(q)&&!p.key.toLowerCase().includes(q))return false;
+    return true;
+  }).map(p=>({p,lastTs:getLastPublishedUpdateDate(p.key)}));
+  if(updSortMode==='az'){
+    visible.sort((a,b)=>a.p.summary.localeCompare(b.p.summary,'pt-BR'));
+  }else if(updSortMode==='priority'){
+    // Mesma ordem de prioridade usada na aba Prioridades (menor número = mais prioritário).
+    visible.sort((a,b)=>{
+      const pa=a.p.priority!=null?a.p.priority:9999,pb=b.p.priority!=null?b.p.priority:9999;
+      if(pa!==pb)return pa-pb;
+      return a.p.summary.localeCompare(b.p.summary,'pt-BR');
+    });
+  }else{
+    // 'recent': quem atualizou mais recentemente primeiro; quem nunca atualizou vai pro final.
+    visible.sort((a,b)=>{
+      if(a.lastTs==null&&b.lastTs==null)return a.p.summary.localeCompare(b.p.summary,'pt-BR');
+      if(a.lastTs==null)return 1;
+      if(b.lastTs==null)return -1;
+      return b.lastTs-a.lastTs;
+    });
+  }
+  visible.forEach(({p,lastTs})=>{
+    // Em vez de mostrar pra sempre a contagem TOTAL de atualizações (que ficava travada em "1"
+    // meses depois da única atualização já publicada, parecendo um aviso de "novidade" que nunca
+    // se apaga), sinaliza de forma que se apague sozinha: um selo verde só enquanto a atualização
+    // for desta semana (< 7 dias), e um selo laranja separado pra quem nunca publicou nada.
+    const daysSince=lastTs!=null?Math.floor((Date.now()-lastTs)/86400000):null;
+    let chip='';
+    if(daysSince==null)chip=`<span class="upd-never-chip" title="Este projeto nunca teve nenhuma atualização publicada">Nunca atualizado</span>`;
+    else if(daysSince<7)chip=`<span class="upd-recent-chip" title="Última atualização publicada ${daysSince===0?'hoje':'há '+daysSince+'d'}">${daysSince===0?'Hoje':'há '+daysSince+'d'}</span>`;
     const div=document.createElement('div');
     div.className='upd-proj-item'+(curUpdKey===p.key?' active':'');
-    div.innerHTML=`<span class="upd-proj-key">${p.key}</span><span class="upd-proj-name">${p.summary}</span>${count?`<span class="upd-count">${count}</span>`:''}`;
+    div.innerHTML=`<span class="upd-proj-key">${p.key}</span><span class="upd-proj-name">${p.summary}</span>${chip}`;
     div.onclick=()=>openUpdatesProject(p.key);
     list.appendChild(div);
   });
@@ -4552,7 +4605,7 @@ function renderBaselineView(){
   }
   body.innerHTML=html;
 }
-function toggleBaseline(){showBaseline=!showBaseline;const b=document.getElementById('baseline-btn');if(b){b.style.background=showBaseline?'var(--navy)':'';b.style.color=showBaseline?'#fff':'';}renderSchedule();}
+function toggleBaseline(){showBaseline=!showBaseline;const b=document.getElementById('baseline-btn');if(b){b.style.background=showBaseline?'var(--navy)':'';b.style.color=showBaseline?'#fff':'';}const chk=document.getElementById('baseline-overlay-chk');if(chk)chk.checked=showBaseline;const lg=document.getElementById('baseline-legend');if(lg)lg.style.display=showBaseline?'flex':'none';renderSchedule();}
 // ── Comparação detalhada Baseline (planejamento original) vs. cronograma atual ──
 // Complementa o toggle visual do Gantt: mostra em texto o que mudou (datas) e o que foi
 // criado/removido (etapas e tarefas) desde a "foto" original do projeto.
@@ -4795,6 +4848,8 @@ function saveColWidths(){try{localStorage.setItem(CRON_COLW_KEY,JSON.stringify(C
 
 function renderSchedule(){
   if(!curKey)return;
+  const lg=document.getElementById('baseline-legend');if(lg)lg.style.display=showBaseline?'flex':'none';
+  const bBtn=document.getElementById('baseline-btn');if(bBtn){bBtn.style.background=showBaseline?'var(--navy)':'';bBtn.style.color=showBaseline?'#fff':'';}
   document.getElementById('se-left').style.width=userLeftW+'px';
   const pProj=PROJECTS.find(x=>x.key===curKey);
   const isDelivered=pProj?.status===DELIVERED_STATUS;
@@ -4894,7 +4949,7 @@ function renderProjSum(){
     </div>`:'';
   const staleAlert=getStaleAlert(curKey);
   const staleHtml=staleAlert?`<div class="ps-item" style="background:#fff7ed;border-radius:4px;padding:3px 6px">
-      <span style="font-size:9.5px;font-weight:700;color:#c2410c">🟠 Sem atualização publicada há ${staleAlert.days}d</span>
+      <span style="font-size:9.5px;font-weight:700;color:#c2410c">🟠 ${staleAlert.never?'Nunca teve uma atualização publicada':'Sem atualização publicada há '+staleAlert.days+'d'}</span>
     </div>`:'';
   const atRiscoAlert=getAtRiscoAlert(curKey);
   const atRiscoHtml=atRiscoAlert?`<div class="ps-item" style="cursor:pointer;background:#fef3c7;border-radius:4px;padding:3px 6px" onclick="showView('updates');openUpdatesProject(curKey)" title="Fim estimado do cronograma diverge do Go Live no Jira">
@@ -7479,7 +7534,12 @@ function reorderProjectPriority(draggedKey,targetKey,dropBefore){
   const dragged=PROJECTS.find(p=>p.key===draggedKey);
   if(!dragged)return;
   if(dragged.priority==null){alert('Não é possível reordenar: esse projeto não tem "Nova Prioridade" definida no Jira ainda.');return;}
-  const reorderable=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS);
+  if(PRIORITY_LIST_EXCLUDED_STATUS.has(dragged.status)){alert(`Esse projeto está em "${dragged.status}" e não participa da lista de prioridade reordenável — mude o status para incluí-lo no ranking.`);return;}
+  const target=PROJECTS.find(p=>p.key===targetKey);
+  if(target&&PRIORITY_LIST_EXCLUDED_STATUS.has(target.status)){alert(`Não é possível soltar sobre um projeto em "${target.status}" — esse grupo não faz parte do ranking numerado.`);return;}
+  // Só renumera quem de fato participa do ranking (exclui Backlog/Pausado/Cancelado/Pós produção/
+  // Neg. Comercial — esses ficam nos "baldes" 998/999/1000/99, sem prioridade individual real).
+  const reorderable=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status));
   const ordered=reorderable.slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999));
   const basePriority=Math.floor(Math.min(...ordered.map(p=>p.priority??0)));
   const fromIdx=ordered.findIndex(p=>p.key===draggedKey);
@@ -7511,7 +7571,7 @@ function reorderScopedPriority(draggedKey,targetKey,dropBefore,scope){
   const {field,value,priKey}=scope;
   const dragged=PROJECTS.find(p=>p.key===draggedKey);
   if(!dragged)return;
-  const group=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&(field==='segment'?(p.segment||'Produtos'):p.region)===value);
+  const group=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status)&&(field==='segment'?(p.segment||'Produtos'):p.region)===value);
   const ordered=group.slice().sort((a,b)=>(a[priKey]??a.priority??9999)-(b[priKey]??b.priority??9999));
   const fromIdx=ordered.findIndex(p=>p.key===draggedKey);
   if(fromIdx<0)return;
