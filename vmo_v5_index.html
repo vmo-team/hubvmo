@@ -1776,6 +1776,39 @@ function computeMsEndReal(msId,key){
   if(!tasks.length)return null;
   return tasks.map(t=>t.endReal).sort().pop();
 }
+// ── Atraso: fonte única de verdade, usada em toda a UI (coluna do cronograma, tooltip do Gantt,
+// resumo do projeto) — Prazo vs. Data de Conclusão real (ou vs. hoje, se ainda em aberto e já
+// vencida). Nunca compara com um "prazo original" congelado — sempre com as datas de fato.
+function taskAtraso(t){
+  if(!t.deadline)return null;
+  const dl=pd(t.deadline);
+  if(t.endReal)return diffD(dl,pd(t.endReal));
+  if(t.status!=='done'&&TODAY>dl)return diffD(dl,TODAY);
+  return 0;
+}
+function msAtraso(ms,key){
+  if(!ms.deadline)return null;
+  const dl=pd(ms.deadline);
+  const autoEr=computeMsEndReal(ms.id,key)||ms.endReal;
+  if(autoEr)return diffD(dl,pd(autoEr));
+  if(ms.status!=='done'&&TODAY>dl)return diffD(dl,TODAY);
+  return 0;
+}
+function atrasoCellHtml(d){
+  return d===null?'—':d>0?`<span style="font-size:9px;font-weight:700;color:var(--red)">+${d}d</span>`:d<0?`<span style="font-size:9px;font-weight:700;color:var(--green)">${d}d</span>`:`<span style="font-size:9px;color:var(--text3)">0d</span>`;
+}
+// Fim projetado "de verdade": pra cada etapa, usa a Data de Conclusão real já conhecida (auto,
+// calculada a partir das tarefas concluídas) quando existir — senão usa o prazo planejado. Isso
+// faz a data final projetada do projeto refletir os atrasos que já apareceram no cronograma, em
+// vez de depender de alguém empurrar manualmente o prazo da etapa.
+function projectRealFinish(key){
+  const s=schedules[key];if(!s||!s.milestones||!s.milestones.length)return null;
+  const dates=s.milestones.map(ms=>{
+    const autoEr=computeMsEndReal(ms.id,key)||ms.endReal;
+    return autoEr||ms.deadline;
+  }).filter(Boolean).sort();
+  return dates.length?dates[dates.length-1]:null;
+}
 // ── RECÁLCULO EM CASCATA (regra de negócio: quando uma tarefa atrasa, as tarefas que
 // dependem dela — em modo "Bloqueia" — são empurradas automaticamente para uma data realista) ──
 function cascadeReschedule(key){
@@ -4835,9 +4868,6 @@ function renderProjSum(){
   const msDates=(s.milestones||[]).map(m=>m.deadline).filter(Boolean).sort();
   const msStarts=(s.milestones||[]).map(m=>m.start).filter(Boolean).sort();
   const glDate=p.golive||st.goLiveLocal;
-  // Compara o fim atualmente previsto com o fim do planejamento original (baseline), pra deixar
-  // visível quando atrasos em cascata mudaram a data de entrega prevista do projeto.
-  const currentFinish=msDates[msDates.length-1]||null;
   const baselineFinish=(()=>{
     if(!s.baseline)return null;
     const bmDates=(s.baseline.milestones||[]).map(m=>m.deadline).filter(Boolean);
@@ -4845,12 +4875,16 @@ function renderProjSum(){
     const all=[...bmDates,...btDates].sort();
     return all.length?all[all.length-1]:null;
   })();
-  const slipDays=(baselineFinish&&currentFinish)?diffD(pd(baselineFinish),pd(currentFinish)):null;
-  const slipHtml=(slipDays!==null&&slipDays!==0&&baselineFinish!==currentFinish)
-    ?`<div class="ps-item" style="cursor:pointer" onclick="toggleBaseline()" title="Clique para comparar visualmente no Gantt (botão Baseline)">
+  // Em vez de só "+Nd", mostra a DATA final projetada considerando os atrasos que já apareceram
+  // de verdade no cronograma (Data de Conclusão real das etapas concluídas) — não só o prazo
+  // planejado bruto, que fica parado até alguém reprogramar a etapa na mão.
+  const realFinish=projectRealFinish(curKey);
+  const slipDays=(baselineFinish&&realFinish)?diffD(pd(baselineFinish),pd(realFinish)):null;
+  const slipHtml=(slipDays!==null&&slipDays!==0&&baselineFinish!==realFinish)
+    ?`<div class="ps-item" style="cursor:pointer" onclick="toggleBaseline()" title="Clique para comparar visualmente no Gantt (botão Baseline) — data projetada com base nos atrasos já registrados no cronograma">
         <span class="ps-lbl">Vs. planejamento original:</span>
-        <b style="color:${slipDays>0?'var(--red)':'var(--green)'}">${slipDays>0?'+':''}${slipDays}d ${slipDays>0?'🔴':'🟢'}</b>
-        <span style="font-size:9px;color:var(--text3);margin-left:3px">(${fmtBR(baselineFinish)} → ${fmtBR(currentFinish)})</span>
+        <b style="color:${slipDays>0?'var(--red)':'var(--green)'}">${fmtBR(realFinish)} ${slipDays>0?'🔴':'🟢'}</b>
+        <span style="font-size:9px;color:var(--text3);margin-left:3px">(previsto: ${fmtBR(baselineFinish)} · ${slipDays>0?'+':''}${slipDays}d)</span>
       </div>`
     :'';
   const critAlert=getCriticalPathAlert(curKey);
@@ -4945,7 +4979,7 @@ function renderRows(){
       </div>
       <div class="td" data-col="start" style="width:${C.start}px"><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
       <div class="td" data-col="dl" style="width:${C.dl}px"><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
-      <div class="td" data-col="atraso" style="width:${C.atraso}px">—</div>
+      <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
       <div class="td" data-col="er" style="width:${C.er}px">${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
       <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de}</span></div>
       <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr!=='—'&&de!=='—'&&parseInt(dr)>parseInt(de)?'var(--red)':'var(--green)'}">${dr}</span></div>
@@ -4967,9 +5001,8 @@ function renderRows(){
     msTasks.forEach((t,ti)=>{
       const depT=tasks.find(x=>x.id===t.depId);
       const prog2=taskProg(t);const de2=t.start&&t.deadline?diffD(pd(t.start),pd(t.deadline))+'d':'—';const dr2=t.start&&t.endReal?diffD(pd(t.start),pd(t.endReal))+'d':'—';
-      // Atraso acumulado: diferença entre a data original da tarefa (gravada na criação) e o prazo atual
-      const origDl2=t.origDeadline||t.deadline;
-      const atrasoAcc2=(origDl2&&t.deadline)?diffD(pd(origDl2),pd(t.deadline)):null;
+      // Atraso acumulado: mesma fonte única de verdade usada na etapa/Gantt (taskAtraso).
+      const atrasoAcc2=taskAtraso(t);
       const aHtml2=(t.assignees||[]).map(a=>`<span class="atag ${a.type==='external'?'ext':''}">${a.name.split(' ')[0]}</span>`).join('');
       const stCls2=strikeTask&&t.status==='done'?' st-task':'';
       // Show dep as line numbers only
@@ -5011,7 +5044,7 @@ function renderRows(){
         </div>
         <div class="td" data-col="start" style="width:${C.start}px"><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
         <div class="td" data-col="dl" style="width:${C.dl}px"><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
-        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o prazo salvo na última atualização e o prazo atual — atualiza sozinho, sem precisar corrigir na mão">${atrasoAcc2===null?'—':atrasoAcc2>0?`<span style="font-size:9px;font-weight:700;color:var(--red)">+${atrasoAcc2}d</span>`:atrasoAcc2<0?`<span style="font-size:9px;font-weight:700;color:var(--green)">${atrasoAcc2}d</span>`:`<span style="font-size:9px;color:var(--text3)">0d</span>`}</div>
+        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(atrasoAcc2)}</div>
         <div class="td" data-col="er" style="width:${C.er}px">${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:`<button class="sched-mini-edit-btn" onclick="inlineDone('${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`}</div>
         <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
@@ -5085,14 +5118,14 @@ function renderBars(){
     if(ms.start&&ms.deadline){
       const x=dateToX(ms.start);const endD=autoEr&&ms.status==='done'?autoEr:ms.deadline;
       const ex=dateToX(endD)+unitWidthAt(endD);const bw=Math.max(ex-x,unitWidthAt(ms.start));
-      const isLate=ms.status!=='done'&&ms.deadline&&pd(ms.deadline)<now;const isEarly=ms.status==='done'&&autoEr&&ms.deadline&&pd(autoEr)<pd(ms.deadline);
+      const msDelay=msAtraso(ms,curKey);const isLate=msDelay!==null&&msDelay>0;const isEarly=msDelay!==null&&msDelay<0;
       const isCrit=crit.milestones.has(ms.id);
       const bar=document.createElement('div');bar.className='gbar ms-bar'+(isLate?' bar-late':isEarly?' bar-early':'')+(isCrit?' bar-critical':'');
       bar.style.cssText=`left:${x}px;width:${bw}px;background:${ms.color}`;
       const pg=document.createElement('div');pg.className='gbar-prog';pg.style.width=(msTasks.length?Math.round(msTasks.reduce((a,t)=>a+taskProg(t),0)/msTasks.length):0)+'%';bar.appendChild(pg);
       if(bw>45){const l=document.createElement('span');l.className='gbar-lbl';l.textContent=ms.name;bar.appendChild(l);}
       if(showBaseline&&sched.baseline){const bms=sched.baseline.milestones?.find(b=>b.id===ms.id);if(bms&&bms.deadline!==ms.deadline){const bx=dateToX(bms.start);const bex=dateToX(bms.deadline)+unitWidthAt(bms.deadline);const bb=document.createElement('div');bb.className='gbar-baseline';bb.style.cssText=`left:${bx}px;width:${Math.max(bex-bx,unitWidthAt(bms.start))}px;background:${ms.color}`;mrow.appendChild(bb);}}
-      bar.addEventListener('mouseenter',e=>showTip({ttl:ms.name,st:SL[ms.status]||ms.status,s:ms.start,dl:ms.deadline,er:autoEr,de:ms.start&&ms.deadline?diffD(pd(ms.start),pd(ms.deadline))+'d':'—',dr:ms.start&&autoEr?diffD(pd(ms.start),pd(autoEr))+'d':'—',dep:'',resp:(ms.assignees||[]).map(a=>a.name).join(', '),late:isLate,early:isEarly,lateD:isLate?diffD(pd(ms.deadline),now):0,earlyD:isEarly?diffD(pd(autoEr),pd(ms.deadline)):0},e));
+      bar.addEventListener('mouseenter',e=>showTip({ttl:ms.name,st:SL[ms.status]||ms.status,s:ms.start,dl:ms.deadline,er:autoEr,de:ms.start&&ms.deadline?diffD(pd(ms.start),pd(ms.deadline))+'d':'—',dr:ms.start&&autoEr?diffD(pd(ms.start),pd(autoEr))+'d':'—',dep:'',resp:(ms.assignees||[]).map(a=>a.name).join(', '),late:isLate,early:isEarly,lateD:isLate?msDelay:0,earlyD:isEarly?-msDelay:0},e));
       bar.addEventListener('mousemove',e=>moveTip(e));bar.addEventListener('mouseleave',hideTip);
       mrow.appendChild(bar);
     }
@@ -5102,7 +5135,7 @@ function renderBars(){
       if(t.start&&t.deadline){
         const x=dateToX(t.start);const endD=t.endReal&&t.status==='done'?t.endReal:t.deadline;
         const ex=dateToX(endD)+unitWidthAt(endD);const bw=Math.max(ex-x,unitWidthAt(t.start));
-        const isLate=t.status!=='done'&&pd(t.deadline)<now;const isEarly=t.status==='done'&&t.endReal&&pd(t.endReal)<pd(t.deadline);
+        const tDelay=taskAtraso(t);const isLate=tDelay!==null&&tDelay>0;const isEarly=tDelay!==null&&tDelay<0;
         const depT=tasks.find(x=>x.id===t.depId);const isBlocked=t.depId&&depT&&depT.status!=='done';
         const isCritT=crit.tasks.has(t.id);
         const barC=isLate?'#dc2626':isEarly?'#16a34a':ms.color;
@@ -5113,7 +5146,7 @@ function renderBars(){
         const pg=document.createElement('div');pg.className='gbar-prog';pg.style.width=taskProg(t)+'%';bar.appendChild(pg);
         if(bw>38){const l=document.createElement('span');l.className='gbar-lbl';l.textContent=t.name;bar.appendChild(l);}
         if(showBaseline&&sched.baseline){const bt=(sched.baseline.tasks||[]).find(b=>b.id===t.id);if(bt&&bt.deadline!==t.deadline){const bx=dateToX(bt.start);const bex=dateToX(bt.deadline)+unitWidthAt(bt.deadline);const bb=document.createElement('div');bb.className='gbar-baseline';bb.style.cssText=`left:${bx}px;width:${Math.max(bex-bx,unitWidthAt(bt.start))}px;background:${ms.color};opacity:.4`;trow.appendChild(bb);}}
-        bar.addEventListener('mouseenter',e=>{showTip({ttl:t.name,st:SL[t.status],s:t.start,dl:t.deadline,er:t.endReal,de:t.start&&t.deadline?diffD(pd(t.start),pd(t.deadline))+'d':'—',dr:t.start&&t.endReal?diffD(pd(t.start),pd(t.endReal))+'d':'—',dep:depT?`[${t.depType||'TI'}] ${depT.name}`:'',resp:(t.assignees||[]).map(a=>a.name).join(', ')||'—',late:isLate,early:isEarly,lateD:isLate?diffD(pd(t.deadline),now):0,earlyD:isEarly?diffD(pd(t.endReal),pd(t.deadline)):0},e);});
+        bar.addEventListener('mouseenter',e=>{showTip({ttl:t.name,st:SL[t.status],s:t.start,dl:t.deadline,er:t.endReal,de:t.start&&t.deadline?diffD(pd(t.start),pd(t.deadline))+'d':'—',dr:t.start&&t.endReal?diffD(pd(t.start),pd(t.endReal))+'d':'—',dep:depT?`[${t.depType||'TI'}] ${depT.name}`:'',resp:(t.assignees||[]).map(a=>a.name).join(', ')||'—',late:isLate,early:isEarly,lateD:isLate?tDelay:0,earlyD:isEarly?-tDelay:0},e);});
         bar.addEventListener('mousemove',e=>moveTip(e));bar.addEventListener('mouseleave',()=>{hideTip();});
         bar.addEventListener('dblclick',()=>openTaskModal(ms.id,t.id));
         trow.appendChild(bar);
@@ -5807,13 +5840,15 @@ function saveTask(){const name=document.getElementById('t-name').value.trim();if
   const data={id:editTaskId||uid(),msId:editTaskMsId,name,start:document.getElementById('t-start').value,deadline:deadlineVal,endReal:document.getElementById('t-endreal').value,assignees:getAs('t-a-list'),depId,depIds,depType:depId?document.getElementById('t-deptype').value:'',depMode:depId?depModeVal2:'',status:document.getElementById('t-status').value,progress,notes:document.getElementById('t-notes').value,links:getLinks('t-link-list'),critical:document.getElementById('t-critical').checked};
   if(editTaskId){
     const idx=sched.tasks.findIndex(x=>x.id===editTaskId);const old=idx>=0?JSON.parse(JSON.stringify(sched.tasks[idx])):null;
-    // Toda edição feita aqui (só admin/editor/GP chegam nesse modal — canEdit já barra o resto)
-    // é uma atualização deliberada e vira a nova referência: o "Atraso Acum." passa a contar só
-    // o desvio a partir de AGORA, não guarda pra sempre a data original da criação da tarefa.
-    // Isso evita o "Atraso Acum." ficar preso mostrando atraso antigo depois que a pessoa já
-    // replanejou de propósito — se o prazo mudar de novo sem passar por aqui (ex.: efeito
-    // cascata de uma dependência atrasada), aí sim volta a acumular normalmente.
-    data.origDeadline=deadlineVal;
+    // O "Atraso Acum." só deve zerar quando o PRAZO em si é replanejado de propósito nessa
+    // edição — editar qualquer outra coisa (nome, responsável, progresso, observações...) sem
+    // mexer no prazo não pode "resetar" um atraso real que já existia, senão o número nunca
+    // acumula de verdade (some sozinho a cada ajuste que nem era sobre datas).
+    if(old&&old.deadline===data.deadline){
+      data.origDeadline=old.origDeadline||old.deadline;
+    }else{
+      data.origDeadline=deadlineVal;
+    }
     if(idx>=0)sched.tasks[idx]=data;
     if(old&&old.deadline!==data.deadline)logChange(curKey,`Tarefa "${name}": prazo ${fmtBR(old.deadline)} → ${fmtBR(data.deadline)}`,'#d97706');
   }else{
