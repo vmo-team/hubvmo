@@ -469,6 +469,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .no-edit .edit-btn{display:none!important}
 .no-edit .clone-btn{display:none!important}
 .no-edit .inline-done-btn{display:none!important}
+.no-edit .sched-mini-edit-btn{display:none!important}
 .atag{font-size:8.5px;padding:1px 6px;border-radius:10px;background:#ede9fe;color:#6d28d9;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis}
 .atag.ext{background:#fef9c3;color:#a16207;border:1px solid #fde047}
 .atag.ext::before{content:"↗ ";font-size:8px}
@@ -639,6 +640,8 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div class="ms-dd" id="dd-gp"><button class="ms-dd-btn" onclick="toggleDD('dd-gp')"><span id="dd-gp-lbl">Todos os GPs</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-gp-menu"></div></div>
     <div class="ms-dd" id="dd-health"><button class="ms-dd-btn" onclick="toggleDD('dd-health')"><span id="dd-health-lbl">Saúde do cronograma</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-health-menu"></div></div>
     <div class="ms-dd" id="dd-times"><button class="ms-dd-btn" onclick="toggleDD('dd-times')"><span id="dd-times-lbl">Todos os times</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-times-menu"></div></div>
+    <div class="filter-sep"></div>
+    <div class="ms-dd" id="dd-cols" title="Escolher quais colunas aparecem na tabela"><button class="ms-dd-btn" onclick="toggleDD('dd-cols')"><i class="ti ti-columns-3" style="font-size:11px"></i><span id="dd-cols-lbl">Colunas</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-cols-menu" style="min-width:210px"></div></div>
     <div style="flex:1"></div>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="savePriorityHistorySnapshot()" title="Salva um retrato completo da ordem de prioridade de hoje, disponível depois em Documentos Úteis"><i class="ti ti-device-floppy" style="font-size:11px"></i> Salvar Histórico</button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="exportPrioridadesXlsx()" title="Exporta a lista de prioridades exatamente como está na tela (respeitando busca e filtros ativos)"><i class="ti ti-file-spreadsheet" style="font-size:11px"></i> Exportar Excel</button>
@@ -1587,6 +1590,68 @@ function showView(v){
 // ── MULTI-SELECT FILTER STATE ──
 const msFilters={status:new Set(),gp:new Set(),health:new Set(),glHealth:new Set(),times:new Set(),tipo:new Set(),segment:new Set(),region:new Set()};
 
+// ── OCULTAR/MOSTRAR COLUNAS (aba Prioridades) ──
+// Mesma ideia de "ocultar coluna" de uma planilha: cada coluna tem um data-col (já usado pro
+// redimensionamento por arrasto — initPftResize) e a visibilidade fica salva por navegador,
+// não mexe em nenhum dado, só no que aparece na tela. "Arraste" e "Projeto" ficam sempre
+// visíveis (não fazem sentido ocultar).
+const PRIO_HIDEABLE_COLS=[
+  {key:'ultprio',label:'Última Prioridade'},
+  {key:'novaprio',label:'Nova Prioridade'},
+  {key:'variacao',label:'Variação'},
+  {key:'tipo',label:'Tipo'},
+  {key:'status',label:'Status Jira'},
+  {key:'gp',label:'GP Alocado'},
+  {key:'times',label:'Times'},
+  {key:'exp',label:'Expect. Entrega'},
+  {key:'golive',label:'Go Live'},
+  {key:'saude',label:'Saúde Cron.'},
+  {key:'prog',label:'Progresso'},
+  {key:'score',label:'Score'},
+  {key:'tpv',label:'TPV Previsto'},
+  {key:'receita',label:'Receita Líq. Prevista'},
+  {key:'driveresg',label:'Driver Estrat./Regul.'},
+  {key:'driverdata',label:'Driver Data'},
+  {key:'acao',label:'Ação'},
+];
+const PRIO_HIDDEN_COLS_KEY='vmo_prio_hidden_cols';
+let prioHiddenCols=new Set();
+try{prioHiddenCols=new Set(JSON.parse(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)||'[]'));}catch(e){}
+function savePrioHiddenCols(){try{localStorage.setItem(PRIO_HIDDEN_COLS_KEY,JSON.stringify([...prioHiddenCols]));}catch(e){}}
+function applyPrioColVisibility(){
+  let styleEl=document.getElementById('prio-col-vis-style');
+  if(!styleEl){styleEl=document.createElement('style');styleEl.id='prio-col-vis-style';document.head.appendChild(styleEl);}
+  styleEl.textContent=[...prioHiddenCols].map(k=>`#prio-table th[data-col="${k}"],#prio-table td[data-col="${k}"]{display:none}`).join('\n');
+}
+function buildPrioColsMenu(){
+  const menu=document.getElementById('dd-cols-menu');if(!menu)return;
+  menu.innerHTML='';
+  const clearEl=document.createElement('div');clearEl.className='ms-dd-clear';clearEl.style.color='var(--purple)';
+  clearEl.innerHTML='<i class="ti ti-eye" style="font-size:9px"></i> Mostrar todas';
+  clearEl.onclick=(e)=>{e.stopPropagation();prioHiddenCols.clear();savePrioHiddenCols();applyPrioColVisibility();buildPrioColsMenu();updatePrioColsLbl();};
+  menu.appendChild(clearEl);
+  const sep=document.createElement('div');sep.className='ms-dd-sep';menu.appendChild(sep);
+  PRIO_HIDEABLE_COLS.forEach(col=>{
+    const visible=!prioHiddenCols.has(col.key);
+    const item=document.createElement('div');item.className='ms-dd-item'+(visible?' checked':'');
+    item.innerHTML=`<input type="checkbox" id="chk-col-${col.key}"${visible?' checked':''}><label for="chk-col-${col.key}" style="cursor:pointer;flex:1">${col.label}</label>`;
+    const cb=item.querySelector('input');
+    cb.addEventListener('change',e=>{
+      e.stopPropagation();
+      if(cb.checked)prioHiddenCols.delete(col.key);else prioHiddenCols.add(col.key);
+      item.classList.toggle('checked',cb.checked);
+      savePrioHiddenCols();applyPrioColVisibility();updatePrioColsLbl();
+    });
+    menu.appendChild(item);
+  });
+}
+function updatePrioColsLbl(){
+  const btn=document.querySelector('#dd-cols .ms-dd-btn');const lbl=document.getElementById('dd-cols-lbl');
+  if(!btn||!lbl)return;
+  if(prioHiddenCols.size===0){lbl.textContent='Colunas';btn.classList.remove('active');}
+  else{lbl.textContent=prioHiddenCols.size+' oculta'+(prioHiddenCols.size!==1?'s':'');btn.classList.add('active');}
+}
+
 // ── INIT FILTERS ──
 function initFilters(){
   const statuses=[...new Set(PROJECTS.map(p=>p.status))].sort((a,b)=>{
@@ -1606,6 +1671,7 @@ function initFilters(){
   buildDD('dd-segment','dd-segment-menu','dd-segment-lbl','segment',SEGMENT_FILTER_OPTIONS,'Segmento');
   const REGION_FILTER_OPTIONS=['Brasil','LATAM','International','Todas'];
   buildDD('dd-region','dd-region-menu','dd-region-lbl','region',REGION_FILTER_OPTIONS,'Região');
+  buildPrioColsMenu();applyPrioColVisibility();updatePrioColsLbl();
   // Close dropdowns on outside click
   document.addEventListener('click',function(e){
     document.querySelectorAll('.ms-dd.open').forEach(dd=>{if(!dd.contains(e.target))dd.classList.remove('open');});
@@ -2117,29 +2183,39 @@ function renderPortfolio(){
     const tr=document.createElement('tr');
     if(GRAY_HL_STATUSES.has(p.status))tr.classList.add('pf-row-gray');
     tr.innerHTML=`
-      <td style="text-align:center;padding:2px">${dragEnabled?'<i class=\"ti ti-grip-vertical prio-grip\" title=\"Arraste a linha para reordenar livremente\"></i>':''}</td>
-      <td style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
-      <td style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)">${(filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum))}</td>
-      <td style="text-align:center;font-size:9px;font-weight:600;white-space:nowrap;color:${(!filtersActive)&&/⬆/.test(p.priorityVariation||'')?'var(--green)':(!filtersActive)&&/⬇/.test(p.priorityVariation||'')?'var(--red)':'var(--text3)'}" title="Variação de prioridade (Jira)">${(!filtersActive)&&p.priorityVariation?p.priorityVariation:'—'}</td>
-      <td><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProjectSchedule('${p.key}')">
+      <td data-col="drag" style="text-align:center;padding:2px">${dragEnabled?'<i class=\"ti ti-grip-vertical prio-grip\" title=\"Arraste a linha para reordenar livremente\"></i>':''}</td>
+      <td data-col="ultprio" style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
+      <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)">${(filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum))}</td>
+      <td data-col="variacao" style="text-align:center;font-size:9px;font-weight:600;white-space:nowrap;color:${(!filtersActive)&&/⬆/.test(p.priorityVariation||'')?'var(--green)':(!filtersActive)&&/⬇/.test(p.priorityVariation||'')?'var(--red)':'var(--text3)'}" title="Variação de prioridade (Jira)">${(!filtersActive)&&p.priorityVariation?p.priorityVariation:'—'}</td>
+      <td data-col="proj"><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProjectSchedule('${p.key}')">
         <span style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;flex-shrink:0">${p.key}</span>
         <span style="font-weight:500;font-size:clamp(8px,1vw,9.5px);overflow:hidden;flex:1;min-width:0;word-break:break-word;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical" title="${p.summary}">${p.summary}</span>
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
       </div></td>
-      <td><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
-      <td><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
-      <td><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
-      <td><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle" title="'+t+'">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
-      <td><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
-      <td><span style="font-size:10px;font-weight:${glDate?'600':'400'};color:${glOverdue?'var(--red)':glDate?'var(--green)':'var(--text3)'}">${glDate?fmtBR(glDate)+'<span style="font-size:8px;color:var(--text3);margin-left:2px">'+(p.golive?'Jira':'local')+'</span>':'—'}</span></td>
-      <td>${healthBadge(st.health,st.lateTasks)}</td>
-      <td>${st.has&&st.tasks>0?`<div style="display:flex;align-items:center;gap:4px"><div class="prog-track" style="width:55px"><div class="prog-fill" style="width:${st.prog}%;background:#6924E1"></div></div><span style="font-size:9.5px;color:var(--text3)">${st.prog}%</span></div>`:'—'}</td>
-      <td>${(()=>{const sr=computeProjectScoring(p);return sr?`<b style="color:${sr.cls.color};font-size:10px">${sr.score.toFixed(2)} ${sr.cls.emoji}</b>`:'<span style="color:var(--text3);font-size:10px">—</span>';})()}</td>
-      <td>${manualFieldCellHtml(p,'tpvPrevisto','TPV Previsto')}</td>
-      <td>${manualFieldCellHtml(p,'receitaLiquidaPrevista','Receita Líquida Prevista')}</td>
-      <td>${manualFieldCellHtml(p,'driverEstReg','Driver Estratégico/Regulatório')}</td>
-      <td>${manualFieldCellHtml(p,'driverData','Driver Data')}</td>
-      <td><button class="pf-act ${st.has?'':'pri'}" onclick="openProjectSchedule('${p.key}')">${st.has?'Ver cronograma':'Criar cronograma'}</button></td>`;
+      <td data-col="tipo"><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
+      <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
+      <td data-col="gp"><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
+      <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle" title="'+t+'">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
+      <td data-col="exp"><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
+      <td data-col="golive"><span style="font-size:10px;font-weight:${glDate?'600':'400'};color:${glOverdue?'var(--red)':glDate?'var(--green)':'var(--text3)'}">${glDate?fmtBR(glDate)+'<span style="font-size:8px;color:var(--text3);margin-left:2px">'+(p.golive?'Jira':'local')+'</span>':'—'}</span></td>
+      <td data-col="saude">${healthBadge(st.health,st.lateTasks)}</td>
+      <td data-col="prog">${st.has&&st.tasks>0?`<div style="display:flex;align-items:center;gap:4px"><div class="prog-track" style="width:55px"><div class="prog-fill" style="width:${st.prog}%;background:#6924E1"></div></div><span style="font-size:9.5px;color:var(--text3)">${st.prog}%</span></div>`:'—'}</td>
+      <td data-col="score">${(()=>{
+        const sr=computeProjectScoring(p);
+        // Clicando no Score direto na tabela de Prioridades também abre o modal de scoring —
+        // mesma regra de permissão da aba Scoring, sem precisar entrar no cronograma antes.
+        const canEditScorePf=!!SCORING_TYPES[p.type]&&canEdit(p.key);
+        const scoreOnclick=canEditScorePf?` onclick="event.stopPropagation();if(prepareProjectContext('${p.key}'))openScoringModal();"`:'';
+        const scoreTitle=canEditScorePf?` title="Clique para ${sr?'editar':'preencher'} o scoring"`:'';
+        const scoreCursor=canEditScorePf?';cursor:pointer':'';
+        if(sr)return `<b style="color:${sr.cls.color};font-size:10px${scoreCursor}"${scoreOnclick}${scoreTitle}>${sr.score.toFixed(2)} ${sr.cls.emoji}</b>`;
+        return `<span style="color:var(--text3);font-size:10px${scoreCursor}"${scoreOnclick}${scoreTitle}>—</span>`;
+      })()}</td>
+      <td data-col="tpv">${manualFieldCellHtml(p,'tpvPrevisto','TPV Previsto')}</td>
+      <td data-col="receita">${manualFieldCellHtml(p,'receitaLiquidaPrevista','Receita Líquida Prevista')}</td>
+      <td data-col="driveresg">${manualFieldCellHtml(p,'driverEstReg','Driver Estratégico/Regulatório')}</td>
+      <td data-col="driverdata">${manualFieldCellHtml(p,'driverData','Driver Data')}</td>
+      <td data-col="acao"><button class="pf-act ${st.has?'':'pri'}" onclick="openProjectSchedule('${p.key}')">${st.has?'Ver cronograma':'Criar cronograma'}</button></td>`;
     if(dragEnabled){
       tr.draggable=true;
       tr.style.cursor='grab';
@@ -4935,8 +5011,8 @@ function renderRows(){
         </div>
         <div class="td" data-col="start" style="width:${C.start}px"><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
         <div class="td" data-col="dl" style="width:${C.dl}px"><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
-        <div class="td" data-col="atraso" style="width:${C.atraso}px;gap:2px" title="Data original de referência: ${fmtBR(origDl2)} — clique no lápis para corrigir">${atrasoAcc2===null?'—':atrasoAcc2>0?`<span style="font-size:9px;font-weight:700;color:var(--red)">+${atrasoAcc2}d</span>`:atrasoAcc2<0?`<span style="font-size:9px;font-weight:700;color:var(--green)">${atrasoAcc2}d</span>`:`<span style="font-size:9px;color:var(--text3)">0d</span>`}<button onclick="editOrigDeadline('${t.id}',event)" title="Corrigir prazo original de referência" style="font-size:8px;border:none;background:transparent;cursor:pointer;color:var(--text3);padding:0 1px">✎</button></div>
-        <div class="td" data-col="er" style="width:${C.er}px">${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span><button onclick="editEndReal('${t.id}',event)" style="font-size:8px;border:none;background:transparent;cursor:pointer;color:var(--text3);padding:0 2px">✎</button>`:`<button onclick="inlineDone('${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`}</div>
+        <div class="td" data-col="atraso" style="width:${C.atraso}px;gap:2px" title="Data original de referência: ${fmtBR(origDl2)} — clique no lápis para corrigir">${atrasoAcc2===null?'—':atrasoAcc2>0?`<span style="font-size:9px;font-weight:700;color:var(--red)">+${atrasoAcc2}d</span>`:atrasoAcc2<0?`<span style="font-size:9px;font-weight:700;color:var(--green)">${atrasoAcc2}d</span>`:`<span style="font-size:9px;color:var(--text3)">0d</span>`}<button class="sched-mini-edit-btn" onclick="editOrigDeadline('${t.id}',event)" title="Corrigir prazo original de referência" style="font-size:8px;border:none;background:transparent;cursor:pointer;color:var(--text3);padding:0 1px">✎</button></div>
+        <div class="td" data-col="er" style="width:${C.er}px">${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span><button class="sched-mini-edit-btn" onclick="editEndReal('${t.id}',event)" style="font-size:8px;border:none;background:transparent;cursor:pointer;color:var(--text3);padding:0 2px">✎</button>`:`<button class="sched-mini-edit-btn" onclick="inlineDone('${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`}</div>
         <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
         <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
@@ -5164,13 +5240,14 @@ function moveTip(e){const t=document.getElementById('tip');t.style.left=(e.clien
 function hideTip(){document.getElementById('tip').style.display='none';}
 
 // ── INLINE ACTIONS ──
-function inlineDone(tid,msId,ev){ev.stopPropagation();const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;t.endReal=ds(TODAY);t.status='done';logChange(curKey,`Tarefa "${t.name}" concluída`,'#16a34a');autoUpdateMsStatus(curKey);const casc1=cascadeReschedule(curKey);logCascadeChanges(curKey,casc1.changed);renderSchedule();syncToJira(curKey);persistSchedule(curKey);}
-function editEndReal(tid,ev){ev.stopPropagation();const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;const val=prompt('Data real (AAAA-MM-DD):',t.endReal||ds(TODAY));if(val&&/^\d{4}-\d{2}-\d{2}$/.test(val)){t.endReal=val;logChange(curKey,`Data real de "${t.name}": ${val}`,'#d97706');autoUpdateMsStatus(curKey);const casc2=cascadeReschedule(curKey);logCascadeChanges(curKey,casc2.changed);renderSchedule();persistSchedule(curKey);}}
+function inlineDone(tid,msId,ev){ev.stopPropagation();if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;t.endReal=ds(TODAY);t.status='done';logChange(curKey,`Tarefa "${t.name}" concluída`,'#16a34a');autoUpdateMsStatus(curKey);const casc1=cascadeReschedule(curKey);logCascadeChanges(curKey,casc1.changed);renderSchedule();syncToJira(curKey);persistSchedule(curKey);}
+function editEndReal(tid,ev){ev.stopPropagation();if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;const val=prompt('Data real (AAAA-MM-DD):',t.endReal||ds(TODAY));if(val&&/^\d{4}-\d{2}-\d{2}$/.test(val)){t.endReal=val;logChange(curKey,`Data real de "${t.name}": ${val}`,'#d97706');autoUpdateMsStatus(curKey);const casc2=cascadeReschedule(curKey);logCascadeChanges(curKey,casc2.changed);renderSchedule();persistSchedule(curKey);}}
 // Corrige o "prazo original de referência" de uma tarefa — usado só para calcular o Atraso Acum.
 // Útil quando esse valor ficou desatualizado/inconsistente (ex: dados importados ou de teste,
 // tarefa clonada, ou modelo aplicado com datas que depois foram corrigidas manualmente).
 function editOrigDeadline(tid,ev){
   ev.stopPropagation();
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
   const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;
   const val=prompt('Corrigir o prazo original de referência (AAAA-MM-DD).\nUsado apenas para calcular o "Atraso Acum." — não altera o prazo atual da tarefa.',t.origDeadline||t.deadline||'');
   if(val===null)return;
@@ -5180,8 +5257,8 @@ function editOrigDeadline(tid,ev){
   logChange(curKey,`Prazo original de referência de "${t.name}" corrigido: ${fmtBR(old)} → ${fmtBR(t.origDeadline)}`,'#d97706');
   renderSchedule();persistSchedule(curKey);
 }
-function cloneMs(msId){const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;const newMs={...JSON.parse(JSON.stringify(ms)),id:uid(),name:ms.name+' (cópia)'};sched.milestones.push(newMs);const msTasks=sched.tasks.filter(t=>t.msId===msId);const idMap={};msTasks.forEach(t=>{const newId=uid();idMap[t.id]=newId;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,msId:newMs.id,endReal:'',status:'not_started',origDeadline:t.origDeadline||t.deadline});});logChange(curKey,`Etapa "${ms.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
-function cloneTask(msId,taskId){const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:uid(),name:t.name+' (cópia)',endReal:'',status:'not_started',depId:'',origDeadline:t.origDeadline||t.deadline});logChange(curKey,`Tarefa "${t.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
+function cloneMs(msId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;const newMs={...JSON.parse(JSON.stringify(ms)),id:uid(),name:ms.name+' (cópia)'};sched.milestones.push(newMs);const msTasks=sched.tasks.filter(t=>t.msId===msId);const idMap={};msTasks.forEach(t=>{const newId=uid();idMap[t.id]=newId;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,msId:newMs.id,endReal:'',status:'not_started',origDeadline:t.origDeadline||t.deadline});});logChange(curKey,`Etapa "${ms.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
+function cloneTask(msId,taskId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:uid(),name:t.name+' (cópia)',endReal:'',status:'not_started',depId:'',origDeadline:t.origDeadline||t.deadline});logChange(curKey,`Tarefa "${t.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
 
 // ── RESIZE ──
 (function(){const handle=document.getElementById('resize-handle');let dr=false,sx=0,sw=0;handle.addEventListener('mousedown',e=>{dr=true;sx=e.clientX;sw=document.getElementById('se-left').offsetWidth;document.body.style.cursor='col-resize';e.preventDefault();});document.addEventListener('mousemove',e=>{if(!dr)return;const nw=Math.max(260,Math.min(920,sw+(e.clientX-sx)));userLeftW=nw;document.getElementById('se-left').style.width=nw+'px';});document.addEventListener('mouseup',()=>{dr=false;document.body.style.cursor='';});})();
@@ -5339,6 +5416,7 @@ function deleteSelectedMs(){
   renderSchedule();renderPortfolio();persistSchedule(curKey);
 }
 function deleteMsDirect(msId){
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
   const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;
   if(!confirm(`Excluir a etapa "${ms.name}" e suas tarefas? Essa ação não pode ser desfeita.`))return;
   sched.tasks=sched.tasks.filter(t=>t.msId!==msId);
@@ -5745,9 +5823,13 @@ function saveTask(){const name=document.getElementById('t-name').value.trim();if
   const data={id:editTaskId||uid(),msId:editTaskMsId,name,start:document.getElementById('t-start').value,deadline:deadlineVal,endReal:document.getElementById('t-endreal').value,assignees:getAs('t-a-list'),depId,depIds,depType:depId?document.getElementById('t-deptype').value:'',depMode:depId?depModeVal2:'',status:document.getElementById('t-status').value,progress,notes:document.getElementById('t-notes').value,links:getLinks('t-link-list'),critical:document.getElementById('t-critical').checked};
   if(editTaskId){
     const idx=sched.tasks.findIndex(x=>x.id===editTaskId);const old=idx>=0?JSON.parse(JSON.stringify(sched.tasks[idx])):null;
-    // Preserva a data original da tarefa (nunca é sobrescrita numa edição); se a tarefa ainda não tinha
-    // esse registro (criada antes desse recurso existir), o prazo anterior à edição vira a origem a partir de agora.
-    data.origDeadline=old?(old.origDeadline||old.deadline):deadlineVal;
+    // Toda edição feita aqui (só admin/editor/GP chegam nesse modal — canEdit já barra o resto)
+    // é uma atualização deliberada e vira a nova referência: o "Atraso Acum." passa a contar só
+    // o desvio a partir de AGORA, não guarda pra sempre a data original da criação da tarefa.
+    // Isso evita o "Atraso Acum." ficar preso mostrando atraso antigo depois que a pessoa já
+    // replanejou de propósito — se o prazo mudar de novo sem passar por aqui (ex.: efeito
+    // cascata de uma dependência atrasada), aí sim volta a acumular normalmente.
+    data.origDeadline=deadlineVal;
     if(idx>=0)sched.tasks[idx]=data;
     if(old&&old.deadline!==data.deadline)logChange(curKey,`Tarefa "${name}": prazo ${fmtBR(old.deadline)} → ${fmtBR(data.deadline)}`,'#d97706');
   }else{
@@ -5766,6 +5848,7 @@ function deleteTask(){
 }
 function deleteTaskDirect(taskId,msId,ev){
   if(ev)ev.stopPropagation();
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
   const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;
   if(!confirm(`Excluir a tarefa "${t.name}"? Essa ação não pode ser desfeita.`))return;
   sched.tasks=sched.tasks.filter(x=>x.id!==taskId);
