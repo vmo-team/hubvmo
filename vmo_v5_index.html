@@ -650,6 +650,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="savePriorityHistorySnapshot()" title="Salva um retrato completo da ordem de prioridade de hoje, disponível depois em Documentos Úteis"><i class="ti ti-device-floppy" style="font-size:11px"></i> Salvar Histórico</button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="exportPrioridadesXlsx()" title="Exporta a lista de prioridades exatamente como está na tela (respeitando busca e filtros ativos)"><i class="ti ti-file-spreadsheet" style="font-size:11px"></i> Exportar Excel</button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px;background:var(--purple);color:#fff;border:none" onclick="openSuggestPriorityModal()" title="Sugere uma nova ordem de prioridade combinando score, datas de entrega e segmento estratégico"><i class="ti ti-sparkles" style="font-size:11px"></i> Sugerir Priorização</button>
+    <button class="fbtn" id="fix-fictitious-prio-btn" style="display:none;align-items:center;gap:4px;background:#fff7ed;color:#c2410c;border:1px solid #fdba74" onclick="openPriorityRepairModal()" title="Corrige projetos em Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial que hoje têm uma prioridade individual fictícia (herdada de um bug antigo) em vez do balde correto"><i class="ti ti-tool" style="font-size:11px"></i> Corrigir prioridades fictícias</button>
   </div>
   <div id="prio-kpi"></div>
 </div>
@@ -742,6 +743,13 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
           <div class="rsm-card-body">
             <div id="rsm-scope-text"></div>
             <div id="rsm-scope-link-row" style="margin-top:7px"></div>
+          </div>
+        </div>
+        <div class="rsm-card">
+          <div class="rsm-card-hdr"><i class="ti ti-forms" style="font-size:11px;color:var(--text3)"></i><h4>Formulário de Abertura (Jira)</h4></div>
+          <div class="rsm-card-body">
+            <div style="font-size:9.5px;color:var(--text3);margin-bottom:6px">Página do Confluence com as informações que a pessoa preencheu no formulário de abertura no Jira.</div>
+            <div id="rsm-form-link-row"></div>
           </div>
         </div>
         <div class="rsm-card">
@@ -883,6 +891,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div class="docs-search"><i class="ti ti-search"></i><input type="text" id="docs-search" placeholder="Buscar por título, descrição ou tag..." oninput="renderDocsLibrary()"></div>
     <a class="btn-c" href="https://one-bemobi.atlassian.net/wiki/spaces/VHDGP/overview" target="_blank" style="font-size:9.5px;padding:4px 9px"><i class="ti ti-external-link" style="font-size:10px"></i> Ver página no Confluence</a>
     <button class="tn-btn pri" id="docs-add-btn" style="display:none;font-size:9.5px;padding:4px 9px" onclick="openDocModal()"><i class="ti ti-plus" style="font-size:9px"></i> Adicionar material</button>
+    <button class="tn-btn pri" id="docs-add-debriefing-btn" style="display:none;font-size:9.5px;padding:4px 9px" onclick="openDebriefingModal()"><i class="ti ti-plus" style="font-size:9px"></i> Nova Ata de Reunião</button>
   </div>
   <div id="docs-filters">
     <button class="fbtn on" data-doccat="all" onclick="setDocCat('all',this)">Todos</button>
@@ -890,6 +899,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <button class="fbtn" data-doccat="documentos" onclick="setDocCat('documentos',this)">📄 Documentos</button>
     <button class="fbtn" data-doccat="planilhas" onclick="setDocCat('planilhas',this)">📊 Planilhas</button>
     <button class="fbtn" data-doccat="priorizacao" onclick="setDocCat('priorizacao',this)">📌 Histórico de Priorização</button>
+    <button class="fbtn" data-doccat="debriefing" onclick="setDocCat('debriefing',this)">📝 Atas de Reunião</button>
     <select id="docs-month-filter" class="fbtn" style="display:none;cursor:pointer" onchange="docsMonthFilter=this.value;renderDocsLibrary()"></select>
   </div>
   <div id="docs-grid"></div>
@@ -947,6 +957,14 @@ let DOCS_LIBRARY = [
 // pelo botão "Salvar Histórico" na aba Prioridades. Exibidos como itens
 // somente-leitura na aba Documentos Úteis, categoria "Histórico de Priorização".
 let PRIORITY_HISTORY = [];
+
+// ── ATAS DE REUNIÃO DE DEBRIEFING ────────────────────────────────────────
+// Registro das atas de debriefing (retrospectiva pós-entrega/pós-etapa), cadastradas
+// manualmente por editores+ na aba Documentos Úteis, categoria "Atas de Debriefing".
+// Cada ata guarda um link (Confluence/Docs), notas opcionais e as tags dos projetos
+// discutidos na reunião — exibidas como chips clicáveis que abrem o projeto direto.
+// Organizadas em pastas por mês, no mesmo padrão do Histórico de Priorização.
+let DEBRIEFING_MINUTES = [];
 
 // ── USER REGISTRY ─────────────────────────────────────────────────────────
 // Cadastro de usuários com senha (hash simples — bcrypt não disponível no browser)
@@ -1966,7 +1984,7 @@ function getCriticalPathAlert(key){
 // "terminal" (entregue/cancelado/pausado/backlog), onde isso é esperado e não é um problema.
 function getStaleAlert(key){
   const p=PROJECTS.find(x=>x.key===key);if(!p)return null;
-  if([DELIVERED_STATUS,'CANCELADO','PAUSADO','BACKLOG'].includes(p.status))return null;
+  if(PRIORITY_LIST_EXCLUDED_STATUS.has(p.status))return null;
   // Um projeto que NUNCA publicou nenhuma atualização é o caso mais óbvio de "sem atualização" —
   // antes isso era ignorado (só contava quem já tinha atualizado uma vez e parou), deixando de
   // fora exatamente os projetos que nunca tiveram nada publicado. Também não depende mais de ter
@@ -2159,12 +2177,21 @@ async function applyStatusChange(key){
   }catch(e){alert('Falha de rede ao aplicar mudança de status.');btn.disabled=false;btn.textContent='Aplicar';}
 }
 function renderPortfolio(){
+  // Preserva a posição de rolagem da view (vertical e horizontal): a tabela é reconstruída do
+  // zero a cada edição (mudar prioridade, driver de data, etc.), e como o tbody é esvaziado e
+  // repopulado, o navegador clampa o scroll do container pai pra 0 no instante em que ele fica
+  // temporariamente menor — sem isso, qualquer ajuste jogava a tela de volta pro topo.
+  const _pfScrollEl=document.getElementById('view-prioridades');
+  const _pfScrollTop=_pfScrollEl?_pfScrollEl.scrollTop:0;
+  const _pfScrollLeft=_pfScrollEl?_pfScrollEl.scrollLeft:0;
   // Sort PROJECTS by priority (ascending, nulls last)
   PROJECTS.sort((a,b)=>{
     const pa=a.priority!=null?a.priority:9999;
     const pb=b.priority!=null?b.priority:9999;
     return pa-pb;
   });
+  const fixBtn=document.getElementById('fix-fictitious-prio-btn');
+  if(fixBtn)fixBtn.style.display=(isEditorOrAbove()&&getFictitiousPriorityProjects().length>0)?'flex':'none';
   renderKPI();renderCalendar();
   const q=(document.getElementById('pf-search').value||'').toLowerCase();
   const statusF=msFilters.status;
@@ -2208,7 +2235,8 @@ function renderPortfolio(){
     if(glHealthF.size>0&&!glHealthF.has(getStats(p.key).glHealth))return false;
     if(timesF.size>0&&![...timesF].some(t=>(p.times||[]).includes(t)))return false;
     if(alertFilter==='critical'&&!getCriticalPathAlert(p.key))return false;
-    if(alertFilter==='stale'&&!getStaleAlert(p.key))return false;
+    if(alertFilter==='stale'){const _sa=getStaleAlert(p.key);if(!_sa||_sa.never)return false;}
+    if(alertFilter==='never'){const _sa=getStaleAlert(p.key);if(!_sa||!_sa.never)return false;}
     if(alertFilter==='atrisco'&&!getAtRiscoAlert(p.key))return false;
     return true;
   });
@@ -2225,10 +2253,11 @@ function renderPortfolio(){
     const glOverdue=glDate&&pd(glDate)<TODAY&&p.status!=='CANCELADO'&&p.status!=='Pós produção';
     const pCrit=getCriticalPathAlert(p.key);
     const pAtRisco=getAtRiscoAlert(p.key);
-    // Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial ficam num "balde" (998/999/1000/99)
-    // sem prioridade individual real — nunca deve mostrar um número sequencial fabricado pra
-    // esses, mesmo com filtro ativo (senão parecem ter um ranking fino que não existe de verdade).
-    const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status);
+    // "Balde" = status estruturalmente fora da fila (Backlog/Pausado/Cancelado/Pós produção/Neg.
+    // Comercial) OU qualquer prioridade que hoje esteja empatada com outro projeto (ex: "Novos
+    // projetos" ainda não triados, todos em 98, ou um empate acidental) — nesses casos nunca
+    // fabrica um número sequencial só porque um filtro está ativo; mostra o valor real (empatado).
+    const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status)||priorityIsShared(p);
     // A aba Prioridades não mostra mais o selo de "Sem Atualização"/"Nunca atualizado" — esse
     // sinal já vive na Visão Geral (card de Alertas) e dentro do próprio cronograma do projeto;
     // aqui na Prioridades ele só poluía a lista sem servir pra priorizar nada.
@@ -2248,7 +2277,7 @@ function renderPortfolio(){
       <td data-col="tipo"><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
       <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?'Clique para mudar o status (aplica no Jira)':p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
       <td data-col="gp"><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
-      <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle" title="'+t+'">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
+      <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle;cursor:pointer" title="Ver fila de prioridade do time \''+t.replace(/'/g,"\\'")+'\'" onclick="event.stopPropagation();openTeamQueueModal(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
       <td data-col="exp"><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
       <td data-col="golive"><span style="font-size:10px;font-weight:${glDate?'600':'400'};color:${glOverdue?'var(--red)':glDate?'var(--green)':'var(--text3)'}">${glDate?fmtBR(glDate)+'<span style="font-size:8px;color:var(--text3);margin-left:2px">'+(p.golive?'Jira':'local')+'</span>':'—'}</span></td>
       <td data-col="saude">${healthBadge(st.health,st.lateTasks)}</td>
@@ -2295,6 +2324,7 @@ function renderPortfolio(){
     if(timesF.size>0)timesF.forEach(t=>filters2.push({label:'Time: '+t.slice(0,12),clear:()=>{msFilters.times.delete(t);updateDD('dd-times','dd-times-lbl','times','Todos os times');renderPortfolio();},col:'#0369a1',bg:'#e0f2fe'}));
     filters2.forEach(fc=>{const chip=document.createElement('span');chip.style.cssText='font-size:9.5px;background:'+fc.bg+';color:'+fc.col+';padding:2px 8px;border-radius:10px;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap';chip.innerHTML=fc.label+' ×';chip.onclick=fc.clear;afr.appendChild(chip);});
   }
+  if(_pfScrollEl){_pfScrollEl.scrollTop=_pfScrollTop;_pfScrollEl.scrollLeft=_pfScrollLeft;}
 }
 // ── Exportação Excel da lista de Prioridades ──
 // Reaplica a MESMA lógica de busca/filtros/ordenação do renderPortfolio() (sem nenhum
@@ -2326,7 +2356,8 @@ function getPrioridadesExportRows(){
     if(glHealthF.size>0&&!glHealthF.has(getStats(p.key).glHealth))return false;
     if(timesF.size>0&&![...timesF].some(t=>(p.times||[]).includes(t)))return false;
     if(alertFilter==='critical'&&!getCriticalPathAlert(p.key))return false;
-    if(alertFilter==='stale'&&!getStaleAlert(p.key))return false;
+    if(alertFilter==='stale'){const _sa=getStaleAlert(p.key);if(!_sa||_sa.never)return false;}
+    if(alertFilter==='never'){const _sa=getStaleAlert(p.key);if(!_sa||!_sa.never)return false;}
     if(alertFilter==='atrisco'&&!getAtRiscoAlert(p.key))return false;
     return true;
   });
@@ -2350,7 +2381,7 @@ function getPrioridadesExportRows(){
 function buildPriorityRowData(p,idx,filtersActive,scopedReorder){
   const st=getStats(p.key);
   const rowNum=scopedReorder?idx:idx+1;
-  const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status);
+  const bucketedPrio=PRIORITY_LIST_EXCLUDED_STATUS.has(p.status)||priorityIsShared(p);
   const novaPrioridade=bucketedPrio?(p.priority!=null?Math.trunc(p.priority):null):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)));
   return {
     lastPriority: (!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):null,
@@ -2478,7 +2509,8 @@ function renderKPI(){
   const withSchedActive=activeProjects.filter(p=>getStats(p.key).has).length;
   const noSchedActive=activeProjects.filter(p=>!getStats(p.key).has).length;
   const novosCount=activeProjects.filter(p=>p.status==='Novos projetos').length;
-  const staleCount=activeProjects.filter(p=>getStaleAlert(p.key)).length;
+  const staleCount=activeProjects.filter(p=>{const a=getStaleAlert(p.key);return a&&!a.never;}).length;
+  const neverUpdatedCount=activeProjects.filter(p=>{const a=getStaleAlert(p.key);return a&&a.never;}).length;
   // Nos trilhos / Em risco / Fora dos trilhos (aba Cronogramas): usa glHealth, que compara o fim
   // estimado do cronograma com a data de Go Live do Jira (ver getStats).
   const onTrackActive=activeProjects.filter(p=>getStats(p.key).glHealth==='on-track').length;
@@ -2549,10 +2581,16 @@ function renderKPI(){
         <div style="font-size:8.5px;color:#b91c1c;opacity:.75;font-weight:600">${withSchedActive?Math.round(offTrackActive/withSchedActive*100):0}%</div>
         <div style="font-size:9px;color:#b91c1c;margin-top:2px;font-weight:500">✗ Fora dos trilhos</div>
       </div>
-      <div class="kc2 alert-kc${alertFilter==='stale'?' alert-kc-on':''}" style="background:#ffedd5;border-color:#fdba74;cursor:pointer" title="Filtrar: sem nenhuma atualização publicada na aba Atualizações há 7+ dias" onclick="filterByAlert('stale',this)">
+      <div style="width:1px;background:var(--border);margin:0 4px;align-self:stretch"></div>
+      <div class="kc2 alert-kc${alertFilter==='stale'?' alert-kc-on':''}" style="background:#ffedd5;border-color:#fdba74;cursor:pointer" title="Filtrar: já publicou atualização alguma vez, mas está há 7+ dias sem nenhuma nova" onclick="filterByAlert('stale',this)">
         <div style="font-size:20px;font-weight:700;color:#c2410c;line-height:1">${staleCount}</div>
         <div style="font-size:8.5px;color:#c2410c;opacity:.75;font-weight:600">${activeProjects.length?Math.round(staleCount/activeProjects.length*100):0}%</div>
         <div style="font-size:9px;color:#c2410c;margin-top:2px;font-weight:500">🟠 Sem Atualização</div>
+      </div>
+      <div class="kc2 alert-kc${alertFilter==='never'?' alert-kc-on':''}" style="background:#fed7aa;border-color:#fb923c;cursor:pointer" title="Filtrar: projetos ativos que nunca tiveram nenhuma atualização publicada" onclick="filterByAlert('never',this)">
+        <div style="font-size:20px;font-weight:700;color:#9a3412;line-height:1">${neverUpdatedCount}</div>
+        <div style="font-size:8.5px;color:#9a3412;opacity:.75;font-weight:600">${activeProjects.length?Math.round(neverUpdatedCount/activeProjects.length*100):0}%</div>
+        <div style="font-size:9px;color:#9a3412;margin-top:2px;font-weight:500">⭕ Nunca Atualizado</div>
       </div>
     </div></div>`+
 
@@ -2688,6 +2726,53 @@ function toggleEtapaCol(stage){if(etapaExpanded.has(stage))etapaExpanded.delete(
 function computeTeamImpactData(){
   const relevant=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG'].includes(p.status));
   return getAllTeams().map(t=>({name:t,count:relevant.filter(p=>(p.times||[]).includes(t)).length}));
+}
+// ── Fila de prioridade POR TIME (quem concorre pela capacidade de um time específico) ──
+// Ex.: se o time POS está hoje em 2 projetos ativos, um projeto novo que também impacte POS
+// entraria como 3º na fila DESSE time — mesmo que a prioridade GERAL dele no portfólio seja
+// outra. Ordenado pela prioridade geral (ninguém "corta a fila" escondido); baldes (Backlog/
+// Pausado/Cancelado/Pós produção/Neg. Comercial) não contam pra fila — eles não disputam
+// capacidade do time agora, só são citados à parte pra não sumir da contagem sem explicação.
+// Homologação e Processo de Rollout já passaram da fase de disputa por capacidade de
+// desenvolvimento do time — estão em validação final/implantação, não competindo mais pelo
+// "próximo a começar". Ainda assim ficam listados fora da fila numerada, sem some ("caso
+// precise de ajuste"), em vez de contar como se ainda estivessem brigando por posição.
+const TEAM_QUEUE_EXTRA_EXCLUDED_STATUS=new Set(['Homologação','PROCESSO DE ROLLOUT','Aguardando Produção']);
+function openTeamQueueModal(team){
+  // Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial nem aparecem aqui — não concorrem e
+  // nem servem de referência pra reavaliação (diferente de Homologação/Rollout/Aguardando
+  // Produção, que ficam visíveis embaixo por ainda estarem em execução, só que sem disputar mais
+  // capacidade de desenvolvimento do time).
+  const visible=PROJECTS.filter(p=>(p.times||[]).includes(team)&&p.status!==DELIVERED_STATUS&&!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status));
+  const competing=visible.filter(p=>!TEAM_QUEUE_EXTRA_EXCLUDED_STATUS.has(p.status)).sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  const notCompeting=visible.filter(p=>TEAM_QUEUE_EXTRA_EXCLUDED_STATUS.has(p.status)).sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  const rows=competing.map((p,i)=>`<tr>
+      <td style="text-align:center;font-weight:700;color:var(--purple);white-space:nowrap">${i+1}º</td>
+      <td style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;cursor:pointer" onclick="closeM('team-queue-modal');openProjectSchedule('${p.key}')">${p.key}</td>
+      <td style="font-size:10.5px">${p.summary}</td>
+      <td style="font-size:9.5px;text-align:center"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span></td>
+      <td style="font-size:9.5px;text-align:center;color:var(--text3)">${p.priority!=null?Math.trunc(p.priority):'—'}</td>
+    </tr>`).join('');
+  const notCompetingRows=notCompeting.map(p=>`<tr style="opacity:.7">
+      <td style="text-align:center;color:var(--text3)">—</td>
+      <td style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;cursor:pointer" onclick="closeM('team-queue-modal');openProjectSchedule('${p.key}')">${p.key}</td>
+      <td style="font-size:10.5px">${p.summary}</td>
+      <td style="font-size:9.5px;text-align:center"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span></td>
+      <td style="font-size:9.5px;text-align:center;color:var(--text3)">${p.priority!=null?Math.trunc(p.priority):'—'}</td>
+    </tr>`).join('');
+  const sepRow=(competing.length&&notCompeting.length)?`<tr><td colspan="5" style="font-size:9px;color:var(--text3);background:var(--bg2);padding:5px 8px;font-weight:600">Não concorrem diretamente agora (Homologação, Rollout, Aguardando Produção)</td></tr>`:'';
+  const nextPos=competing.length+1;
+  const body=`<div class="info-box" style="margin-bottom:8px">
+      <b>${competing.length}</b> projeto${competing.length!==1?'s':''} ativo${competing.length!==1?'s':''} hoje disputa${competing.length!==1?'m':''} a capacidade do time <b>${team}</b> — ordenados pela prioridade geral do portfólio. Um projeto novo que passe a impactar esse time entraria como <b>${nextPos}º</b> na fila do time, a não ser que seja repriorizado.
+    </div>
+    ${(competing.length||notCompeting.length)?`<table class="pft" style="width:100%">
+      <thead><tr><th style="width:50px">Fila</th><th style="width:80px">Chave</th><th>Projeto</th><th style="width:130px;text-align:center">Status</th><th style="width:80px;text-align:center">Prioridade</th></tr></thead>
+      <tbody>${rows}${sepRow}${notCompetingRows}</tbody>
+    </table>`:'<div style="font-size:10.5px;color:var(--text3);padding:8px">Nenhum projeto ativo citando esse time no momento.</div>'}`;
+  getOrBuildModal('team-queue-modal',`Fila de prioridade — ${team}`,body,
+    `<button class="btn-c" onclick="closeM('team-queue-modal')">Fechar</button><button class="btn-s" onclick="closeM('team-queue-modal');filterByTeamLink('${team.replace(/'/g,"\\'")}')">Ver na tabela de Prioridades</button>`);
+  const mbox=document.querySelector('#team-queue-modal .mbox');if(mbox)mbox.style.width='640px';
+  openM('team-queue-modal');
 }
 function filterByTeamLink(team){
   clearOtherFilterCategories('times');
@@ -3383,7 +3468,7 @@ function openUpdatesProject(key){
   if(glDate){glChip.style.display='';glVal.textContent=fmtBRFull(glDate)+(p.golive?' (Jira)':' (local)');}
   else glChip.style.display='none';
   document.getElementById('upd-composer').style.display=isEditorOrAbove()?'':'none';
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
   renderScopeLinkChip(key);
   renderUpdates(key);renderUpdatesProjectList();
 }
@@ -3935,7 +4020,7 @@ function prepareProjectContext(key){
   // Update browser URL so this page can be shared/bookmarked
   const schedUrl=window.location.href.split('?')[0]+'?project='+key;
   history.replaceState(null,'',schedUrl);
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
   collapsed.clear();viewOffset=0;selectedMs.clear();
   document.getElementById('se-title').textContent=p.summary.length>35?p.summary.slice(0,35)+'…':p.summary;
   const jl=document.getElementById('se-jira-lnk');jl.style.display='';
@@ -4037,6 +4122,7 @@ function renderResumoDashboard(){
   } else {
     linkRow.innerHTML='';
   }
+  renderResumoFormLinkRow();
 
   // Datas Macro
   renderResumoDatesList();
@@ -4081,6 +4167,37 @@ function renderResumoScoringCard(){
 function editScopeLinkFromResumo(){
   if(!curKey)return;
   if(promptScopeLink(curKey))renderResumoDashboard();
+}
+// ── Link do formulário de abertura (página do Confluence com o que foi preenchido no
+// formulário do Jira ao abrir o projeto) — mesmo padrão do link de escopo, mas guardado à
+// parte (schedules[key].formLink), pois são documentos diferentes.
+function promptFormLink(key){
+  if(!key||!schedules[key])return false;
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem alterar o link do formulário.');return false;}
+  const sched=schedules[key];
+  const val=prompt('Link da página do Confluence com o formulário de abertura preenchido:',sched.formLink||'https://one-bemobi.atlassian.net/wiki/...');
+  if(val===null)return false;
+  const trimmed=val.trim();
+  sched.formLink=trimmed||null;
+  logChange(key,trimmed?'Link do formulário de abertura atualizado':'Link do formulário de abertura removido','#0369a1');
+  persistSchedule(key);
+  return true;
+}
+function renderResumoFormLinkRow(){
+  const row=document.getElementById('rsm-form-link-row');if(!row||!curKey)return;
+  const sched=schedules[curKey];const link=sched&&sched.formLink;
+  const canEd=isEditorOrAbove();
+  if(link){
+    row.innerHTML=`<a href="${link}" target="_blank" class="upd-golive-chip" style="text-decoration:none"><i class="ti ti-file-text" style="font-size:10px"></i> Formulário preenchido</a>${canEd?` <button class="btn-c" style="font-size:9px;padding:2px 7px" onclick="editFormLinkFromResumo()"><i class="ti ti-pencil" style="font-size:9px"></i></button>`:''}`;
+  } else if(canEd){
+    row.innerHTML=`<button class="btn-c" style="font-size:9px;padding:3px 8px;display:flex;gap:4px;align-items:center" onclick="editFormLinkFromResumo()"><i class="ti ti-link" style="font-size:9px"></i> Adicionar link do formulário (Confluence)</button>`;
+  } else {
+    row.innerHTML=`<span style="font-size:9.5px;color:var(--text3)">Nenhum link cadastrado ainda.</span>`;
+  }
+}
+function editFormLinkFromResumo(){
+  if(!curKey)return;
+  if(promptFormLink(curKey))renderResumoFormLinkRow();
 }
 function editClientName(){
   if(!curKey||!schedules[curKey])return;
@@ -4310,13 +4427,14 @@ const DOC_CAT_META={
   documentos:{label:'Documentos',icon:'📄',bg:'#dbeafe',color:'#1d4ed8'},
   planilhas:{label:'Planilhas',icon:'📊',bg:'#dcfce7',color:'#166534'},
   priorizacao:{label:'Histórico de Priorização',icon:'📌',bg:'#fef3c7',color:'#92400e'},
+  debriefing:{label:'Ata de Reunião',icon:'📝',bg:'#e0f2fe',color:'#0369a1'},
 };
 function setDocCat(cat,el){
   curDocCat=cat;
   document.querySelectorAll('#docs-filters .fbtn').forEach(b=>b.classList.remove('on'));
   if(el)el.classList.add('on');
   const monthFilterEl=document.getElementById('docs-month-filter');
-  if(monthFilterEl)monthFilterEl.style.display=(cat==='priorizacao')?'':'none';
+  if(monthFilterEl)monthFilterEl.style.display=(cat==='priorizacao'||cat==='debriefing')?'':'none';
   renderDocsLibrary();
 }
 const PT_MONTHS_=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -4330,7 +4448,10 @@ let docsMonthOpen=new Set();
 let docsMonthOpenInit=false;
 function populateDocsMonthFilterOptions(){
   const sel=document.getElementById('docs-month-filter');if(!sel)return;
-  const months=[...new Set(PRIORITY_HISTORY.map(h=>h.date.slice(0,7)))].sort().reverse();
+  // A fonte dos meses depende da categoria ativa — cada categoria com pastas por mês
+  // (Histórico de Priorização, Atas de Debriefing) tem sua própria linha do tempo.
+  const source=curDocCat==='debriefing'?DEBRIEFING_MINUTES:PRIORITY_HISTORY;
+  const months=[...new Set(source.map(h=>h.date.slice(0,7)))].sort().reverse();
   const prev=docsMonthFilter;
   sel.innerHTML='<option value="all">Todos os meses</option>'+months.map(ym=>`<option value="${ym}">${monthLabelPT(ym)}</option>`).join('');
   docsMonthFilter=months.includes(prev)||prev==='all'?prev:'all';
@@ -4341,9 +4462,18 @@ function docCardHtml(d){
   const footer=d.isPriorityHistory
     ? `<button class="btn-c" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center" onclick="openPriorityHistoryModal('${d.id}')"><i class="ti ti-eye" style="font-size:10px"></i> Ver lista</button>
        ${isAdmin()?`<button class="rm" onclick="removePriorityHistorySnapshot('${d.id}')" title="Remover">×</button>`:''}`
+    : d.isDebriefing
+    ? `${d.link?`<a class="btn-c" href="${d.link}" target="_blank" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center"><i class="ti ti-external-link" style="font-size:10px"></i> Ver ata</a>`:`<span style="font-size:9.5px;color:var(--text3);flex:1;text-align:center">Sem link cadastrado</span>`}
+       ${isEditorOrAbove()?`<button class="btn-c" style="font-size:9.5px;padding:4px 8px" onclick="openDebriefingModal('${d.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:10px"></i></button>`:''}
+       ${isAdmin()?`<button class="rm" onclick="removeDebriefingMinute('${d.id}')" title="Remover">×</button>`:''}`
     : `<a class="btn-c" href="${d.link}" target="_blank" style="font-size:9.5px;padding:4px 9px;flex:1;text-align:center"><i class="ti ti-external-link" style="font-size:10px"></i> Abrir</a>
        ${isAdmin()?`<button class="btn-c" style="font-size:9.5px;padding:4px 8px" onclick="openDocModal('${d.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:10px"></i></button>
        <button class="rm" onclick="removeDocItem('${d.id}')" title="Remover">×</button>`:''}`;
+  // Nas atas de debriefing, as "tags" são os projetos discutidos na reunião — chips clicáveis
+  // que abrem o projeto direto (aba Resumo dos Projetos), em vez de texto estático com #.
+  const tagsHtml=d.isDebriefing
+    ? (d.projectTags||[]).map(t=>`<span class="doc-tag" style="cursor:pointer" onclick="openProject('${t.key.replace(/'/g,"\\'")}')" title="${(t.summary||'').replace(/"/g,'&quot;')}">${t.key}</span>`).join('')
+    : (d.tags||[]).map(t=>`<span class="doc-tag">#${t}</span>`).join('');
   return `<div class="doc-card">
       <div class="doc-card-top">
         <div class="doc-cat-icon" style="background:${meta.bg}">${meta.icon}</div>
@@ -4353,7 +4483,7 @@ function docCardHtml(d){
         </div>
       </div>
       <div class="doc-desc">${d.description}</div>
-      <div class="doc-tags">${(d.tags||[]).map(t=>`<span class="doc-tag">#${t}</span>`).join('')}</div>
+      <div class="doc-tags">${tagsHtml}</div>
       <div class="doc-card-ftr">${footer}</div>
     </div>`;
 }
@@ -4411,9 +4541,46 @@ function renderPriorityHistoryFolders(items){
     </div>`;
   }).join('');
 }
+// ── Pastas por mês — Atas de Debriefing ──
+// Mesmo padrão visual do Histórico de Priorização (pasta por mês, abre/fecha, primeira
+// aberta por padrão), mas sem a subdivisão Unificada/Segmento-Região — aqui cada mês guarda
+// só a lista simples de atas daquele mês.
+let debMonthOpen=new Set();
+let debMonthOpenInit=false;
+function toggleDebMonth(ym){
+  if(debMonthOpen.has(ym))debMonthOpen.delete(ym);else debMonthOpen.add(ym);
+  renderDocsLibrary();
+}
+function renderDebriefingFolders(items){
+  const groups=[];const byYm={};
+  items.forEach(it=>{
+    const ym=it._date.slice(0,7);
+    if(!byYm[ym]){byYm[ym]={ym,items:[]};groups.push(byYm[ym]);}
+    byYm[ym].items.push(it);
+  });
+  if(!debMonthOpenInit){
+    debMonthOpenInit=true;
+    if(groups[0])debMonthOpen.add(groups[0].ym);
+  }
+  return groups.map(g=>{
+    const open=debMonthOpen.has(g.ym);
+    return `<div class="doc-month-folder">
+      <div class="doc-month-hdr" onclick="toggleDebMonth('${g.ym}')">
+        <i class="ti ti-folder${open?'-open':''}" style="font-size:14px;color:var(--purple)"></i>
+        <span class="doc-month-title">${monthLabelPT(g.ym)}</span>
+        <span class="doc-month-count">${g.items.length} ata${g.items.length!==1?'s':''}</span>
+        <i class="ti ti-chevron-${open?'up':'down'}" style="margin-left:auto;font-size:12px;color:var(--text3)"></i>
+      </div>
+      <div class="doc-month-body" style="display:${open?'grid':'none'}">${g.items.map(docCardHtml).join('')}</div>
+    </div>`;
+  }).join('');
+}
 function renderDocsLibrary(){
   const grid=document.getElementById('docs-grid');if(!grid)return;
-  const addBtn=document.getElementById('docs-add-btn');if(addBtn)addBtn.style.display=isAdmin()?'':'none';
+  const addBtn=document.getElementById('docs-add-btn');
+  if(addBtn)addBtn.style.display=(isAdmin()&&curDocCat!=='priorizacao'&&curDocCat!=='debriefing')?'':'none';
+  const addDebBtn=document.getElementById('docs-add-debriefing-btn');
+  if(addDebBtn)addDebBtn.style.display=(isEditorOrAbove()&&curDocCat==='debriefing')?'':'none';
   const q=(document.getElementById('docs-search')?.value||'').toLowerCase().trim();
   if(curDocCat==='priorizacao'){
     const histItems=PRIORITY_HISTORY.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(h=>({
@@ -4428,6 +4595,28 @@ function renderDocsLibrary(){
     if(q)items=items.filter(d=>d.title.toLowerCase().includes(q)||(d.description||'').toLowerCase().includes(q));
     if(!items.length){grid.innerHTML='<div class="doc-empty">Nenhuma priorização encontrada. Tente outro mês ou busca.</div>';return;}
     grid.innerHTML=renderPriorityHistoryFolders(items);
+    return;
+  }
+  if(curDocCat==='debriefing'){
+    const debItems=DEBRIEFING_MINUTES.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(m=>{
+      const projectTags=(m.projectKeys||[]).map(k=>{const p=PROJECTS.find(x=>x.key===k);return{key:k,summary:p?p.summary:''};});
+      // Quando não há notas manuais, mostra os nomes completos dos projetos marcados na
+      // reunião em vez do texto genérico — assim dá pra saber do que se tratou sem precisar
+      // passar o mouse nos chips (que ficam curtos, só com a chave do Jira).
+      const projectNamesLine=projectTags.length?projectTags.map(t=>t.summary||t.key).join(', '):'';
+      return{
+        id:m.id, category:'debriefing', isDebriefing:true, _date:m.date, link:m.link||'',
+        title:m.title+' — '+fmtBRFull(m.date),
+        description:(m.notes&&m.notes.trim())?m.notes:(projectNamesLine||'Sem notas adicionais.'),
+        projectTags
+      };
+    });
+    populateDocsMonthFilterOptions();
+    let items=debItems;
+    if(docsMonthFilter!=='all')items=items.filter(d=>d._date.slice(0,7)===docsMonthFilter);
+    if(q)items=items.filter(d=>d.title.toLowerCase().includes(q)||(d.description||'').toLowerCase().includes(q)||(d.projectTags||[]).some(t=>t.key.toLowerCase().includes(q)||(t.summary||'').toLowerCase().includes(q)));
+    if(!items.length){grid.innerHTML='<div class="doc-empty">Nenhuma ata de reunião encontrada. Tente outro mês ou busca.</div>';return;}
+    grid.innerHTML=renderDebriefingFolders(items);
     return;
   }
   let items;
@@ -4484,6 +4673,80 @@ function removeDocItem(id){
   renderDocsLibrary();
   persistDocsLibrary();
 }
+
+// ── ATAS DE DEBRIEFING — modal de cadastro/edição ──
+// Um editor+ registra a ata (título, data, link opcional, notas) e marca quais projetos
+// foram discutidos na reunião, num checklist buscável — igual ao padrão de outros pickers
+// do app. Os projetos marcados viram chips clicáveis no card (ver docCardHtml).
+let editDebriefingId=null;
+let debSelectedKeys=new Set();
+function openDebriefingModal(id){
+  if(!isEditorOrAbove()){alert('Apenas editores e administradores podem cadastrar atas de reunião.');return;}
+  editDebriefingId=id||null;
+  const m=id?DEBRIEFING_MINUTES.find(x=>x.id===id):null;
+  debSelectedKeys=new Set(m?(m.projectKeys||[]):[]);
+  const bodyHtml=`<div style="display:flex;flex-direction:column;gap:7px">
+      <input type="text" id="deb-title" placeholder="Título da reunião" value="${m?m.title.replace(/"/g,'&quot;'):''}" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+      <label style="font-size:9px;color:var(--text3)">Data da reunião
+        <input type="date" id="deb-date" value="${m?m.date:new Date().toISOString().slice(0,10)}" style="display:block;width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px;margin-top:2px">
+      </label>
+      <input type="text" id="deb-link" placeholder="Link da ata (Confluence/Google Docs) — opcional" value="${m?(m.link||''):''}" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+      <textarea id="deb-notes" rows="2" placeholder="Notas/resumo (opcional)" style="border:1px solid var(--border2);border-radius:6px;padding:6px 8px;font-size:10.5px;font-family:inherit;resize:vertical">${m?(m.notes||''):''}</textarea>
+      <div>
+        <label style="font-size:9px;color:var(--text3);display:block;margin-bottom:3px">Projetos discutidos</label>
+        <input type="text" id="deb-proj-search" placeholder="Buscar projeto por nome ou chave..." oninput="renderDebProjectPicker()" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px;width:100%;margin-bottom:5px">
+        <div id="deb-proj-picker" style="max-height:170px;overflow-y:auto;border:1px solid var(--border2);border-radius:6px;padding:5px"></div>
+      </div>
+    </div>`;
+  getOrBuildModal('debriefing-modal',id?'Editar ata de reunião':'Nova ata de reunião',bodyHtml,
+    `<button class="btn-c" onclick="closeM('debriefing-modal')">Cancelar</button>
+     <button class="btn-s" onclick="saveDebriefingItem()"><i class="ti ti-device-floppy" style="font-size:10px"></i> Salvar</button>`);
+  openM('debriefing-modal');
+  renderDebProjectPicker();
+}
+function toggleDebProjectKey(key,checked){
+  if(checked)debSelectedKeys.add(key);else debSelectedKeys.delete(key);
+}
+function renderDebProjectPicker(){
+  const box=document.getElementById('deb-proj-picker');if(!box)return;
+  const q=(document.getElementById('deb-proj-search')?.value||'').toLowerCase().trim();
+  let list=PROJECTS.slice().sort((a,b)=>a.summary.localeCompare(b.summary));
+  if(q)list=list.filter(p=>p.key.toLowerCase().includes(q)||p.summary.toLowerCase().includes(q));
+  list=list.slice(0,80); // evita travar com portfólios muito grandes; a busca já filtra o resto
+  if(!list.length){box.innerHTML='<div style="font-size:9.5px;color:var(--text3);padding:6px">Nenhum projeto encontrado.</div>';return;}
+  box.innerHTML=list.map(p=>`
+    <label style="display:flex;align-items:center;gap:6px;padding:3px 2px;font-size:10px;cursor:pointer">
+      <input type="checkbox" ${debSelectedKeys.has(p.key)?'checked':''} onchange="toggleDebProjectKey('${p.key.replace(/'/g,"\\'")}',this.checked)">
+      <span><b>${p.key}</b> · ${p.summary}</span>
+    </label>`).join('');
+}
+function saveDebriefingItem(){
+  const title=document.getElementById('deb-title').value.trim();
+  const date=document.getElementById('deb-date').value;
+  const link=document.getElementById('deb-link').value.trim();
+  const notes=document.getElementById('deb-notes').value.trim();
+  if(!title){alert('Informe o título da reunião.');return;}
+  if(!date){alert('Informe a data da reunião.');return;}
+  const projectKeys=Array.from(debSelectedKeys);
+  if(editDebriefingId){
+    const m=DEBRIEFING_MINUTES.find(x=>x.id===editDebriefingId);
+    if(m)Object.assign(m,{title,date,link:link||null,notes:notes||'',projectKeys});
+  } else {
+    DEBRIEFING_MINUTES.push({id:uid(),title,date,link:link||null,notes:notes||'',projectKeys,createdBy:currentUser?.name||currentUser?.email||'—',createdAt:new Date().toISOString()});
+  }
+  closeM('debriefing-modal');
+  renderDocsLibrary();
+  persistDebriefingMinutes();
+}
+function removeDebriefingMinute(id){
+  if(!isAdmin()){alert('Apenas administradores podem remover atas de reunião.');return;}
+  const m=DEBRIEFING_MINUTES.find(x=>x.id===id);if(!m)return;
+  if(!confirm(`Remover a ata "${m.title}"?`))return;
+  DEBRIEFING_MINUTES=DEBRIEFING_MINUTES.filter(x=>x.id!==id);
+  renderDocsLibrary();
+  persistDebriefingMinutes();
+}
+
 function openPriorityHistoryModal(id){
   const h=PRIORITY_HISTORY.find(x=>x.id===id);if(!h)return;
   const ddmm=fmtBR(h.date).slice(0,5);
@@ -7051,6 +7314,7 @@ async function persistSchedule(key) {
         scoringProd:   schedules[key].scoringProd   || null,
         stakeholders:  schedules[key].stakeholders  || [],
         scopeLink:     schedules[key].scopeLink     || null,
+        formLink:      schedules[key].formLink      || null,
         scopeSummary:  schedules[key].scopeSummary  || '',
         clientName:    schedules[key].clientName    || '',
         clientNameManual: schedules[key].clientNameManual || false,
@@ -7108,6 +7372,7 @@ async function autoLoadOnLogin() {
             scoringProd:   raw.scoringProd   || null,
             stakeholders:  raw.stakeholders  || [],
             scopeLink:     raw.scopeLink     || null,
+            formLink:      raw.formLink      || null,
             scopeSummary:  raw.scopeSummary  || '',
             clientName:    raw.clientName    || '',
             clientNameManual: raw.clientNameManual || false,
@@ -7123,7 +7388,7 @@ async function autoLoadOnLogin() {
         try {
           const raw = JSON.parse(JSON.stringify(doc.data()));
           if (schedules[doc.id]) schedules[doc.id].updates = raw.updates || [];
-          else schedules[doc.id] = { milestones:[], tasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[] };
+          else schedules[doc.id] = { milestones:[], tasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, formLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[] };
         } catch(e) { console.warn('Error loading updates', doc.id, e); }
       });
       // Load users (compartilha a mesma lógica usada no pré-carregamento antes do login)
@@ -7139,6 +7404,12 @@ async function autoLoadOnLogin() {
       if (snapPrioHist.exists) {
         const savedHist = snapPrioHist.data().items || [];
         if (savedHist.length) PRIORITY_HISTORY = savedHist;
+      }
+      // Load debriefing minutes
+      const snapDebMin = await db.collection('app_config').doc('debriefing_minutes').get();
+      if (snapDebMin.exists) {
+        const savedDebMin = snapDebMin.data().items || [];
+        if (savedDebMin.length) DEBRIEFING_MINUTES = savedDebMin;
       }
       setSyncTxt('ok', '✓ Dados carregados');
       setTimeout(() => setSyncTxt('idle', ''), 2500);
@@ -7281,6 +7552,15 @@ async function persistPriorityHistory() {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
   } catch(e) { console.error('persistPriorityHistory error:', e); }
+}
+async function persistDebriefingMinutes() {
+  if (!firebaseReady || !db) return;
+  try {
+    await db.collection('app_config').doc('debriefing_minutes').set({
+      items:     DEBRIEFING_MINUTES,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch(e) { console.error('persistDebriefingMinutes error:', e); }
 }
 
 async function syncFromJira(){
@@ -7442,7 +7722,7 @@ function applyJiraSync(freshProjects,opts={}){
     // só aplica se o Jira mandou um valor preenchido, e só se ninguém já definiu manualmente
     // pelo lápis do Resumo dos Projetos (ver editClientName/clientNameManual).
     if(fp.clientName){
-      if(!schedules[fp.key])schedules[fp.key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
+      if(!schedules[fp.key])schedules[fp.key]={milestones:[],tasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[]};
       if(!schedules[fp.key].clientNameManual&&schedules[fp.key].clientName!==fp.clientName){
         schedules[fp.key].clientName=fp.clientName;
         clientNameTouched.push(fp.key);
@@ -7524,6 +7804,21 @@ function prioDrop(key,ev){
   if(currentReorderScope)reorderScopedPriority(srcKey,key,before,currentReorderScope);
   else reorderProjectPriority(srcKey,key,before);
 }
+// "Última Prioridade" deve funcionar como uma referência estável de comparação — não como
+// um espelho de instantes atrás. Em reunião de priorização o time reordena várias vezes no
+// mesmo dia (ajustando conforme a discussão), e se cada reorder atualizasse a "última" junto,
+// a coluna perderia o sentido de "de onde viemos" a cada poucos segundos. Por isso só
+// capturamos um novo valor de "última prioridade" na PRIMEIRA mudança de prioridade de cada
+// projeto em um novo dia civil — mudanças seguintes no mesmo dia só atualizam a prioridade
+// atual, sem tocar na referência (que só "vira a página" no dia seguinte).
+function captureLastPriorityIfNewDay(p,oldPriority){
+  const now=new Date();
+  const todayStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  if(p.lastPriorityCaptureDay!==todayStr){
+    p.lastPriority=oldPriority;
+    p.lastPriorityCaptureDay=todayStr;
+  }
+}
 // Reordena movendo o projeto arrastado para a nova posição e RENUMERA sequencialmente
 // (sem criar números fracionários) — a prioridade de cada projeto passa a corresponder
 // exatamente à sua posição na lista. Só os projetos cujo número realmente mudou (o arrastado
@@ -7537,28 +7832,38 @@ function reorderProjectPriority(draggedKey,targetKey,dropBefore){
   if(PRIORITY_LIST_EXCLUDED_STATUS.has(dragged.status)){alert(`Esse projeto está em "${dragged.status}" e não participa da lista de prioridade reordenável — mude o status para incluí-lo no ranking.`);return;}
   const target=PROJECTS.find(p=>p.key===targetKey);
   if(target&&PRIORITY_LIST_EXCLUDED_STATUS.has(target.status)){alert(`Não é possível soltar sobre um projeto em "${target.status}" — esse grupo não faz parte do ranking numerado.`);return;}
-  // Só renumera quem de fato participa do ranking (exclui Backlog/Pausado/Cancelado/Pós produção/
-  // Neg. Comercial — esses ficam nos "baldes" 998/999/1000/99, sem prioridade individual real).
+  // O projeto ARRASTADO "pula" para a posição de destino e assume o valor de prioridade de
+  // quem ocupava aquele lugar; todo mundo que ficou "atropelado" nesse trajeto desloca uma
+  // posição (como uma troca em cadeia). NINGUÉM fora desse trecho (do ponto de origem até o
+  // ponto de destino) é tocado — os valores usados são sempre os mesmos que já existiam
+  // nesse trecho, só trocam de dono. Isso evita tanto renumerar o portfólio inteiro quanto
+  // inventar números fracionários novos (que colidiam na exibição truncada).
   const reorderable=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status));
   const ordered=reorderable.slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999));
-  const basePriority=Math.floor(Math.min(...ordered.map(p=>p.priority??0)));
-  const fromIdx=ordered.findIndex(p=>p.key===draggedKey);
+  const oldKeys=ordered.map(p=>p.key);
+  const oldPriorityAtPos=ordered.map(p=>p.priority);
+  const fromIdx=oldKeys.indexOf(draggedKey);
   if(fromIdx<0)return;
-  ordered.splice(fromIdx,1);
-  const targetIdx=ordered.findIndex(p=>p.key===targetKey);
-  if(targetIdx<0)return;
-  const insertIdx=dropBefore?targetIdx:targetIdx+1;
-  ordered.splice(insertIdx,0,dragged);
+  const work=ordered.slice();
+  const removed=work.splice(fromIdx,1)[0];
+  const targetIdxAfterRemoval=work.findIndex(p=>p.key===targetKey);
+  if(targetIdxAfterRemoval<0)return;
+  const insertIdx=dropBefore?targetIdxAfterRemoval:targetIdxAfterRemoval+1;
+  work.splice(insertIdx,0,removed);
+  const newKeys=work.map(p=>p.key);
+  let lo=0;while(lo<oldKeys.length&&oldKeys[lo]===newKeys[lo])lo++;
+  let hi=oldKeys.length-1;while(hi>=0&&oldKeys[hi]===newKeys[hi])hi--;
+  if(lo>hi)return; // soltou no mesmo lugar de onde saiu — nada muda
   const changed=[];
-  ordered.forEach((p,i)=>{
-    const newPriority=basePriority+i;
-    if(p.priority!==newPriority){
-      const oldPriority=p.priority;
-      p.lastPriority=oldPriority; // captura automaticamente o valor anterior
-      p.priority=newPriority;
-      changed.push(p);
-    }
-  });
+  for(let i=lo;i<=hi;i++){
+    const proj=PROJECTS.find(p=>p.key===newKeys[i]);
+    const newVal=oldPriorityAtPos[i];
+    if(!proj||proj.priority===newVal)continue;
+    const oldPriority=proj.priority;
+    captureLastPriorityIfNewDay(proj,oldPriority);
+    proj.priority=newVal;
+    changed.push(proj);
+  }
   if(!changed.length)return;
   persistProjects();
   changed.forEach(p=>pushPriorityToJira(p.key,p.priority,p.lastPriority));
@@ -7627,6 +7932,68 @@ function segComponentFor(p){
 // Status que nunca entram na sugestão de priorização: já não fazem parte da fila ativa de
 // entrega (negociação ainda não fechada, ou o projeto já saiu do fluxo de execução).
 const PRIORITY_LIST_EXCLUDED_STATUS=new Set(['NEG. COMERCIAL / PRÉ VENDA','CANCELADO','PAUSADO','BACKLOG','Pós produção']);
+function priorityIsShared(p){
+  if(p.priority==null)return false;
+  return PROJECTS.filter(x=>x.status!==DELIVERED_STATUS&&x.priority===p.priority).length>1;
+}
+// ── Correção de prioridades "fictícias" herdadas de um bug antigo ──
+// Antes de uma correção anterior, arrastar QUALQUER projeto na aba Prioridades renumerava TODO
+// mundo não entregue — inclusive Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial, que
+// nunca deveriam ter prioridade individual — e enviava esses números fabricados pro Jira. Isso
+// já aconteceu antes dessa correção existir, então o Jira hoje pode guardar prioridades
+// individuais falsas pra projetos nesses status, que voltam a cada Sync Jira. Este é o "balde"
+// correto de cada status excluído, pra restaurar e reenviar ao Jira sob demanda (nunca sozinho).
+const PRIORITY_BUCKET_VALUES={
+  'NEG. COMERCIAL / PRÉ VENDA':99,
+  'BACKLOG':998,
+  'PAUSADO':999,
+  'Pós produção':1000,
+  'CANCELADO':1001,
+};
+function getFictitiousPriorityProjects(){
+  return PROJECTS.filter(p=>{
+    const bucket=PRIORITY_BUCKET_VALUES[p.status];
+    return bucket!=null&&p.priority!==bucket;
+  });
+}
+function openPriorityRepairModal(){
+  const toFix=getFictitiousPriorityProjects();
+  const rows=toFix.map(p=>`<tr>
+      <td style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap">${p.key}</td>
+      <td style="font-size:10.5px">${p.summary}</td>
+      <td style="font-size:9.5px;text-align:center"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span></td>
+      <td style="font-size:10.5px;text-align:center;color:var(--red);font-weight:700">${p.priority}</td>
+      <td style="font-size:10.5px;text-align:center;color:var(--green);font-weight:700">${PRIORITY_BUCKET_VALUES[p.status]}</td>
+    </tr>`).join('');
+  const body=toFix.length
+    ? `<div class="info-box" style="margin-bottom:8px">Encontrados <b>${toFix.length}</b> projeto(s) com uma prioridade individual fictícia num status que não deveria ter uma (herdada de um bug antigo de reordenação). Confirmando, o valor é corrigido aqui no HUB e a correção é enviada ao Jira para cada um deles.</div>
+       <div style="max-height:380px;overflow-y:auto"><table class="pft" style="width:100%">
+         <thead><tr><th>Chave</th><th>Projeto</th><th style="text-align:center">Status</th><th style="text-align:center">Atual</th><th style="text-align:center">Corrigido</th></tr></thead>
+         <tbody>${rows}</tbody>
+       </table></div>`
+    : `<div class="info-box">Nenhuma prioridade fictícia encontrada — todos os projetos em Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial já estão com o valor correto.</div>`;
+  getOrBuildModal('priority-repair-modal','Corrigir prioridades fictícias',body,
+    toFix.length
+      ? `<button class="btn-c" onclick="closeM('priority-repair-modal')">Cancelar</button><button class="btn-s" style="background:#c2410c" onclick="applyPriorityRepair()"><i class="ti ti-tool" style="font-size:10px"></i> Corrigir ${toFix.length} e enviar ao Jira</button>`
+      : `<button class="btn-c" onclick="closeM('priority-repair-modal')">Fechar</button>`
+  );
+  const mbox=document.querySelector('#priority-repair-modal .mbox');if(mbox)mbox.style.width='720px';
+  openM('priority-repair-modal');
+}
+function applyPriorityRepair(){
+  const toFix=getFictitiousPriorityProjects();
+  if(!toFix.length){closeM('priority-repair-modal');return;}
+  toFix.forEach(p=>{
+    const old=p.priority;
+    p.lastPriority=old;
+    p.priority=PRIORITY_BUCKET_VALUES[p.status];
+  });
+  persistProjects();
+  toFix.forEach(p=>pushPriorityToJira(p.key,p.priority,p.lastPriority));
+  closeM('priority-repair-modal');
+  renderPortfolio();
+  alert(`✓ ${toFix.length} prioridade(s) corrigida(s) e enviada(s) ao Jira.`);
+}
 function computeSuggestedPriorityOrder(){
   const reorderable=PROJECTS.filter(p=>!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status));
   const currentOrder=reorderable.slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999));
@@ -7701,7 +8068,7 @@ function applySuggestedPriorityOrder(){
   ordered.forEach((p,i)=>{
     const newPriority=basePriority+i;
     if(p.priority!==newPriority){
-      p.lastPriority=p.priority;
+      captureLastPriorityIfNewDay(p,p.priority);
       p.priority=newPriority;
       changed.push(p);
     }
