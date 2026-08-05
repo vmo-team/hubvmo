@@ -517,6 +517,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .del-btn{display:none;position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:8.5px;padding:1px 4px;border:1px solid #fca5a5;border-radius:3px;background:#fef2f2;cursor:pointer;color:#dc2626;z-index:2}
 .trow:hover .del-btn{display:flex;align-items:center;gap:1px}
 .no-edit .del-btn{display:none!important}
+.no-edit .add-row{display:none!important}
 /* Gantt */
 .gh-wrap{position:sticky;top:0;z-index:4;background:var(--bg2);border-bottom:1px solid var(--border)}
 .month-row{display:flex;height:17px}
@@ -3130,9 +3131,13 @@ function computeTeamCapacitySummary(roster){
   const negocProjects=[...negocSeen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
   return{recursos:roster.length,total:projects.length,clienteCount,projects,negocProjects};
 }
-function cargaFlatRowHtml(p,dim){
+function cargaFlatRowHtml(p,dim,teamKey){
   const gp=(p.gp||'').split(',')[0].trim();
-  const rev=p.receitaLiquidaPrevista;
+  // Time Transformação (ex-PMO) trabalha só com projetos de Produto/TI/Regulatório — o campo de
+  // receita não se aplica a esses projetos (não há R$ previsto) e, na prática, acaba usado pra
+  // anotar o driver do projeto, que é sempre o mesmo pra esse time. Por isso não mostramos essa
+  // tag aqui: pra Time VMO (projetos comerciais) o campo continua aparecendo normalmente.
+  const rev=teamKey==='PMO'?null:p.receitaLiquidaPrevista;
   const stCls=JIRA_SC[p.status]||'s-bkl';
   return `<div class="carga-flat-row${dim?' dim':''}" onclick="openProject('${p.key}')">
     <span class="carga-flat-num">#${p.priority??'—'}</span>
@@ -3147,9 +3152,9 @@ function cargaFlatRowHtml(p,dim){
 // ordenados por prioridade, seguidos do divisor "Em negociação" e os presales do time, tudo
 // dentro do mesmo container, igual à referência do Apps Script.
 function cargaCapacityHeroHtml(teamLabel,summary,teamKey){
-  const activeRows=summary.projects.map(p=>cargaFlatRowHtml(p,false)).join('');
+  const activeRows=summary.projects.map(p=>cargaFlatRowHtml(p,false,teamKey)).join('');
   const negocDivider=summary.negocProjects.length?`<div class="carga-flat-negoc-divider">Em negociação · suporte do time necessário · não entra na conta</div>`:'';
-  const negocRows=summary.negocProjects.map(p=>cargaFlatRowHtml(p,true)).join('');
+  const negocRows=summary.negocProjects.map(p=>cargaFlatRowHtml(p,true,teamKey)).join('');
   const allRows=activeRows+negocDivider+negocRows;
   return `<div style="margin-bottom:12px">
     <div class="carga-cap-hero">
@@ -4539,10 +4544,23 @@ function renderResumoDecisionsList(){
     return `<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${meta.color}"></div><div style="min-width:0"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:${meta.color}">${d.typeLabel||meta.label}</div><div style="font-size:10px;color:var(--text2);margin-top:1px">${d.description.length>90?d.description.slice(0,90)+'…':d.description}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${d.who} · ${d.when}</div></div></div>`;
   }).join(''):'<div class="rsm-empty">Nenhuma decisão registrada ainda.</div>';
 }
+// Junta as atas cadastradas direto no projeto (schedules[key].minutes) com as atas de
+// Debriefing (Documentos Úteis) que citaram este projeto entre os "Projetos discutidos" —
+// assim uma ata de debriefing relacionada aqui aparece automaticamente no Resumo, sem precisar
+// cadastrar a mesma reunião duas vezes. Ordenado por data (mais recente primeiro).
+function getCombinedMinutesForProject(key){
+  const sched=schedules[key];
+  const own=((sched&&sched.minutes)||[]).map(m=>({...m,source:'own'}));
+  const fromDebriefing=DEBRIEFING_MINUTES.filter(d=>(d.projectKeys||[]).includes(key)).map(d=>({
+    id:d.id,title:d.title,date:d.date,link:d.link||'',summary:d.notes||'',
+    author:d.createdBy||'—',addedAt:(d.createdAt||'').slice(0,10),source:'debriefing'
+  }));
+  return[...own,...fromDebriefing].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+}
 function renderResumoMinutesList(){
-  const sched=schedules[curKey];const list=document.getElementById('rsm-minutes-list');if(!list)return;
-  const recent=(sched.minutes||[]).slice(0,3);
-  list.innerHTML=recent.length?recent.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:#0d9488"></div><div style="min-width:0"><div style="font-size:10.5px;font-weight:600">${m.title}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${fmtBRFull(m.date)}${m.link?' · <a href="'+m.link+'" target="_blank">link</a>':''}</div>${m.summary?`<div style="font-size:9.5px;color:var(--text2);margin-top:2px">${m.summary.length>90?m.summary.slice(0,90)+'…':m.summary}</div>`:''}</div></div>`).join(''):'<div class="rsm-empty">Nenhuma ata cadastrada ainda.</div>';
+  const list=document.getElementById('rsm-minutes-list');if(!list)return;
+  const recent=getCombinedMinutesForProject(curKey).slice(0,3);
+  list.innerHTML=recent.length?recent.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:#0d9488"></div><div style="min-width:0"><div style="font-size:10.5px;font-weight:600">${m.title}${m.source==='debriefing'?' <span style="font-weight:600;color:#7c3aed;font-size:8.5px">· Debriefing</span>':''}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${fmtBRFull(m.date)}${m.link?' · <a href="'+m.link+'" target="_blank">link</a>':''}</div>${m.summary?`<div style="font-size:9.5px;color:var(--text2);margin-top:2px">${m.summary.length>90?m.summary.slice(0,90)+'…':m.summary}</div>`:''}</div></div>`).join(''):'<div class="rsm-empty">Nenhuma ata cadastrada ainda.</div>';
 }
 // ── Atas de Reuniões: modal de cadastro/consulta ──
 function openMinutesModal(){
@@ -4550,7 +4568,7 @@ function openMinutesModal(){
   const sched=schedules[curKey];if(!sched.minutes)sched.minutes=[];
   const canEd=isEditorOrAbove();
   const modal=getOrBuildModal('minutes-modal','Atas de Reuniões',`
-    <div class="info-box">Registre aqui as atas das reuniões deste projeto — data, resumo e link para o documento completo (Confluence, Drive etc.), quando existir.</div>
+    <div class="info-box">Registre aqui as atas das reuniões deste projeto — data, resumo e link para o documento completo (Confluence, Drive etc.), quando existir. Atas de <b>Debriefing</b> cadastradas em Documentos Úteis que citam este projeto também aparecem aqui automaticamente.</div>
     ${canEd?`<div class="section-lbl">Registrar nova ata</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
       <input type="text" id="min-title" placeholder="Título da reunião" style="flex:1;min-width:150px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px">
@@ -4568,23 +4586,25 @@ function openMinutesModal(){
   openM('minutes-modal');
 }
 function minuteCardHtml(m){
+  const isDeb=m.source==='debriefing';
   return `<div style="display:flex;gap:8px;padding:7px 9px;background:var(--bg2);border-radius:6px">
-      <div style="width:7px;height:7px;border-radius:50%;background:#0d9488;flex-shrink:0;margin-top:4px"></div>
+      <div style="width:7px;height:7px;border-radius:50%;background:${isDeb?'#7c3aed':'#0d9488'};flex-shrink:0;margin-top:4px"></div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <span style="font-size:10.5px;font-weight:700;color:var(--text)">${m.title}</span>
+          ${isDeb?`<span style="font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#6d28d9">DEBRIEFING</span>`:''}
           <span style="font-size:9px;color:var(--text3)">${fmtBRFull(m.date)}</span>
           ${m.link?`<a href="${m.link}" target="_blank" style="font-size:9px">🔗 link</a>`:''}
         </div>
         ${m.summary?`<div style="font-size:10.5px;color:var(--text2);margin-top:2px;white-space:pre-wrap">${m.summary}</div>`:''}
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">${m.author} · ${m.addedAt}</div>
+        <div style="font-size:9px;color:var(--text3);margin-top:3px">${m.author} · ${m.addedAt}${isDeb?' · cadastrada em Documentos Úteis':''}</div>
       </div>
-      ${isAdmin()?`<button class="rm" onclick="removeMinute('${m.id}')">×</button>`:''}
+      ${(isAdmin()&&!isDeb)?`<button class="rm" onclick="removeMinute('${m.id}')">×</button>`:''}
     </div>`;
 }
 function renderMinutesModalList(){
-  const sched=schedules[curKey];const list=document.getElementById('minutes-list');if(!sched||!list)return;
-  const all=(sched.minutes||[]);
+  const list=document.getElementById('minutes-list');if(!curKey||!list)return;
+  const all=getCombinedMinutesForProject(curKey);
   list.innerHTML=all.length?all.map(m=>minuteCardHtml(m)).join(''):'<div style="font-size:10.5px;color:var(--text3);padding:4px">Nenhuma ata registrada ainda.</div>';
 }
 function addMinuteToProject(key,title,date,link,summary){
@@ -6045,12 +6065,17 @@ function getOrBuildModal(id,title,body,footer){
 }
 
 // Milestone
-function openMsModal(id){editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;
-  const modal=getOrBuildModal('ms-modal','Etapa',`<div class="fg"><label>Nome *</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="ms-start"></div><div class="fg"><label>Prazo</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">Responsáveis</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="Adiciona esse(s) responsável(is) em todas as tarefas desta etapa, sem remover quem já estiver atribuído"><i class="ti ti-copy" style="font-size:10px"></i> Aplicar a todas as tarefas</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>Status</label><select id="ms-status"><option value="not_started">Não iniciado</option><option value="in_progress">Em andamento</option><option value="done">Concluído</option><option value="blocked">Bloqueado</option><option value="cancelled">Cancelado</option></select></div><div class="fg"><label>Cor</label><select id="ms-color"><option value="#6366f1">Índigo</option><option value="#8b5cf6">Violeta</option><option value="#06b6d4">Ciano</option><option value="#10b981">Verde</option><option value="#f59e0b">Âmbar</option><option value="#ef4444">Vermelho</option><option value="#3b82f6">Azul</option><option value="#ec4899">Rosa</option></select></div></div>`,
-  `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">Excluir</button><button class="btn-c" onclick="closeM('ms-modal')">Cancelar</button><button class="btn-s" onclick="saveMs()">Salvar</button>`);
-  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=ms?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=ms?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr;document.getElementById('ms-er-info').textContent=autoEr?`Calculado automaticamente (${fmtBR(autoEr)}).`:`Preencha manualmente se necessário.`;document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');openM('ms-modal');}
-function saveMs(){const name=document.getElementById('ms-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];const data={name,start:document.getElementById('ms-start').value,deadline:document.getElementById('ms-deadline').value,endReal:document.getElementById('ms-endreal').value,status:document.getElementById('ms-status').value,color:document.getElementById('ms-color').value,assignees:getAs('ms-a-list')};if(editMsId){const ms=sched.milestones.find(m=>m.id===editMsId);const old=JSON.parse(JSON.stringify(ms));Object.assign(ms,data);if(old.deadline!==data.deadline)logChange(curKey,`Etapa "${name}": prazo ${fmtBR(old.deadline)} → ${fmtBR(data.deadline)}`,'#d97706');}else{const newMs={id:uid(),...data};sched.milestones.push(newMs);if(!sched.baseline)sched.baseline={milestones:[JSON.parse(JSON.stringify(newMs))],tasks:JSON.parse(JSON.stringify(sched.tasks))};else sched.baseline.milestones.push(JSON.parse(JSON.stringify(newMs)));logChange(curKey,`Etapa "${name}" criada`,'#6924E1');}closeM('ms-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);persistSchedule(curKey);}
-function deleteMs(){if(!confirm('Excluir etapa e suas tarefas?'))return;const sched=schedules[curKey];sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
+function openMsModal(id){if(!id&&!canEdit(curKey)){alert('Você não tem permissão para criar etapas neste cronograma.');return;}editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;const editable=canEdit(curKey);
+  const modal=getOrBuildModal('ms-modal','Etapa',`<div class="fg"><label>Nome *</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="ms-start"></div><div class="fg"><label>Prazo</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">Responsáveis</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="Adiciona esse(s) responsável(is) em todas as tarefas desta etapa, sem remover quem já estiver atribuído"><i class="ti ti-copy" style="font-size:10px"></i> Aplicar a todas as tarefas</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>Status</label><select id="ms-status"><option value="not_started">Não iniciado</option><option value="in_progress">Em andamento</option><option value="done">Concluído</option><option value="blocked">Bloqueado</option><option value="cancelled">Cancelado</option></select></div><div class="fg"><label>Cor</label><select id="ms-color"><option value="#6366f1">Índigo</option><option value="#8b5cf6">Violeta</option><option value="#06b6d4">Ciano</option><option value="#10b981">Verde</option><option value="#f59e0b">Âmbar</option><option value="#ef4444">Vermelho</option><option value="#3b82f6">Azul</option><option value="#ec4899">Rosa</option></select></div></div>`,
+  `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">Excluir</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">Cancelar</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">Salvar</button>`);
+  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`Calculado automaticamente (${fmtBR(autoEr)}).`:`Preencha manualmente se necessário.`;document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
+  ['ms-name','ms-start','ms-deadline','ms-status','ms-color'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const msAddResp=document.getElementById('ms-add-resp-btn');if(msAddResp)msAddResp.style.display=editable?'':'none';
+  document.getElementById('ms-save-btn').style.display=editable?'':'none';
+  document.getElementById('ms-cancel-btn').textContent=editable?'Cancelar':'Fechar';
+  openM('ms-modal');}
+function saveMs(){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const name=document.getElementById('ms-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];const data={name,start:document.getElementById('ms-start').value,deadline:document.getElementById('ms-deadline').value,endReal:document.getElementById('ms-endreal').value,status:document.getElementById('ms-status').value,color:document.getElementById('ms-color').value,assignees:getAs('ms-a-list')};if(editMsId){const ms=sched.milestones.find(m=>m.id===editMsId);const old=JSON.parse(JSON.stringify(ms));Object.assign(ms,data);if(old.deadline!==data.deadline)logChange(curKey,`Etapa "${name}": prazo ${fmtBR(old.deadline)} → ${fmtBR(data.deadline)}`,'#d97706');}else{const newMs={id:uid(),...data};sched.milestones.push(newMs);if(!sched.baseline)sched.baseline={milestones:[JSON.parse(JSON.stringify(newMs))],tasks:JSON.parse(JSON.stringify(sched.tasks))};else sched.baseline.milestones.push(JSON.parse(JSON.stringify(newMs)));logChange(curKey,`Etapa "${name}" criada`,'#6924E1');}closeM('ms-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);persistSchedule(curKey);}
+function deleteMs(){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}if(!confirm('Excluir etapa e suas tarefas?'))return;const sched=schedules[curKey];sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
 // Copia o(s) responsável(is) atualmente preenchido(s) na etapa para todas as tarefas dela —
 // só ADICIONA quem ainda não estiver na tarefa, nunca remove um responsável já atribuído.
 function applyMsAssigneesToTasks(){
@@ -6094,6 +6119,7 @@ function renderMsBulkBar(){
   } else bar.style.display='none';
 }
 function deleteSelectedMs(){
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
   if(!selectedMs.size||!curKey)return;
   const sched=schedules[curKey];
   const names=sched.milestones.filter(m=>selectedMs.has(m.id)).map(m=>m.name);
@@ -6132,6 +6158,7 @@ function onMsDragLeave(e){
 function onMsDrop(e,targetMsId){
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
+  if(!canEdit(curKey))return;
   if(!dragMsId||dragMsId===targetMsId)return;
   const sched=schedules[curKey];const arr=sched.milestones;
   const fromIdx=arr.findIndex(m=>m.id===dragMsId);
@@ -6422,10 +6449,10 @@ function renderScoringView(){
 }
 
 // Task
-function openTaskModal(msId,taskId){editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;
-  const modal=getOrBuildModal('task-modal','Tarefa',`<div class="fg"><label>Nome *</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="t-start"></div><div class="fg"><label>Prazo</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">Responsáveis</div><div class="a-list" id="t-a-list"></div><button class="add-a" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row"><div class="fg"><label>Status</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">Não iniciada</option><option value="in_progress">Em andamento</option><option value="done">Concluída</option><option value="blocked">Bloqueada</option><option value="cancelled">Cancelada</option></select></div><div class="fg"><label>Progresso (%)</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> Tarefa crítica — atraso pode impactar a data final do projeto</label></div><div class="fg"><label>Depende de (números da coluna #, separados por vírgula. Ex: 3, 4, 7)</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>Tipo de dependência</label><select id="t-deptype"><option value="TI">TI — Término para Início (mais comum)</option><option value="II">II — Início para Início</option><option value="TT">TT — Término para Término</option><option value="IT">IT — Início para Término</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>Como se relaciona?</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">🔒 Bloqueia</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">⚡ Paralelo</button></div></div></div><div class="fg"><label>Links (Jira, Confluence, etc.)</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar link</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>Observações</label><textarea id="t-notes" rows="2"></textarea></div>`,
-  `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">Excluir</button><button class="btn-c" onclick="closeM('task-modal')">Cancelar</button><button class="btn-s" onclick="saveTask()">Salvar</button>`);
-  document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:ds(addD(TODAY,14));document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-del-btn').style.display=t?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);
+function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert('Você não tem permissão para criar tarefas neste cronograma.');return;}editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;const editable=canEdit(curKey);
+  const modal=getOrBuildModal('task-modal','Tarefa',`<div class="fg"><label>Nome *</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="t-start"></div><div class="fg"><label>Prazo</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">Responsáveis</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row"><div class="fg"><label>Status</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">Não iniciada</option><option value="in_progress">Em andamento</option><option value="done">Concluída</option><option value="blocked">Bloqueada</option><option value="cancelled">Cancelada</option></select></div><div class="fg"><label>Progresso (%)</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> Tarefa crítica — atraso pode impactar a data final do projeto</label></div><div class="fg"><label>Depende de (números da coluna #, separados por vírgula. Ex: 3, 4, 7)</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>Tipo de dependência</label><select id="t-deptype"><option value="TI">TI — Término para Início (mais comum)</option><option value="II">II — Início para Início</option><option value="TT">TT — Término para Término</option><option value="IT">IT — Início para Término</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>Como se relaciona?</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">🔒 Bloqueia</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">⚡ Paralelo</button></div></div></div><div class="fg"><label>Links (Jira, Confluence, etc.)</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar link</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>Observações</label><textarea id="t-notes" rows="2"></textarea></div>`,
+  `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">Excluir</button><button class="btn-c" id="t-cancel-btn" onclick="closeM('task-modal')">Cancelar</button><button class="btn-s" id="t-save-btn" onclick="saveTask()">Salvar</button>`);
+  document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:ds(addD(TODAY,14));document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-del-btn').style.display=(t&&editable)?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);
   document.getElementById('t-progress').value=t?taskProg(t):0;
   // Mapa de números (coluna #) ↔ id, mesmo usado na tabela do cronograma
   const{numToId,idToNum}=buildRowNumMap(sched);
@@ -6447,6 +6474,11 @@ function openTaskModal(msId,taskId){editTaskMsId=msId;editTaskId=taskId;depModeV
   }
   depInput.oninput=updateDepPreview;updateDepPreview();
   if(t&&getTaskLinks(t).length&&!t.notes)fetchJiraTaskDescription();
+  ['t-name','t-start','t-deadline','t-endreal','t-status','t-progress','t-critical','t-dep','t-deptype','t-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const tAddResp=document.getElementById('t-add-resp-btn');if(tAddResp)tAddResp.style.display=editable?'':'none';
+  const tAddLink=document.getElementById('t-add-link-btn');if(tAddLink)tAddLink.style.display=editable?'':'none';
+  document.getElementById('t-save-btn').style.display=editable?'':'none';
+  document.getElementById('t-cancel-btn').textContent=editable?'Cancelar':'Fechar';
   openM('task-modal');}
 function onStatusChangeFromSelect(){
   progressTouched=false;
@@ -6502,7 +6534,7 @@ function onProgressInput(){
   const st=v>=100?'done':v<=0?'not_started':'in_progress';
   document.getElementById('t-status').value=st;
 }
-function saveTask(){const name=document.getElementById('t-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];// Parse line numbers to IDs
+function saveTask(){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const name=document.getElementById('t-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];// Parse line numbers to IDs
   const sched2=schedules[curKey];const{numToId:numToId2}=buildRowNumMap(sched2);
   const depRaw=document.getElementById('t-dep').value;
   const depIds=depRaw.split(',').map(s=>s.trim()).filter(Boolean).map(v=>numToId2[parseInt(v)]).filter(Boolean);
@@ -6530,6 +6562,7 @@ function saveTask(){const name=document.getElementById('t-name').value.trim();if
   }
   autoUpdateMsStatus(curKey);const casc3=cascadeReschedule(curKey);logCascadeChanges(curKey,casc3.changed);closeM('task-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);}
 function deleteTask(){
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
   if(!confirm('Excluir tarefa?'))return;
   const sched=schedules[curKey];const delT=sched.tasks.find(x=>x.id===editTaskId);
   sched.tasks=sched.tasks.filter(t=>t.id!==editTaskId);
