@@ -289,7 +289,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .ti-legend{display:flex;align-items:center;gap:16px;padding:9px 12px;border-top:1px solid var(--border2);font-size:9.5px;color:var(--text3);flex-wrap:wrap}
 .ti-legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:middle}
 .carga-team-divider{font-size:10.5px;font-weight:700;color:#5b21b6;text-transform:uppercase;letter-spacing:.5px;background:#ede9fe;border-left:4px solid #6924E1;padding:7px 11px;margin:2px 0 8px;border-radius:5px}
-.carga-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;padding:2px 0 10px}
+.carga-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:2px 0 10px}
 .carga-person-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
 .carga-person-hdr{padding:8px 10px 7px}
 .carga-tier-badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:9px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;background:#fee2e2;color:#b91c1c}
@@ -300,6 +300,27 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .carga-negoc-list-title{font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:0 4px 3px}
 .carga-negoc-item{font-size:9px;color:var(--text3);font-style:italic;padding:2px 4px;line-height:1.4}
 .carga-proj-item{display:flex;flex-direction:column;gap:3px}
+/* ── Capacidade (hero + lista plana) ── */
+.carga-cap-hero{position:relative;background:linear-gradient(135deg,var(--purple),#027BFF);color:#fff;border-radius:10px 10px 0 0;padding:14px 16px 16px}
+.carga-cap-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.85}
+.carga-cap-title{font-size:16px;font-weight:700;margin-top:5px;line-height:1.3;max-width:calc(100% - 110px)}
+.carga-cap-badge{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.18);border-radius:10px;padding:8px 12px;text-align:center;min-width:84px}
+.carga-cap-badge b{display:block;font-size:19px;font-weight:700;line-height:1}
+.carga-cap-badge span{display:block;font-size:8px;font-weight:600;opacity:.9;margin-top:2px;line-height:1.25}
+.carga-flat-list{border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;max-height:340px;overflow-y:auto}
+.carga-flat-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:10.5px}
+.carga-flat-row:last-child{border-bottom:none}
+.carga-flat-row:hover{background:var(--bg2)}
+.carga-flat-num{font-size:9px;font-weight:700;color:var(--text3);width:26px;flex-shrink:0}
+.carga-flat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#94a3b8}
+.carga-flat-name{flex:1;color:var(--navy);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carga-flat-revenue{font-size:9.5px;font-weight:700;color:#16a34a;white-space:nowrap;flex-shrink:0}
+.carga-flat-gp{font-size:9.5px;color:var(--text3);white-space:nowrap;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.carga-flat-negoc-divider{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:9px 12px 7px;border-top:1.5px dashed var(--border2);margin-top:2px}
+.carga-flat-row.dim{opacity:.55;font-style:italic;cursor:pointer}
+.carga-flat-row.dim .carga-flat-name{color:var(--text3)}
+.carga-flat-row.dim .carga-flat-gp{color:var(--text3)}
+.carga-flat-row.dim .carga-flat-dot{background:#cbd5e1}
 .carga-proj-text{font-size:inherit}
 .carga-proj-status{display:flex;justify-content:flex-end}
 .gp-tag{font-size:9px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:10px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
@@ -352,6 +373,10 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 #rsm-topbar h3{font-size:11px;font-weight:600;white-space:nowrap}
 #rsm-search-wrap{position:relative;width:320px;max-width:100%}
 #rsm-proj-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg);border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 24px rgba(11,27,115,.12);z-index:150;display:none;max-height:320px;overflow-y:auto}
+/* Busca de projeto dentro da própria seção Cronograma — mesmo comportamento do Resumo. */
+#se-search-wrap{position:relative;width:210px;max-width:100%;flex-shrink:0}
+#se-proj-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg);border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 24px rgba(11,27,115,.12);z-index:250;display:none;max-height:320px;overflow-y:auto;width:280px}
+#se-proj-dropdown.open{display:block}
 #rsm-proj-dropdown.open{display:block}
 #rsm-proj-dropdown .rsm-proj-item{border-bottom:.5px solid var(--border)}
 #rsm-proj-dropdown .rsm-proj-item:last-child{border-bottom:none}
@@ -444,9 +469,11 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .ps-item{display:flex;align-items:center;gap:3px;font-size:10px}
 .ps-lbl{color:var(--text3);font-size:9.5px}
 #se-body{display:flex;flex:1;overflow:hidden;position:relative}
-#se-left{overflow-y:auto;overflow-x:auto;border-right:2px solid var(--border2);background:var(--bg);flex-shrink:0;min-width:260px}
-#se-left::-webkit-scrollbar{width:3px;height:3px}
-#se-left::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+#se-left{overflow-y:auto;overflow-x:auto;border-right:2px solid var(--border2);background:var(--bg);flex-shrink:0;min-width:260px;scrollbar-width:thin}
+#se-left::-webkit-scrollbar{width:3px;height:9px}
+#se-left::-webkit-scrollbar-thumb{background:#b7becb;border-radius:5px}
+#se-left::-webkit-scrollbar-thumb:hover{background:#8890a6}
+#se-left::-webkit-scrollbar-track{background:var(--bg2)}
 .resize-handle{width:5px;background:var(--border2);cursor:col-resize;flex-shrink:0}
 .resize-handle:hover{background:var(--purple)}
 #se-right{flex:1;overflow:auto;background:var(--bg)}
@@ -584,13 +611,13 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <span class="tn-logo">VMO</span>
     <button class="sidenav-toggle" onclick="toggleSidenav()" title="Recolher/expandir menu"><i class="ti ti-layout-sidebar-left-collapse" id="sidenav-toggle-icon"></i></button>
   </div>
-  <div class="nav-tab active" onclick="showView('portfolio')" data-view="portfolio"><i class="ti ti-layout-dashboard" style="font-size:13px"></i><span class="stlabel">Visão Geral</span><span class="nt-badge" id="badge-pf">83</span></div>
-  <div class="nav-tab" onclick="showView('schedule')" data-view="schedule" id="nav-schedule"><i class="ti ti-calendar-stats" style="font-size:13px"></i><span class="stlabel">Cronogramas</span></div>
-  <div class="nav-tab" onclick="showView('resumo')" data-view="resumo" id="nav-resumo"><i class="ti ti-layout-grid" style="font-size:13px"></i><span class="stlabel">Resumo dos Projetos</span></div>
-  <div class="nav-tab" onclick="showView('updates')" data-view="updates"><i class="ti ti-speakerphone" style="font-size:13px"></i><span class="stlabel">Atualizações</span></div>
-  <div class="nav-tab" onclick="showView('prioridades')" data-view="prioridades"><i class="ti ti-sort-ascending" style="font-size:13px"></i><span class="stlabel">Prioridades</span></div>
-  <div class="nav-tab" onclick="showView('scoring')" data-view="scoring"><i class="ti ti-star" style="font-size:13px"></i><span class="stlabel">Scoring</span></div>
-  <div class="nav-tab" onclick="showView('docs')" data-view="docs" id="nav-docs"><i class="ti ti-folder" style="font-size:13px"></i><span class="stlabel">Documentos Úteis</span></div>
+  <div class="nav-tab active" onclick="showView('portfolio')" data-view="portfolio"><i class="ti ti-layout-dashboard" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_visao_geral">Visão Geral</span><span class="nt-badge" id="badge-pf">83</span></div>
+  <div class="nav-tab" onclick="showView('schedule')" data-view="schedule" id="nav-schedule"><i class="ti ti-calendar-stats" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_cronogramas">Cronogramas</span></div>
+  <div class="nav-tab" onclick="showView('resumo')" data-view="resumo" id="nav-resumo"><i class="ti ti-layout-grid" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_resumo">Resumo dos Projetos</span></div>
+  <div class="nav-tab" onclick="showView('updates')" data-view="updates"><i class="ti ti-speakerphone" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_atualizacoes">Atualizações</span></div>
+  <div class="nav-tab" onclick="showView('prioridades')" data-view="prioridades"><i class="ti ti-sort-ascending" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_prioridades">Prioridades</span></div>
+  <div class="nav-tab" onclick="showView('scoring')" data-view="scoring"><i class="ti ti-star" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_scoring">Scoring</span></div>
+  <div class="nav-tab" onclick="showView('docs')" data-view="docs" id="nav-docs"><i class="ti ti-folder" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_docs">Documentos Úteis</span></div>
   <div id="sidenav-spacer"></div>
   <span class="tn-sync" id="sync-txt"><i class="ti ti-brand-jira" style="font-size:11px"></i><span class="stlabel">one-bemobi.atlassian.net</span></span>
 </div>
@@ -598,8 +625,14 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 <div id="main-col">
 <div id="topbar">
   <button class="tn-btn" id="jira-sync-btn" onclick="syncFromJira()" title="Sincronizar projetos com o Jira">
-    <i class="ti ti-refresh" style="font-size:11px" id="sync-icon"></i> Sync Jira
+    <i class="ti ti-refresh" style="font-size:11px" id="sync-icon"></i> <span data-i18n="sync_jira">Sync Jira</span>
   </button>
+  <div class="tn-sep"></div>
+  <select id="lang-select" onchange="setLanguage(this.value)" title="Idioma / Language / Idioma" style="font-size:10.5px;border:1px solid var(--border2);border-radius:6px;padding:4px 6px;background:var(--bg);color:var(--text);cursor:pointer">
+    <option value="pt">🇧🇷 Português</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="en">🇺🇸 English</option>
+  </select>
   <div class="tn-sep"></div>
   <button class="tn-btn hdr-dd-trigger" id="sched-more-btn" onclick="toggleHdrMenu(event,'schedmore')" style="display:none"><i class="ti ti-dots" style="font-size:12px"></i></button>
   <div class="hdr-dd-menu" id="hdr-menu-schedmore">
@@ -631,7 +664,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 <!-- ══ PRIORIDADES ══ -->
 <div class="view" id="view-prioridades" style="overflow-y:auto;overflow-x:auto">
   <div id="pf-topbar" style="position:sticky;top:0;left:0;z-index:10;background:var(--bg);display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;will-change:transform;transform:translateZ(0)">
-    <div class="sb2"><i class="ti ti-search"></i><input id="pf-search" type="text" placeholder="Buscar projeto..." oninput="renderPortfolio()"></div>
+    <div class="sb2"><i class="ti ti-search"></i><input id="pf-search" type="text" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" oninput="renderPortfolio()"></div>
     <div class="filter-sep"></div>
     <button class="fbtn on" onclick="setF('all',this)" id="fbtn-all">Todos</button>
     <button class="fbtn" id="fbtn-sched" onclick="setF('sched',this)">Com cronograma</button>
@@ -650,7 +683,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="savePriorityHistorySnapshot()" title="Salva um retrato completo da ordem de prioridade de hoje, disponível depois em Documentos Úteis"><i class="ti ti-device-floppy" style="font-size:11px"></i> Salvar Histórico</button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="exportPrioridadesXlsx()" title="Exporta a lista de prioridades exatamente como está na tela (respeitando busca e filtros ativos)"><i class="ti ti-file-spreadsheet" style="font-size:11px"></i> Exportar Excel</button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px;background:var(--purple);color:#fff;border:none" onclick="openSuggestPriorityModal()" title="Sugere uma nova ordem de prioridade combinando score, datas de entrega e segmento estratégico"><i class="ti ti-sparkles" style="font-size:11px"></i> Sugerir Priorização</button>
-    <button class="fbtn" id="fix-fictitious-prio-btn" style="display:none;align-items:center;gap:4px;background:#fff7ed;color:#c2410c;border:1px solid #fdba74" onclick="openPriorityRepairModal()" title="Corrige projetos em Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial que hoje têm uma prioridade individual fictícia (herdada de um bug antigo) em vez do balde correto"><i class="ti ti-tool" style="font-size:11px"></i> Corrigir prioridades fictícias</button>
+    <button class="fbtn" id="fix-fictitious-prio-btn" style="display:none;align-items:center;gap:4px;background:#fff7ed;color:#c2410c;border:1px solid #fdba74" onclick="openPriorityRepairModal()" title="Corrige projetos em Backlog/Pausado/Cancelado/Pós produção/Presales que hoje têm uma prioridade individual fictícia (herdada de um bug antigo) em vez do balde correto"><i class="ti ti-tool" style="font-size:11px"></i> Corrigir prioridades fictícias</button>
   </div>
   <div id="prio-kpi"></div>
 </div>
@@ -660,7 +693,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   <div id="upd-sidebar">
     <div id="upd-sidebar-hdr">
       <div style="display:flex;align-items:center;gap:6px"><h3><i class="ti ti-speakerphone" style="font-size:12px;color:var(--purple)"></i> Atualizações</h3><button class="tn-btn pri" style="margin-left:auto;font-size:9.5px;padding:3px 8px" onclick="openEmailModal()"><i class="ti ti-mail" style="font-size:9px"></i> Email</button></div>
-      <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="upd-search" placeholder="Buscar projeto..." oninput="renderUpdatesProjectList()"></div>
+      <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="upd-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" oninput="renderUpdatesProjectList()"></div>
       <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
         <span style="font-size:9px;color:var(--text3);flex-shrink:0">Ordenar:</span>
         <button class="upd-sort-btn" id="upd-sort-az" onclick="setUpdSort('az')">A-Z</button>
@@ -712,7 +745,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   <div id="rsm-topbar">
     <div style="display:flex;align-items:center;gap:6px"><h3><i class="ti ti-layout-grid" style="font-size:12px;color:var(--purple)"></i> Resumo dos Projetos</h3></div>
     <div id="rsm-search-wrap">
-      <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="rsm-search" placeholder="Buscar projeto..." autocomplete="off" oninput="renderResumoProjectList()" onfocus="openResumoDropdown()" onkeydown="if(event.key==='Escape'){closeResumoDropdown();this.blur();}"></div>
+      <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="rsm-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" autocomplete="off" oninput="renderResumoProjectList()" onfocus="openResumoDropdown()" onkeydown="if(event.key==='Escape'){closeResumoDropdown();this.blur();}"></div>
       <div id="rsm-proj-dropdown"></div>
     </div>
   </div>
@@ -800,6 +833,10 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 <div class="view" id="view-schedule">
   <div id="se-hdr">
     <button class="seb" onclick="showView('portfolio');history.replaceState(null,'',window.location.pathname)"><i class="ti ti-arrow-left" style="font-size:10px"></i> Voltar</button>
+    <div id="se-search-wrap">
+      <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="se-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" autocomplete="off" oninput="renderScheduleSearchList()" onfocus="openScheduleSearchDropdown()" onkeydown="if(event.key==='Escape'){closeScheduleSearchDropdown();this.blur();}"></div>
+      <div id="se-proj-dropdown"></div>
+    </div>
     <h2 id="se-title">Selecione um projeto</h2>
     <a class="se-jira" id="se-jira-lnk" href="#" target="_blank" style="display:none"><i class="ti ti-brand-jira"></i><span id="se-jira-key"></span></a>
     <button class="seb" id="copy-link-btn" onclick="copyScheduleLink()" style="display:none" title="Copiar link direto para este cronograma"><i class="ti ti-link" style="font-size:10px"></i> Copiar link</button>
@@ -857,7 +894,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 <!-- ══ SCORING ══ -->
 <div class="view" id="view-scoring" style="overflow-y:auto;overflow-x:auto">
   <div id="sc-topbar" style="position:sticky;top:0;z-index:10;background:var(--bg);display:flex;align-items:center;gap:7px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap">
-    <div class="sb2"><i class="ti ti-search"></i><input id="sc-search" type="text" placeholder="Buscar projeto..." oninput="renderScoringView()"></div>
+    <div class="sb2"><i class="ti ti-search"></i><input id="sc-search" type="text" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" oninput="renderScoringView()"></div>
     <div class="filter-sep"></div>
     <button class="fbtn sc-scope-btn on" onclick="setScF('all',this)" id="scfbtn-all">Todos</button>
     <button class="fbtn sc-scope-btn" onclick="setScF('scored',this)">Com score</button>
@@ -936,6 +973,13 @@ const ADMIN_EMAILS = [
 const EDITOR_EMAILS = [
   // 'gp.nome@bemobi.com',
 ];
+// Papel "Consulta": pessoas internas (@bemobi.com) que devem enxergar Cronogramas + Resumo dos
+// Projetos de TODA a carteira, mas nada além disso (sem Visão Geral, Atualizações, Prioridades,
+// Scoring, Documentos, e sem poder editar nada) — diferente de "stakeholder", que é restrito a
+// um único projeto específico.
+const CONSULTA_EMAILS = [
+  // 'pessoa@bemobi.com',
+];
 
 // ── DOCUMENTOS ÚTEIS (Materiais Padronizados do VMO) ───────────────────────
 // Espelha a página do Confluence "Materiais Padronizados do VMO" (VHDGP/5485232133).
@@ -971,6 +1015,62 @@ let DEBRIEFING_MINUTES = [];
 // Admins podem adicionar/remover usuários pelo modal de gerenciamento
 // Formato: { email, passwordHash, name, active }
 // passwordHash = btoa(email + ':' + password) — simples mas funcional para uso interno
+// ── i18n ─────────────────────────────────────────────────────────────────
+// Cobre a "casca" da ferramenta (menu lateral, barra superior, campos de busca e os títulos das
+// seções da Visão Geral e do Cronograma) nos três idiomas. Nomes de projetos (p.summary/p.key)
+// NUNCA passam por aqui — são dados, não texto de interface, e continuam sempre no original,
+// não importa o idioma selecionado.
+let currentLang = localStorage.getItem('vmo_lang') || 'pt';
+const I18N = {
+  pt: {
+    nav_visao_geral:'Visão Geral', nav_cronogramas:'Cronogramas', nav_resumo:'Resumo dos Projetos',
+    nav_atualizacoes:'Atualizações', nav_prioridades:'Prioridades', nav_scoring:'Scoring', nav_docs:'Documentos Úteis',
+    sync_jira:'Sync Jira', search_project:'Buscar projeto...',
+    btn_voltar:'Voltar', btn_hoje:'Hoje', btn_nova_etapa:'Nova etapa',
+    zoom_dias:'Dias', zoom_semanas:'Semanas', zoom_meses:'Meses', zoom_ano:'Ano',
+    sec_alertas:'Alertas', sec_status_portfolio:'Status do Portfólio', sec_dados_gerais:'Dados Gerais',
+    sec_impacto_time:'Impacto por Time',
+    sec_carga:'Carga de Trabalho — VMO & Transformação', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
+  },
+  es: {
+    nav_visao_geral:'Visión General', nav_cronogramas:'Cronogramas', nav_resumo:'Resumen de Proyectos',
+    nav_atualizacoes:'Actualizaciones', nav_prioridades:'Prioridades', nav_scoring:'Puntuación', nav_docs:'Documentos Útiles',
+    sync_jira:'Sincronizar Jira', search_project:'Buscar proyecto...',
+    btn_voltar:'Volver', btn_hoje:'Hoy', btn_nova_etapa:'Nueva etapa',
+    zoom_dias:'Días', zoom_semanas:'Semanas', zoom_meses:'Meses', zoom_ano:'Año',
+    sec_alertas:'Alertas', sec_status_portfolio:'Estado del Portafolio', sec_dados_gerais:'Datos Generales',
+    sec_impacto_time:'Impacto por Equipo',
+    sec_carga:'Carga de Trabajo — VMO y Transformación', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
+  },
+  en: {
+    nav_visao_geral:'Overview', nav_cronogramas:'Schedules', nav_resumo:'Project Summary',
+    nav_atualizacoes:'Updates', nav_prioridades:'Priorities', nav_scoring:'Scoring', nav_docs:'Useful Documents',
+    sync_jira:'Sync Jira', search_project:'Search project...',
+    btn_voltar:'Back', btn_hoje:'Today', btn_nova_etapa:'New milestone',
+    zoom_dias:'Days', zoom_semanas:'Weeks', zoom_meses:'Months', zoom_ano:'Year',
+    sec_alertas:'Alerts', sec_status_portfolio:'Portfolio Status', sec_dados_gerais:'Overall Data',
+    sec_impacto_time:'Impact by Team',
+    sec_carga:'Workload — VMO & Transformation', sec_proximas_entregas:'Upcoming Deliveries', sec_historico:'History',
+  },
+};
+function t(key){ return (I18N[currentLang]&&I18N[currentLang][key]) || I18N.pt[key] || key; }
+function setLanguage(lang){
+  if(!I18N[lang])return;
+  currentLang=lang;
+  localStorage.setItem('vmo_lang',lang);
+  const sel=document.getElementById('lang-select');if(sel)sel.value=lang;
+  applyI18n();
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);});
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=t(el.dataset.i18nPlaceholder);});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle);});
+  // Reconstrói as telas cujo texto é gerado via JS (não dá pra só trocar textContent de um nó
+  // estático) — hoje cobre a Visão Geral; outras telas continuam majoritariamente em português
+  // (ver ressalva de escopo compartilhada com a Amanda).
+  if(typeof renderKPI==='function'&&document.getElementById('pf-kpi'))renderKPI();
+}
+
 let USER_REGISTRY = [
   // Admins pré-cadastrados com senha padrão "bemobi@2026" — devem trocar no primeiro acesso
   { email:'tainah.andrade@bemobi.com',    passwordHash: btoa('tainah.andrade@bemobi.com:bemobi@2026'),    name:'Tainah Andrade',        active:true },
@@ -1004,15 +1104,26 @@ async function loadUserRegistryFromFirestore() {
       // ser a fonte da verdade — o array local é substituído pelo conteúdo persistido.
       if (Array.isArray(data.editorEmails)) { EDITOR_EMAILS.length = 0; data.editorEmails.forEach(e => { if (!EDITOR_EMAILS.includes(e)) EDITOR_EMAILS.push(e); }); }
       if (Array.isArray(data.adminEmails))  { ADMIN_EMAILS.length = 0;  data.adminEmails.forEach(e  => { if (!ADMIN_EMAILS.includes(e))  ADMIN_EMAILS.push(e);  }); }
+      if (Array.isArray(data.consultaEmails)) { CONSULTA_EMAILS.length = 0; data.consultaEmails.forEach(e => { if (!CONSULTA_EMAILS.includes(e)) CONSULTA_EMAILS.push(e); }); }
     }
   } catch(e) { console.error('loadUserRegistryFromFirestore error:', e); }
 }
 
 // ── ROLE RESOLUTION ───────────────────────────────────────────────────────
+// Alguém cadastrado como stakeholder em QUALQUER projeto (schedules[key].stakeholders) — de
+// qualquer domínio de e-mail — vira esse papel super restrito: só cronograma+resumo do(s)
+// projeto(s) onde está cadastrado, menu lateral nem aparece, e nunca pode editar nada (ver
+// canEdit/canViewTab abaixo).
+function isStakeholderEmail(email) {
+  const e = (email||'').toLowerCase();
+  return Object.values(schedules).some(s => (s.stakeholders||[]).some(st => (st.email||'').toLowerCase() === e));
+}
 function resolveRole(email) {
   const e = email.toLowerCase();
   if (ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(e))  return 'admin';
   if (EDITOR_EMAILS.map(x=>x.toLowerCase()).includes(e)) return 'editor';
+  if (CONSULTA_EMAILS.map(x=>x.toLowerCase()).includes(e)) return 'consulta';
+  if (isStakeholderEmail(e)) return 'stakeholder';
   if (e.endsWith('@bemobi.com')) return 'viewer';
   return 'external';
 }
@@ -1051,16 +1162,21 @@ function canEdit(projectKey) {
 function canViewProject(projectKey) {
   if (!currentUser) return false;
   const r = currentUser.role;
-  if (r === 'admin' || r === 'editor' || r === 'viewer') return true;
+  if (r === 'admin' || r === 'editor' || r === 'viewer' || r === 'consulta') return true;
   if (r === 'external') {
     const sc = schedules[projectKey];
     return (sc?.access || []).some(a => a.email === currentUser.email);
+  }
+  if (r === 'stakeholder') {
+    const sc = schedules[projectKey];
+    return (sc?.stakeholders || []).some(st => (st.email||'').toLowerCase() === (currentUser.email||'').toLowerCase());
   }
   return false;
 }
 function canViewTab(tab) {
   if (!currentUser) return false;
-  if (currentUser.role !== 'external') return true;
+  const r = currentUser.role;
+  if (r !== 'external' && r !== 'stakeholder' && r !== 'consulta') return true;
   return tab === 'schedule' || tab === 'resumo';
 }
 function isAdmin()          { return currentUser?.role === 'admin'; }
@@ -1111,10 +1227,12 @@ async function doLoginManual() {
     showLoginErr('⚠️ Informe um e-mail válido.'); return;
   }
 
-  // 2. Domínio diferente de bemobi.com
-  if (!email.endsWith('@bemobi.com')) {
+  // 2. Domínio diferente de bemobi.com — liberado só pra quem está cadastrado como stakeholder
+  // em algum projeto (acesso somente-leitura, restrito àquele projeto); qualquer outro domínio
+  // externo continua bloqueado aqui.
+  if (!email.endsWith('@bemobi.com') && !isStakeholderEmail(email)) {
     const domain = email.split('@')[1] || '';
-    showLoginErr(`🚫 O domínio "@${domain}" não tem acesso à ferramenta. Esta plataforma é exclusiva para usuários @bemobi.com.`); return;
+    showLoginErr(`🚫 O domínio "@${domain}" não tem acesso à ferramenta. Esta plataforma é exclusiva para usuários @bemobi.com (ou stakeholders cadastrados em um projeto).`); return;
   }
 
   // 3. Senha vazia
@@ -1156,7 +1274,7 @@ function finalizeLogin(email, name, picture, persist=true) {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('tn-uname').textContent = name.split(' ')[0];
   document.getElementById('tn-avatar').textContent = name.charAt(0).toUpperCase();
-  const roleLabels = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo' };
+  const roleLabels = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consulta' };
   document.getElementById('tn-role').textContent = roleLabels[role] || role;
   // Fill profile menu
   const pmName = document.getElementById('pm-name');
@@ -1172,6 +1290,7 @@ function finalizeLogin(email, name, picture, persist=true) {
   }
   applyRoleUI();
   initFilters();
+  applyI18n();
   autoLoadOnLogin();
 }
 
@@ -1187,10 +1306,17 @@ function showLoginErr(msg) {
 function applyRoleUI() {
   const r   = currentUser?.role;
   const sb  = document.getElementById('jira-sync-btn');
-  if (r === 'external') {
+  if (r === 'external' || r === 'stakeholder') {
     document.querySelectorAll('.nav-tab').forEach(t => {
       const view = t.dataset.view;
       if (view !== 'schedule') t.style.display = 'none';
+    });
+    if (sb) sb.style.display = 'none';
+  } else if (r === 'consulta') {
+    // Vê Cronogramas + Resumo dos Projetos de toda a carteira, nada além disso.
+    document.querySelectorAll('.nav-tab').forEach(t => {
+      const view = t.dataset.view;
+      if (view !== 'schedule' && view !== 'resumo') t.style.display = 'none';
     });
     if (sb) sb.style.display = 'none';
   } else if (r === 'viewer') {
@@ -1307,6 +1433,7 @@ window.addEventListener('load', async function() {
     }
   }catch(e){}
   initFirebase();
+  applyI18n();
   userRegistryLoadPromise = loadUserRegistryFromFirestore();
   // Close profile menu when clicking outside
   document.addEventListener('click', function(e) {
@@ -1334,18 +1461,20 @@ function openUserMgmtModal() {
   const modal = getOrBuildModal('user-mgmt-modal', 'Gerenciar Usuários', `
     <div class="info-box" style="margin-bottom:8px">
       Adicione usuários com email <b>@bemobi.com</b>.<br>
-      Senha padrão inicial: <code>bemobi@2026</code> — oriente o usuário a trocar após primeiro acesso.
+      Senha padrão inicial: <code>bemobi@2026</code> — oriente o usuário a trocar após primeiro acesso.<br>
+      <span style="color:var(--text3)">Papel <b>Consulta</b>: só vê Cronogramas + Resumo dos Projetos, sem editar nada.</span>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:8px">
-      <input type="email" id="new-user-email" placeholder="email@bemobi.com" style="flex:2;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px">
-      <input type="text"  id="new-user-name"  placeholder="Nome completo"    style="flex:2;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px">
-      <input type="password" id="new-user-pwd" placeholder="Senha"           style="flex:1;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px" value="bemobi@2026">
-      <select id="new-user-role" style="border:1px solid var(--border2);border-radius:5px;padding:5px;font-size:10.5px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+      <input type="email" id="new-user-email" placeholder="email@bemobi.com" style="flex:2;min-width:150px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px;box-sizing:border-box">
+      <input type="text"  id="new-user-name"  placeholder="Nome completo"    style="flex:2;min-width:120px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px;box-sizing:border-box">
+      <input type="password" id="new-user-pwd" placeholder="Senha"           style="flex:1;min-width:90px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px;box-sizing:border-box" value="bemobi@2026">
+      <select id="new-user-role" style="flex-shrink:0;border:1px solid var(--border2);border-radius:5px;padding:5px;font-size:10.5px">
         <option value="viewer">Visualizador</option>
+        <option value="consulta">Consulta</option>
         <option value="editor">Editor</option>
         <option value="admin">Admin</option>
       </select>
-      <button class="btn-s" onclick="addUserToRegistry()" style="white-space:nowrap;padding:5px 10px">+ Adicionar</button>
+      <button class="btn-s" onclick="addUserToRegistry()" style="white-space:nowrap;flex-shrink:0;padding:5px 10px">+ Adicionar</button>
     </div>
     <div id="user-registry-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>`,
     `<button class="btn-c" onclick="closeM('user-mgmt-modal')">Fechar</button>`
@@ -1358,26 +1487,34 @@ function renderUserRegistry() {
   const list = document.getElementById('user-registry-list');
   if (!list) return;
   list.innerHTML = '';
-  USER_REGISTRY.forEach((u, i) => {
+  // Mostra em ordem alfabética por nome — mas os onclick (toggleUserActive/resetUserPassword/
+  // removeUser/changeUserRole) precisam do índice ORIGINAL em USER_REGISTRY, então ordena os
+  // índices em vez do array em si, e usa esse índice original ao renderizar cada linha.
+  const sortedIdx = USER_REGISTRY.map((_, idx) => idx).sort((a, b) =>
+    (USER_REGISTRY[a].name || '').localeCompare(USER_REGISTRY[b].name || '', 'pt-BR', { sensitivity: 'base' })
+  );
+  sortedIdx.forEach((i) => {
+    const u = USER_REGISTRY[i];
     const role = resolveRole(u.email);
-    const roleLabel = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo' }[role] || role;
+    const roleLabel = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consulta' }[role] || role;
     const div = document.createElement('div');
-    div.style.cssText = 'display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--bg2);border-radius:6px;font-size:10.5px';
-    const editableRoles = ['admin','editor','viewer'];
+    div.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px;background:var(--bg2);border-radius:6px;font-size:10.5px';
+    const editableRoles = ['admin','editor','viewer','consulta'];
     const roleSelectHtml = editableRoles.includes(role)
-      ? `<select onchange="changeUserRole(${i},this.value)" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:${role==='admin'?'#ede9fe':role==='editor'?'#dbeafe':'#f1f5f9'};color:${role==='admin'?'#6d28d9':role==='editor'?'#1d4ed8':'#475569'};padding:2px 4px;font-weight:600">
+      ? `<select onchange="changeUserRole(${i},this.value)" style="flex-shrink:0;font-size:9px;border:1px solid var(--border2);border-radius:4px;background:${role==='admin'?'#ede9fe':role==='editor'?'#dbeafe':role==='consulta'?'#fef3c7':'#f1f5f9'};color:${role==='admin'?'#6d28d9':role==='editor'?'#1d4ed8':role==='consulta'?'#92400e':'#475569'};padding:2px 4px;font-weight:600">
            <option value="viewer" ${role==='viewer'?'selected':''}>Visualizador</option>
+           <option value="consulta" ${role==='consulta'?'selected':''}>Consulta</option>
            <option value="editor" ${role==='editor'?'selected':''}>Editor</option>
            <option value="admin"  ${role==='admin' ?'selected':''}>Admin</option>
          </select>`
-      : `<span class="spill" style="background:#f1f5f9;color:#475569">${roleLabel}</span>`;
+      : `<span class="spill" style="flex-shrink:0;white-space:nowrap;background:#f1f5f9;color:#475569">${roleLabel}</span>`;
     div.innerHTML = `
-      <div style="flex:1"><b>${u.name}</b> <span style="color:var(--text3);font-size:9.5px">${u.email}</span></div>
+      <div style="flex:1 1 100%;min-width:150px"><b>${u.name}</b> <span style="color:var(--text3);font-size:9.5px">${u.email}</span></div>
       ${roleSelectHtml}
-      <span style="font-size:9px;padding:2px 6px;border-radius:8px;background:${u.active?'#dcfce7':'#fee2e2'};color:${u.active?'#166534':'#b91c1c'}">${u.active?'Ativo':'Inativo'}</span>
-      <button onclick="toggleUserActive(${i})" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">${u.active?'Desativar':'Ativar'}</button>
-      <button onclick="resetUserPassword(${i})" style="font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">Reset senha</button>
-      ${u.email !== currentUser?.email ? `<button onclick="removeUser(${i})" style="font-size:9px;border:1px solid #fca5a5;border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer;color:var(--red)">×</button>` : ''}
+      <span style="flex-shrink:0;white-space:nowrap;font-size:9px;padding:2px 6px;border-radius:8px;background:${u.active?'#dcfce7':'#fee2e2'};color:${u.active?'#166534':'#b91c1c'}">${u.active?'Ativo':'Inativo'}</span>
+      <button onclick="toggleUserActive(${i})" style="flex-shrink:0;white-space:nowrap;font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">${u.active?'Desativar':'Ativar'}</button>
+      <button onclick="resetUserPassword(${i})" style="flex-shrink:0;white-space:nowrap;font-size:9px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer">Reset senha</button>
+      ${u.email !== currentUser?.email ? `<button onclick="removeUser(${i})" style="flex-shrink:0;white-space:nowrap;font-size:9px;border:1px solid #fca5a5;border-radius:4px;background:var(--bg);padding:2px 6px;cursor:pointer;color:var(--red)">×</button>` : ''}
     `;
     list.appendChild(div);
   });
@@ -1399,6 +1536,7 @@ function addUserToRegistry() {
   // escolhido aqui nunca era realmente persistido (o e-mail ficava de fora da lista salva).
   if (role === 'editor' && !EDITOR_EMAILS.includes(email)) EDITOR_EMAILS.push(email);
   if (role === 'admin'  && !ADMIN_EMAILS.includes(email))  ADMIN_EMAILS.push(email);
+  if (role === 'consulta' && !CONSULTA_EMAILS.includes(email)) CONSULTA_EMAILS.push(email);
   persistUsers();
   renderUserRegistry();
   document.getElementById('new-user-email').value = '';
@@ -1408,10 +1546,12 @@ function addUserToRegistry() {
 // dessa correção, cujo papel de Editor/Admin nunca tinha sido salvo de verdade).
 function changeUserRole(idx, newRole) {
   const u = USER_REGISTRY[idx]; if (!u) return;
-  const i1 = ADMIN_EMAILS.indexOf(u.email);  if (i1 >= 0) ADMIN_EMAILS.splice(i1, 1);
-  const i2 = EDITOR_EMAILS.indexOf(u.email); if (i2 >= 0) EDITOR_EMAILS.splice(i2, 1);
-  if (newRole === 'admin')  ADMIN_EMAILS.push(u.email);
-  if (newRole === 'editor') EDITOR_EMAILS.push(u.email);
+  const i1 = ADMIN_EMAILS.indexOf(u.email);    if (i1 >= 0) ADMIN_EMAILS.splice(i1, 1);
+  const i2 = EDITOR_EMAILS.indexOf(u.email);   if (i2 >= 0) EDITOR_EMAILS.splice(i2, 1);
+  const i3 = CONSULTA_EMAILS.indexOf(u.email); if (i3 >= 0) CONSULTA_EMAILS.splice(i3, 1);
+  if (newRole === 'admin')    ADMIN_EMAILS.push(u.email);
+  if (newRole === 'editor')   EDITOR_EMAILS.push(u.email);
+  if (newRole === 'consulta') CONSULTA_EMAILS.push(u.email);
   persistUsers();
   renderUserRegistry();
 }
@@ -1534,7 +1674,7 @@ async function doForcedPwdChange() {
 }
 
 // ── PROJECT DATA ──
-const PROJECTS = [{"key": "VMO-246", "summary": "Integracion SmartCheckout para Enel APP", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-08", "gp": "Camilo Oyarce", "priority": -1, "golive": "2026-06-30", "created": "2026-05", "times": []}, {"key": "VMO-186", "summary": "Claro TV Mais", "type": "Comercial", "status": "Homologação", "duedate": "2026-04-30", "gp": "Natália Brito Conde", "priority": -1, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-178", "summary": "Ajuste no processo de captura tardia - Rede", "type": "Produtos", "status": "Homologação", "duedate": "2026-05-30", "gp": "Flavio Rodrigues", "priority": -1, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-170", "summary": "Integração SABESP Agência de Cobrança Meirelles", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-27", "gp": "Lucas Alves", "priority": -1, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services", "INFRA"]}, {"key": "VMO-160", "summary": "Chilquinta - Botón de Pago", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-11", "gp": "Camilo Oyarce", "priority": -1, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "Checkout", "Financial Services", "PaymentsLATAM"]}, {"key": "VMO-156", "summary": "Inspira - Fase 2 (Recorrência)", "type": "Comercial", "status": "Homologação", "duedate": "2026-06-03", "gp": "Natália Brito Conde", "priority": -7, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-148", "summary": "Hapvida | Saúde + Odonto", "type": "Comercial", "status": "Homologação", "duedate": "2026-06-15", "gp": "Vinícius Pereira da Silva", "priority": -9, "golive": "2026-06-18", "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Grace", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services", "Dados(DAE/DA)", "SaasCampanhas"]}, {"key": "VMO-140", "summary": "Integração Paytime - Checkout/Gateway", "type": "Produtos", "status": "Homologação", "duedate": null, "gp": "Felippe Borello", "priority": -8, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-382", "summary": "Implementações Farias Brito", "type": "Comercial", "status": "Refinamento & Cronograma", "duedate": null, "gp": "Debora Lima", "priority": 0, "golive": null, "created": "2026-06", "times": ["Partners/Batch", "CorePayments", "POS", "Financial Services"]}, {"key": "VMO-286", "summary": "Evolução fluxos e ferramentas de cadastro", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 0, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services"]}, {"key": "VMO-142", "summary": "Regulatório Setor Energia - Padronização de UC", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Lucas Alves", "priority": 0, "golive": "2026-06-30", "created": "2026-05", "times": ["BillPaymentsManager(Invoices)", "POS", "Checkout"]}, {"key": "VMO-138", "summary": "Celcoin: Bemobi IP / Emissora de Moeda Digital", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-07-31", "gp": "Vinícius Pereira da Silva", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments"]}, {"key": "VMO-136", "summary": "Múltiplos meios de pagamento - PIX + Cartão de Crédito", "type": "Produtos", "status": "Desenvolvimento", "duedate": null, "gp": "Lucas Alves", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-134", "summary": "ITP Celcoin Licença Friday", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-08-10", "gp": "Lucas Alves", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments", "Checkout"]}, {"key": "VMO-390", "summary": "Governança da Comunicação Operacional Bemobi", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 1, "golive": null, "created": "2026-06", "times": ["Command Center"]}, {"key": "VMO-128", "summary": "Neoenergia - novos canais", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Paola Camara", "priority": 2, "golive": "2026-06-16", "created": "2026-05", "times": ["Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "Checkout", "Financial Services", "SaasCampanhas", "Logística", "Plimpag"]}, {"key": "VMO-144", "summary": "Neoenergia - Pix automático", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-10", "gp": "Paola Camara", "priority": 3, "golive": "2026-06-22", "created": "2026-05", "times": ["Partners/Batch", "CorePayments", "BillPaymentsManager(Invoices)", "RCI", "RP", "Dados(DAE/DA)"]}, {"key": "VMO-146", "summary": "Neoenergia - Recorrência", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-06", "gp": "Paola Camara", "priority": 4, "golive": "2026-07-13", "created": "2026-05", "times": ["Partners/Batch", "CorePayments", "BillPaymentsCheckout(GM)", "RCI", "RP", "Checkout", "SaasCampanhas"]}, {"key": "VMO-152", "summary": "Hapvida - SmartCheckout com recorrência em canais de adesão", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-16", "gp": "Gabriel Oliveira", "priority": 5, "golive": null, "created": "2026-05", "times": ["RCI", "Checkout"]}, {"key": "VMO-132", "summary": "Recorrência YDUQS - Fase 3", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-22", "gp": "Paola Camara", "priority": 6, "golive": null, "created": "2026-05", "times": ["BillPaymentsManager(Invoices)", "RCI", "RP", "Checkout", "Financial Services"]}, {"key": "VMO-190", "summary": "Enel Brasil - Expansão de Canais", "type": "Comercial", "status": "Documentação de escopo", "duedate": "2026-08-31", "gp": "Gabriel Oliveira", "priority": 7, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Grace", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services", "Dados(DAE/DA)", "SaasCampanhas", "Logística", "Plimpag"]}, {"key": "VMO-182", "summary": "AgendaEdu Integration - Recorrência", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-05-30", "gp": "Natália Brito Conde", "priority": 8, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-208", "summary": "Whatsapp Pay na Telcel-MX (Recarga)", "type": "Comercial", "status": "Desenvolvimento", "duedate": null, "gp": "Araceli Osorio", "priority": 9, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "LOOP", "Recarga", "Checkout"]}, {"key": "VMO-172", "summary": "Enel Chile Delivery - POS", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-19", "gp": "Camilo Oyarce", "priority": 10, "golive": "2026-06-22", "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsManager(Invoices)", "POS", "Financial Services", "PaymentsLATAM"]}, {"key": "VMO-184", "summary": "TIM Plano Anual", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Daniele Monteiro", "priority": 11, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-188", "summary": "Claro SVA Recorrente", "type": "Comercial", "status": "Documentação de escopo", "duedate": "2026-07-06", "gp": "Daniele Monteiro", "priority": 12, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-310", "summary": "NuPay como Meio de Pagamento na Vivo Recarga", "type": "Comercial", "status": "CANCELADO", "duedate": "2026-07-27", "gp": "—", "priority": 13, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-258", "summary": "Claro Pay - Pasarela de pagos", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Araceli Osorio", "priority": 14, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Financial Services"]}, {"key": "VMO-386", "summary": "Wallet Mercado Pago", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-06", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "PaymentsLATAM", "Dados(DAE/DA)"]}, {"key": "VMO-330", "summary": "Wallet PicPay", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-314", "summary": "Wallet Livelo", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-150", "summary": "TOTEMs SABESP", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-27", "gp": "Sara Larangeira", "priority": 16, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Wave", "Plimpag"]}, {"key": "VMO-365", "summary": "REENERGISA - Link de pagamento", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 17, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services"]}, {"key": "VMO-306", "summary": "NuPay - SABESP", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Sara Larangeira", "priority": 18, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services"]}, {"key": "VMO-194", "summary": "Pix Equatorial", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Bárbara Lee Colbachini", "priority": 19, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-384", "summary": "SABESP - 2 cartões no POS", "type": "Comercial", "status": "CANCELADO", "duedate": null, "gp": "—", "priority": 20, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-162", "summary": "Telco - Múltiplos cartões com pré-reserva", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "—", "priority": 21, "golive": null, "created": "2026-05", "times": ["CorePayments"]}, {"key": "VMO-164", "summary": "Algar Telecom", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Sara Larangeira", "priority": 22, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Wave", "Grace", "Checkout", "SaasCampanhas"]}, {"key": "VMO-192", "summary": "Plataforma Wave – Payments TIM (Ômega)", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Julia Machareth", "priority": 23, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-272", "summary": "Telcel - Pago de Factura", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Araceli Osorio", "priority": 24, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsManager(Invoices)", "Checkout"]}, {"key": "VMO-200", "summary": "SABESP - Pagamentos no Município e Olímpia", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 25, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-166", "summary": "3DS 2.2 Autenticado - Rede", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Flavio Rodrigues", "priority": 26, "golive": null, "created": "2026-05", "times": ["Prevention", "CorePayments", "Checkout"]}, {"key": "VMO-174", "summary": "SCOF + Passkeys - Mastercard", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-07-27", "gp": "Flavio Rodrigues", "priority": 27, "golive": null, "created": "2026-05", "times": ["CorePayments", "Checkout"]}, {"key": "VMO-252", "summary": "ASSESSORIAS DE COBRANÇA COPEL", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 28, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-304", "summary": "YDUQS - Ajuste de hierarquias YDUQS SIA e APP (Google e 4x)", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-06", "gp": "Paola Camara", "priority": 29, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-154", "summary": "Orquestrador Telcel - Back to Front", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-26", "gp": "Araceli Osorio", "priority": 30, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-380", "summary": "Agentic Commerce", "type": "Produtos", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 31, "golive": null, "created": "2026-06", "times": ["Prevention", "Grace", "CorePayments"]}, {"key": "VMO-454", "summary": "Fallback Pix Automático", "type": "Comercial", "status": "Novos projetos", "duedate": "2026-07-14", "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-445", "summary": "Adequação Reforma Tributária", "type": "Produtos", "status": "Novos projetos", "duedate": "2026-08-01", "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-429", "summary": "Bemobipay - Cruzeiro do Sul", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-427", "summary": "Bemobipay - Vitru", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-419", "summary": "[Pix Automático] Retentativa Pix Automático", "type": "Produtos", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-417", "summary": "POS de Negociação - Enel Brasil", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "Gabriel Oliveira", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-312", "summary": "NioS - NIO NOVA FIBRA", "type": "Comercial", "status": "NEG. COMERCIAL / PRÉ VENDA", "duedate": null, "gp": "Gabriel Oliveira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-308", "summary": "FMU - BemobiPay", "type": "Comercial", "status": "NEG. COMERCIAL / PRÉ VENDA", "duedate": "2026-07-01", "gp": "Gabriel Oliveira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-112", "summary": "Wallets Telcel MX", "type": "Produtos", "status": "NEG. COMERCIAL / PRÉ VENDA", "duedate": null, "gp": "Araceli Osorio", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-110", "summary": "NuPay NIO", "type": "Comercial", "status": "NEG. COMERCIAL / PRÉ VENDA", "duedate": "2026-07-01", "gp": "Sara Larangeira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-254", "summary": "Claro Recarga Programada - Habilitar Wallets Google Pay e Apple Pay como Meio de Pagamento na Recorrência", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 100, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-262", "summary": "SDK APP Equatorial", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Sara Larangeira", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-248", "summary": "Chilquinta/CHL - WPP Pag. de Contas", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Camilo Oyarce", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-236", "summary": "Recorrência no 2º cartão de crédito", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Flavio Rodrigues", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-234", "summary": "[BSC] Cancelar pré reserva no caso de arrependimento no pagto crédito + pix", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "—", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-232", "summary": "Atualização automática Omniboard - Login do operador + frente de uso", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "—", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-230", "summary": "Integração 7AZ - Motor de Recorrência - Vero", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-218", "summary": "TIM - Pix Biometria no Whatsapp Pay", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-216", "summary": "SABESP - Pagamento Recorrente", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-214", "summary": "SABESP - Envio de Comprovante por E-mail", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Sara Larangeira", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-212", "summary": "Telcel MX - Portal de Recargas (Recarga Programada)", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Araceli Osorio", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-204", "summary": "Obrigações Acessórias - DIMP e DECRED", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Emanuelle Pimenta", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-202", "summary": "Omniboard - Fim do Backoffice", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Ricardo Mendes", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-250", "summary": "Integracion SmartCheckout para Enel Colina", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Camilo Oyarce", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-242", "summary": "Light - Campanhas Adimplentes - POS", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-240", "summary": "LightPay - Fase 2", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Paola Camara", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-238", "summary": "SABESP - App + Nova Agv via Barramento de Invoices", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-226", "summary": "TIM LIO - PIX e Parcelamento", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-224", "summary": "SABESP - Pix Automático na fatura física - API sync", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Paola Camara", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-222", "summary": "QualiCorp", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Julia Machareth", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-220", "summary": "Migração Pix TIM para Bradesco", "type": "Produtos", "status": "PAUSADO", "duedate": null, "gp": "Lucas Alves", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-198", "summary": "Light - Pagamento na área não logada", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Rafael Abreu", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-168", "summary": "SABESP - Tombamento do débito automático para o Pix automático", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Julia Machareth", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-210", "summary": "Claro - Recorrência de Recarga Programada", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-05", "gp": "Dalton Calor", "priority": 1000, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-196", "summary": "SABESP - Pagamento com 2 cartões", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-18", "gp": "Dalton Calor", "priority": 1000, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-158", "summary": "Bemobi Pay - Claro Pagamento de Contas Clientes Pós Pago", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-21", "gp": "Vinícius Pereira da Silva", "priority": 1000, "golive": null, "created": "2026-05", "times": []}];
+const PROJECTS = [{"key": "VMO-246", "summary": "Integracion SmartCheckout para Enel APP", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-08", "gp": "Camilo Oyarce", "priority": -1, "golive": "2026-06-30", "created": "2026-05", "times": []}, {"key": "VMO-186", "summary": "Claro TV Mais", "type": "Comercial", "status": "Homologação", "duedate": "2026-04-30", "gp": "Natália Brito Conde", "priority": -1, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-178", "summary": "Ajuste no processo de captura tardia - Rede", "type": "Produtos", "status": "Homologação", "duedate": "2026-05-30", "gp": "Flavio Rodrigues", "priority": -1, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-170", "summary": "Integração SABESP Agência de Cobrança Meirelles", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-27", "gp": "Lucas Alves", "priority": -1, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services", "INFRA"]}, {"key": "VMO-160", "summary": "Chilquinta - Botón de Pago", "type": "Comercial", "status": "Homologação", "duedate": "2026-05-11", "gp": "Camilo Oyarce", "priority": -1, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "Checkout", "Financial Services", "PaymentsLATAM"]}, {"key": "VMO-156", "summary": "Inspira - Fase 2 (Recorrência)", "type": "Comercial", "status": "Homologação", "duedate": "2026-06-03", "gp": "Natália Brito Conde", "priority": -7, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-148", "summary": "Hapvida | Saúde + Odonto", "type": "Comercial", "status": "Homologação", "duedate": "2026-06-15", "gp": "Vinícius Pereira da Silva", "priority": -9, "golive": "2026-06-18", "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Grace", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services", "Dados(DAE/DA)", "SaasCampanhas"]}, {"key": "VMO-140", "summary": "Integração Paytime - Checkout/Gateway", "type": "Produtos", "status": "Homologação", "duedate": null, "gp": "Felippe Borello", "priority": -8, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-382", "summary": "Implementações Farias Brito", "type": "Comercial", "status": "Refinamento & Cronograma", "duedate": null, "gp": "Debora Lima", "priority": 0, "golive": null, "created": "2026-06", "times": ["Partners/Batch", "CorePayments", "POS", "Financial Services"]}, {"key": "VMO-286", "summary": "Evolução fluxos e ferramentas de cadastro", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 0, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services"]}, {"key": "VMO-142", "summary": "Regulatório Setor Energia - Padronização de UC", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Lucas Alves", "priority": 0, "golive": "2026-06-30", "created": "2026-05", "times": ["BillPaymentsManager(Invoices)", "POS", "Checkout"]}, {"key": "VMO-138", "summary": "Celcoin: Bemobi IP / Emissora de Moeda Digital", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-07-31", "gp": "Vinícius Pereira da Silva", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments"]}, {"key": "VMO-136", "summary": "Múltiplos meios de pagamento - PIX + Cartão de Crédito", "type": "Produtos", "status": "Desenvolvimento", "duedate": null, "gp": "Lucas Alves", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-134", "summary": "ITP Celcoin Licença Friday", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-08-10", "gp": "Lucas Alves", "priority": 0, "golive": null, "created": "2026-05", "times": ["CorePayments", "Checkout"]}, {"key": "VMO-390", "summary": "Governança da Comunicação Operacional Bemobi", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 1, "golive": null, "created": "2026-06", "times": ["Command Center"]}, {"key": "VMO-128", "summary": "Neoenergia - novos canais", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Paola Camara", "priority": 2, "golive": "2026-06-16", "created": "2026-05", "times": ["Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "Checkout", "Financial Services", "SaasCampanhas", "Logística", "Plimpag"]}, {"key": "VMO-144", "summary": "Neoenergia - Pix automático", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-10", "gp": "Paola Camara", "priority": 3, "golive": "2026-06-22", "created": "2026-05", "times": ["Partners/Batch", "CorePayments", "BillPaymentsManager(Invoices)", "RCI", "RP", "Dados(DAE/DA)"]}, {"key": "VMO-146", "summary": "Neoenergia - Recorrência", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-06", "gp": "Paola Camara", "priority": 4, "golive": "2026-07-13", "created": "2026-05", "times": ["Partners/Batch", "CorePayments", "BillPaymentsCheckout(GM)", "RCI", "RP", "Checkout", "SaasCampanhas"]}, {"key": "VMO-152", "summary": "Hapvida - SmartCheckout com recorrência em canais de adesão", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-16", "gp": "Gabriel Oliveira", "priority": 5, "golive": null, "created": "2026-05", "times": ["RCI", "Checkout"]}, {"key": "VMO-132", "summary": "Recorrência YDUQS - Fase 3", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-22", "gp": "Paola Camara", "priority": 6, "golive": null, "created": "2026-05", "times": ["BillPaymentsManager(Invoices)", "RCI", "RP", "Checkout", "Financial Services"]}, {"key": "VMO-190", "summary": "Enel Brasil - Expansão de Canais", "type": "Comercial", "status": "Documentação de escopo", "duedate": "2026-08-31", "gp": "Gabriel Oliveira", "priority": 7, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Grace", "CorePayments", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "POS", "RCI", "RP", "Checkout", "Financial Services", "Dados(DAE/DA)", "SaasCampanhas", "Logística", "Plimpag"]}, {"key": "VMO-182", "summary": "AgendaEdu Integration - Recorrência", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-05-30", "gp": "Natália Brito Conde", "priority": 8, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-208", "summary": "Whatsapp Pay na Telcel-MX (Recarga)", "type": "Comercial", "status": "Desenvolvimento", "duedate": null, "gp": "Araceli Osorio", "priority": 9, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "LOOP", "Recarga", "Checkout"]}, {"key": "VMO-172", "summary": "Enel Chile Delivery - POS", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-19", "gp": "Camilo Oyarce", "priority": 10, "golive": "2026-06-22", "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsManager(Invoices)", "POS", "Financial Services", "PaymentsLATAM"]}, {"key": "VMO-184", "summary": "TIM Plano Anual", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Daniele Monteiro", "priority": 11, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-188", "summary": "Claro SVA Recorrente", "type": "Comercial", "status": "Documentação de escopo", "duedate": "2026-07-06", "gp": "Daniele Monteiro", "priority": 12, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-310", "summary": "NuPay como Meio de Pagamento na Vivo Recarga", "type": "Comercial", "status": "CANCELADO", "duedate": "2026-07-27", "gp": "—", "priority": 13, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-258", "summary": "Claro Pay - Pasarela de pagos", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Araceli Osorio", "priority": 14, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Financial Services"]}, {"key": "VMO-386", "summary": "Wallet Mercado Pago", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-06", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "PaymentsLATAM", "Dados(DAE/DA)"]}, {"key": "VMO-330", "summary": "Wallet PicPay", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-314", "summary": "Wallet Livelo", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "Debora Lima", "priority": 15, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsCheckout(GM)", "Checkout", "Financial Services", "Dados(DAE/DA)"]}, {"key": "VMO-150", "summary": "TOTEMs SABESP", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-27", "gp": "Sara Larangeira", "priority": 16, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Wave", "Plimpag"]}, {"key": "VMO-365", "summary": "REENERGISA - Link de pagamento", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 17, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "BillPaymentsCheckout(GM)", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services"]}, {"key": "VMO-306", "summary": "NuPay - SABESP", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Sara Larangeira", "priority": 18, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "BillPaymentsManager(Invoices)", "Checkout", "Financial Services"]}, {"key": "VMO-194", "summary": "Pix Equatorial", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Bárbara Lee Colbachini", "priority": 19, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-384", "summary": "SABESP - 2 cartões no POS", "type": "Comercial", "status": "CANCELADO", "duedate": null, "gp": "—", "priority": 20, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-162", "summary": "Telco - Múltiplos cartões com pré-reserva", "type": "Produtos", "status": "Documentação de escopo", "duedate": null, "gp": "—", "priority": 21, "golive": null, "created": "2026-05", "times": ["CorePayments"]}, {"key": "VMO-164", "summary": "Algar Telecom", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Sara Larangeira", "priority": 22, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "Wave", "Grace", "Checkout", "SaasCampanhas"]}, {"key": "VMO-192", "summary": "Plataforma Wave – Payments TIM (Ômega)", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Julia Machareth", "priority": 23, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-272", "summary": "Telcel - Pago de Factura", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "Araceli Osorio", "priority": 24, "golive": null, "created": "2026-05", "times": ["Partners/Batch", "Prevention", "CorePayments", "BillPaymentsManager(Invoices)", "Checkout"]}, {"key": "VMO-200", "summary": "SABESP - Pagamentos no Município e Olímpia", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 25, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-166", "summary": "3DS 2.2 Autenticado - Rede", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-06-30", "gp": "Flavio Rodrigues", "priority": 26, "golive": null, "created": "2026-05", "times": ["Prevention", "CorePayments", "Checkout"]}, {"key": "VMO-174", "summary": "SCOF + Passkeys - Mastercard", "type": "Produtos", "status": "Desenvolvimento", "duedate": "2026-07-27", "gp": "Flavio Rodrigues", "priority": 27, "golive": null, "created": "2026-05", "times": ["CorePayments", "Checkout"]}, {"key": "VMO-252", "summary": "ASSESSORIAS DE COBRANÇA COPEL", "type": "Comercial", "status": "Documentação de escopo", "duedate": null, "gp": "felipe.soave", "priority": 28, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-304", "summary": "YDUQS - Ajuste de hierarquias YDUQS SIA e APP (Google e 4x)", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-07-06", "gp": "Paola Camara", "priority": 29, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-154", "summary": "Orquestrador Telcel - Back to Front", "type": "Comercial", "status": "Desenvolvimento", "duedate": "2026-06-26", "gp": "Araceli Osorio", "priority": 30, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-380", "summary": "Agentic Commerce", "type": "Produtos", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 31, "golive": null, "created": "2026-06", "times": ["Prevention", "Grace", "CorePayments"]}, {"key": "VMO-454", "summary": "Fallback Pix Automático", "type": "Comercial", "status": "Novos projetos", "duedate": "2026-07-14", "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-445", "summary": "Adequação Reforma Tributária", "type": "Produtos", "status": "Novos projetos", "duedate": "2026-08-01", "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-429", "summary": "Bemobipay - Cruzeiro do Sul", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-427", "summary": "Bemobipay - Vitru", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-419", "summary": "[Pix Automático] Retentativa Pix Automático", "type": "Produtos", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-417", "summary": "POS de Negociação - Enel Brasil", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "Gabriel Oliveira", "priority": 98, "golive": null, "created": "2026-06", "times": []}, {"key": "VMO-312", "summary": "NioS - NIO NOVA FIBRA", "type": "Comercial", "status": "PRESALES", "duedate": null, "gp": "Gabriel Oliveira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-308", "summary": "FMU - BemobiPay", "type": "Comercial", "status": "PRESALES", "duedate": "2026-07-01", "gp": "Gabriel Oliveira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-112", "summary": "Wallets Telcel MX", "type": "Produtos", "status": "PRESALES", "duedate": null, "gp": "Araceli Osorio", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-110", "summary": "NuPay NIO", "type": "Comercial", "status": "PRESALES", "duedate": "2026-07-01", "gp": "Sara Larangeira", "priority": 99, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-254", "summary": "Claro Recarga Programada - Habilitar Wallets Google Pay e Apple Pay como Meio de Pagamento na Recorrência", "type": "Comercial", "status": "Novos projetos", "duedate": null, "gp": "—", "priority": 100, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-262", "summary": "SDK APP Equatorial", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Sara Larangeira", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-248", "summary": "Chilquinta/CHL - WPP Pag. de Contas", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Camilo Oyarce", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-236", "summary": "Recorrência no 2º cartão de crédito", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Flavio Rodrigues", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-234", "summary": "[BSC] Cancelar pré reserva no caso de arrependimento no pagto crédito + pix", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "—", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-232", "summary": "Atualização automática Omniboard - Login do operador + frente de uso", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "—", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-230", "summary": "Integração 7AZ - Motor de Recorrência - Vero", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-218", "summary": "TIM - Pix Biometria no Whatsapp Pay", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-216", "summary": "SABESP - Pagamento Recorrente", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Paola Camara", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-214", "summary": "SABESP - Envio de Comprovante por E-mail", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Sara Larangeira", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-212", "summary": "Telcel MX - Portal de Recargas (Recarga Programada)", "type": "Comercial", "status": "BACKLOG", "duedate": null, "gp": "Araceli Osorio", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-204", "summary": "Obrigações Acessórias - DIMP e DECRED", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Emanuelle Pimenta", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-202", "summary": "Omniboard - Fim do Backoffice", "type": "Produtos", "status": "BACKLOG", "duedate": null, "gp": "Ricardo Mendes", "priority": 998, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-250", "summary": "Integracion SmartCheckout para Enel Colina", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Camilo Oyarce", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-242", "summary": "Light - Campanhas Adimplentes - POS", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-240", "summary": "LightPay - Fase 2", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Paola Camara", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-238", "summary": "SABESP - App + Nova Agv via Barramento de Invoices", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-226", "summary": "TIM LIO - PIX e Parcelamento", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "—", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-224", "summary": "SABESP - Pix Automático na fatura física - API sync", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Paola Camara", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-222", "summary": "QualiCorp", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Julia Machareth", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-220", "summary": "Migração Pix TIM para Bradesco", "type": "Produtos", "status": "PAUSADO", "duedate": null, "gp": "Lucas Alves", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-198", "summary": "Light - Pagamento na área não logada", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Rafael Abreu", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-168", "summary": "SABESP - Tombamento do débito automático para o Pix automático", "type": "Comercial", "status": "PAUSADO", "duedate": null, "gp": "Julia Machareth", "priority": 999, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-210", "summary": "Claro - Recorrência de Recarga Programada", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-05", "gp": "Dalton Calor", "priority": 1000, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-196", "summary": "SABESP - Pagamento com 2 cartões", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-18", "gp": "Dalton Calor", "priority": 1000, "golive": null, "created": "2026-05", "times": []}, {"key": "VMO-158", "summary": "Bemobi Pay - Claro Pagamento de Contas Clientes Pós Pago", "type": "Comercial", "status": "Pós produção", "duedate": "2026-05-21", "gp": "Vinícius Pereira da Silva", "priority": 1000, "golive": null, "created": "2026-05", "times": []}];
 
 // ── STATE ──
 let schedules = {};
@@ -1588,7 +1728,7 @@ function renderUpdateBodyHtml(raw){
 function nowStr(){return new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 const SL={not_started:'Não iniciada',in_progress:'Em andamento',done:'Concluída',blocked:'Bloqueada',cancelled:'Cancelada'};
 const SC={not_started:'ts-not_started',in_progress:'ts-in_progress',done:'ts-done',blocked:'ts-blocked',cancelled:'ts-cancelled'};
-const JIRA_SC={'Novos projetos':'s-novos','NEG. COMERCIAL / PRÉ VENDA':'s-neg','Refinamento & Cronograma':'s-ref','Documentação de escopo':'s-doc','Desenvolvimento':'s-dev','Homologação':'s-hom','Pós produção':'s-pos','Aguardando Produção':'s-agp','PROCESSO DE ROLLOUT':'s-roll','Pré-Comitê':'s-precom','Comitê':'s-com','PAUSADO':'s-pau','BACKLOG':'s-bkl','CANCELADO':'s-can','KICK OFF':'s-kick'};
+const JIRA_SC={'Novos projetos':'s-novos','PRESALES':'s-neg','Refinamento & Cronograma':'s-ref','Documentação de escopo':'s-doc','Desenvolvimento':'s-dev','Homologação':'s-hom','Pós produção':'s-pos','Aguardando Produção':'s-agp','PROCESSO DE ROLLOUT':'s-roll','Pré-Comitê':'s-precom','Comitê':'s-com','PAUSADO':'s-pau','BACKLOG':'s-bkl','CANCELADO':'s-can','KICK OFF':'s-kick'};
 const DEP_LABELS={TI:'Término→Início',II:'Início→Início',TT:'Término→Término',IT:'Início→Término'};
 // Cores das linhas de dependência no Gantt — evitam o vermelho/verde já usados para atraso/adiantamento das barras
 const DEP_LINE_COLOR={TI:'#6924E1',II:'#d97706',TT:'#0d9488',IT:'#0369a1'};
@@ -2466,7 +2606,7 @@ const DELIVERED_STATUS='Pós produção';
 // Status que recebem destaque cinza na tabela de Prioridades (igual planilha de referência da reunião de priorização).
 const GRAY_HL_STATUSES=new Set(['PROCESSO DE ROLLOUT','Aguardando Produção','Homologação']);
 // Ordem fixa do funil, usada na seção "Por Etapa"
-const ETAPA_ORDER=['NEG. COMERCIAL / PRÉ VENDA','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','Aguardando Produção','PROCESSO DE ROLLOUT','Pós produção','CANCELADO'];
+const ETAPA_ORDER=['PRESALES','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','Aguardando Produção','PROCESSO DE ROLLOUT','Pós produção','CANCELADO'];
 function renderKPI(){
   try {
   const total=PROJECTS.length;
@@ -2476,7 +2616,7 @@ function renderKPI(){
   PROJECTS.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+1;});
   const pct=n=>Math.round(n/total*100);
   const statusOrder=ETAPA_ORDER.slice();
-  const SC2={'Desenvolvimento':'#ede9fe|#7c3aed','Homologação':'#dcfce7|#16a34a','Pós produção':'#bbf7d0|#15803d','Aguardando Produção':'#ccfbf1|#0f766e','PROCESSO DE ROLLOUT':'#e0e7ff|#3730a3','Pré-Comitê':'#ede0d3|#7c4a23','Comitê':'#e0c3a0|#6b4423','KICK OFF':'#fce7f3|#be185d','Refinamento & Cronograma':'#fdf0d5|#b45309','Documentação de escopo':'#fde3da|#c2410c','NEG. COMERCIAL / PRÉ VENDA':'#fef9c3|#854d0e','Novos projetos':'#dbeafe|#2563eb','PAUSADO':'#e5e7eb|#374151','BACKLOG':'#cbd5e1|#1e293b','CANCELADO':'#fee2e2|#b91c1c'};
+  const SC2={'Desenvolvimento':'#ede9fe|#7c3aed','Homologação':'#dcfce7|#16a34a','Pós produção':'#bbf7d0|#15803d','Aguardando Produção':'#ccfbf1|#0f766e','PROCESSO DE ROLLOUT':'#e0e7ff|#3730a3','Pré-Comitê':'#ede0d3|#7c4a23','Comitê':'#e0c3a0|#6b4423','KICK OFF':'#fce7f3|#be185d','Refinamento & Cronograma':'#fdf0d5|#b45309','Documentação de escopo':'#fde3da|#c2410c','PRESALES':'#fef9c3|#854d0e','Novos projetos':'#dbeafe|#2563eb','PAUSADO':'#e5e7eb|#374151','BACKLOG':'#cbd5e1|#1e293b','CANCELADO':'#fee2e2|#b91c1c'};
   const statusCardHtml=s=>{
     const [bg,fg]=(SC2[s]||'#f0f1fa|#4b5675').split('|');
     const n=byStatus[s]||0;
@@ -2519,7 +2659,7 @@ function renderKPI(){
 
   // ── Por Etapa: Top 10 por fase (projetos ativos) ──
   const etapaGroups={};
-  activeProjects.forEach(p=>{(etapaGroups[p.status]=etapaGroups[p.status]||[]).push(p);});
+  activeProjects.forEach(p=>{if(p.status==='CANCELADO')return;(etapaGroups[p.status]=etapaGroups[p.status]||[]).push(p);});
   const etapaOrder=Object.keys(etapaGroups).sort((a,b)=>{
     const ia=ETAPA_ORDER.indexOf(a),ib=ETAPA_ORDER.indexOf(b);
     const pa=ia===-1?999:ia,pb=ib===-1?999:ib;
@@ -2548,7 +2688,7 @@ function renderKPI(){
   document.getElementById('pf-kpi').innerHTML=
     // Alertas e Cronogramas voltaram a ficar juntos numa única seção, chamada só de "Alertas" —
     // ela abre expandida por padrão (ver sectionState); as demais seções começam fechadas.
-    secHdr('alertas','#fee2e2','#b91c1c','ti-alert-triangle','Alertas','Pontos de atenção do portfólio ativo · '+activeProjects.length+' projetos ativos')+
+    secHdr('alertas','#fee2e2','#b91c1c','ti-alert-triangle',t('sec_alertas'),'Pontos de atenção do portfólio ativo · '+activeProjects.length+' projetos ativos')+
     `<div class="kpi-row2">
       <div class="kc2" style="background:#ede9fe;border-color:#ddd6fe;cursor:pointer" title="Filtrar: com cronograma" onclick="setF('sched',document.getElementById('fbtn-sched'))">
         <div style="font-size:20px;font-weight:700;color:#6d28d9;line-height:1">${withSchedActive}</div>
@@ -2594,10 +2734,10 @@ function renderKPI(){
       </div>
     </div></div>`+
 
-    secHdr('etapas','#fef3c7','#92400e','ti-columns','Status do Portfólio','Top 10 projetos por fase (ativos)')+
+    secHdr('etapas','#fef3c7','#92400e','ti-columns',t('sec_status_portfolio'),'Top 10 projetos por fase (ativos)')+
     `<div id="etapa-grid" style="display:flex;gap:8px;overflow-x:auto;padding:10px 14px 12px">${etapaCols||'<div style="font-size:11px;color:var(--text3);padding:8px">Nenhum projeto ativo.</div>'}</div></div>`+
 
-    secHdr('status','#ede9fe','#6924E1','ti-chart-pie','Dados Gerais',total+' projetos na carteira VMO')+
+    secHdr('status','#ede9fe','#6924E1','ti-chart-pie',t('sec_dados_gerais'),total+' projetos na carteira VMO')+
     `<div class="status-card-row">
       <div class="kc2 total-card" title="Filtrar: Todos os projetos" onclick="filterAllStatus()">
         <div style="font-size:26px;font-weight:700;color:var(--navy);line-height:1">${total}</div>
@@ -2613,25 +2753,21 @@ function renderKPI(){
       ${statusChartMoreBtn}
     </div></div>`+
 
-    secHdr('impacto','#ecfeff','#0e7490','ti-users','Impacto por Time','Quantidade de projetos ativos que cada time está tocando · '+getAllTeams().length+' time'+(getAllTeams().length!==1?'s':''))+
+    secHdr('impacto','#ecfeff','#0e7490','ti-users',t('sec_impacto_time'),'Quantidade de projetos ativos que cada time está tocando · '+getAllTeams().length+' time'+(getAllTeams().length!==1?'s':''))+
     `<div id="team-impact-body"></div>
     </div>`+
 
-    secHdr('gpimpacto','#f5f3ff','#5b21b6','ti-user-check','Distribuição de Projetos por GP','Quantidade de projetos ativos que cada GP está tocando · '+getAllGPs().filter(g=>g!=='TBD').length+' GP'+(getAllGPs().filter(g=>g!=='TBD').length!==1?'s':''))+
-    `<div id="gp-impact-body"></div>
-    </div>`+
-
-    secHdr('carga','#fff7ed','#c2410c','ti-scale','Carga de Trabalho — VMO & PMO','Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Neg. Comercial/Pré-venda são filtrados dessa contagem"></i>',
+    secHdr('carga','#fff7ed','#c2410c','ti-scale',t('sec_carga'),'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i>',
       `<div class="cal-mode-btns" id="carga-tabs" onclick="event.stopPropagation()">
         <button class="cmb on" onclick="setCargaView('VMO',this)">Time VMO</button>
-        <button class="cmb" onclick="setCargaView('PMO',this)">Time PMO</button>
+        <button class="cmb" onclick="setCargaView('PMO',this)">Time Transformação</button>
         <button class="cmb" onclick="setCargaView('OUTRAS',this)">Outras Áreas</button>
         <button class="cmb" onclick="setCargaView('TBD',this)">Sem GP</button>
       </div>`)+
     `<div id="carga-body"></div>
     </div>`+
 
-    secHdr('cal','#e0f9ff','#0369a1','ti-calendar-check','Próximas Entregas','Datas de Go Live cadastradas no Jira','')+
+    secHdr('cal','#e0f9ff','#0369a1','ti-calendar-check',t('sec_proximas_entregas'),'Datas de Go Live cadastradas no Jira','')+
     `<div style="padding:8px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border2)">
       <span style="font-size:10px;color:var(--text3);font-weight:500">Visualizar por:</span>
       <div class="cal-mode-btns">
@@ -2644,7 +2780,11 @@ function renderKPI(){
     <div id="cal-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
     </div>`+
 
-    secHdr('historico','#f1f5f9','#475569','ti-archive','Histórico · Projetos Entregues','Consulta apenas leitura · '+delivered.length+' projeto'+(delivered.length!==1?'s':'')+' em Pós produção')+
+    secHdr('historico','#f1f5f9','#475569','ti-archive',t('sec_historico'),'Consulta apenas leitura · <span id="historico-count">'+delivered.length+' projeto'+(delivered.length!==1?'s':'')+' em Pós produção</span>',
+      `<div class="cal-mode-btns" id="historico-view-btns" onclick="event.stopPropagation()">
+        <button class="cmb ${historicoView==='entregues'?'on':''}" onclick="setHistoricoView('entregues',this)">Projetos entregues</button>
+        <button class="cmb ${historicoView==='cancelados'?'on':''}" onclick="setHistoricoView('cancelados',this)">Projetos cancelados</button>
+      </div>`)+
     `<table class="pft"><thead><tr>
       <th style="width:360px">Projeto</th>
       <th style="width:75px">Tipo</th>
@@ -2653,9 +2793,8 @@ function renderKPI(){
       <th style="width:110px">Ação</th>
     </tr></thead><tbody id="hist-body"></tbody></table>
     </div>`;
-  renderHistorico(delivered);
+  renderHistorico();
   renderTeamImpact();
-  renderGPImpact();
   renderCargaTrabalho();
   renderPrioridadesShell(activeProjects.length);
   // Apply collapse state immediately (no setTimeout)
@@ -2731,7 +2870,7 @@ function computeTeamImpactData(){
 // Ex.: se o time POS está hoje em 2 projetos ativos, um projeto novo que também impacte POS
 // entraria como 3º na fila DESSE time — mesmo que a prioridade GERAL dele no portfólio seja
 // outra. Ordenado pela prioridade geral (ninguém "corta a fila" escondido); baldes (Backlog/
-// Pausado/Cancelado/Pós produção/Neg. Comercial) não contam pra fila — eles não disputam
+// Pausado/Cancelado/Pós produção/Presales) não contam pra fila — eles não disputam
 // capacidade do time agora, só são citados à parte pra não sumir da contagem sem explicação.
 // Homologação e Processo de Rollout já passaram da fase de disputa por capacidade de
 // desenvolvimento do time — estão em validação final/implantação, não competindo mais pelo
@@ -2739,7 +2878,7 @@ function computeTeamImpactData(){
 // precise de ajuste"), em vez de contar como se ainda estivessem brigando por posição.
 const TEAM_QUEUE_EXTRA_EXCLUDED_STATUS=new Set(['Homologação','PROCESSO DE ROLLOUT','Aguardando Produção']);
 function openTeamQueueModal(team){
-  // Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial nem aparecem aqui — não concorrem e
+  // Backlog/Pausado/Cancelado/Pós produção/Presales nem aparecem aqui — não concorrem e
   // nem servem de referência pra reavaliação (diferente de Homologação/Rollout/Aguardando
   // Produção, que ficam visíveis embaixo por ainda estarem em execução, só que sem disputar mais
   // capacidade de desenvolvimento do time).
@@ -2823,13 +2962,13 @@ function renderTeamImpact(){
   wrap.innerHTML=`<div class="team-impact-grid">
     <div class="ti-panel">
       <div class="ti-panel-hdr">
-        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-list-check" style="font-size:13px"></i> Times &amp; Projetos Impactados <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Neg. Comercial/Pré-venda são filtrados dessa contagem"></i></div>
+        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-list-check" style="font-size:13px"></i> Times &amp; Projetos Impactados <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i></div>
       </div>
       <div class="team-card-row" style="padding:10px 12px">${cardsHtml}</div>
     </div>
     <div class="ti-panel">
       <div class="ti-panel-hdr">
-        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-chart-bar" style="font-size:13px"></i> Carga de Projetos por Time${teamChartExpanded?' (todos)':''} <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Neg. Comercial/Pré-venda são filtrados dessa contagem"></i></div>
+        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-chart-bar" style="font-size:13px"></i> Carga de Projetos por Time${teamChartExpanded?' (todos)':''} <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i></div>
       </div>
       <div style="padding:8px 2px">${barsHtml}</div>
       ${chartMoreBtn}
@@ -2840,16 +2979,14 @@ function renderTeamImpact(){
     </div>
   </div>`;
 }
-// ── DISTRIBUIÇÃO DE PROJETOS POR GP (Visão Geral) ──
-// Mesmo formato do Impacto por Time, mas com faixas de carga em 3 níveis:
-// 1-2 projetos = Normal, 3-4 = Média, 5+ = Alta.
-let gpChartExpanded=false;
-function toggleGPChartExpand(){gpChartExpanded=!gpChartExpanded;renderGPImpact();}
+// Funções ainda usadas pela Carga de Trabalho (a seção "Distribuição de Projetos por GP" foi
+// removida a pedido, mas isNoGP/gpRelevantProjects/getAllGPs continuam servindo o cálculo de
+// carga por pessoa e o filtro de GP em Prioridades).
 function isNoGP(gp){const v=(gp||'').trim();return !v||v==='—'||v==='-';}
 function gpRelevantProjects(){
   return PROJECTS.filter(p=>{
     const st=(p.status||'').trim();
-    return st!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG','NEG. COMERCIAL / PRÉ VENDA'].includes(st);
+    return st!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG','PRESALES'].includes(st);
   });
 }
 function getAllGPs(){
@@ -2862,101 +2999,28 @@ function getAllGPs(){
   const sorted=[...names].sort();
   return hasTBD?[...sorted,'TBD']:sorted;
 }
-function computeGPImpactData(){
-  const relevant=gpRelevantProjects();
-  return getAllGPs()
-    .map(g=>({name:g,count:g==='TBD'?relevant.filter(p=>isNoGP(p.gp)).length:relevant.filter(p=>(p.gp||'').split(',').map(x=>x.trim()).includes(g)).length}))
-    .filter(d=>d.count>0);
-}
-function gpLoadTier(count){
-  if(count>=5)return{label:'Alta',bg:'#fee2e2',fg:'#b91c1c',bar:'high'};
-  if(count>=3)return{label:'Média',bg:'#fef3c7',fg:'#92400e',bar:'mid'};
-  return{label:'Normal',bg:'#e0f2fe',fg:'#0369a1',bar:'low'};
-}
-function filterByGPLink(gp){
-  clearOtherFilterCategories('gp');
-  msFilters.gp.clear();msFilters.gp.add(gp);
-  const safe=gp.replace(/[^a-z0-9]/gi,'_');
-  document.querySelectorAll('#dd-gp-menu .ms-dd-item').forEach(item=>{
-    const cb=item.querySelector('input');
-    const match=!!cb&&cb.id==='chk-gp-'+safe;
-    if(cb)cb.checked=match;
-    item.classList.toggle('checked',match);
-  });
-  updateDD('dd-gp','dd-gp-lbl','gp','Todos os GPs');
-  showView('prioridades');
-}
-function renderGPImpact(){
-  const wrap=document.getElementById('gp-impact-body');if(!wrap)return;
-  const data=computeGPImpactData();
-  if(!data.length){wrap.innerHTML='<div class="ti-empty">Nenhum GP cadastrado ainda.</div>';return;}
-  const cardsSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
-  const chartSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
-  const maxCount=Math.max(1,...data.map(d=>d.count));
-  const esc=s=>String(s).replace(/'/g,"\\'");
-  const cardHtmlFor=d=>{
-    const tier=gpLoadTier(d.count);
-    return `<div class="kc2" style="background:${tier.bg};border-color:${tier.bg};cursor:pointer" title="Ver Portfólio: ${d.name}" onclick="filterByGPLink('${esc(d.name)}')">
-      <div style="font-size:20px;font-weight:700;color:${tier.fg};line-height:1">${d.count}</div>
-      <div style="font-size:8.5px;color:${tier.fg};opacity:.75;margin-top:1px;font-weight:600">${tier.label}</div>
-      <div style="font-size:9px;color:${tier.fg};margin-top:2px;line-height:1.3;font-weight:500;text-transform:uppercase;overflow-wrap:break-word;word-break:break-word">${d.name}</div>
-    </div>`;
-  };
-  // Distribui os cards em 3 linhas o mais equilibrado possível (sobra vai pra última linha).
-  // Ex.: 16 GPs → 5, 5 e 6 por linha.
-  const GP_ROWS=3;
-  const nCards=cardsSorted.length;
-  const baseRow=Math.floor(nCards/GP_ROWS);
-  const extraRow=nCards%GP_ROWS;
-  const rowSizes=[];
-  for(let i=0;i<GP_ROWS;i++)rowSizes.push(baseRow+(i<extraRow?1:0));
-  const cardRows=[];
-  let _ci=0;
-  rowSizes.forEach(sz=>{if(sz>0){cardRows.push(cardsSorted.slice(_ci,_ci+sz));_ci+=sz;}});
-  const cardsHtml=cardRows.map(row=>
-    `<div class="gp-card-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(cardHtmlFor).join('')}</div>`
-  ).join('');
-  const GP_CHART_PAGE_SIZE=5;
-  const chartToShow=gpChartExpanded?chartSorted:chartSorted.slice(0,GP_CHART_PAGE_SIZE);
-  const chartRest=chartSorted.length-GP_CHART_PAGE_SIZE;
-  const barsHtml=chartToShow.map(d=>{
-    const wpct=Math.max(4,Math.round(d.count/maxCount*100));
-    const tier=gpLoadTier(d.count);
-    return `<div class="ti-bar-row">
-      <span class="ti-bar-label" title="${d.name}">${d.name}</span>
-      <div class="ti-bar-track"><div class="ti-bar-fill ${tier.bar}" style="width:${wpct}%"><span class="ti-bar-val">${d.count}</span></div></div>
-    </div>`;
-  }).join('');
-  const chartMoreBtn=chartRest>0?`<div style="text-align:center;padding:6px 0 2px">
-      <button class="pf-act" onclick="toggleGPChartExpand()">${gpChartExpanded?'Ver menos':'Ver mais ('+chartRest+')'}</button>
-    </div>`:'';
-  wrap.innerHTML=`<div class="team-impact-grid">
-    <div class="ti-panel">
-      <div class="ti-panel-hdr">
-        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-user-check" style="font-size:13px"></i> GPs &amp; Projetos Impactados <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Neg. Comercial/Pré-venda são filtrados dessa contagem"></i></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;padding:10px 12px">${cardsHtml}</div>
-    </div>
-    <div class="ti-panel">
-      <div class="ti-panel-hdr">
-        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-chart-bar" style="font-size:13px"></i> Carga de Projetos por GP${gpChartExpanded?' (todos)':''} <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Neg. Comercial/Pré-venda são filtrados dessa contagem"></i></div>
-      </div>
-      <div style="padding:8px 2px">${barsHtml}</div>
-      ${chartMoreBtn}
-      <div class="ti-legend">
-        <span><span class="ti-legend-dot" style="background:#93c5fd"></span>1 a 2 projetos (Normal)</span>
-        <span><span class="ti-legend-dot" style="background:#fbbf24"></span>3 a 4 projetos (Média)</span>
-        <span><span class="ti-legend-dot" style="background:#f87171"></span>5 ou mais projetos (Alta)</span>
-      </div>
-    </div>
-  </div>`;
+// ── Classificação de carga (Alta Carga vs Normal) ──
+// Regras definidas pela Amanda: Presales NÃO conta como "projeto ativo" (não entra no `count`),
+// mas ocupa espaço do time, então entra na conta de carga como um "peso" menor que um projeto
+// ativo de verdade. Combinações confirmadas:
+//   3+ ativos                        → Alta, não importa quantos presales
+//   2 ativos + 1 presales            → Normal
+//   2 ativos + 2 presales            → Alta
+//   1 ativo  + 2 presales            → Normal
+//   1 ativo  + 3+ presales           → Alta
+function isAltaCarga(count,negocCount){
+  negocCount=negocCount||0;
+  if(count>=3)return true;
+  if(count>=2&&negocCount>=2)return true;
+  if(count>=1&&negocCount>=3)return true;
+  return false;
 }
 
-// ── CARGA DE TRABALHO — TIMES VMO & PMO ──
+// ── CARGA DE TRABALHO — TIMES VMO & Transformação (chave interna 'PMO' mantida por compat) ──
 // Roster fixo dos dois times que a Amanda gerencia diretamente. Qualquer GP que aparecer
 // nos projetos e não estiver em nenhuma dessas duas listas cai automaticamente em "Outras Áreas".
 const TEAM_ROSTER={
-  VMO:['Gabriel Oliveira','Sara Larangeira','Julia Machareth','Felipe Soave','Araceli Osorio','Camilo Oyarce','Paola Camara'],
+  VMO:['Gabriel Oliveira','Sara Larangeira','Felipe Soave','Araceli Osorio','Camilo Oyarce','Paola Camara'],
   PMO:['Debora Lima','Vinícius Pereira da Silva','Lucas Alves','Daniel Izu'],
 };
 // Normaliza nomes pra comparar sem depender de acento, caixa ou formato (ex.: "felipe.soave" vs "Felipe Soave")
@@ -2982,8 +3046,8 @@ function setCargaView(mode,el){cargaViewMode=mode;document.querySelectorAll('#ca
 function computeWorkloadDetail(name){
   const relevant=gpRelevantProjects();
   const activeList=relevant.filter(p=>!isNoGP(p.gp)&&p.gp.split(',').map(x=>x.trim()).some(g=>nameMatches(g,name)));
-  const negocCount=PROJECTS.filter(p=>p.status==='NEG. COMERCIAL / PRÉ VENDA'&&!isNoGP(p.gp)&&p.gp.split(',').map(x=>x.trim()).some(g=>nameMatches(g,name))).length;
-  return{name,count:activeList.length,activeList,negocCount};
+  const negocList=PROJECTS.filter(p=>p.status==='PRESALES'&&!isNoGP(p.gp)&&p.gp.split(',').map(x=>x.trim()).some(g=>nameMatches(g,name)));
+  return{name,count:activeList.length,activeList,negocCount:negocList.length,negocList};
 }
 function computeTeamWorkload(roster){return roster.map(computeWorkloadDetail);}
 function computeOutrasAreasWorkload(){
@@ -2996,20 +3060,19 @@ function computeOutrasAreasWorkload(){
 function computeTBDDetail(){
   const relevant=gpRelevantProjects();
   const activeList=relevant.filter(p=>isNoGP(p.gp));
-  const negocList=PROJECTS.filter(p=>p.status==='NEG. COMERCIAL / PRÉ VENDA'&&isNoGP(p.gp));
+  const negocList=PROJECTS.filter(p=>p.status==='PRESALES'&&isNoGP(p.gp));
   return{name:'TBD',count:activeList.length,activeList,negocCount:negocList.length,negocList};
 }
 function cargaPersonCard(d,variant){
   const isTbd=variant==='tbd';
-  const tier=gpLoadTier(d.count);
-  const isAlta=!isTbd&&tier.label==='Alta';
+  const isAlta=!isTbd&&isAltaCarga(d.count,d.negocCount);
   const isExp=cargaExpanded.has(d.name);
   const toShow=isExp?d.activeList:d.activeList.slice(0,4);
   const rest=d.activeList.length-4;
   const esc=s=>String(s).replace(/'/g,"\\'");
   const cardCls='carga-person-card'+(isTbd?' tbd':'');
-  const negocListHtml=(isTbd&&d.negocList&&d.negocList.length)?`<div class="carga-negoc-list">
-      <div class="carga-negoc-list-title">Negociação</div>
+  const negocListHtml=(d.negocList&&d.negocList.length)?`<div class="carga-negoc-list">
+      <div class="carga-negoc-list-title">${isTbd?'Negociação':'Presales'}</div>
       ${d.negocList.map(p=>`<div class="carga-negoc-item" style="cursor:pointer" onclick="openProject('${p.key}')">${p.summary.length>40?p.summary.slice(0,40)+'…':p.summary}</div>`).join('')}
     </div>`:'';
   return `<div class="${cardCls}" style="${isAlta?'border-color:#fca5a5':''}">
@@ -3021,7 +3084,7 @@ function cargaPersonCard(d,variant){
       ${isTbd?`<div style="font-size:9.5px;color:#92400e;font-weight:500;margin-top:1px">Sem GP</div>`:''}
       <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
         ${isAlta?`<span class="carga-tier-badge">Alta carga</span>`:''}
-        <span style="font-size:10.5px;font-weight:700;color:${isTbd?'#92400e':tier.fg}">${d.count} projeto${d.count!==1?'s':''}</span>
+        <span style="font-size:10.5px;font-weight:700;color:${isTbd?'#92400e':isAlta?'#b91c1c':'#0369a1'}">${d.count} projeto${d.count!==1?'s':''}</span>
       </div>
     </div>
     <div class="cal-items" style="padding:6px">
@@ -3034,24 +3097,95 @@ function cargaPersonCard(d,variant){
 function cargaGroupHtml(label,data,emptyMsg){
   const divider=`<div class="carga-team-divider">${label}</div>`;
   if(!data.length)return divider+`<div class="ti-empty">${emptyMsg}</div>`;
-  // Ordena só por quantidade de ativos (desc) e, em empate, por ordem alfabética.
-  const sorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
+  // Ordena por carga: Alta Carga primeiro, depois por quantidade de ativos (desc), e em
+  // empate por ordem alfabética — assim os cartões de Alta Carga sempre aparecem primeiro,
+  // não só quem tem mais projetos "ativos" na conta.
+  const sorted=data.slice().sort((a,b)=>{
+    const altaA=isAltaCarga(a.count,a.negocCount)?0:1;
+    const altaB=isAltaCarga(b.count,b.negocCount)?0:1;
+    return altaA-altaB||b.count-a.count||a.name.localeCompare(b.name);
+  });
   return divider+`<div class="carga-card-grid">${sorted.map(d=>cargaPersonCard(d)).join('')}</div>`;
+}
+// ── Capacidade do time: cabeçalho-resumo + lista plana de projetos ordenada por prioridade ──
+// (formato pedido pela Amanda, igual ao Apps Script antigo de carga por time).
+function computeTeamCapacitySummary(roster){
+  const relevant=gpRelevantProjects();
+  const seen=new Map();
+  relevant.forEach(p=>{
+    if(isNoGP(p.gp))return;
+    const gps=p.gp.split(',').map(x=>x.trim());
+    if(gps.some(g=>roster.some(n=>nameMatches(g,n))))seen.set(p.key,p);
+  });
+  const projects=[...seen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  const clienteCount=projects.filter(p=>p.type==='Comercial').length;
+  // Presales do time inteiro (não conta como ativo/carga na conta principal, mas a Amanda
+  // quer ver a lista — "suporte do time necessário, não entra na conta").
+  const negocSeen=new Map();
+  PROJECTS.forEach(p=>{
+    if(p.status!=='PRESALES'||isNoGP(p.gp))return;
+    const gps=p.gp.split(',').map(x=>x.trim());
+    if(gps.some(g=>roster.some(n=>nameMatches(g,n))))negocSeen.set(p.key,p);
+  });
+  const negocProjects=[...negocSeen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  return{recursos:roster.length,total:projects.length,clienteCount,projects,negocProjects};
+}
+function cargaFlatRowHtml(p,dim){
+  const gp=(p.gp||'').split(',')[0].trim();
+  const rev=p.receitaLiquidaPrevista;
+  const stCls=JIRA_SC[p.status]||'s-bkl';
+  return `<div class="carga-flat-row${dim?' dim':''}" onclick="openProject('${p.key}')">
+    <span class="carga-flat-num">#${p.priority??'—'}</span>
+    <span class="carga-flat-dot${dim?'':' '+stCls}"></span>
+    <span class="carga-flat-name" title="${escHtml(p.summary)}">${escHtml(p.summary)}</span>
+    ${(!dim&&rev)?`<span class="carga-flat-revenue">R$ ${escHtml(rev)}</span>`:''}
+    ${dim?'':`<span class="spill ${stCls}">${p.status}</span>`}
+    <span class="carga-flat-gp" title="${escHtml(gp)}">${escHtml(gp)}</span>
+  </div>`;
+}
+// Lista única e contínua (rola dentro da mesma caixa, sem paginação/"ver mais") — ativos
+// ordenados por prioridade, seguidos do divisor "Em negociação" e os presales do time, tudo
+// dentro do mesmo container, igual à referência do Apps Script.
+function cargaCapacityHeroHtml(teamLabel,summary,teamKey){
+  const activeRows=summary.projects.map(p=>cargaFlatRowHtml(p,false)).join('');
+  const negocDivider=summary.negocProjects.length?`<div class="carga-flat-negoc-divider">Em negociação · suporte do time necessário · não entra na conta</div>`:'';
+  const negocRows=summary.negocProjects.map(p=>cargaFlatRowHtml(p,true)).join('');
+  const allRows=activeRows+negocDivider+negocRows;
+  return `<div style="margin-bottom:12px">
+    <div class="carga-cap-hero">
+      <div class="carga-cap-eyebrow">Capacidade · ${teamLabel}</div>
+      <div class="carga-cap-title">Atuando com ${summary.total} projeto${summary.total!==1?'s':''} alocado${summary.total!==1?'s':''} para ${summary.recursos} recurso${summary.recursos!==1?'s':''}</div>
+      <div class="carga-cap-badge"><b>${summary.clienteCount}</b><span>projeto${summary.clienteCount!==1?'s':''} de cliente</span></div>
+    </div>
+    <div class="carga-flat-list">
+      ${allRows||'<div class="ti-empty">Nenhum projeto ativo no momento.</div>'}
+    </div>
+  </div>`;
 }
 function renderCargaTrabalho(){
   const wrap=document.getElementById('carga-body');if(!wrap)return;
   const vmoData=computeTeamWorkload(TEAM_ROSTER.VMO);
   const pmoData=computeTeamWorkload(TEAM_ROSTER.PMO);
   const combined=[...vmoData,...pmoData];
-  const tierCount=lbl=>combined.filter(d=>gpLoadTier(d.count).label===lbl).length;
-  const summaryHtml=`<div class="ti-legend" style="padding:8px 14px 2px">
-    <span><span class="ti-legend-dot" style="background:#ef4444"></span>Alta (5+ projetos): <b>${tierCount('Alta')}</b></span>
-    <span><span class="ti-legend-dot" style="background:#f59e0b"></span>Média (3–4 projetos): <b>${tierCount('Média')}</b></span>
-    <span><span class="ti-legend-dot" style="background:#3b82f6"></span>Normal (1–2 projetos): <b>${tierCount('Normal')}</b></span>
+  const altaCount=combined.filter(d=>isAltaCarga(d.count,d.negocCount)).length;
+  const normalCount=combined.length-altaCount;
+  const summaryHtml=`<div class="ti-legend" style="padding:8px 14px 2px;flex-direction:column;align-items:flex-start;gap:5px">
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <span><span class="ti-legend-dot" style="background:#ef4444"></span>Alta carga: <b>${altaCount}</b></span>
+      <span><span class="ti-legend-dot" style="background:#3b82f6"></span>Normal: <b>${normalCount}</b></span>
+    </div>
+    <div style="font-size:9px;color:var(--text3);line-height:1.6">
+      💡 <b>Sobre a Carga de Trabalho:</b> Presales não são projetos ativos, mas consomem capacidade do time.
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:9px;color:var(--text3)">
+      <span><span class="ti-legend-dot" style="background:#3b82f6"></span>1 · normal</span>
+      <span><span class="ti-legend-dot" style="background:#f59e0b"></span>2 a 3 · média</span>
+      <span><span class="ti-legend-dot" style="background:#ef4444"></span>4 ou mais · alta carga</span>
+    </div>
   </div>`;
   let bodyHtml;
-  if(cargaViewMode==='VMO')bodyHtml=cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
-  else if(cargaViewMode==='PMO')bodyHtml=cargaGroupHtml('Time PMO',pmoData,'Nenhum projeto ativo no momento.');
+  if(cargaViewMode==='VMO')bodyHtml=cargaCapacityHeroHtml('Time VMO',computeTeamCapacitySummary(TEAM_ROSTER.VMO),'VMO')+cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
+  else if(cargaViewMode==='PMO')bodyHtml=cargaCapacityHeroHtml('Time Transformação',computeTeamCapacitySummary(TEAM_ROSTER.PMO),'PMO')+cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.');
   else if(cargaViewMode==='OUTRAS')bodyHtml=cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.');
   else{
     const tbd=computeTBDDetail();
@@ -3199,12 +3333,31 @@ function initPftResize(tableId,storageKey){
 const HIST_PAGE_SIZE=5;
 let histExpanded=false;
 let histLastList=[];
-function toggleHistExpand(){histExpanded=!histExpanded;renderHistorico(histLastList);}
-function renderHistorico(delivered){
-  histLastList=delivered||[];
+// "Histórico" alterna entre duas listas somente-leitura: projetos entregues (Pós produção, o
+// comportamento original) e projetos cancelados (que saíram da visão principal de Status do
+// Portfólio, mas continuam acessíveis aqui — pedido explícito de não escondê-los do sistema).
+let historicoView='entregues';
+function toggleHistExpand(){histExpanded=!histExpanded;renderHistorico();}
+function setHistoricoView(view,el){
+  historicoView=view;histExpanded=false;
+  document.querySelectorAll('#historico-view-btns .cmb').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  renderHistorico();
+}
+function getHistoricoList(){
+  return historicoView==='cancelados'
+    ? PROJECTS.filter(p=>p.status==='CANCELADO')
+    : PROJECTS.filter(p=>p.status===DELIVERED_STATUS);
+}
+function renderHistorico(){
+  histLastList=getHistoricoList();
   const tbody=document.getElementById('hist-body');if(!tbody)return;
+  const countEl=document.getElementById('historico-count');
+  if(countEl)countEl.textContent=historicoView==='cancelados'
+    ?(histLastList.length+' projeto'+(histLastList.length!==1?'s':'')+' cancelado'+(histLastList.length!==1?'s':''))
+    :(histLastList.length+' projeto'+(histLastList.length!==1?'s':'')+' em Pós produção');
   tbody.innerHTML='';
-  if(!histLastList.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:22px;color:var(--text3)">Nenhum projeto entregue ainda.</td></tr>';return;}
+  if(!histLastList.length){tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:22px;color:var(--text3)">Nenhum projeto ${historicoView==='cancelados'?'cancelado':'entregue'} ainda.</td></tr>`;return;}
   const sorted=histLastList.slice().sort((a,b)=>(a.golive&&b.golive)?(a.golive<b.golive?1:-1):(a.golive?-1:1));
   const toShow=histExpanded?sorted:sorted.slice(0,HIST_PAGE_SIZE);
   toShow.forEach(p=>{
@@ -3231,11 +3384,25 @@ function renderHistorico(delivered){
 // Section state persists across filter changes.
 // Ao entrar na Visão Geral, só a seção Alertas (agora já com Cronogramas embutido) abre expandida
 // por padrão — as demais seções começam fechadas, pra deixar a tela mais enxuta na primeira olhada.
-const sectionState={status:false, alertas:true, etapas:false, impacto:false, gpimpacto:false, carga:false, cal:false, historico:false, prioridades:true};
+const sectionState={status:false, alertas:true, etapas:false, impacto:false, carga:false, cal:false, historico:false, prioridades:true};
 
 function toggleSection(sec){
   sectionState[sec]=!sectionState[sec];
   applySectionState(sec);
+}
+// Acesso separado aos projetos Cancelados (pedido: eles não aparecem mais nos quadros de
+// "Status do Portfólio", mas continuam no sistema) — reaproveita a seção Histórico já existente,
+// só troca o filtro dela pra "Projetos cancelados", garante que a seção esteja expandida, e rola
+// a tela até ela. Sem tabela/lógica duplicada.
+function showCancelledProjects(){
+  showView('portfolio');
+  sectionState.historico=true;
+  applySectionState('historico');
+  const btns=document.querySelectorAll('#historico-view-btns .cmb');
+  const cancelBtn=Array.from(btns).find(b=>b.textContent.trim()==='Projetos cancelados');
+  setHistoricoView('cancelados',cancelBtn);
+  const sec=document.getElementById('sec-body-historico');
+  if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function applySectionState(sec){
   const open=sectionState[sec];
@@ -3779,7 +3946,7 @@ function refreshEmailStakeholders(){
         <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email}${st.role?' <span style="font-weight:400;color:var(--text3)">· '+st.role+'</span>':''}</div>
         <div style="font-size:9.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.email}</div>
       </div>
-      <button class="rm" onclick="removeStakeholderFromProject('${key}','${st.id}');refreshEmailStakeholders()">×</button>`;
+      <button class="rm" onclick="removeStakeholderFromProject('${key}','${st.id}');persistSchedule('${key}');refreshEmailStakeholders()">×</button>`;
     list.appendChild(div);
   });
   if(!sts.length)list.innerHTML=`<div style="font-size:10.5px;color:var(--text3);padding:4px">${key?'Nenhum stakeholder cadastrado neste projeto ainda.':'Abra um projeto na lista de Atualizações para cadastrar stakeholders.'}</div>`;
@@ -3791,6 +3958,7 @@ function addStakeholderFromEmailModal(){
   const res=addStakeholderToProject(key,nameEl.value.trim(),emailEl.value.trim(),roleEl.value.trim());
   if(!res.ok){alert(res.error);return;}
   nameEl.value='';emailEl.value='';roleEl.value='';
+  persistSchedule(key); // este modal (diferente do de Stakeholders no Cronograma) continua salvando na hora
   refreshEmailStakeholders();
   if(res.accessBlocked)alert('Stakeholder cadastrado. O papel "Editor" concederia acesso de edição do cronograma, mas só administradores podem fazer essa concessão — peça a um admin para liberar em "Gerenciar Acessos".');
 }
@@ -4079,6 +4247,40 @@ document.addEventListener('click',function(e){
   const wrap=document.getElementById('rsm-search-wrap');
   const dd=document.getElementById('rsm-proj-dropdown');
   if(dd&&dd.classList.contains('open')&&wrap&&!wrap.contains(e.target))closeResumoDropdown();
+});
+// Busca de projeto direto na seção Cronograma — mesmo comportamento do campo de busca do Resumo
+// (mesma lista filtrada por chave/nome, mesmo respeito a canViewProject), mas ao selecionar abre
+// o CRONOGRAMA do projeto direto (openProjectSchedule), em vez do dashboard de Resumo.
+function renderScheduleSearchList(){
+  const q=(document.getElementById('se-search')?.value||'').toLowerCase();
+  const list=document.getElementById('se-proj-dropdown');if(!list)return;
+  list.innerHTML='';
+  let shown=0;
+  PROJECTS.forEach(p=>{
+    if(!canViewProject(p.key))return;
+    if(q&&!p.summary.toLowerCase().includes(q)&&!p.key.toLowerCase().includes(q))return;
+    shown++;
+    const div=document.createElement('div');
+    div.className='rsm-proj-item'+(curKey===p.key?' active':'');
+    div.innerHTML=`<span class="upd-proj-key">${p.key}</span><span class="upd-proj-name">${p.summary}</span>`;
+    div.onclick=()=>{openProjectSchedule(p.key);closeScheduleSearchDropdown();};
+    list.appendChild(div);
+  });
+  if(!shown)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">Nenhum projeto encontrado.</div>';
+}
+function openScheduleSearchDropdown(){
+  const dd=document.getElementById('se-proj-dropdown');if(!dd)return;
+  renderScheduleSearchList();
+  dd.classList.add('open');
+}
+function closeScheduleSearchDropdown(){
+  const dd=document.getElementById('se-proj-dropdown');if(dd)dd.classList.remove('open');
+  const inp=document.getElementById('se-search');if(inp)inp.value='';
+}
+document.addEventListener('click',function(e){
+  const wrap=document.getElementById('se-search-wrap');
+  const dd=document.getElementById('se-proj-dropdown');
+  if(dd&&dd.classList.contains('open')&&wrap&&!wrap.contains(e.target))closeScheduleSearchDropdown();
 });
 function renderResumoDashboard(){
   if(!curKey)return;
@@ -5113,7 +5315,7 @@ function renderSchedule(){
   if(!curKey)return;
   const lg=document.getElementById('baseline-legend');if(lg)lg.style.display=showBaseline?'flex':'none';
   const bBtn=document.getElementById('baseline-btn');if(bBtn){bBtn.style.background=showBaseline?'var(--navy)':'';bBtn.style.color=showBaseline?'#fff':'';}
-  document.getElementById('se-left').style.width=userLeftW+'px';
+  const _sl=document.getElementById('se-left');if(_sl){_sl.style.width=ganttVisible?userLeftW+'px':'100%';_sl.style.minWidth=ganttVisible?'260px':'100%';}
   const pProj=PROJECTS.find(x=>x.key===curKey);
   const isDelivered=pProj?.status===DELIVERED_STATUS;
   // Show/hide edit controls based on permission (entregues ficam somente-leitura)
@@ -5251,7 +5453,7 @@ function renderTblHdr(){
   LW=Object.values(C).reduce((a,b)=>a+b,0);
   const h=document.getElementById('tbl-hdr');h.style.width=LW+'px';
   const rh=(col)=>`<div class="th-resize" onmousedown="startColResize(event,'${col}')"></div>`;
-  h.innerHTML=`<div class="th" data-col="num" style="width:${C.num}px">#${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">Nome${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">Início${rh('start')}</div><div class="th" data-col="dl" style="width:${C.dl}px">Prazo${rh('dl')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="Atraso acumulado: diferença entre a data original da tarefa e o prazo atual">Atraso Acum.${rh('atraso')}</div><div class="th" data-col="er" style="width:${C.er}px">Data de Conclusão${rh('er')}</div><div class="th" data-col="de" style="width:${C.de}px">Est.${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">Real${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">Progresso${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">Responsáveis${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">Dep.${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">Status${rh('st')}</div><div class="th" data-col="timing" style="width:${C.timing}px">Tempo${rh('timing')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">Jira${rh('jiralink')}</div><div class="th" data-col="act" style="width:${C.act}px"></div>`;
+  h.innerHTML=`<div class="th" data-col="num" style="width:${C.num}px">#${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">Nome${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">Início${rh('start')}</div><div class="th" data-col="er" style="width:${C.er}px">Conclusão${rh('er')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="Atraso acumulado: diferença entre a data original da tarefa e o prazo atual">Atraso Acum.${rh('atraso')}</div><div class="th" data-col="de" style="width:${C.de}px">Est.${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">Real${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">Progresso${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">Responsáveis${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">Dep.${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">Status${rh('st')}</div><div class="th" data-col="timing" style="width:${C.timing}px">Tempo${rh('timing')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">Link${rh('jiralink')}</div><div class="th" data-col="dl" style="width:${C.dl}px">Prazo${rh('dl')}</div><div class="th" data-col="act" style="width:${C.act}px"></div>`;
 }
 function taskProg(t){if(t.progress!=null&&!isNaN(t.progress))return Math.max(0,Math.min(100,Math.round(t.progress)));return t.status==='done'?100:t.status==='in_progress'?50:0;}
 // ── NUMERAÇÃO SEQUENCIAL DA COLUNA # (inteiros, sem decimais) ──
@@ -5295,18 +5497,18 @@ function renderRows(){
         <button class="edit-btn" onclick="openMsModal('${ms.id}')"><i class="ti ti-pencil" style="font-size:8.5px"></i></button>
         ${canEd?`<button class="edit-btn" title="Excluir etapa" onclick="deleteMsDirect('${ms.id}')"><i class="ti ti-trash" style="font-size:8.5px"></i></button>`:''}
       </div>
-      <div class="td" data-col="start" style="width:${C.start}px"><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
-      <div class="td" data-col="dl" style="width:${C.dl}px"><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
+      <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'start','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
+      <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'endreal','ms','${ms.id}',null,event)"`:''}>${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
       <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
-      <div class="td" data-col="er" style="width:${C.er}px">${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
       <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de}</span></div>
       <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr!=='—'&&de!=='—'&&parseInt(dr)>parseInt(de)?'var(--red)':'var(--green)'}">${dr}</span></div>
       <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog}%</span></div></div>
-      <div class="td" data-col="resp" style="width:${C.resp}px"><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
+      <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'resp','ms','${ms.id}',null,event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
       <div class="td" data-col="dep" style="width:${C.dep}px">—</div>
-      <div class="td" data-col="st" style="width:${C.st}px"><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
+      <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'status','ms','${ms.id}',null,event)"`:''}><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
       <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge({...ms,endReal:er},true)}</div>
       <div class="td" data-col="jiralink" style="width:${C.jiralink}px">—</div>
+      <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'deadline','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
       <div class="td" data-col="act" style="width:${C.act}px"></div>`;
     if(canEd){
       row.addEventListener('dragstart',e=>onMsDragStart(e,ms.id));
@@ -5360,18 +5562,18 @@ function renderRows(){
           </div>
           ${jiraSubline}
         </div>
-        <div class="td" data-col="start" style="width:${C.start}px"><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
-        <div class="td" data-col="dl" style="width:${C.dl}px"><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
+        <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'start','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
+        <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar a data (ou use o ✓ ao lado do nome pra concluir hoje)':''}"${canEd?` onclick="inlineEditField(this,'endreal','task','${t.id}','${ms.id}',event)"`:''}>${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','task','${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`:'—')}</div>
         <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(atrasoAcc2)}</div>
-        <div class="td" data-col="er" style="width:${C.er}px">${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:`<button class="sched-mini-edit-btn" onclick="inlineDone('${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`}</div>
         <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
-        <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
-        <div class="td" data-col="resp" style="width:${C.resp}px"><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
-        <div class="td" data-col="dep" style="width:${C.dep}px">${depLbl}</div>
-        <div class="td" data-col="st" style="width:${C.st}px"><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
+        <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'progress','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
+        <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'resp','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
+        <div class="td" data-col="dep" style="width:${C.dep}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'dep','task','${t.id}','${ms.id}',event)"`:''}>${depLbl}</div>
+        <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'status','task','${t.id}','${ms.id}',event)"`:''}><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
         <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge(t,false)}</div>
-        <div class="td" data-col="jiralink" style="width:${C.jiralink}px">${jiraLinkHtml}</div>
+        <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'jira','task','${t.id}','${ms.id}',event)"`:''}>${jiraLinkHtml}</div>
+        <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'deadline','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
         <div class="td" data-col="act" style="width:${C.act}px"><button style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:11px" onclick="openTaskModal('${ms.id}','${t.id}')"><i class="ti ti-dots-vertical"></i></button></div>`;
       cont.appendChild(tr2);
     });
@@ -5592,6 +5794,158 @@ function hideTip(){document.getElementById('tip').style.display='none';}
 
 // ── INLINE ACTIONS ──
 function inlineDone(tid,msId,ev){ev.stopPropagation();if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;t.endReal=ds(TODAY);t.status='done';logChange(curKey,`Tarefa "${t.name}" concluída`,'#16a34a');autoUpdateMsStatus(curKey);const casc1=cascadeReschedule(curKey);logCascadeChanges(curKey,casc1.changed);renderSchedule();syncToJira(curKey);persistSchedule(curKey);}
+// ── EDIÇÃO INLINE (clique na célula, sem abrir o pop-up da etapa/tarefa) ──
+// Cobre as colunas pedidas: Status, Responsáveis, Data de Conclusão, Dependências e Jira.
+// Cada célula, quando clicável (canEdit e ainda não em edição), vira um input/select na hora;
+// Enter ou perder o foco confirma, Esc cancela — sempre reaproveitando os mesmos efeitos
+// colaterais do salvamento pelo modal (cascata de datas, sync com Jira, log de alteração).
+function inlineEditField(el,field,kind,id,msId,ev){
+  if(ev)ev.stopPropagation();
+  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(el.querySelector('.inline-edit-input,.inline-edit-select'))return; // já em edição
+  const sched=schedules[curKey];
+  const obj=kind==='ms'?(sched.milestones||[]).find(m=>m.id===id):(sched.tasks||[]).find(t=>t.id===id);
+  if(!obj)return;
+  const commit=(raw)=>{commitInlineField(field,kind,id,msId,raw);};
+  const cancel=()=>{renderSchedule();};
+  if(field==='status'){
+    const sel=document.createElement('select');sel.className='inline-edit-select';
+    sel.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    Object.keys(SL).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=SL[k];if(k===obj.status)o.selected=true;sel.appendChild(o);});
+    el.innerHTML='';el.appendChild(sel);sel.focus();
+    sel.onchange=()=>commit(sel.value);
+    sel.onblur=()=>{ if(el.contains(sel)) commit(sel.value); };
+    sel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();cancel();}});
+    return;
+  }
+  if(field==='resp'){
+    const cur=(obj.assignees||[]).map(a=>a.name).join(', ');
+    const inp=document.createElement('input');inp.type='text';inp.className='inline-edit-input';inp.value=cur;inp.placeholder='Nomes separados por vírgula';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    return;
+  }
+  if(field==='endreal'){
+    const inp=document.createElement('input');inp.type='date';inp.className='inline-edit-input';inp.value=obj.endReal||'';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    inp.addEventListener('change',finish);
+    return;
+  }
+  if(field==='dep'&&kind==='task'){
+    const {idToNum}=buildRowNumMap(sched);
+    const allDeps=(obj.depIds&&obj.depIds.length>0)?obj.depIds:(obj.depId?[obj.depId]:[]);
+    const cur=allDeps.map(id2=>idToNum[id2]).filter(Boolean).join(', ');
+    const inp=document.createElement('input');inp.type='text';inp.className='inline-edit-input';inp.value=cur;inp.placeholder='Nº das linhas, ex: 2, 3';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    return;
+  }
+  if(field==='jira'&&kind==='task'){
+    const links=getTaskLinks(obj);const cur=links[0]?links[0].url:'';
+    const inp=document.createElement('input');inp.type='text';inp.className='inline-edit-input';inp.value=cur;inp.placeholder='https://...';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value.trim());};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    return;
+  }
+  if(field==='start'){
+    const inp=document.createElement('input');inp.type='date';inp.className='inline-edit-input';inp.value=obj.start||'';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    inp.addEventListener('change',finish);
+    return;
+  }
+  if(field==='deadline'){
+    const inp=document.createElement('input');inp.type='date';inp.className='inline-edit-input';inp.value=obj.deadline||'';
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    inp.addEventListener('change',finish);
+    return;
+  }
+  if(field==='progress'&&kind==='task'){
+    const inp=document.createElement('input');inp.type='number';inp.min='0';inp.max='100';inp.step='1';inp.className='inline-edit-input';
+    inp.value=obj.progress!=null&&!isNaN(obj.progress)?obj.progress:taskProg(obj);
+    inp.style.cssText='font-size:9.5px;padding:1px 3px;border:1px solid var(--purple);border-radius:4px;width:100%';
+    el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();
+    let done=false;
+    const finish=()=>{if(done)return;done=true;commit(inp.value);};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
+    inp.addEventListener('blur',finish);
+    return;
+  }
+}
+function commitInlineField(field,kind,id,msId,raw){
+  const sched=schedules[curKey];
+  const obj=kind==='ms'?(sched.milestones||[]).find(m=>m.id===id):(sched.tasks||[]).find(t=>t.id===id);
+  if(!obj){renderSchedule();return;}
+  const label=kind==='ms'?'Etapa':'Tarefa';
+  if(field==='status'){
+    if(obj.status!==raw){obj.status=raw;logChange(curKey,`${label} "${obj.name}": status → ${SL[raw]||raw}`,'#0369a1');}
+  }else if(field==='resp'){
+    const existingByName={};(obj.assignees||[]).forEach(a=>{existingByName[a.name]=a.type;});
+    obj.assignees=raw.split(',').map(s=>s.trim()).filter(Boolean).map(name=>({name,type:existingByName[name]||'internal'}));
+    logChange(curKey,`${label} "${obj.name}": responsáveis atualizados`,'#0369a1');
+  }else if(field==='endreal'){
+    obj.endReal=raw||'';
+    logChange(curKey,`${label} "${obj.name}": data de conclusão → ${raw?fmtBR(raw):'—'}`,'#0369a1');
+  }else if(field==='dep'&&kind==='task'){
+    const {numToId}=buildRowNumMap(sched);
+    const depIds=raw.split(',').map(s=>s.trim()).filter(Boolean).map(v=>numToId[parseInt(v)]).filter(Boolean).filter(depId2=>depId2!==id);
+    obj.depIds=depIds;obj.depId=depIds[0]||'';
+    logChange(curKey,`${label} "${obj.name}": dependências atualizadas`,'#0369a1');
+  }else if(field==='jira'&&kind==='task'){
+    if(Array.isArray(obj.links)&&obj.links.length){
+      if(raw)obj.links[0]={...obj.links[0],url:raw,internal:isInternalLink(raw)};else obj.links.shift();
+    }else if(raw){
+      obj.jiraLink=raw;
+    }else{
+      obj.jiraLink='';
+    }
+    logChange(curKey,`${label} "${obj.name}": link atualizado`,'#0369a1');
+  }else if(field==='start'){
+    if(obj.start!==raw){obj.start=raw||'';logChange(curKey,`${label} "${obj.name}": início → ${raw?fmtBR(raw):'—'}`,'#0369a1');}
+  }else if(field==='deadline'){
+    const old=obj.deadline;
+    if(kind==='task'){
+      // Mesma regra do modal (saveTask): o "Atraso Acum." só deve zerar quando o PRAZO em si é
+      // replanejado de propósito — editar outra coisa sem mexer no prazo não pode resetar um
+      // atraso real que já existia.
+      if(old===raw){obj.origDeadline=obj.origDeadline||old;}else{obj.origDeadline=raw;}
+    }
+    obj.deadline=raw||'';
+    if(old!==raw)logChange(curKey,`${label} "${obj.name}": prazo ${fmtBR(old)} → ${fmtBR(raw)}`,'#d97706');
+  }else if(field==='progress'&&kind==='task'){
+    const p=parseInt(raw);
+    obj.progress=isNaN(p)?null:Math.max(0,Math.min(100,p));
+    logChange(curKey,`${label} "${obj.name}": progresso → ${obj.progress!=null?obj.progress:taskProg(obj)}%`,'#0369a1');
+  }
+  if(kind==='task'){autoUpdateMsStatus(curKey);const casc2=cascadeReschedule(curKey);logCascadeChanges(curKey,casc2.changed);}
+  renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);
+}
 function cloneMs(msId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;const newMs={...JSON.parse(JSON.stringify(ms)),id:uid(),name:ms.name+' (cópia)'};sched.milestones.push(newMs);const msTasks=sched.tasks.filter(t=>t.msId===msId);const idMap={};msTasks.forEach(t=>{const newId=uid();idMap[t.id]=newId;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,msId:newMs.id,endReal:'',status:'not_started',origDeadline:t.origDeadline||t.deadline});});logChange(curKey,`Etapa "${ms.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
 function cloneTask(msId,taskId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:uid(),name:t.name+' (cópia)',endReal:'',status:'not_started',depId:'',origDeadline:t.origDeadline||t.deadline});logChange(curKey,`Tarefa "${t.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
 
@@ -6419,28 +6773,83 @@ function openStakeholdersModal(){
     <div style="font-size:9px;color:var(--text3);margin-top:4px;line-height:1.4">💡 Papel <b>Editor</b> — pode inserir, editar e excluir etapas/tarefas deste cronograma. Papel <b>Visualizador</b> (ou qualquer outro texto, ex.: Cliente, Gerente) — só acompanha, sem edição.</div>
     <div class="section-lbl" style="margin-top:8px">Cadastrados</div>
     <div id="stakeholders-list" style="max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    <div id="sh-unsaved-note" style="display:none;font-size:9.5px;color:#b45309;background:#fef3c7;padding:5px 8px;border-radius:5px;margin-top:6px">⚠ Você tem alterações não salvas na lista de stakeholders — clique em "Salvar" antes de fechar.</div>
     <div class="section-lbl" style="margin-top:10px">Enviar atualização por e-mail</div>
     <textarea id="sh-message" rows="3" placeholder="Mensagem opcional — vai junto com o status atual do projeto (etapa, progresso, próxima entrega)" style="width:100%;border:1px solid var(--border2);border-radius:6px;padding:6px 8px;font-size:10.5px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
     <div id="sh-send-status" style="font-size:9.5px;color:var(--text3);margin-top:5px"></div>
-  `,`<button class="btn-c" onclick="closeM('stakeholders-modal')">Fechar</button>
+  `,`<button class="btn-c" onclick="closeStakeholdersModal()">Fechar</button>
+     <button class="btn-s" id="sh-save-btn" onclick="saveStakeholdersChanges()" style="background:linear-gradient(135deg,#0369a1,#0284c7)"><i class="ti ti-device-floppy"></i> Salvar</button>
      <button class="btn-c" id="sh-slack-btn" onclick="sendStakeholderSlack()" style="border-color:#4A154B;color:#4A154B;display:${canSend?'flex':'none'}"><i class="ti ti-brand-slack"></i> Enviar no Slack</button>
      <button class="btn-s" id="sh-send-btn" onclick="sendStakeholderUpdate()" style="background:linear-gradient(135deg,#16a34a,#059669);display:${canSend?'flex':'none'}"><i class="ti ti-mail-forward"></i> Enviar atualização</button>`);
+  shDirty=false;
   renderStakeholdersList();
   renderStakeholdersScopeRow();
   openM('stakeholders-modal');
 }
+// Controla se há adições/remoções de stakeholder ainda não persistidas nesta sessão do modal —
+// "+"/"×" só mexem na lista em memória e re-renderizam; só o clique em "Salvar" grava no
+// Firestore de fato. Isso alinha esse modal com o padrão do resto do app (editar campo manual,
+// trocar status etc., que também exigem um clique explícito de "Salvar") e evita a corrida em
+// que duas pessoas mexendo na lista ao mesmo tempo, em abas diferentes, geravam duplicata.
+let shDirty=false;
+function markStakeholdersDirty(){
+  shDirty=true;
+  const note=document.getElementById('sh-unsaved-note');if(note)note.style.display='';
+}
+function closeStakeholdersModal(){
+  if(shDirty&&!confirm('Você tem alterações não salvas na lista de stakeholders. Fechar sem salvar?'))return;
+  closeM('stakeholders-modal');
+}
+async function saveStakeholdersChanges(){
+  if(!curKey)return;
+  const btn=document.getElementById('sh-save-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='Salvando...';}
+  await persistSchedule(curKey);
+  shDirty=false;
+  const note=document.getElementById('sh-unsaved-note');if(note)note.style.display='none';
+  if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-device-floppy"></i> Salvo ✓';setTimeout(()=>{if(btn)btn.innerHTML='<i class="ti ti-device-floppy"></i> Salvar';},1800);}
+}
+// Preferências de notificação (canal + tipo de atualização) só podem ser alteradas pelo GP do
+// projeto ou por um admin — os demais (outros editores, viewers) veem os valores mas não mexem.
+function canEditStakeholderPrefs(){
+  const p=PROJECTS.find(x=>x.key===curKey);
+  return isAdmin()||isGPOfProject(currentUser,p);
+}
+function toggleStakeholderPref(id,group,key,checked){
+  if(!canEditStakeholderPrefs()){alert('Só o GP do projeto ou um administrador pode alterar as preferências de notificação.');renderStakeholdersList();return;}
+  const sched=schedules[curKey];const st=(sched.stakeholders||[]).find(s=>s.id===id);if(!st)return;
+  if(!st[group])st[group]={};
+  st[group][key]=checked;
+  markStakeholdersDirty();
+  renderStakeholdersList();
+}
 function renderStakeholdersList(){
   const sched=schedules[curKey];const list=document.getElementById('stakeholders-list');if(!sched||!list)return;
   list.innerHTML='';
+  const canEditPrefs=canEditStakeholderPrefs();
   (sched.stakeholders||[]).forEach(st=>{
     // Mesmo mecanismo do "Gerenciar Acessos" (sched.access com role 'editor') — só pra mostrar,
     // ao lado do stakeholder, se essa pessoa também tem permissão de editar o cronograma.
     const hasEditAccess=(sched.access||[]).some(a=>a.email.toLowerCase()===st.email.toLowerCase()&&a.role==='editor');
+    const ch=st.notifyChannels||{email:true,slack:false};
+    const ty=st.notifyTypes||{cronograma:true,risco:true,feed:false};
+    const chk=(checked,onFn,label,title)=>`<label style="display:flex;align-items:center;gap:2px;font-size:8.5px;color:var(--text3);cursor:${canEditPrefs?'pointer':'default'}" title="${title||''}"><input type="checkbox" ${checked?'checked':''} ${canEditPrefs?'':'disabled'} onchange="${onFn}" style="margin:0;width:10px;height:10px">${label}</label>`;
     const div=document.createElement('div');
-    div.style.cssText='display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg2);border-radius:5px';
-    div.innerHTML=`<div style="flex:1;min-width:0">
+    div.style.cssText='display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg2);border-radius:5px;flex-wrap:wrap';
+    div.innerHTML=`<div style="flex:1;min-width:160px">
         <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email}${st.role?' <span style="font-weight:400;color:var(--text3)">· '+st.role+'</span>':''}${hasEditAccess?' <span style="font-weight:600;color:#166534;font-size:9px">· ✏️ Editor do cronograma</span>':''}</div>
         <div style="font-size:9.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.email}</div>
+        <div style="display:flex;gap:8px;margin-top:3px;flex-wrap:wrap">
+          <span style="display:flex;gap:5px;padding-right:7px;border-right:1px solid var(--border2)">
+            ${chk(ch.email,`toggleStakeholderPref('${st.id}','notifyChannels','email',this.checked)`,'📧 E-mail','Receber por e-mail')}
+            ${chk(ch.slack,`toggleStakeholderPref('${st.id}','notifyChannels','slack',this.checked)`,'💬 Slack','Receber por Slack')}
+          </span>
+          <span style="display:flex;gap:5px">
+            ${chk(ty.cronograma,`toggleStakeholderPref('${st.id}','notifyTypes','cronograma',this.checked)`,'Cronograma','Atualizações de cronograma')}
+            ${chk(ty.risco,`toggleStakeholderPref('${st.id}','notifyTypes','risco',this.checked)`,'Risco','Alertas de risco')}
+            ${chk(ty.feed,`toggleStakeholderPref('${st.id}','notifyTypes','feed',this.checked)`,'Feed','Atualizações do feed geral')}
+          </span>
+        </div>
       </div>
       ${isAdmin()?(hasEditAccess?`<button class="btn-c" style="font-size:8.5px;padding:2px 6px" onclick="revokeExternalEditAccess('${st.email.replace(/'/g,"\'")}')" title="Remover acesso de edição">Remover edição</button>`:`<button class="btn-c" style="font-size:8.5px;padding:2px 6px" onclick="grantExternalEditAccess('${st.email.replace(/'/g,"\'")}')" title="Dar acesso de edição">Dar edição</button>`):''}
       <button class="rm" onclick="removeStakeholder('${st.id}')">×</button>`;
@@ -6473,6 +6882,19 @@ function revokeExternalEditAccess(email){
   persistSchedule(curKey);
   renderStakeholdersList();
 }
+// Remove entradas duplicadas (mesmo e-mail, case-insensitive) que possam ter entrado na lista
+// por uma corrida entre duas pessoas editando o mesmo projeto em abas/sessões diferentes sem
+// dar refresh entre si — mantém a primeira ocorrência de cada e-mail. Chamado tanto ao carregar
+// os dados do Firestore quanto logo antes de persistir, então nenhuma duplicata sobrevive.
+function dedupeStakeholders(list){
+  const seen=new Set();const out=[];
+  (list||[]).forEach(st=>{
+    const k=(st.email||'').toLowerCase();
+    if(!k||seen.has(k))return;
+    seen.add(k);out.push(st);
+  });
+  return out;
+}
 // Núcleo compartilhado — usado tanto pelo modal de Stakeholders do Cronograma
 // quanto pelo bloco de Stakeholders dentro do Email Executivo Semanal.
 function addStakeholderToProject(key,name,email,role){
@@ -6480,7 +6902,8 @@ function addStakeholderToProject(key,name,email,role){
   const sched=schedules[key];if(!sched)return{ok:false,error:'Projeto não encontrado'};
   if(!sched.stakeholders)sched.stakeholders=[];
   if(sched.stakeholders.find(s=>s.email.toLowerCase()===email.toLowerCase()))return{ok:false,error:'Esse e-mail já está cadastrado para este projeto.'};
-  sched.stakeholders.push({id:uid(),name:name||email,email,role,addedAt:nowStr()});
+  sched.stakeholders.push({id:uid(),name:name||email,email,role,addedAt:nowStr(),notifyChannels:{email:true,slack:false},notifyTypes:{cronograma:true,risco:true,feed:false}});
+  sched.stakeholders=dedupeStakeholders(sched.stakeholders);
   logChange(key,`Stakeholder adicionado: ${name||email}`,'#0369a1');
   // Papel "Editor" digitado no cadastro concede automaticamente acesso de edição
   // do cronograma deste projeto (mesmo mecanismo de "Gerenciar Acessos"). Só quem
@@ -6500,7 +6923,9 @@ function addStakeholderToProject(key,name,email,role){
       accessBlocked=true;
     }
   }
-  persistSchedule(key);
+  // Não persiste aqui — quem chamou decide quando salvar (o modal de Stakeholders do
+  // Cronograma acumula os ajustes e só grava tudo de uma vez no clique de "Salvar";
+  // o modal do Email Executivo já persiste na hora, logo após chamar esta função).
   return{ok:true,accessGranted,accessBlocked};
 }
 function removeStakeholderFromProject(key,id){
@@ -6508,7 +6933,7 @@ function removeStakeholderFromProject(key,id){
   const st=(sched.stakeholders||[]).find(s=>s.id===id);if(!st)return false;
   sched.stakeholders=sched.stakeholders.filter(s=>s.id!==id);
   logChange(key,`Stakeholder removido: ${st.name||st.email}`,'#dc2626');
-  persistSchedule(key);
+  // Não persiste aqui — mesmo motivo do comentário em addStakeholderToProject.
   return true;
 }
 function addStakeholder(){
@@ -6517,13 +6942,15 @@ function addStakeholder(){
   const res=addStakeholderToProject(curKey,nameEl.value.trim(),email,roleEl.value.trim());
   if(!res.ok){alert(res.error);return;}
   nameEl.value='';emailEl.value='';roleEl.value='';
+  markStakeholdersDirty();
   renderStakeholdersList();
-  if(res.accessBlocked)alert('Stakeholder cadastrado. O papel "Editor" concederia acesso de edição do cronograma, mas só administradores podem fazer essa concessão — peça a um admin para liberar em "Gerenciar Acessos" ou nesta mesma lista.');
+  if(res.accessBlocked)alert('Stakeholder cadastrado (ainda não salvo). O papel "Editor" concederia acesso de edição do cronograma, mas só administradores podem fazer essa concessão — peça a um admin para liberar em "Gerenciar Acessos" ou nesta mesma lista.');
 }
 function removeStakeholder(id){
   const sched=schedules[curKey];const st=(sched.stakeholders||[]).find(s=>s.id===id);if(!st)return;
   if(!confirm(`Remover "${st.name||st.email}" da lista de stakeholders?`))return;
   removeStakeholderFromProject(curKey,id);
+  markStakeholdersDirty();
   renderStakeholdersList();
 }
 async function sendStakeholderUpdate(){
@@ -7299,6 +7726,10 @@ const JIRA_JQL='project = VMO AND issuetype in (Comercial, Produtos, Tarefa) ORD
 // ── PERSISTENCE ──────────────────────────────────────────
 async function persistSchedule(key) {
   if (!schedules[key]) return;
+  // Trava final contra duplicidade: mesmo que algum caminho tenha deixado passar um e-mail
+  // repetido na lista de stakeholders (ex.: corrida entre duas abas), nunca escreve isso de
+  // volta pro Firestore — limpa aqui, no ponto único de gravação, antes de qualquer coisa.
+  if (schedules[key].stakeholders) schedules[key].stakeholders = dedupeStakeholders(schedules[key].stakeholders);
   setSyncTxt('syncing', 'Salvando...');
   try {
     if (firebaseReady && db) {
@@ -7370,7 +7801,7 @@ async function autoLoadOnLogin() {
             baseline:      raw.baseline      || null,
             scoring:       raw.scoring       || null,
             scoringProd:   raw.scoringProd   || null,
-            stakeholders:  raw.stakeholders  || [],
+            stakeholders:  dedupeStakeholders(raw.stakeholders  || []),
             scopeLink:     raw.scopeLink     || null,
             formLink:      raw.formLink      || null,
             scopeSummary:  raw.scopeSummary  || '',
@@ -7438,14 +7869,21 @@ async function autoLoadOnLogin() {
     }
     if (PROJECTS.find(p => p.key === projectParam) && canViewProject(projectParam)) {
       openProject(projectParam);
-    } else if (currentUser?.role === 'external') {
+    } else if (currentUser?.role === 'external' || currentUser?.role === 'stakeholder') {
       const myProjects = PROJECTS.filter(p => canViewProject(p.key));
       if (myProjects.length === 1) openProject(myProjects[0].key);
+    } else if (currentUser?.role === 'consulta') {
+      showView('resumo');
     }
-  } else if (currentUser?.role === 'external') {
-    // External users go to their project
+  } else if (currentUser?.role === 'external' || currentUser?.role === 'stakeholder') {
+    // External/stakeholder users go straight to their project — não tem sentido nenhum deles
+    // pousar na Visão Geral, que eles nem conseguem ver.
     const myProjects = PROJECTS.filter(p => canViewProject(p.key));
     if (myProjects.length === 1) openProject(myProjects[0].key);
+  } else if (currentUser?.role === 'consulta') {
+    // Idem: "Consulta" não vê Visão Geral — manda direto pro Resumo dos Projetos (sem
+    // pré-selecionar nenhum, já que enxerga a carteira inteira, não um projeto só).
+    showView('resumo');
   }
 }
 
@@ -7527,10 +7965,11 @@ async function persistUsers() {
     // Externo) assim que a pessoa cadastrada dava reload/logava numa aba nova, mesmo com o
     // usuário certinho no registro — o role vinha desses arrays, não do registro em si.
     await db.collection('app_config').doc('users').set({
-      registry:     USER_REGISTRY,
-      editorEmails: EDITOR_EMAILS,
-      adminEmails:  ADMIN_EMAILS,
-      updatedAt:    firebase.firestore.FieldValue.serverTimestamp(),
+      registry:       USER_REGISTRY,
+      editorEmails:   EDITOR_EMAILS,
+      adminEmails:    ADMIN_EMAILS,
+      consultaEmails: CONSULTA_EMAILS,
+      updatedAt:      firebase.firestore.FieldValue.serverTimestamp(),
     });
     return true;
   } catch(e) { console.error('persistUsers error:', e); return false; }
@@ -7931,20 +8370,20 @@ function segComponentFor(p){
 }
 // Status que nunca entram na sugestão de priorização: já não fazem parte da fila ativa de
 // entrega (negociação ainda não fechada, ou o projeto já saiu do fluxo de execução).
-const PRIORITY_LIST_EXCLUDED_STATUS=new Set(['NEG. COMERCIAL / PRÉ VENDA','CANCELADO','PAUSADO','BACKLOG','Pós produção']);
+const PRIORITY_LIST_EXCLUDED_STATUS=new Set(['PRESALES','CANCELADO','PAUSADO','BACKLOG','Pós produção']);
 function priorityIsShared(p){
   if(p.priority==null)return false;
   return PROJECTS.filter(x=>x.status!==DELIVERED_STATUS&&x.priority===p.priority).length>1;
 }
 // ── Correção de prioridades "fictícias" herdadas de um bug antigo ──
 // Antes de uma correção anterior, arrastar QUALQUER projeto na aba Prioridades renumerava TODO
-// mundo não entregue — inclusive Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial, que
+// mundo não entregue — inclusive Backlog/Pausado/Cancelado/Pós produção/Presales, que
 // nunca deveriam ter prioridade individual — e enviava esses números fabricados pro Jira. Isso
 // já aconteceu antes dessa correção existir, então o Jira hoje pode guardar prioridades
 // individuais falsas pra projetos nesses status, que voltam a cada Sync Jira. Este é o "balde"
 // correto de cada status excluído, pra restaurar e reenviar ao Jira sob demanda (nunca sozinho).
 const PRIORITY_BUCKET_VALUES={
-  'NEG. COMERCIAL / PRÉ VENDA':99,
+  'PRESALES':99,
   'BACKLOG':998,
   'PAUSADO':999,
   'Pós produção':1000,
@@ -7971,7 +8410,7 @@ function openPriorityRepairModal(){
          <thead><tr><th>Chave</th><th>Projeto</th><th style="text-align:center">Status</th><th style="text-align:center">Atual</th><th style="text-align:center">Corrigido</th></tr></thead>
          <tbody>${rows}</tbody>
        </table></div>`
-    : `<div class="info-box">Nenhuma prioridade fictícia encontrada — todos os projetos em Backlog/Pausado/Cancelado/Pós produção/Neg. Comercial já estão com o valor correto.</div>`;
+    : `<div class="info-box">Nenhuma prioridade fictícia encontrada — todos os projetos em Backlog/Pausado/Cancelado/Pós produção/Presales já estão com o valor correto.</div>`;
   getOrBuildModal('priority-repair-modal','Corrigir prioridades fictícias',body,
     toFix.length
       ? `<button class="btn-c" onclick="closeM('priority-repair-modal')">Cancelar</button><button class="btn-s" style="background:#c2410c" onclick="applyPriorityRepair()"><i class="ti ti-tool" style="font-size:10px"></i> Corrigir ${toFix.length} e enviar ao Jira</button>`
