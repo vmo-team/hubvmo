@@ -879,58 +879,58 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 <div class="view" id="view-schedule" style="flex-direction:row">
   <div id="sch-sidebar">
     <div id="sch-sidebar-hdr">
-      <h3><i class="ti ti-list-details" style="font-size:12px;color:var(--purple)"></i> Projetos ativos</h3>
+      <h3><i class="ti ti-list-details" style="font-size:12px;color:var(--purple)"></i> <span data-i18n="sch_sidebar_title">Projetos ativos</span></h3>
       <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="sch-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" autocomplete="off" oninput="renderScheduleProjectList()"></div>
     </div>
     <div id="sch-proj-list"></div>
   </div>
   <div id="se-main">
   <div id="se-hdr">
-    <button class="seb" onclick="showView('portfolio');history.replaceState(null,'',window.location.pathname)"><i class="ti ti-arrow-left" style="font-size:10px"></i> Voltar</button>
-    <button class="seb" id="sch-sidebar-toggle-btn" onclick="toggleSchSidebar()" title="Mostrar lista de projetos"><i class="ti ti-list" style="font-size:10px"></i> Projetos</button>
+    <button class="seb" onclick="showView('portfolio');history.replaceState(null,'',window.location.pathname)"><i class="ti ti-arrow-left" style="font-size:10px"></i> <span data-i18n="btn_voltar">Voltar</span></button>
+    <button class="seb" id="sch-sidebar-toggle-btn" onclick="toggleSchSidebar()" title="Mostrar lista de projetos" data-i18n-title="sch_toggle_show_title"><i class="ti ti-list" style="font-size:10px"></i> <span data-i18n="sch_toggle_projetos">Projetos</span></button>
     <div id="se-search-wrap">
       <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="se-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" autocomplete="off" oninput="renderScheduleSearchList()" onfocus="openScheduleSearchDropdown()" onkeydown="if(event.key==='Escape'){closeScheduleSearchDropdown();this.blur();}"></div>
       <div id="se-proj-dropdown"></div>
     </div>
-    <h2 id="se-title">Selecione um projeto</h2>
+    <h2 id="se-title" data-i18n="select_project">Selecione um projeto</h2>
     <a class="se-jira" id="se-jira-lnk" href="#" target="_blank" style="display:none"><i class="ti ti-brand-jira"></i><span id="se-jira-key"></span></a>
-    <button class="seb" id="copy-link-btn" onclick="copyScheduleLink()" style="display:none" title="Copiar link direto para este cronograma"><i class="ti ti-link" style="font-size:10px"></i> Copiar link</button>
+    <button class="seb" id="copy-link-btn" onclick="copyScheduleLink()" style="display:none" title="Copiar link direto para este cronograma" data-i18n-title="sch_copy_link_title"><i class="ti ti-link" style="font-size:10px"></i> <span data-i18n="sch_copy_link">Copiar link</span></button>
     <div class="vg">
-      <button class="vbtn" onclick="setZoom('day')">Dias</button>
-      <button class="vbtn" onclick="setZoom('week')">Semanas</button>
-      <button class="vbtn on" onclick="setZoom('month')">Meses</button>
-      <button class="vbtn" onclick="setZoom('year')">Ano</button>
+      <button class="vbtn" onclick="setZoom('day')" data-i18n="zoom_dias">Dias</button>
+      <button class="vbtn" onclick="setZoom('week')" data-i18n="zoom_semanas">Semanas</button>
+      <button class="vbtn on" onclick="setZoom('month')" data-i18n="zoom_meses">Meses</button>
+      <button class="vbtn" onclick="setZoom('year')" data-i18n="zoom_ano">Ano</button>
     </div>
-    <button class="seb" onclick="scrollToToday()"><i class="ti ti-calendar-event" style="font-size:10px"></i> Hoje</button>
+    <button class="seb" onclick="scrollToToday()"><i class="ti ti-calendar-event" style="font-size:10px"></i> <span data-i18n="btn_hoje">Hoje</span></button>
     <button class="seb" onclick="shiftV(-1)"><i class="ti ti-chevron-left" style="font-size:10px"></i></button>
     <button class="seb" onclick="shiftV(1)"><i class="ti ti-chevron-right" style="font-size:10px"></i></button>
-    <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'exibicao')"><i class="ti ti-adjustments" style="font-size:10px"></i> Exibição <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
-    <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'ferramentas')"><i class="ti ti-tools" style="font-size:10px"></i> Ferramentas <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
+    <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'exibicao')"><i class="ti ti-adjustments" style="font-size:10px"></i> <span data-i18n="sch_exibicao">Exibição</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
+    <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'ferramentas')"><i class="ti ti-tools" style="font-size:10px"></i> <span data-i18n="sch_ferramentas">Ferramentas</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <div style="flex:1"></div>
-    <button class="seb pri" id="new-ms-btn" onclick="openMsModal(null)"><i class="ti ti-flag-plus" style="font-size:10px"></i> Nova etapa</button>
+    <button class="seb pri" id="new-ms-btn" onclick="openMsModal(null)"><i class="ti ti-flag-plus" style="font-size:10px"></i> <span data-i18n="btn_nova_etapa">Nova etapa</span></button>
   </div>
   <div class="hdr-dd-menu" id="hdr-menu-exibicao">
-    <div class="hdr-dd-item" id="seq-btn" onclick="toggleSeqNums()" title="Numerar unidades sequencialmente (D1/D2 ou S1/S2 ou M1/M2)"><i class="ti ti-list-numbers"></i> Seq.</div>
-    <div class="hdr-dd-item" id="critical-btn" onclick="toggleCritical()" title="Caminho crítico: destaca com contorno tracejado as tarefas marcadas manualmente como 'críticas' — atrasá-las pode impactar a data final do projeto."><i class="ti ti-bolt"></i> Caminho Crítico</div>
+    <div class="hdr-dd-item" id="seq-btn" onclick="toggleSeqNums()" title="Numerar unidades sequencialmente (D1/D2 ou S1/S2 ou M1/M2)" data-i18n-title="sch_seq_title"><i class="ti ti-list-numbers"></i> <span data-i18n="sch_seq">Seq.</span></div>
+    <div class="hdr-dd-item" id="critical-btn" onclick="toggleCritical()" title="Caminho crítico: destaca com contorno tracejado as tarefas marcadas manualmente como 'críticas' — atrasá-las pode impactar a data final do projeto." data-i18n-title="sch_caminho_critico_title"><i class="ti ti-bolt"></i> <span data-i18n="sch_caminho_critico">Caminho Crítico</span></div>
   </div>
   <div class="hdr-dd-menu" id="hdr-menu-ferramentas">
-    <div class="hdr-dd-item" id="cal-btn" onclick="closeAllHdrMenus();openCalModal()"><i class="ti ti-calendar-cog"></i> Calendário</div>
-    <div class="hdr-dd-item" id="baseline-btn" onclick="closeAllHdrMenus();openBaselineViewModal()" title="Ver o cronograma original: a primeira versão registrada deste projeto (etapas e tarefas como foram criadas)."><i class="ti ti-git-compare"></i> Baseline</div>
-    <div class="hdr-dd-item" id="baseline-compare-btn" onclick="closeAllHdrMenus();openBaselineCompareModal()" title="Comparação detalhada: datas alteradas e tarefas/etapas criadas ou removidas desde o planejamento original."><i class="ti ti-list-details"></i> Comparar</div>
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openImportModal()" id="import-btn" style="display:none"><i class="ti ti-file-import"></i> Importar</div>
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openTemplateModal()" id="template-btn" style="display:none"><i class="ti ti-template"></i> Modelos</div>
-    <div class="hdr-dd-item" id="gantt-toggle-btn" onclick="toggleGantt()" title="Exibir/ocultar o diagrama de Gantt"><i class="ti ti-layout-sidebar-right"></i> Gantt</div>
+    <div class="hdr-dd-item" id="cal-btn" onclick="closeAllHdrMenus();openCalModal()"><i class="ti ti-calendar-cog"></i> <span data-i18n="sch_calendario">Calendário</span></div>
+    <div class="hdr-dd-item" id="baseline-btn" onclick="closeAllHdrMenus();openBaselineViewModal()" title="Ver o cronograma original: a primeira versão registrada deste projeto (etapas e tarefas como foram criadas)." data-i18n-title="sch_baseline_title"><i class="ti ti-git-compare"></i> <span data-i18n="sch_baseline">Baseline</span></div>
+    <div class="hdr-dd-item" id="baseline-compare-btn" onclick="closeAllHdrMenus();openBaselineCompareModal()" title="Comparação detalhada: datas alteradas e tarefas/etapas criadas ou removidas desde o planejamento original." data-i18n-title="sch_comparar_title"><i class="ti ti-list-details"></i> <span data-i18n="sch_comparar">Comparar</span></div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openImportModal()" id="import-btn" style="display:none"><i class="ti ti-file-import"></i> <span data-i18n="sch_importar">Importar</span></div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openTemplateModal()" id="template-btn" style="display:none"><i class="ti ti-template"></i> <span data-i18n="sch_modelos">Modelos</span></div>
+    <div class="hdr-dd-item" id="gantt-toggle-btn" onclick="toggleGantt()" title="Exibir/ocultar o diagrama de Gantt" data-i18n-title="sch_gantt_title"><i class="ti ti-layout-sidebar-right"></i> <span data-i18n="sch_gantt">Gantt</span></div>
   </div>
   <div id="delivered-banner" style="display:none;padding:6px 14px;background:#f1f5f9;border-bottom:1px solid var(--border);font-size:10.5px;color:#475569;align-items:center;gap:6px"><i class="ti ti-archive" style="font-size:12px"></i><span id="delivered-banner-txt"></span></div>
   <div id="proj-sum"></div>
   <div id="ms-bulk-bar" style="display:none;align-items:center;gap:8px;padding:6px 14px;background:#fef2f2;border-bottom:1px solid #fecaca;font-size:10.5px;color:#991b1b">
     <i class="ti ti-checkbox" style="font-size:13px"></i>
     <span id="ms-bulk-count"></span>
-    <button class="btn-c" style="margin-left:auto;padding:3px 9px;font-size:10px" onclick="clearMsSelection()">Cancelar</button>
-    <button class="btn-c" style="padding:3px 9px;font-size:10px;color:#dc2626;border-color:#fca5a5" onclick="deleteSelectedMs()"><i class="ti ti-trash" style="font-size:10px"></i> Excluir selecionadas</button>
+    <button class="btn-c" style="margin-left:auto;padding:3px 9px;font-size:10px" onclick="clearMsSelection()" data-i18n="btn_cancelar">Cancelar</button>
+    <button class="btn-c" style="padding:3px 9px;font-size:10px;color:#dc2626;border-color:#fca5a5" onclick="deleteSelectedMs()"><i class="ti ti-trash" style="font-size:10px"></i> <span data-i18n="sch_excluir_selecionadas">Excluir selecionadas</span></button>
   </div>
   <div id="gantt-timeline" style="display:none;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border2);background:var(--bg2)">
-    <span style="font-size:8.5px;font-weight:700;color:var(--text3);letter-spacing:.4px;white-space:nowrap">LINHA DO TEMPO</span>
+    <span style="font-size:8.5px;font-weight:700;color:var(--text3);letter-spacing:.4px;white-space:nowrap" data-i18n="sch_linha_tempo">LINHA DO TEMPO</span>
     <div id="timeline-track" style="position:relative;flex:1;height:28px"></div>
   </div>
   <div id="se-body">
@@ -1085,6 +1085,73 @@ const I18N = {
     sec_alertas:'Overview', sec_status_portfolio:'Status do Portfólio', sec_dados_gerais:'Dados Gerais',
     sec_impacto_time:'Impacto por Time',
     sec_carga:'Carga de Trabalho — VMO & Transformação', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
+    // ── Cronograma ──
+    select_project:'Selecione um projeto', sch_sidebar_title:'Projetos ativos', sch_toggle_projetos:'Projetos',
+    sch_toggle_show_title:'Mostrar lista de projetos', sch_toggle_hide_title:'Ocultar lista de projetos',
+    sch_copy_link:'Copiar link', sch_copy_link_title:'Copiar link direto para este cronograma',
+    sch_exibicao:'Exibição', sch_ferramentas:'Ferramentas',
+    sch_seq:'Seq.', sch_seq_title:'Numerar unidades sequencialmente (D1/D2 ou S1/S2 ou M1/M2)',
+    sch_caminho_critico:'Caminho Crítico', sch_caminho_critico_title:"Caminho crítico: destaca com contorno tracejado as tarefas marcadas manualmente como 'críticas' — atrasá-las pode impactar a data final do projeto.",
+    sch_calendario:'Calendário', sch_baseline:'Baseline', sch_baseline_title:'Ver o cronograma original: a primeira versão registrada deste projeto (etapas e tarefas como foram criadas).',
+    sch_comparar:'Comparar', sch_comparar_title:'Comparação detalhada: datas alteradas e tarefas/etapas criadas ou removidas desde o planejamento original.',
+    sch_importar:'Importar', sch_modelos:'Modelos', sch_gantt:'Gantt', sch_gantt_title:'Exibir/ocultar o diagrama de Gantt',
+    btn_cancelar:'Cancelar', btn_fechar:'Fechar', btn_salvar:'Salvar', btn_excluir:'Excluir', btn_adicionar:'Adicionar',
+    sch_excluir_selecionadas:'Excluir selecionadas', sch_linha_tempo:'LINHA DO TEMPO',
+    sch_empty_title:'Nenhuma etapa ainda.', sch_empty_sub:'Clique em', sch_empty_sub2:'para começar ou use um', sch_modelo:'Modelo',
+    col_num:'#', col_nome:'Nome', col_inicio:'Início', col_conclusao:'Conclusão',
+    col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferença entre a data original da tarefa e o prazo atual',
+    col_est:'Est.', col_real:'Real', col_prog:'Progresso', col_resp:'Responsáveis', col_dep:'Dep.',
+    col_status:'Status', col_tempo:'Tempo', col_link:'Link', col_prazo:'Prazo',
+    sch_add_tarefa:'Adicionar tarefa', sch_add_etapa:'Adicionar etapa', sch_add_subtarefa:'Adicionar subtarefa',
+    tt_click_edit:'Clique para editar', tt_click_edit_er:'Clique para editar a data (ou use o ✓ ao lado do nome pra concluir hoje)',
+    tt_drag:'Arrastar para reordenar', tt_del_etapa:'Excluir etapa', tt_del_tarefa:'Excluir tarefa', tt_del_subtarefa:'Excluir subtarefa',
+    tt_tarefa_critica:'Tarefa crítica — atraso pode impactar a data final do projeto', tt_subtarefa_critica:'Subtarefa crítica',
+    tt_marco_add:'Marcar como Data Marco (aparece no Resumo do Projeto)', tt_marco_remove:'Remover de Datas Marco',
+    tt_atraso_row_title:'Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão',
+    tt_atraso_row_title_short:'Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida)',
+    tt_dep_none:'Subtarefas não participam do sistema de dependências', badge_interno:'Interno', badge_externo:'Externo',
+    tt_abrir:'Abrir', add_date_btn:'+ data',
+    tb_no_prazo:'No prazo', tb_atraso_suffix:'d atraso', tb_atras_suffix:'d atras.',
+    alert_no_perm_edit:'Você não tem permissão para editar este cronograma.',
+    alert_no_perm_create_ms:'Você não tem permissão para criar etapas neste cronograma.',
+    alert_no_perm_create_task:'Você não tem permissão para criar tarefas neste cronograma.',
+    alert_no_perm_create_sub:'Você não tem permissão para criar subtarefas nesta tarefa.',
+    alert_informe_nome:'Informe o nome',
+    confirm_excluir_etapa:'Excluir etapa?', confirm_excluir_tarefa:'Excluir tarefa?', confirm_excluir_subtarefa:'Excluir subtarefa?',
+    fld_nome:'Nome *', fld_inicio:'Início', fld_prazo:'Prazo', fld_data_conclusao:'Data de conclusão',
+    lbl_responsaveis:'Responsáveis', fld_status:'Status', fld_progresso:'Progresso (%)', fld_cor:'Cor',
+    chk_critica_tarefa:'Tarefa crítica — atraso pode impactar a data final do projeto', chk_critica_subtarefa:'Subtarefa crítica',
+    chk_marco:'Marcar como Data Marco (aparece no Resumo do Projeto)',
+    fld_depende_de:'Depende de (números da coluna #, separados por vírgula. Ex: 3, 4, 7)',
+    fld_tipo_dep:'Tipo de dependência', dep_ti_full:'TI — Término para Início (mais comum)',
+    dep_ii_full:'II — Início para Início', dep_tt_full:'TT — Término para Término', dep_it_full:'IT — Início para Término',
+    lbl_como_relaciona:'Como se relaciona?', btn_bloqueia:'🔒 Bloqueia', btn_paralelo:'⚡ Paralelo',
+    fld_links:'Links (Jira, Confluence, etc.)', btn_add_link:'Adicionar link', fld_observacoes:'Observações',
+    ms_title:'Etapa', task_title:'Tarefa', sub_title:'Subtarefa',
+    btn_apply_all_tasks:'Aplicar a todas as tarefas', tt_apply_all_tasks:'Adiciona esse(s) responsável(is) em todas as tarefas desta etapa, sem remover quem já estiver atribuído',
+    ms_er_auto:'Calculado automaticamente', ms_er_manual:'Preencha manualmente se necessário.',
+    ps_inicio:'Início:', ps_fim_estimado:'Fim estimado:',
+    ps_vs_planejamento:'Vs. planejamento original:',
+    ps_vs_planejamento_title:'Clique para comparar visualmente no Gantt (botão Baseline) — data projetada com base nos atrasos já registrados no cronograma',
+    ps_previsto:'previsto:', ps_caminho_critico_label:'Caminho Crítico', ps_gargalo:'gargalo:', ps_atrasada:'atrasada',
+    ps_nunca_atualizacao:'Nunca teve uma atualização publicada', ps_sem_atualizacao_ha:'Sem atualização publicada há',
+    ps_em_risco:'Em Risco', ps_em_risco_title:'Fim estimado do cronograma diverge do Go Live no Jira',
+    ps_cronograma_label:'cronograma:', ps_jira_label:'Jira:', ps_editar_scoring:'Editar scoring',
+    ps_score_label:'Score:', ps_preencher_scoring:'Preencher scoring', ps_go_live_jira:'Go Live Jira:',
+    ps_tarefas_label:'Tarefas:', ps_concluido_suffix:'concluído', ps_gp_label:'GP:', ps_atualizado_por:'Atualizado por:',
+    hb_on_track:'✓ Nos trilhos', hb_alert:'⚠ Em risco', hb_off_track:'✗ Fora dos trilhos',
+    hb_tarefa:'tarefa', hb_atrasada:'atrasada',
+    banner_delivered:'Projeto entregue', banner_delivered_sub:'disponível apenas para consulta histórica.', golive_label:'Go Live:',
+    ms_bulk_selected_s:'etapa selecionada', ms_bulk_selected_p:'etapas selecionadas',
+    confirm_delete_selected_ms:'Excluir {n} etapa(s) e todas as suas tarefas?', confirm_irreversible:'Essa ação não pode ser desfeita.',
+    opt_ns_ms:'Não iniciado', opt_ip_ms:'Em andamento', opt_done_ms:'Concluído', opt_bl_ms:'Bloqueado', opt_can_ms:'Cancelado',
+    confirm_excluir_etapa_tarefas:'Excluir etapa e suas tarefas?',
+    alert_no_perm_create_ms:'Você não tem permissão para criar etapas neste cronograma.',
+    color_indigo:'Índigo', color_violet:'Violeta', color_cyan:'Ciano', color_green:'Verde', color_amber:'Âmbar', color_red:'Vermelho', color_blue:'Azul', color_pink:'Rosa',
+    fld_cor2:'Cor',
+    confirm_del_ms_named:'Excluir a etapa "{name}" e suas tarefas?', confirm_del_task_named:'Excluir a tarefa "{name}"?', confirm_del_sub_named:'Excluir a subtarefa "{name}"?',
+    no_projects_found:'Nenhum projeto encontrado.',
+    not_found_short:'não encontrado',
   },
   es: {
     nav_visao_geral:'Visión General', nav_cronogramas:'Cronogramas', nav_resumo:'Resumen de Proyectos',
@@ -1095,6 +1162,73 @@ const I18N = {
     sec_alertas:'Overview', sec_status_portfolio:'Estado del Portafolio', sec_dados_gerais:'Datos Generales',
     sec_impacto_time:'Impacto por Equipo',
     sec_carga:'Carga de Trabajo — VMO y Transformación', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
+    // ── Cronograma ──
+    select_project:'Seleccione un proyecto', sch_sidebar_title:'Proyectos activos', sch_toggle_projetos:'Proyectos',
+    sch_toggle_show_title:'Mostrar lista de proyectos', sch_toggle_hide_title:'Ocultar lista de proyectos',
+    sch_copy_link:'Copiar enlace', sch_copy_link_title:'Copiar enlace directo a este cronograma',
+    sch_exibicao:'Visualización', sch_ferramentas:'Herramientas',
+    sch_seq:'Sec.', sch_seq_title:'Numerar unidades secuencialmente (D1/D2 o S1/S2 o M1/M2)',
+    sch_caminho_critico:'Ruta Crítica', sch_caminho_critico_title:"Ruta crítica: resalta con contorno punteado las tareas marcadas manualmente como 'críticas' — atrasarlas puede impactar la fecha final del proyecto.",
+    sch_calendario:'Calendario', sch_baseline:'Línea base', sch_baseline_title:'Ver el cronograma original: la primera versión registrada de este proyecto (etapas y tareas como fueron creadas).',
+    sch_comparar:'Comparar', sch_comparar_title:'Comparación detallada: fechas modificadas y tareas/etapas creadas o eliminadas desde la planificación original.',
+    sch_importar:'Importar', sch_modelos:'Plantillas', sch_gantt:'Gantt', sch_gantt_title:'Mostrar/ocultar el diagrama de Gantt',
+    btn_cancelar:'Cancelar', btn_fechar:'Cerrar', btn_salvar:'Guardar', btn_excluir:'Eliminar', btn_adicionar:'Agregar',
+    sch_excluir_selecionadas:'Eliminar seleccionadas', sch_linha_tempo:'LÍNEA DE TIEMPO',
+    sch_empty_title:'Todavía no hay etapas.', sch_empty_sub:'Haga clic en', sch_empty_sub2:'para empezar o use una', sch_modelo:'Plantilla',
+    col_num:'#', col_nome:'Nombre', col_inicio:'Inicio', col_conclusao:'Conclusión',
+    col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferencia entre la fecha original de la tarea y el plazo actual',
+    col_est:'Est.', col_real:'Real', col_prog:'Progreso', col_resp:'Responsables', col_dep:'Dep.',
+    col_status:'Estado', col_tempo:'Tiempo', col_link:'Enlace', col_prazo:'Plazo',
+    sch_add_tarefa:'Agregar tarea', sch_add_etapa:'Agregar etapa', sch_add_subtarefa:'Agregar subtarea',
+    tt_click_edit:'Haga clic para editar', tt_click_edit_er:'Haga clic para editar la fecha (o use el ✓ junto al nombre para concluir hoy)',
+    tt_drag:'Arrastrar para reordenar', tt_del_etapa:'Eliminar etapa', tt_del_tarefa:'Eliminar tarea', tt_del_subtarefa:'Eliminar subtarea',
+    tt_tarefa_critica:'Tarea crítica — el atraso puede impactar la fecha final del proyecto', tt_subtarefa_critica:'Subtarea crítica',
+    tt_marco_add:'Marcar como Fecha Clave (aparece en el Resumen del Proyecto)', tt_marco_remove:'Quitar de Fechas Clave',
+    tt_atraso_row_title:'Diferencia entre el Plazo y la Fecha de Conclusión real (u hoy, si está abierta y vencida) — se actualiza sola, sin corregir a mano',
+    tt_atraso_row_title_short:'Diferencia entre el Plazo y la Fecha de Conclusión real (u hoy, si está abierta y vencida)',
+    tt_dep_none:'Las subtareas no participan del sistema de dependencias', badge_interno:'Interno', badge_externo:'Externo',
+    tt_abrir:'Abrir', add_date_btn:'+ fecha',
+    tb_no_prazo:'En plazo', tb_atraso_suffix:'d de atraso', tb_atras_suffix:'d atr.',
+    alert_no_perm_edit:'No tiene permiso para editar este cronograma.',
+    alert_no_perm_create_ms:'No tiene permiso para crear etapas en este cronograma.',
+    alert_no_perm_create_task:'No tiene permiso para crear tareas en este cronograma.',
+    alert_no_perm_create_sub:'No tiene permiso para crear subtareas en esta tarea.',
+    alert_informe_nome:'Ingrese el nombre',
+    confirm_excluir_etapa:'¿Eliminar etapa?', confirm_excluir_tarefa:'¿Eliminar tarea?', confirm_excluir_subtarefa:'¿Eliminar subtarea?',
+    fld_nome:'Nombre *', fld_inicio:'Inicio', fld_prazo:'Plazo', fld_data_conclusao:'Fecha de conclusión',
+    lbl_responsaveis:'Responsables', fld_status:'Estado', fld_progresso:'Progreso (%)', fld_cor:'Color',
+    chk_critica_tarefa:'Tarea crítica — el atraso puede impactar la fecha final del proyecto', chk_critica_subtarefa:'Subtarea crítica',
+    chk_marco:'Marcar como Fecha Clave (aparece en el Resumen del Proyecto)',
+    fld_depende_de:'Depende de (números de la columna #, separados por coma. Ej: 3, 4, 7)',
+    fld_tipo_dep:'Tipo de dependencia', dep_ti_full:'TI — Fin para Inicio (más común)',
+    dep_ii_full:'II — Inicio para Inicio', dep_tt_full:'TT — Fin para Fin', dep_it_full:'IT — Inicio para Fin',
+    lbl_como_relaciona:'¿Cómo se relaciona?', btn_bloqueia:'🔒 Bloquea', btn_paralelo:'⚡ Paralelo',
+    fld_links:'Enlaces (Jira, Confluence, etc.)', btn_add_link:'Agregar enlace', fld_observacoes:'Observaciones',
+    ms_title:'Etapa', task_title:'Tarea', sub_title:'Subtarea',
+    btn_apply_all_tasks:'Aplicar a todas las tareas', tt_apply_all_tasks:'Agrega este/estos responsable(s) a todas las tareas de esta etapa, sin quitar a quien ya esté asignado',
+    ms_er_auto:'Calculado automáticamente', ms_er_manual:'Complete manualmente si es necesario.',
+    ps_inicio:'Inicio:', ps_fim_estimado:'Fin estimado:',
+    ps_vs_planejamento:'Vs. planificación original:',
+    ps_vs_planejamento_title:'Haga clic para comparar visualmente en el Gantt (botón Baseline) — fecha proyectada según los atrasos ya registrados en el cronograma',
+    ps_previsto:'previsto:', ps_caminho_critico_label:'Ruta Crítica', ps_gargalo:'cuello de botella:', ps_atrasada:'atrasada',
+    ps_nunca_atualizacao:'Nunca tuvo una actualización publicada', ps_sem_atualizacao_ha:'Sin actualización publicada hace',
+    ps_em_risco:'En Riesgo', ps_em_risco_title:'El fin estimado del cronograma difiere del Go Live en Jira',
+    ps_cronograma_label:'cronograma:', ps_jira_label:'Jira:', ps_editar_scoring:'Editar puntuación',
+    ps_score_label:'Puntuación:', ps_preencher_scoring:'Completar puntuación', ps_go_live_jira:'Go Live Jira:',
+    ps_tarefas_label:'Tareas:', ps_concluido_suffix:'concluido', ps_gp_label:'GP:', ps_atualizado_por:'Actualizado por:',
+    hb_on_track:'✓ En camino', hb_alert:'⚠ En riesgo', hb_off_track:'✗ Fuera de rumbo',
+    hb_tarefa:'tarea', hb_atrasada:'atrasada',
+    banner_delivered:'Proyecto entregado', banner_delivered_sub:'disponible solo para consulta histórica.', golive_label:'Go Live:',
+    ms_bulk_selected_s:'etapa seleccionada', ms_bulk_selected_p:'etapas seleccionadas',
+    confirm_delete_selected_ms:'¿Eliminar {n} etapa(s) y todas sus tareas?', confirm_irreversible:'Esta acción no se puede deshacer.',
+    opt_ns_ms:'No iniciada', opt_ip_ms:'En curso', opt_done_ms:'Concluida', opt_bl_ms:'Bloqueada', opt_can_ms:'Cancelada',
+    confirm_excluir_etapa_tarefas:'¿Eliminar etapa y sus tareas?',
+    alert_no_perm_create_ms:'No tiene permiso para crear etapas en este cronograma.',
+    color_indigo:'Índigo', color_violet:'Violeta', color_cyan:'Cian', color_green:'Verde', color_amber:'Ámbar', color_red:'Rojo', color_blue:'Azul', color_pink:'Rosa',
+    fld_cor2:'Color',
+    confirm_del_ms_named:'¿Eliminar la etapa "{name}" y sus tareas?', confirm_del_task_named:'¿Eliminar la tarea "{name}"?', confirm_del_sub_named:'¿Eliminar la subtarea "{name}"?',
+    no_projects_found:'No se encontraron proyectos.',
+    not_found_short:'no encontrado',
   },
   en: {
     nav_visao_geral:'Overview', nav_cronogramas:'Schedules', nav_resumo:'Project Summary',
@@ -1105,6 +1239,73 @@ const I18N = {
     sec_alertas:'Overview', sec_status_portfolio:'Portfolio Status', sec_dados_gerais:'Overall Data',
     sec_impacto_time:'Impact by Team',
     sec_carga:'Workload — VMO & Transformation', sec_proximas_entregas:'Upcoming Deliveries', sec_historico:'History',
+    // ── Schedule ──
+    select_project:'Select a project', sch_sidebar_title:'Active projects', sch_toggle_projetos:'Projects',
+    sch_toggle_show_title:'Show project list', sch_toggle_hide_title:'Hide project list',
+    sch_copy_link:'Copy link', sch_copy_link_title:'Copy a direct link to this schedule',
+    sch_exibicao:'Display', sch_ferramentas:'Tools',
+    sch_seq:'Seq.', sch_seq_title:'Number units sequentially (D1/D2 or W1/W2 or M1/M2)',
+    sch_caminho_critico:'Critical Path', sch_caminho_critico_title:"Critical path: highlights with a dashed outline the tasks manually marked as 'critical' — delaying them may impact the project's final date.",
+    sch_calendario:'Calendar', sch_baseline:'Baseline', sch_baseline_title:'View the original schedule: the first recorded version of this project (milestones and tasks as they were created).',
+    sch_comparar:'Compare', sch_comparar_title:'Detailed comparison: dates changed and tasks/milestones created or removed since the original plan.',
+    sch_importar:'Import', sch_modelos:'Templates', sch_gantt:'Gantt', sch_gantt_title:'Show/hide the Gantt chart',
+    btn_cancelar:'Cancel', btn_fechar:'Close', btn_salvar:'Save', btn_excluir:'Delete', btn_adicionar:'Add',
+    sch_excluir_selecionadas:'Delete selected', sch_linha_tempo:'TIMELINE',
+    sch_empty_title:'No milestones yet.', sch_empty_sub:'Click', sch_empty_sub2:'to get started or use a', sch_modelo:'Template',
+    col_num:'#', col_nome:'Name', col_inicio:'Start', col_conclusao:'Completion',
+    col_atraso:'Accum. Delay', col_atraso_title:'Accumulated delay: difference between the task\'s original date and the current deadline',
+    col_est:'Est.', col_real:'Actual', col_prog:'Progress', col_resp:'Assignees', col_dep:'Dep.',
+    col_status:'Status', col_tempo:'Time', col_link:'Link', col_prazo:'Deadline',
+    sch_add_tarefa:'Add task', sch_add_etapa:'Add milestone', sch_add_subtarefa:'Add subtask',
+    tt_click_edit:'Click to edit', tt_click_edit_er:'Click to edit the date (or use the ✓ next to the name to complete today)',
+    tt_drag:'Drag to reorder', tt_del_etapa:'Delete milestone', tt_del_tarefa:'Delete task', tt_del_subtarefa:'Delete subtask',
+    tt_tarefa_critica:'Critical task — a delay may impact the project\'s final date', tt_subtarefa_critica:'Critical subtask',
+    tt_marco_add:'Mark as Key Date (shown in the Project Summary)', tt_marco_remove:'Remove from Key Dates',
+    tt_atraso_row_title:'Difference between the deadline and the actual completion date (or today, if still open and overdue) — updates automatically, no manual correction needed',
+    tt_atraso_row_title_short:'Difference between the deadline and the actual completion date (or today, if still open and overdue)',
+    tt_dep_none:'Subtasks do not participate in the dependency system', badge_interno:'Internal', badge_externo:'External',
+    tt_abrir:'Open', add_date_btn:'+ date',
+    tb_no_prazo:'On time', tb_atraso_suffix:'d late', tb_atras_suffix:'d late',
+    alert_no_perm_edit:'You do not have permission to edit this schedule.',
+    alert_no_perm_create_ms:'You do not have permission to create milestones in this schedule.',
+    alert_no_perm_create_task:'You do not have permission to create tasks in this schedule.',
+    alert_no_perm_create_sub:'You do not have permission to create subtasks in this task.',
+    alert_informe_nome:'Enter a name',
+    confirm_excluir_etapa:'Delete milestone?', confirm_excluir_tarefa:'Delete task?', confirm_excluir_subtarefa:'Delete subtask?',
+    fld_nome:'Name *', fld_inicio:'Start', fld_prazo:'Deadline', fld_data_conclusao:'Completion date',
+    lbl_responsaveis:'Assignees', fld_status:'Status', fld_progresso:'Progress (%)', fld_cor:'Color',
+    chk_critica_tarefa:'Critical task — a delay may impact the project\'s final date', chk_critica_subtarefa:'Critical subtask',
+    chk_marco:'Mark as Key Date (shown in the Project Summary)',
+    fld_depende_de:'Depends on (# column numbers, comma-separated. E.g.: 3, 4, 7)',
+    fld_tipo_dep:'Dependency type', dep_ti_full:'FS — Finish to Start (most common)',
+    dep_ii_full:'SS — Start to Start', dep_tt_full:'FF — Finish to Finish', dep_it_full:'SF — Start to Finish',
+    lbl_como_relaciona:'How are they related?', btn_bloqueia:'🔒 Blocks', btn_paralelo:'⚡ Parallel',
+    fld_links:'Links (Jira, Confluence, etc.)', btn_add_link:'Add link', fld_observacoes:'Notes',
+    ms_title:'Milestone', task_title:'Task', sub_title:'Subtask',
+    btn_apply_all_tasks:'Apply to all tasks', tt_apply_all_tasks:'Adds this/these assignee(s) to all tasks in this milestone, without removing anyone already assigned',
+    ms_er_auto:'Automatically calculated', ms_er_manual:'Fill in manually if needed.',
+    ps_inicio:'Start:', ps_fim_estimado:'Estimated end:',
+    ps_vs_planejamento:'Vs. original plan:',
+    ps_vs_planejamento_title:'Click to compare visually on the Gantt (Baseline button) — date projected based on delays already recorded in the schedule',
+    ps_previsto:'planned:', ps_caminho_critico_label:'Critical Path', ps_gargalo:'bottleneck:', ps_atrasada:'delayed',
+    ps_nunca_atualizacao:'Never had a published update', ps_sem_atualizacao_ha:'No published update for',
+    ps_em_risco:'At Risk', ps_em_risco_title:"The schedule's estimated end differs from the Go Live date in Jira",
+    ps_cronograma_label:'schedule:', ps_jira_label:'Jira:', ps_editar_scoring:'Edit scoring',
+    ps_score_label:'Score:', ps_preencher_scoring:'Fill in scoring', ps_go_live_jira:'Go Live Jira:',
+    ps_tarefas_label:'Tasks:', ps_concluido_suffix:'complete', ps_gp_label:'PM:', ps_atualizado_por:'Updated by:',
+    hb_on_track:'✓ On track', hb_alert:'⚠ At risk', hb_off_track:'✗ Off track',
+    hb_tarefa:'task', hb_atrasada:'delayed',
+    banner_delivered:'Project delivered', banner_delivered_sub:'available for historical reference only.', golive_label:'Go Live:',
+    ms_bulk_selected_s:'milestone selected', ms_bulk_selected_p:'milestones selected',
+    confirm_delete_selected_ms:'Delete {n} milestone(s) and all their tasks?', confirm_irreversible:'This action cannot be undone.',
+    opt_ns_ms:'Not started', opt_ip_ms:'In progress', opt_done_ms:'Done', opt_bl_ms:'Blocked', opt_can_ms:'Cancelled',
+    confirm_excluir_etapa_tarefas:'Delete milestone and its tasks?',
+    alert_no_perm_create_ms:'You do not have permission to create milestones in this schedule.',
+    color_indigo:'Indigo', color_violet:'Violet', color_cyan:'Cyan', color_green:'Green', color_amber:'Amber', color_red:'Red', color_blue:'Blue', color_pink:'Pink',
+    fld_cor2:'Color',
+    confirm_del_ms_named:'Delete the milestone "{name}" and its tasks?', confirm_del_task_named:'Delete the task "{name}"?', confirm_del_sub_named:'Delete the subtask "{name}"?',
+    no_projects_found:'No projects found.',
+    not_found_short:'not found',
   },
 };
 function t(key){ return (I18N[currentLang]&&I18N[currentLang][key]) || I18N.pt[key] || key; }
@@ -1116,13 +1317,24 @@ function setLanguage(lang){
   applyI18n();
 }
 function applyI18n(){
+  // Dicionários dinâmicos usados dentro das funções de render (reatribuir a variável já basta —
+  // toda função que faz SL[x]/DEP_LABELS[x]/MONTHS_PT[x] lê o valor atual na hora que roda).
+  SL=currentLang==='es'?SL_ES:currentLang==='en'?SL_EN:SL_PT;
+  DEP_LABELS=currentLang==='es'?DEP_LABELS_ES:currentLang==='en'?DEP_LABELS_EN:DEP_LABELS_PT;
+  MONTHS_PT=currentLang==='es'?MONTHS_PT_ES:currentLang==='en'?MONTHS_PT_EN:MONTHS_PT_PT;
   document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);});
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=t(el.dataset.i18nPlaceholder);});
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle);});
   // Reconstrói as telas cujo texto é gerado via JS (não dá pra só trocar textContent de um nó
-  // estático) — hoje cobre a Visão Geral; outras telas continuam majoritariamente em português
-  // (ver ressalva de escopo compartilhada com a Amanda).
+  // estático) — hoje cobre a Visão Geral e o Cronograma; outras telas continuam majoritariamente
+  // em português (ver ressalva de escopo compartilhada com a Amanda — indo aba por aba).
   if(typeof renderKPI==='function'&&document.getElementById('pf-kpi'))renderKPI();
+  if(document.getElementById('view-schedule')?.classList.contains('active')){
+    if(typeof renderScheduleProjectList==='function')renderScheduleProjectList();
+    if(typeof applySchSidebarVisibility==='function')applySchSidebarVisibility();
+    if(curKey&&typeof renderSchedule==='function')renderSchedule();
+    else{const st=document.getElementById('se-title');if(st)st.textContent=t('select_project');}
+  }
 }
 
 let USER_REGISTRY = [
@@ -1799,13 +2011,22 @@ function renderUpdateBodyHtml(raw){
   return body.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/_(.*?)_/g,'<i>$1</i>').replace(/\n/g,'<br>');
 }
 function nowStr(){return new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
-const SL={not_started:'Não iniciada',in_progress:'Em andamento',done:'Concluída',blocked:'Bloqueada',cancelled:'Cancelada'};
+const SL_PT={not_started:'Não iniciada',in_progress:'Em andamento',done:'Concluída',blocked:'Bloqueada',cancelled:'Cancelada'};
+const SL_ES={not_started:'No iniciada',in_progress:'En curso',done:'Concluida',blocked:'Bloqueada',cancelled:'Cancelada'};
+const SL_EN={not_started:'Not started',in_progress:'In progress',done:'Done',blocked:'Blocked',cancelled:'Cancelled'};
+let SL=SL_PT;
 const SC={not_started:'ts-not_started',in_progress:'ts-in_progress',done:'ts-done',blocked:'ts-blocked',cancelled:'ts-cancelled'};
 const JIRA_SC={'Novos projetos':'s-novos','PRESALES':'s-neg','Refinamento & Cronograma':'s-ref','Documentação de escopo':'s-doc','Desenvolvimento':'s-dev','Homologação':'s-hom','Pós produção':'s-pos','Aguardando Produção':'s-agp','PROCESSO DE ROLLOUT':'s-roll','Pré-Comitê':'s-precom','Comitê':'s-com','PAUSADO':'s-pau','BACKLOG':'s-bkl','CANCELADO':'s-can','KICK OFF':'s-kick'};
-const DEP_LABELS={TI:'Término→Início',II:'Início→Início',TT:'Término→Término',IT:'Início→Término'};
+const DEP_LABELS_PT={TI:'Término→Início',II:'Início→Início',TT:'Término→Término',IT:'Início→Término'};
+const DEP_LABELS_ES={TI:'Fin→Inicio',II:'Inicio→Inicio',TT:'Fin→Fin',IT:'Inicio→Fin'};
+const DEP_LABELS_EN={TI:'Finish→Start',II:'Start→Start',TT:'Finish→Finish',IT:'Start→Finish'};
+let DEP_LABELS=DEP_LABELS_PT;
 // Cores das linhas de dependência no Gantt — evitam o vermelho/verde já usados para atraso/adiantamento das barras
 const DEP_LINE_COLOR={TI:'#6924E1',II:'#d97706',TT:'#0d9488',IT:'#0369a1'};
-const MONTHS_PT=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MONTHS_PT_PT=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MONTHS_PT_ES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MONTHS_PT_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let MONTHS_PT=MONTHS_PT_PT;
 const MONTHS_FULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 // ── NAV ──
@@ -2004,14 +2225,14 @@ function getStats(key){
 // que é esse aviso extra) sem duplicar um segundo selo cheio em todo lugar. Quando não há
 // atraso, ou quando lateTasks não é passado, não ocupa espaço nenhum a mais.
 function healthBadge(h,lateTasks){
-  const badge=h==='on-track'?'<span class="health-badge hb-green">✓ Nos trilhos</span>'
-    :h==='alert'?'<span class="health-badge hb-amber">⚠ Em risco</span>'
-    :h==='off-track'?'<span class="health-badge hb-red">✗ Fora dos trilhos</span>'
+  const badge=h==='on-track'?`<span class="health-badge hb-green">${t('hb_on_track')}</span>`
+    :h==='alert'?`<span class="health-badge hb-amber">${t('hb_alert')}</span>`
+    :h==='off-track'?`<span class="health-badge hb-red">${t('hb_off_track')}</span>`
     :'<span class="health-badge hb-gray">—</span>';
   if(!lateTasks)return badge;
   // <span> em vez de <div>: o selo é usado em containers que já são <span> (ex.: rsm-health-slot),
   // e aninhar um <div> dentro de um <span> quebra o parsing/layout do HTML.
-  return `<span style="display:inline-flex;flex-direction:column;gap:2px">${badge}<span style="display:block;color:var(--red);font-size:9px;white-space:nowrap">⚠ ${lateTasks} tarefa${lateTasks>1?'s':''} atrasada${lateTasks>1?'s':''}</span></span>`;
+  return `<span style="display:inline-flex;flex-direction:column;gap:2px">${badge}<span style="display:block;color:var(--red);font-size:9px;white-space:nowrap">⚠ ${lateTasks} ${t('hb_tarefa')}${lateTasks>1?'s':''} ${t('hb_atrasada')}${lateTasks>1?'s':''}</span></span>`;
 }
 function computeMsEndReal(msId,key){
   const s=schedules[key];if(!s)return null;
@@ -2167,12 +2388,12 @@ function autoUpdateMsStatus(key){
 function timingBadge(item,isMilestone){
   const now=new Date();now.setHours(0,0,0,0);
   const er=isMilestone?(computeMsEndReal(item.id,curKey)||item.endReal):item.endReal;
-  if(item.status==='done'){if(er&&item.deadline){const d=diffD(pd(er),pd(item.deadline));if(d>0)return`<span class="tbadge2 tb-early">+${d}d</span>`;if(d<0)return`<span class="tbadge2 tb-late">${Math.abs(d)}d atraso</span>`;return`<span class="tbadge2 tb-on">No prazo</span>`;} return`<span class="tbadge2 tb-on">Concluída</span>`;}
-  if(item.status==='blocked')return`<span class="tbadge2 tb-bl">Bloqueada</span>`;
-  if(item.status==='cancelled')return`<span class="tbadge2 tb-ns">Cancelada</span>`;
-  if(item.deadline&&pd(item.deadline)<now){const d=diffD(pd(item.deadline),now);return`<span class="tbadge2 tb-late">${d}d atras.</span>`;}
-  if(item.status==='in_progress')return`<span class="tbadge2 tb-ip">Em andamento</span>`;
-  return`<span class="tbadge2 tb-ns">Não iniciada</span>`;
+  if(item.status==='done'){if(er&&item.deadline){const d=diffD(pd(er),pd(item.deadline));if(d>0)return`<span class="tbadge2 tb-early">+${d}d</span>`;if(d<0)return`<span class="tbadge2 tb-late">${Math.abs(d)}${t('tb_atraso_suffix')}</span>`;return`<span class="tbadge2 tb-on">${t('tb_no_prazo')}</span>`;} return`<span class="tbadge2 tb-on">${SL.done}</span>`;}
+  if(item.status==='blocked')return`<span class="tbadge2 tb-bl">${SL.blocked}</span>`;
+  if(item.status==='cancelled')return`<span class="tbadge2 tb-ns">${SL.cancelled}</span>`;
+  if(item.deadline&&pd(item.deadline)<now){const d=diffD(pd(item.deadline),now);return`<span class="tbadge2 tb-late">${d}${t('tb_atras_suffix')}</span>`;}
+  if(item.status==='in_progress')return`<span class="tbadge2 tb-ip">${SL.in_progress}</span>`;
+  return`<span class="tbadge2 tb-ns">${SL.not_started}</span>`;
 }
 function logChange(key,desc,color){const s=schedules[key];if(!s)return;if(!s.auditLog)s.auditLog=[];s.auditLog.unshift({id:uid(),who:currentUser?.name||'Sistema',when:nowStr(),ts:Date.now(),desc,color:color||'#6924E1'});}
 // ── ALERTAS AUTOMÁTICOS: Caminho Crítico de atraso e Projeto sem atualização ──
@@ -4499,7 +4720,7 @@ function renderScheduleProjectList(){
     div.onclick=()=>openProjectSchedule(p.key);
     list.appendChild(div);
   });
-  if(!visible.length)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">Nenhum projeto encontrado.</div>';
+  if(!visible.length)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">'+t('no_projects_found')+'</div>';
 }
 // Lista de projetos oculta/exibida na aba Cronograma — some automaticamente ao abrir um
 // cronograma (mais espaço pra tabela/Gantt), com um botão no cabeçalho pra trazer de volta.
@@ -4507,7 +4728,7 @@ let schSidebarHidden=false;
 function applySchSidebarVisibility(){
   const sb=document.getElementById('sch-sidebar');if(sb)sb.style.display=schSidebarHidden?'none':'';
   const btn=document.getElementById('sch-sidebar-toggle-btn');
-  if(btn){btn.classList.toggle('on',!schSidebarHidden);btn.title=schSidebarHidden?'Mostrar lista de projetos':'Ocultar lista de projetos';}
+  if(btn){btn.classList.toggle('on',!schSidebarHidden);btn.title=schSidebarHidden?t('sch_toggle_show_title'):t('sch_toggle_hide_title');}
 }
 function hideSchSidebar(){schSidebarHidden=true;applySchSidebarVisibility();}
 function showSchSidebar(){schSidebarHidden=false;applySchSidebarVisibility();}
@@ -4537,7 +4758,7 @@ function renderResumoProjectList(){
     div.onclick=()=>{openProject(p.key);closeResumoDropdown();};
     list.appendChild(div);
   });
-  if(!shown)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">Nenhum projeto encontrado.</div>';
+  if(!shown)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">'+t('no_projects_found')+'</div>';
 }
 function openResumoDropdown(){
   const dd=document.getElementById('rsm-proj-dropdown');if(!dd)return;
@@ -4571,7 +4792,7 @@ function renderScheduleSearchList(){
     div.onclick=()=>{openProjectSchedule(p.key);closeScheduleSearchDropdown();};
     list.appendChild(div);
   });
-  if(!shown)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">Nenhum projeto encontrado.</div>';
+  if(!shown)list.innerHTML='<div class="rsm-empty" style="padding:14px;text-align:center">'+t('no_projects_found')+'</div>';
 }
 function openScheduleSearchDropdown(){
   const dd=document.getElementById('se-proj-dropdown');if(!dd)return;
@@ -4662,7 +4883,7 @@ function indicadorChipHtml(label,value,editable,onEdit,icon){
 // Caixinha usada nas seções "Score & Complexidade" e "Indicadores" do Resumo — layout em grid
 // lado a lado (ver .rsm-stat-row/.rsm-stat-row2), em vez da lista vertical antiga.
 function resumoStatBoxHtml(icon,label,valueHtml,editable,onEdit,extraHdr,onClick){
-  return `<div class="rsm-stat-box"${onClick?` style="cursor:pointer" onclick="${onClick}" title="Clique para editar"`:''}>
+  return `<div class="rsm-stat-box"${onClick?` style="cursor:pointer" onclick="${onClick}" title="${t('tt_click_edit')}"`:''}>
     <div class="rsm-stat-box-lbl"><i class="ti ${icon}"></i><span>${label}${extraHdr||''}</span></div>
     ${editable&&!onClick?`<button class="btn-c rsm-edit-btn" style="font-size:8px;padding:1px 5px" onclick="event.stopPropagation();${onEdit}"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}
     <div class="rsm-stat-box-val">${valueHtml}</div>
@@ -5570,7 +5791,7 @@ function renderDebProjectPicker(){
   let list=PROJECTS.slice().sort((a,b)=>a.summary.localeCompare(b.summary));
   if(q)list=list.filter(p=>p.key.toLowerCase().includes(q)||p.summary.toLowerCase().includes(q));
   list=list.slice(0,80); // evita travar com portfólios muito grandes; a busca já filtra o resto
-  if(!list.length){box.innerHTML='<div style="font-size:9.5px;color:var(--text3);padding:6px">Nenhum projeto encontrado.</div>';return;}
+  if(!list.length){box.innerHTML='<div style="font-size:9.5px;color:var(--text3);padding:6px">'+t('no_projects_found')+'</div>';return;}
   box.innerHTML=list.map(p=>`
     <label style="display:flex;align-items:center;gap:6px;padding:3px 2px;font-size:10px;cursor:pointer">
       <input type="checkbox" ${debSelectedKeys.has(p.key)?'checked':''} onchange="toggleDebProjectKey('${p.key.replace(/'/g,"\\'")}',this.checked)">
@@ -5986,7 +6207,7 @@ function renderSchedule(){
   if(banner){
     if(isDelivered){
       const st=getStats(curKey);const glDate=pProj.golive||st.goLiveLocal;
-      document.getElementById('delivered-banner-txt').innerHTML=`<b>Projeto entregue</b> — disponível apenas para consulta histórica.${glDate?' Go Live: <b>'+fmtBR(glDate)+'</b>':''}`;
+      document.getElementById('delivered-banner-txt').innerHTML=`<b>${t('banner_delivered')}</b> — ${t('banner_delivered_sub')}${glDate?' '+t('golive_label')+' <b>'+fmtBR(glDate)+'</b>':''}`;
       banner.style.display='flex';
     } else banner.style.display='none';
   }
@@ -6056,59 +6277,59 @@ function renderProjSum(){
   const realFinish=projectRealFinish(curKey);
   const slipDays=(baselineFinish&&realFinish)?diffD(pd(baselineFinish),pd(realFinish)):null;
   const slipHtml=(slipDays!==null&&slipDays!==0&&baselineFinish!==realFinish)
-    ?`<div class="ps-item" style="cursor:pointer" onclick="toggleBaseline()" title="Clique para comparar visualmente no Gantt (botão Baseline) — data projetada com base nos atrasos já registrados no cronograma">
-        <span class="ps-lbl">Vs. planejamento original:</span>
+    ?`<div class="ps-item" style="cursor:pointer" onclick="toggleBaseline()" title="${t('ps_vs_planejamento_title')}">
+        <span class="ps-lbl">${t('ps_vs_planejamento')}</span>
         <b style="color:${slipDays>0?'var(--red)':'var(--green)'}">${fmtBR(realFinish)} ${slipDays>0?'🔴':'🟢'}</b>
-        <span style="font-size:9px;color:var(--text3);margin-left:3px">(previsto: ${fmtBR(baselineFinish)} · ${slipDays>0?'+':''}${slipDays}d)</span>
+        <span style="font-size:9px;color:var(--text3);margin-left:3px">(${t('ps_previsto')} ${fmtBR(baselineFinish)} · ${slipDays>0?'+':''}${slipDays}d)</span>
       </div>`
     :'';
   const critAlert=getCriticalPathAlert(curKey);
-  const critHtml=critAlert?`<div class="ps-item" style="cursor:pointer;background:#fef2f2;border-radius:4px;padding:3px 6px" onclick="openBaselineCompareModal()" title="Clique para ver o comparativo detalhado">
-      <span style="font-size:9.5px;font-weight:700;color:#b91c1c">🔴 Caminho Crítico</span>
-      <span style="font-size:9px;color:#b91c1c;margin-left:3px">+${critAlert.slip}d — gargalo: "${critAlert.bottleneckName}" (${critAlert.bottleneckDays}d atrasada)</span>
+  const critHtml=critAlert?`<div class="ps-item" style="cursor:pointer;background:#fef2f2;border-radius:4px;padding:3px 6px" onclick="openBaselineCompareModal()" title="${t('sch_comparar_title')}">
+      <span style="font-size:9.5px;font-weight:700;color:#b91c1c">🔴 ${t('ps_caminho_critico_label')}</span>
+      <span style="font-size:9px;color:#b91c1c;margin-left:3px">+${critAlert.slip}d — ${t('ps_gargalo')} "${critAlert.bottleneckName}" (${critAlert.bottleneckDays}d ${t('ps_atrasada')})</span>
     </div>`:'';
   const staleAlert=getStaleAlert(curKey);
   const staleHtml=staleAlert?`<div class="ps-item" style="background:#fff7ed;border-radius:4px;padding:3px 6px">
-      <span style="font-size:9.5px;font-weight:700;color:#c2410c">🟠 ${staleAlert.never?'Nunca teve uma atualização publicada':'Sem atualização publicada há '+staleAlert.days+'d'}</span>
+      <span style="font-size:9.5px;font-weight:700;color:#c2410c">🟠 ${staleAlert.never?t('ps_nunca_atualizacao'):t('ps_sem_atualizacao_ha')+' '+staleAlert.days+'d'}</span>
     </div>`:'';
   const atRiscoAlert=getAtRiscoAlert(curKey);
-  const atRiscoHtml=atRiscoAlert?`<div class="ps-item" style="cursor:pointer;background:#fef3c7;border-radius:4px;padding:3px 6px" onclick="showView('updates');openUpdatesProject(curKey)" title="Fim estimado do cronograma diverge do Go Live no Jira">
-      <span style="font-size:9.5px;font-weight:700;color:#92400e">⚠ Em Risco</span>
-      <span style="font-size:9px;color:#92400e;margin-left:3px">cronograma: ${fmtBR(atRiscoAlert.goLiveLocal)} · Jira: ${fmtBR(atRiscoAlert.goLiveJira)}</span>
+  const atRiscoHtml=atRiscoAlert?`<div class="ps-item" style="cursor:pointer;background:#fef3c7;border-radius:4px;padding:3px 6px" onclick="showView('updates');openUpdatesProject(curKey)" title="${t('ps_em_risco_title')}">
+      <span style="font-size:9.5px;font-weight:700;color:#92400e">⚠ ${t('ps_em_risco')}</span>
+      <span style="font-size:9px;color:#92400e;margin-left:3px">${t('ps_cronograma_label')} ${fmtBR(atRiscoAlert.goLiveLocal)} · ${t('ps_jira_label')} ${fmtBR(atRiscoAlert.goLiveJira)}</span>
     </div>`:'';
   const canEdSc=canEdit(curKey)&&p.status!==DELIVERED_STATUS;
   const scRes=SCORING_TYPES[p.type]?computeProjectScoring(p):null;
   const scoreHtml = !SCORING_TYPES[p.type]
     ? ''
     : (scRes
-        ? `<div class="ps-item"${canEdSc?` style="cursor:pointer" onclick="openScoringModal()" title="Editar scoring"`:''}>
-             <span class="ps-lbl">Score:</span>
+        ? `<div class="ps-item"${canEdSc?` style="cursor:pointer" onclick="openScoringModal()" title="${t('ps_editar_scoring')}"`:''}>
+             <span class="ps-lbl">${t('ps_score_label')}</span>
              <b style="color:${scRes.cls.color}">${scRes.score.toFixed(2)} ${scRes.cls.emoji} ${scRes.cls.label}</b>
              ${scRes.alert?`<span style="font-size:9px;color:var(--red);margin-left:3px">${scRes.alert}</span>`:''}
              ${canEdSc?`<i class="ti ti-pencil" style="font-size:9px;color:var(--text3);margin-left:3px"></i>`:''}
            </div>`
         : canEdSc
-          ? `<div class="ps-item" style="cursor:pointer;color:var(--purple)" onclick="openScoringModal()" title="Preencher scoring"><i class="ti ti-star" style="font-size:10px"></i><span style="font-size:10px">Preencher scoring</span></div>`
-          : `<div class="ps-item"><span class="ps-lbl">Score:</span><span style="color:var(--text3)">—</span></div>`);
+          ? `<div class="ps-item" style="cursor:pointer;color:var(--purple)" onclick="openScoringModal()" title="${t('ps_preencher_scoring')}"><i class="ti ti-star" style="font-size:10px"></i><span style="font-size:10px">${t('ps_preencher_scoring')}</span></div>`
+          : `<div class="ps-item"><span class="ps-lbl">${t('ps_score_label')}</span><span style="color:var(--text3)">—</span></div>`);
   document.getElementById('proj-sum').innerHTML=`
-    <div class="ps-item"><span class="ps-lbl">Início:</span><b>${fmtBR(msStarts[0])}</b></div>
-    <div class="ps-item"><span class="ps-lbl">Fim estimado:</span><b>${fmtBR(msDates[msDates.length-1])}</b></div>
+    <div class="ps-item"><span class="ps-lbl">${t('ps_inicio')}</span><b>${fmtBR(msStarts[0])}</b></div>
+    <div class="ps-item"><span class="ps-lbl">${t('ps_fim_estimado')}</span><b>${fmtBR(msDates[msDates.length-1])}</b></div>
     ${slipHtml}
     ${critHtml}
     ${staleHtml}
     ${atRiscoHtml}
-    ${glDate?`<div class="ps-item"><span class="ps-lbl">Go Live Jira:</span><b style="color:var(--green)">${fmtBRFull(p.golive||null)||'—'}</b></div>`:''}
-    <div class="ps-item"><span class="ps-lbl">Tarefas:</span><b>${st.tasks} · ${st.prog}% concluído</b></div>
+    ${glDate?`<div class="ps-item"><span class="ps-lbl">${t('ps_go_live_jira')}</span><b style="color:var(--green)">${fmtBRFull(p.golive||null)||'—'}</b></div>`:''}
+    <div class="ps-item"><span class="ps-lbl">${t('ps_tarefas_label')}</span><b>${st.tasks} · ${st.prog}% ${t('ps_concluido_suffix')}</b></div>
     <div class="ps-item">${healthBadge(st.health,st.lateTasks)}</div>
     ${scoreHtml}
-    <div class="ps-item"><span class="ps-lbl">GP:</span><b>${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:'—'}</b></div>
-    <div class="ps-item"><span class="ps-lbl">Atualizado por:</span><b style="font-size:9.5px">${(s.auditLog||[])[0]?.who||'—'}${(s.auditLog||[])[0]?.when?' · '+(s.auditLog||[])[0].when:''}</b></div>`;
+    <div class="ps-item"><span class="ps-lbl">${t('ps_gp_label')}</span><b>${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:'—'}</b></div>
+    <div class="ps-item"><span class="ps-lbl">${t('ps_atualizado_por')}</span><b style="font-size:9.5px">${(s.auditLog||[])[0]?.who||'—'}${(s.auditLog||[])[0]?.when?' · '+(s.auditLog||[])[0].when:''}</b></div>`;
 }
 function renderTblHdr(){
   LW=Object.values(C).reduce((a,b)=>a+b,0);
   const h=document.getElementById('tbl-hdr');h.style.width=LW+'px';
   const rh=(col)=>`<div class="th-resize" onmousedown="startColResize(event,'${col}')"></div>`;
-  h.innerHTML=`<div class="th" data-col="num" style="width:${C.num}px">#${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">Nome${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">Início${rh('start')}</div><div class="th" data-col="er" style="width:${C.er}px">Conclusão${rh('er')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="Atraso acumulado: diferença entre a data original da tarefa e o prazo atual">Atraso Acum.${rh('atraso')}</div><div class="th" data-col="de" style="width:${C.de}px">Est.${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">Real${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">Progresso${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">Responsáveis${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">Dep.${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">Status${rh('st')}</div><div class="th" data-col="timing" style="width:${C.timing}px">Tempo${rh('timing')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">Link${rh('jiralink')}</div><div class="th" data-col="dl" style="width:${C.dl}px">Prazo${rh('dl')}</div><div class="th" data-col="act" style="width:${C.act}px"></div>`;
+  h.innerHTML=`<div class="th" data-col="num" style="width:${C.num}px">${t('col_num')}${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">${t('col_nome')}${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">${t('col_inicio')}${rh('start')}</div><div class="th" data-col="er" style="width:${C.er}px">${t('col_conclusao')}${rh('er')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="${t('col_atraso_title')}">${t('col_atraso')}${rh('atraso')}</div><div class="th" data-col="de" style="width:${C.de}px">${t('col_est')}${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">${t('col_real')}${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">${t('col_prog')}${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">${t('col_resp')}${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">${t('col_dep')}${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">${t('col_status')}${rh('st')}</div><div class="th" data-col="timing" style="width:${C.timing}px">${t('col_tempo')}${rh('timing')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">${t('col_link')}${rh('jiralink')}</div><div class="th" data-col="dl" style="width:${C.dl}px">${t('col_prazo')}${rh('dl')}</div><div class="th" data-col="act" style="width:${C.act}px"></div>`;
 }
 // Progresso de uma Tarefa que tem Subtarefas = média do progresso das Subtarefas (mesma regra
 // já usada entre Etapa e Tarefa, um nível abaixo). Sem Subtarefas, comportamento idêntico a
@@ -6138,7 +6359,7 @@ function renderRows(){
   const canEd=canEdit(curKey);
   cont.classList.toggle('no-edit',!canEd);
   const mss=sched.milestones||[];const tasks=sched.tasks||[];const subtasksAll=sched.subtasks||[];
-  if(!mss.length){cont.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:9px;color:var(--text3)"><i class="ti ti-calendar-plus" style="font-size:34px;opacity:.3"></i><p style="font-size:12px;text-align:center;max-width:260px;line-height:1.6">Nenhuma etapa ainda.<br>Clique em <b>Nova etapa</b> para começar ou use um <b>Modelo</b>.</p></div>';return;}
+  if(!mss.length){cont.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:9px;color:var(--text3)"><i class="ti ti-calendar-plus" style="font-size:34px;opacity:.3"></i><p style="font-size:12px;text-align:center;max-width:260px;line-height:1.6">${t('sch_empty_title')}<br>${t('sch_empty_sub')} <b>${t('btn_nova_etapa')}</b> ${t('sch_empty_sub2')} <b>${t('sch_modelo')}</b>.</p></div>`;return;}
   const {idToNum}=buildRowNumMap(sched);
   mss.forEach((ms,mi)=>{
     const msTasks=tasks.filter(t=>t.msId===ms.id);const isCl=collapsed.has(ms.id);
@@ -6152,26 +6373,26 @@ function renderRows(){
     row.innerHTML=`
       <div class="td" data-col="num" style="width:${C.num}px">${canEd?`<input type="checkbox" class="ms-chk" ${selectedMs.has(ms.id)?'checked':''} onchange="toggleMsSelect('${ms.id}',this.checked)">`:`<span class="rnum">${idToNum[ms.id]}</span>`}</div>
       <div class="td" data-col="name" style="width:${C.name}px;gap:4px">
-        ${canEd?`<span class="drag-handle" title="Arrastar para reordenar" onmousedown="this.closest('.ms-row').setAttribute('draggable','true')" onmouseup="this.closest('.ms-row').setAttribute('draggable','false')"><i class="ti ti-grip-vertical" style="font-size:11px"></i></span>`:''}
+        ${canEd?`<span class="drag-handle" title="${t('tt_drag')}" onmousedown="this.closest('.ms-row').setAttribute('draggable','true')" onmouseup="this.closest('.ms-row').setAttribute('draggable','false')"><i class="ti ti-grip-vertical" style="font-size:11px"></i></span>`:''}
         <span class="expbtn ${isCl?'cl':''}" onclick="toggleMs('${ms.id}')">▾</span>
         <i class="ti ti-flag-2" style="color:${ms.color};font-size:12px"></i>
         <span class="rlbl ms${stCls}" title="${ms.name}" style="cursor:pointer" onclick="openMsModal('${ms.id}')">${ms.name}</span>
         <button class="clone-btn" onclick="cloneMs('${ms.id}')"><i class="ti ti-copy" style="font-size:8.5px"></i></button>
         <button class="edit-btn" onclick="openMsModal('${ms.id}')"><i class="ti ti-pencil" style="font-size:8.5px"></i></button>
-        ${canEd?`<button class="edit-btn" title="Excluir etapa" onclick="deleteMsDirect('${ms.id}')"><i class="ti ti-trash" style="font-size:8.5px"></i></button>`:''}
+        ${canEd?`<button class="edit-btn" title="${t('tt_del_etapa')}" onclick="deleteMsDirect('${ms.id}')"><i class="ti ti-trash" style="font-size:8.5px"></i></button>`:''}
       </div>
-      <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'start','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
-      <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'endreal','ms','${ms.id}',null,event)"`:''}>${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
+      <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
+      <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'endreal','ms','${ms.id}',null,event)"`:''}>${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
       <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
       <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de}</span></div>
       <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr!=='—'&&de!=='—'&&parseInt(dr)>parseInt(de)?'var(--red)':'var(--green)'}">${dr}</span></div>
       <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog}%</span></div></div>
-      <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'resp','ms','${ms.id}',null,event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
+      <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','ms','${ms.id}',null,event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
       <div class="td" data-col="dep" style="width:${C.dep}px">—</div>
-      <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'status','ms','${ms.id}',null,event)"`:''}><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
+      <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','ms','${ms.id}',null,event)"`:''}><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
       <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge({...ms,endReal:er},true)}</div>
       <div class="td" data-col="jiralink" style="width:${C.jiralink}px">—</div>
-      <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'deadline','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
+      <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
       <div class="td" data-col="act" style="width:${C.act}px"></div>`;
     if(canEd){
       row.addEventListener('dragstart',e=>onMsDragStart(e,ms.id));
@@ -6202,12 +6423,12 @@ function renderRows(){
       const linkIconOf=u=>/\/browse\//i.test(String(u||''))?'ti-brand-jira':(isSlackLink(u)?'ti-brand-slack':'ti-link');
       const primaryLink2=taskLinks2[0]||null;
       const primaryKey2=primaryLink2?linkKeyOf(primaryLink2.url):'';
-      const jiraLinkHtml=primaryLink2?`<a href="${primaryLink2.url}" target="_blank" title="Abrir ${primaryKey2}" style="font-size:8.5px;color:var(--blue);display:flex;align-items:center;gap:3px;padding:2px 5px;background:#e8ecfd;border-radius:4px;font-weight:600;white-space:nowrap;overflow:hidden"><i class="ti ${linkIconOf(primaryLink2.url)}" style="font-size:10px"></i><span style="overflow:hidden;text-overflow:ellipsis">${primaryKey2.length>10?primaryKey2.slice(0,10)+'…':primaryKey2}</span>${taskLinks2.length>1?`<span style="opacity:.7">+${taskLinks2.length-1}</span>`:''}${primaryLink2.status?` <span class="spill ${JIRA_SC[primaryLink2.status]||'s-bkl'}" style="font-size:7px">${primaryLink2.status.slice(0,6)}</span>`:''}</a>`:'—';
+      const jiraLinkHtml=primaryLink2?`<a href="${primaryLink2.url}" target="_blank" title="${window.t('tt_abrir')} ${primaryKey2}" style="font-size:8.5px;color:var(--blue);display:flex;align-items:center;gap:3px;padding:2px 5px;background:#e8ecfd;border-radius:4px;font-weight:600;white-space:nowrap;overflow:hidden"><i class="ti ${linkIconOf(primaryLink2.url)}" style="font-size:10px"></i><span style="overflow:hidden;text-overflow:ellipsis">${primaryKey2.length>10?primaryKey2.slice(0,10)+'…':primaryKey2}</span>${taskLinks2.length>1?`<span style="opacity:.7">+${taskLinks2.length-1}</span>`:''}${primaryLink2.status?` <span class="spill ${JIRA_SC[primaryLink2.status]||'s-bkl'}" style="font-size:7px">${primaryLink2.status.slice(0,6)}</span>`:''}</a>`:'—';
       const jiraSubline=taskLinks2.length?`<div style="display:flex;align-items:center;gap:4px;padding-left:31px;margin-top:1px;overflow:hidden;flex-wrap:wrap">
           ${taskLinks2.map(l=>{
             const key=linkKeyOf(l.url);
             const internal=isInternalLink(l.url);
-            return `<a href="${l.url}" target="_blank" title="Abrir ${key}" style="font-size:7.5px;color:var(--blue);font-weight:700;text-decoration:none;white-space:nowrap"><i class="ti ${linkIconOf(l.url)}" style="font-size:8px"></i> ${key.length>18?key.slice(0,18)+'…':key}</a><span style="font-size:7px;font-weight:700;padding:0 4px;border-radius:3px;white-space:nowrap;background:${internal?'#e0f2fe':'#fef3c7'};color:${internal?'#0369a1':'#92400e'}">${internal?'Interno':'Externo'}</span>`;
+            return `<a href="${l.url}" target="_blank" title="${window.t('tt_abrir')} ${key}" style="font-size:7.5px;color:var(--blue);font-weight:700;text-decoration:none;white-space:nowrap"><i class="ti ${linkIconOf(l.url)}" style="font-size:8px"></i> ${key.length>18?key.slice(0,18)+'…':key}</a><span style="font-size:7px;font-weight:700;padding:0 4px;border-radius:3px;white-space:nowrap;background:${internal?'#e0f2fe':'#fef3c7'};color:${internal?'#0369a1':'#92400e'}">${internal?window.t('badge_interno'):window.t('badge_externo')}</span>`;
           }).join('')}
         </div>`:'';
       const tr2=document.createElement('div');const hasExt=(t.assignees||[]).some(a=>a.type==='external');
@@ -6218,27 +6439,27 @@ function renderRows(){
           <div style="display:flex;align-items:center;gap:3px;width:100%">
             ${subsOfTask.length?`<span class="expbtn ${isClT?'cl':''}" onclick="toggleTask('${t.id}',event)">▾</span>`:`<span style="width:14px;flex-shrink:0"></span>`}
             <i class="ti ti-checkbox" style="color:${ms.color};font-size:11px;opacity:.7"></i>
-            ${t.critical?'<i class="ti ti-bolt" style="color:#dc2626;font-size:10px;flex-shrink:0" title="Tarefa crítica — atraso pode impactar a data final do projeto"></i>':''}<span class="rlbl${stCls2}" title="${t.name}" style="cursor:pointer" onclick="openTaskModal('${ms.id}','${t.id}')">${t.name}</span>
+            ${t.critical?`<i class="ti ti-bolt" style="color:#dc2626;font-size:10px;flex-shrink:0" title="${window.t('tt_tarefa_critica')}"></i>`:''}<span class="rlbl${stCls2}" title="${t.name}" style="cursor:pointer" onclick="openTaskModal('${ms.id}','${t.id}')">${t.name}</span>
             ${t.status!=='done'?`<button class="inline-done-btn" onclick="inlineDone('${t.id}','${ms.id}',event)">✓</button>`:''}
-            ${canEd?`<button class="marco-btn${t.isMarco?' on':''}" title="${t.isMarco?'Remover de Datas Marco':'Marcar como Data Marco (aparece no Resumo do Projeto)'}" onclick="toggleTaskMarco('${t.id}',event)"><i class="ti ti-pin${t.isMarco?'-filled':''}" style="font-size:11.5px"></i></button>`:(t.isMarco?`<i class="ti ti-pin-filled" style="font-size:11px;color:#d97706;flex-shrink:0" title="Data Marco"></i>`:'')}
+            ${canEd?`<button class="marco-btn${t.isMarco?' on':''}" title="${t.isMarco?window.t('tt_marco_remove'):window.t('tt_marco_add')}" onclick="toggleTaskMarco('${t.id}',event)"><i class="ti ti-pin${t.isMarco?'-filled':''}" style="font-size:11.5px"></i></button>`:(t.isMarco?`<i class="ti ti-pin-filled" style="font-size:11px;color:#d97706;flex-shrink:0" title="${window.t('tt_marco_add')}"></i>`:'')}
             <button class="clone-btn" style="margin-right:2px" onclick="cloneTask('${ms.id}','${t.id}')"><i class="ti ti-copy" style="font-size:8.5px"></i></button>
             <button class="edit-btn" style="position:static;transform:none" onclick="openTaskModal('${ms.id}','${t.id}')"><i class="ti ti-pencil" style="font-size:8.5px"></i></button>
-            <button class="del-btn" style="position:static;transform:none;margin-left:2px" title="Excluir tarefa" onclick="deleteTaskDirect('${t.id}','${ms.id}',event)"><i class="ti ti-trash" style="font-size:8.5px"></i></button>
+            <button class="del-btn" style="position:static;transform:none;margin-left:2px" title="${window.t('tt_del_tarefa')}" onclick="deleteTaskDirect('${t.id}','${ms.id}',event)"><i class="ti ti-trash" style="font-size:8.5px"></i></button>
           </div>
           ${jiraSubline}
         </div>
-        <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'start','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
-        <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar a data (ou use o ✓ ao lado do nome pra concluir hoje)':''}"${canEd?` onclick="inlineEditField(this,'endreal','task','${t.id}','${ms.id}',event)"`:''}>${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','task','${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`:'—')}</div>
-        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(atrasoAcc2)}</div>
+        <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
+        <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','task','${t.id}','${ms.id}',event)"`:''}>${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','task','${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
+        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title')}">${atrasoCellHtml(atrasoAcc2)}</div>
         <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
-        <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'progress','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
-        <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'resp','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
-        <div class="td" data-col="dep" style="width:${C.dep}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'dep','task','${t.id}','${ms.id}',event)"`:''}>${depLbl}</div>
-        <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'status','task','${t.id}','${ms.id}',event)"`:''}><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
+        <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
+        <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
+        <div class="td" data-col="dep" style="width:${C.dep}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'dep','task','${t.id}','${ms.id}',event)"`:''}>${depLbl}</div>
+        <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','task','${t.id}','${ms.id}',event)"`:''}><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
         <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge(t,false)}</div>
-        <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'jira','task','${t.id}','${ms.id}',event)"`:''}>${jiraLinkHtml}</div>
-        <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'deadline','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
+        <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','task','${t.id}','${ms.id}',event)"`:''}>${jiraLinkHtml}</div>
+        <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
         <div class="td" data-col="act" style="width:${C.act}px"><button style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:11px" onclick="openTaskModal('${ms.id}','${t.id}')"><i class="ti ti-dots-vertical"></i></button></div>`;
       cont.appendChild(tr2);
       const subHidden=isCl||isClT;
@@ -6250,7 +6471,7 @@ function renderRows(){
         const subLinks=getTaskLinks(s);
         const primaryLink3=subLinks[0]||null;
         const primaryKey3=primaryLink3?linkKeyOf(primaryLink3.url):'';
-        const jiraLinkHtml3=primaryLink3?`<a href="${primaryLink3.url}" target="_blank" title="Abrir ${primaryKey3}" style="font-size:8.5px;color:var(--blue);display:flex;align-items:center;gap:3px;padding:2px 5px;background:#e8ecfd;border-radius:4px;font-weight:600;white-space:nowrap;overflow:hidden"><i class="ti ${linkIconOf(primaryLink3.url)}" style="font-size:10px"></i><span style="overflow:hidden;text-overflow:ellipsis">${primaryKey3.length>10?primaryKey3.slice(0,10)+'…':primaryKey3}</span>${subLinks.length>1?`<span style="opacity:.7">+${subLinks.length-1}</span>`:''}</a>`:'—';
+        const jiraLinkHtml3=primaryLink3?`<a href="${primaryLink3.url}" target="_blank" title="${window.t('tt_abrir')} ${primaryKey3}" style="font-size:8.5px;color:var(--blue);display:flex;align-items:center;gap:3px;padding:2px 5px;background:#e8ecfd;border-radius:4px;font-weight:600;white-space:nowrap;overflow:hidden"><i class="ti ${linkIconOf(primaryLink3.url)}" style="font-size:10px"></i><span style="overflow:hidden;text-overflow:ellipsis">${primaryKey3.length>10?primaryKey3.slice(0,10)+'…':primaryKey3}</span>${subLinks.length>1?`<span style="opacity:.7">+${subLinks.length-1}</span>`:''}</a>`:'—';
         const tr3=document.createElement('div');const hasExt3=(s.assignees||[]).some(a=>a.type==='external');
         tr3.className='trow'+(subHidden?' hidden':'')+(hasExt3?' has-external':'');tr3.dataset.msid=ms.id;tr3.dataset.tid=t.id;tr3.dataset.subid=s.id;tr3.style.width=LW+'px';
         tr3.innerHTML=`
@@ -6259,40 +6480,40 @@ function renderRows(){
             <div style="display:flex;align-items:center;gap:3px;width:100%">
               <span style="width:14px;flex-shrink:0"></span>
               <i class="ti ti-corner-down-right" style="color:${ms.color};font-size:10px;opacity:.6"></i>
-              ${s.critical?'<i class="ti ti-bolt" style="color:#dc2626;font-size:9px;flex-shrink:0" title="Subtarefa crítica"></i>':''}<span class="rlbl${stCls3}" title="${s.name}" style="cursor:pointer;font-size:10.5px" onclick="openSubtaskModal('${t.id}','${s.id}')">${s.name}</span>
+              ${s.critical?`<i class="ti ti-bolt" style="color:#dc2626;font-size:9px;flex-shrink:0" title="${window.t('tt_subtarefa_critica')}"></i>`:''}<span class="rlbl${stCls3}" title="${s.name}" style="cursor:pointer;font-size:10.5px" onclick="openSubtaskModal('${t.id}','${s.id}')">${s.name}</span>
               ${s.status!=='done'?`<button class="inline-done-btn" onclick="inlineDoneSub('${s.id}','${t.id}',event)">✓</button>`:''}
               <button class="clone-btn" style="margin-right:2px" onclick="cloneSubtask('${t.id}','${s.id}')"><i class="ti ti-copy" style="font-size:8.5px"></i></button>
               <button class="edit-btn" style="position:static;transform:none" onclick="openSubtaskModal('${t.id}','${s.id}')"><i class="ti ti-pencil" style="font-size:8.5px"></i></button>
-              <button class="del-btn" style="position:static;transform:none;margin-left:2px" title="Excluir subtarefa" onclick="deleteSubtaskDirect('${s.id}','${t.id}',event)"><i class="ti ti-trash" style="font-size:8.5px"></i></button>
+              <button class="del-btn" style="position:static;transform:none;margin-left:2px" title="${window.t('tt_del_subtarefa')}" onclick="deleteSubtaskDirect('${s.id}','${t.id}',event)"><i class="ti ti-trash" style="font-size:8.5px"></i></button>
             </div>
           </div>
-          <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'start','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.start)}</span></div>
-          <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'endreal','subtask','${s.id}','${t.id}',event)"`:''}>${s.endReal?`<span style="font-size:9.5px">${fmtBR(s.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','subtask','${s.id}','${t.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">+ data</button>`:'—')}</div>
-          <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida)">${atrasoCellHtml(atraso3)}</div>
+          <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.start)}</span></div>
+          <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','subtask','${s.id}','${t.id}',event)"`:''}>${s.endReal?`<span style="font-size:9.5px">${fmtBR(s.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','subtask','${s.id}','${t.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
+          <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title_short')}">${atrasoCellHtml(atraso3)}</div>
           <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de3}</span></div>
           <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr3!=='—'&&de3!=='—'&&parseInt(dr3)>parseInt(de3)?'var(--red)':'var(--green)'}">${dr3}</span></div>
-          <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'progress','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog3}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog3}%</span></div></div>
-          <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'resp','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml3||'—'}</div></div>
-          <div class="td" data-col="dep" style="width:${C.dep}px" title="Subtarefas não participam do sistema de dependências">—</div>
-          <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'status','subtask','${s.id}','${t.id}',event)"`:''}><span class="tbadge2 ${SC[s.status]}">${SL[s.status]}</span></div>
+          <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog3}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog3}%</span></div></div>
+          <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml3||'—'}</div></div>
+          <div class="td" data-col="dep" style="width:${C.dep}px" title="${window.t('tt_dep_none')}">—</div>
+          <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','subtask','${s.id}','${t.id}',event)"`:''}><span class="tbadge2 ${SC[s.status]}">${SL[s.status]}</span></div>
           <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge(s,false)}</div>
-          <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'jira','subtask','${s.id}','${t.id}',event)"`:''}>${jiraLinkHtml3}</div>
-          <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?'Clique para editar':''}"${canEd?` onclick="inlineEditField(this,'deadline','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
+          <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','subtask','${s.id}','${t.id}',event)"`:''}>${jiraLinkHtml3}</div>
+          <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
           <div class="td" data-col="act" style="width:${C.act}px"><button style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:11px" onclick="openSubtaskModal('${t.id}','${s.id}')"><i class="ti ti-dots-vertical"></i></button></div>`;
         cont.appendChild(tr3);
       });
       if(canEd){
         const astr=document.createElement('div');astr.className='add-row'+(subHidden?' hidden':'');astr.dataset.msid=ms.id;astr.dataset.tid=t.id;astr.style.paddingLeft='64px';
-        astr.onclick=()=>openSubtaskModal(t.id,null);astr.innerHTML=`<i class="ti ti-plus" style="font-size:9px"></i> Adicionar subtarefa`;
+        astr.onclick=()=>openSubtaskModal(t.id,null);astr.innerHTML=`<i class="ti ti-plus" style="font-size:9px"></i> ${window.t('sch_add_subtarefa')}`;
         cont.appendChild(astr);
       }
     });
     const atr=document.createElement('div');atr.className='add-row'+(isCl?' hidden':'');atr.dataset.msid=ms.id;atr.style.paddingLeft='40px';
-    atr.onclick=()=>openTaskModal(ms.id,null);atr.innerHTML=`<i class="ti ti-plus" style="font-size:9.5px"></i> Adicionar tarefa`;
+    atr.onclick=()=>openTaskModal(ms.id,null);atr.innerHTML=`<i class="ti ti-plus" style="font-size:9.5px"></i> ${t('sch_add_tarefa')}`;
     cont.appendChild(atr);
   });
   const adr=document.createElement('div');adr.className='add-row';adr.style.paddingLeft='12px';
-  adr.onclick=()=>openMsModal(null);adr.innerHTML=`<i class="ti ti-flag-plus" style="font-size:9.5px"></i> Adicionar etapa`;
+  adr.onclick=()=>openMsModal(null);adr.innerHTML=`<i class="ti ti-flag-plus" style="font-size:9.5px"></i> ${t('sch_add_etapa')}`;
   cont.appendChild(adr);
 }
 function toggleMs(id){if(collapsed.has(id))collapsed.delete(id);else collapsed.add(id);renderSchedule();}
@@ -6302,7 +6523,7 @@ function toggleTask(id,ev){if(ev)ev.stopPropagation();if(collapsed.has(id))colla
 // renderResumoDatesList), isso só serve pra elevar uma tarefa específica pra essa mesma visão.
 function toggleTaskMarco(taskId,ev){
   if(ev)ev.stopPropagation();
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(window.t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;
   t.isMarco=!t.isMarco;
   logChange(curKey,`Tarefa "${t.name}" ${t.isMarco?'marcada':'desmarcada'} como Data Marco`,'#d97706');
@@ -6516,7 +6737,7 @@ function moveTip(e){const t=document.getElementById('tip');t.style.left=(e.clien
 function hideTip(){document.getElementById('tip').style.display='none';}
 
 // ── INLINE ACTIONS ──
-function inlineDone(tid,msId,ev){ev.stopPropagation();if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;t.endReal=ds(TODAY);t.status='done';logChange(curKey,`Tarefa "${t.name}" concluída`,'#16a34a');autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);const casc1=cascadeReschedule(curKey);logCascadeChanges(curKey,casc1.changed);renderSchedule();syncToJira(curKey);persistSchedule(curKey);}
+function inlineDone(tid,msId,ev){ev.stopPropagation();if(!canEdit(curKey)){alert(window.t('alert_no_perm_edit'));return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===tid);if(!t)return;t.endReal=ds(TODAY);t.status='done';logChange(curKey,`Tarefa "${t.name}" concluída`,'#16a34a');autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);const casc1=cascadeReschedule(curKey);logCascadeChanges(curKey,casc1.changed);renderSchedule();syncToJira(curKey);persistSchedule(curKey);}
 // ── EDIÇÃO INLINE (clique na célula, sem abrir o pop-up da etapa/tarefa) ──
 // Cobre as colunas pedidas: Status, Responsáveis, Data de Conclusão, Dependências e Jira.
 // Cada célula, quando clicável (canEdit e ainda não em edição), vira um input/select na hora;
@@ -6524,7 +6745,7 @@ function inlineDone(tid,msId,ev){ev.stopPropagation();if(!canEdit(curKey)){alert
 // colaterais do salvamento pelo modal (cascata de datas, sync com Jira, log de alteração).
 function inlineEditField(el,field,kind,id,msId,ev){
   if(ev)ev.stopPropagation();
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   if(el.querySelector('.inline-edit-input,.inline-edit-select'))return; // já em edição
   const sched=schedules[curKey];
   const obj=kind==='ms'?(sched.milestones||[]).find(m=>m.id===id):kind==='subtask'?(sched.subtasks||[]).find(s=>s.id===id):(sched.tasks||[]).find(t=>t.id===id);
@@ -6682,8 +6903,8 @@ function commitInlineField(field,kind,id,msId,raw){
   const newGoLiveLocal=getStats(curKey).goLiveLocal;
   if(oldGoLiveLocal!==newGoLiveLocal)notifyFollowers(curKey,'Data final do projeto alterada',`Data final estimada: ${oldGoLiveLocal?fmtBR(oldGoLiveLocal):'—'} → ${newGoLiveLocal?fmtBR(newGoLiveLocal):'—'}`,'dateChange');
 }
-function cloneMs(msId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;const newMs={...JSON.parse(JSON.stringify(ms)),id:uid(),name:ms.name+' (cópia)'};sched.milestones.push(newMs);const msTasks=sched.tasks.filter(t=>t.msId===msId);const idMap={};msTasks.forEach(t=>{const newId=uid();idMap[t.id]=newId;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,msId:newMs.id,endReal:'',status:'not_started',origDeadline:t.origDeadline||t.deadline});});(sched.subtasks||[]).filter(s=>idMap[s.taskId]).forEach(s=>{sched.subtasks.push({...JSON.parse(JSON.stringify(s)),id:uid(),taskId:idMap[s.taskId],endReal:'',status:'not_started',origDeadline:s.origDeadline||s.deadline});});logChange(curKey,`Etapa "${ms.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
-function cloneTask(msId,taskId){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;const newId=uid();sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,name:t.name+' (cópia)',endReal:'',status:'not_started',depId:'',depIds:[],origDeadline:t.origDeadline||t.deadline});(sched.subtasks||[]).filter(s=>s.taskId===taskId).forEach(s=>{sched.subtasks.push({...JSON.parse(JSON.stringify(s)),id:uid(),taskId:newId,endReal:'',status:'not_started',origDeadline:s.origDeadline||s.deadline});});logChange(curKey,`Tarefa "${t.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
+function cloneMs(msId){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;const newMs={...JSON.parse(JSON.stringify(ms)),id:uid(),name:ms.name+' (cópia)'};sched.milestones.push(newMs);const msTasks=sched.tasks.filter(t=>t.msId===msId);const idMap={};msTasks.forEach(t=>{const newId=uid();idMap[t.id]=newId;sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,msId:newMs.id,endReal:'',status:'not_started',origDeadline:t.origDeadline||t.deadline});});(sched.subtasks||[]).filter(s=>idMap[s.taskId]).forEach(s=>{sched.subtasks.push({...JSON.parse(JSON.stringify(s)),id:uid(),taskId:idMap[s.taskId],endReal:'',status:'not_started',origDeadline:s.origDeadline||s.deadline});});logChange(curKey,`Etapa "${ms.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
+function cloneTask(msId,taskId){if(!canEdit(curKey)){alert(window.t('alert_no_perm_edit'));return;}const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;const newId=uid();sched.tasks.push({...JSON.parse(JSON.stringify(t)),id:newId,name:t.name+' (cópia)',endReal:'',status:'not_started',depId:'',depIds:[],origDeadline:t.origDeadline||t.deadline});(sched.subtasks||[]).filter(s=>s.taskId===taskId).forEach(s=>{sched.subtasks.push({...JSON.parse(JSON.stringify(s)),id:uid(),taskId:newId,endReal:'',status:'not_started',origDeadline:s.origDeadline||s.deadline});});logChange(curKey,`Tarefa "${t.name}" clonada`,'#6924E1');renderSchedule();persistSchedule(curKey);}
 
 // ── RESIZE ──
 (function(){const handle=document.getElementById('resize-handle');let dr=false,sx=0,sw=0;handle.addEventListener('mousedown',e=>{dr=true;sx=e.clientX;sw=document.getElementById('se-left').offsetWidth;document.body.style.cursor='col-resize';e.preventDefault();});document.addEventListener('mousemove',e=>{if(!dr)return;const nw=Math.max(260,Math.min(920,sw+(e.clientX-sx)));userLeftW=nw;document.getElementById('se-left').style.width=nw+'px';});document.addEventListener('mouseup',()=>{dr=false;document.body.style.cursor='';});})();
@@ -6781,18 +7002,18 @@ function getOrBuildModal(id,title,body,footer){
 }
 
 // Milestone
-function openMsModal(id){if(!id&&!canEdit(curKey)){alert('Você não tem permissão para criar etapas neste cronograma.');return;}editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('ms-modal','Etapa',`<div class="fg"><label>Nome *</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="ms-start"></div><div class="fg"><label>Prazo</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">Responsáveis</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="Adiciona esse(s) responsável(is) em todas as tarefas desta etapa, sem remover quem já estiver atribuído"><i class="ti ti-copy" style="font-size:10px"></i> Aplicar a todas as tarefas</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>Status</label><select id="ms-status"><option value="not_started">Não iniciado</option><option value="in_progress">Em andamento</option><option value="done">Concluído</option><option value="blocked">Bloqueado</option><option value="cancelled">Cancelado</option></select></div><div class="fg"><label>Cor</label><select id="ms-color"><option value="#6366f1">Índigo</option><option value="#8b5cf6">Violeta</option><option value="#06b6d4">Ciano</option><option value="#10b981">Verde</option><option value="#f59e0b">Âmbar</option><option value="#ef4444">Vermelho</option><option value="#3b82f6">Azul</option><option value="#ec4899">Rosa</option></select></div></div>`,
-  `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">Excluir</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">Cancelar</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">Salvar</button>`);
-  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`Calculado automaticamente (${fmtBR(autoEr)}).`:`Preencha manualmente se necessário.`;document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
+function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create_ms'));return;}editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;const editable=canEdit(curKey);
+  const modal=getOrBuildModal('ms-modal',t('ms_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="ms-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">${t('lbl_responsaveis')}</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="${t('tt_apply_all_tasks')}"><i class="ti ti-copy" style="font-size:10px"></i> ${t('btn_apply_all_tasks')}</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>${t('fld_status')}</label><select id="ms-status"><option value="not_started">${t('opt_ns_ms')}</option><option value="in_progress">${t('opt_ip_ms')}</option><option value="done">${t('opt_done_ms')}</option><option value="blocked">${t('opt_bl_ms')}</option><option value="cancelled">${t('opt_can_ms')}</option></select></div><div class="fg"><label>${t('fld_cor2')}</label><select id="ms-color"><option value="#6366f1">${t('color_indigo')}</option><option value="#8b5cf6">${t('color_violet')}</option><option value="#06b6d4">${t('color_cyan')}</option><option value="#10b981">${t('color_green')}</option><option value="#f59e0b">${t('color_amber')}</option><option value="#ef4444">${t('color_red')}</option><option value="#3b82f6">${t('color_blue')}</option><option value="#ec4899">${t('color_pink')}</option></select></div></div>`,
+  `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">${t('btn_salvar')}</button>`);
+  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`${t('ms_er_auto')} (${fmtBR(autoEr)}).`:t('ms_er_manual');document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
   ['ms-name','ms-start','ms-deadline','ms-status','ms-color'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
   const msAddResp=document.getElementById('ms-add-resp-btn');if(msAddResp)msAddResp.style.display=editable?'':'none';
   document.getElementById('ms-save-btn').style.display=editable?'':'none';
-  document.getElementById('ms-cancel-btn').textContent=editable?'Cancelar':'Fechar';
+  document.getElementById('ms-cancel-btn').textContent=editable?t('btn_cancelar'):t('btn_fechar');
   openM('ms-modal');}
 function saveMs(){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
-  const name=document.getElementById('ms-name').value.trim();if(!name){alert('Informe o nome');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
+  const name=document.getElementById('ms-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}
   const sched=schedules[curKey];
   // Snapshot da data final do projeto ANTES de salvar — usado pro gatilho de Follow #2 (data
   // final do projeto mudou). Compara de novo depois de tudo recalculado (inclusive cascata).
@@ -6817,7 +7038,7 @@ function saveMs(){
   const newGoLiveLocal=getStats(curKey).goLiveLocal;
   if(oldGoLiveLocal!==newGoLiveLocal)notifyFollowers(curKey,'Data final do projeto alterada',`Data final estimada: ${oldGoLiveLocal?fmtBR(oldGoLiveLocal):'—'} → ${newGoLiveLocal?fmtBR(newGoLiveLocal):'—'}`,'dateChange');
 }
-function deleteMs(){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}if(!confirm('Excluir etapa e suas tarefas?'))return;const sched=schedules[curKey];const delTaskIds=new Set(sched.tasks.filter(t=>t.msId===editMsId).map(t=>t.id));sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.subtasks=(sched.subtasks||[]).filter(s=>!delTaskIds.has(s.taskId));sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
+function deleteMs(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}if(!confirm(t('confirm_excluir_etapa_tarefas')))return;const sched=schedules[curKey];const delTaskIds=new Set(sched.tasks.filter(t=>t.msId===editMsId).map(t=>t.id));sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.subtasks=(sched.subtasks||[]).filter(s=>!delTaskIds.has(s.taskId));sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
 // Copia o(s) responsável(is) atualmente preenchido(s) na etapa para todas as tarefas dela —
 // só ADICIONA quem ainda não estiver na tarefa, nunca remove um responsável já atribuído.
 function applyMsAssigneesToTasks(){
@@ -6857,15 +7078,15 @@ function renderMsBulkBar(){
   if(selectedMs.size>0){
     bar.style.display='flex';
     const n=selectedMs.size;
-    document.getElementById('ms-bulk-count').textContent=n+(n>1?' etapas selecionadas':' etapa selecionada');
+    document.getElementById('ms-bulk-count').textContent=n+' '+(n>1?t('ms_bulk_selected_p'):t('ms_bulk_selected_s'));
   } else bar.style.display='none';
 }
 function deleteSelectedMs(){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   if(!selectedMs.size||!curKey)return;
   const sched=schedules[curKey];
   const names=sched.milestones.filter(m=>selectedMs.has(m.id)).map(m=>m.name);
-  if(!confirm(`Excluir ${selectedMs.size} etapa(s) e todas as suas tarefas?\n\n${names.join(', ')}\n\nEssa ação não pode ser desfeita.`))return;
+  if(!confirm(`${t('confirm_delete_selected_ms').replace('{n}',selectedMs.size)}\n\n${names.join(', ')}\n\n${t('confirm_irreversible')}`))return;
   sched.tasks=sched.tasks.filter(t=>!selectedMs.has(t.msId));
   sched.milestones=sched.milestones.filter(m=>!selectedMs.has(m.id));
   logChange(curKey,`${selectedMs.size} etapa(s) excluída(s) em lote: ${names.join(', ')}`,'#dc2626');
@@ -6873,9 +7094,9 @@ function deleteSelectedMs(){
   renderSchedule();renderPortfolio();persistSchedule(curKey);
 }
 function deleteMsDirect(msId){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const ms=sched.milestones.find(m=>m.id===msId);if(!ms)return;
-  if(!confirm(`Excluir a etapa "${ms.name}" e suas tarefas? Essa ação não pode ser desfeita.`))return;
+  if(!confirm(`${t('confirm_del_ms_named').replace('{name}',ms.name)} ${t('confirm_irreversible')}`))return;
   const delTaskIds=new Set(sched.tasks.filter(t=>t.msId===msId).map(t=>t.id));
   sched.tasks=sched.tasks.filter(t=>t.msId!==msId);
   sched.subtasks=(sched.subtasks||[]).filter(s=>!delTaskIds.has(s.taskId));
@@ -7168,7 +7389,7 @@ function renderScoringView(){
   if(scFilter==='unscored')rows=rows.filter(r=>!r.res);
   rows.sort((a,b)=>(b.res?b.res.score:-1)-(a.res?a.res.score:-1));
   tbody.innerHTML='';
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">Nenhum projeto encontrado.</td></tr>';return;}
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">'+t('no_projects_found')+'</td></tr>';return;}
   rows.forEach((r,i)=>{
     const tr=document.createElement('tr');tr.style.cursor='pointer';tr.onclick=()=>openProject(r.p.key);
     const notApplicable=!SCORING_TYPES[r.p.type];
@@ -7193,9 +7414,9 @@ function renderScoringView(){
 }
 
 // Task
-function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert('Você não tem permissão para criar tarefas neste cronograma.');return;}editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('task-modal','Tarefa',`<div class="fg"><label>Nome *</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="t-start"></div><div class="fg"><label>Prazo</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">Responsáveis</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row"><div class="fg"><label>Status</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">Não iniciada</option><option value="in_progress">Em andamento</option><option value="done">Concluída</option><option value="blocked">Bloqueada</option><option value="cancelled">Cancelada</option></select></div><div class="fg"><label>Progresso (%)</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> Tarefa crítica — atraso pode impactar a data final do projeto</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="t-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> Marcar como Data Marco (aparece no Resumo do Projeto)</label></div><div class="fg"><label>Depende de (números da coluna #, separados por vírgula. Ex: 3, 4, 7)</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>Tipo de dependência</label><select id="t-deptype"><option value="TI">TI — Término para Início (mais comum)</option><option value="II">II — Início para Início</option><option value="TT">TT — Término para Término</option><option value="IT">IT — Início para Término</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>Como se relaciona?</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">🔒 Bloqueia</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">⚡ Paralelo</button></div></div></div><div class="fg"><label>Links (Jira, Confluence, etc.)</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar link</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>Observações</label><textarea id="t-notes" rows="2"></textarea></div>`,
-  `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">Excluir</button><button class="btn-c" id="t-cancel-btn" onclick="closeM('task-modal')">Cancelar</button><button class="btn-s" id="t-save-btn" onclick="saveTask()">Salvar</button>`);
+function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t('alert_no_perm_create_task'));return;}editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;const editable=canEdit(curKey);
+  const modal=getOrBuildModal('task-modal',window.t('task_title'),`<div class="fg"><label>${window.t('fld_nome')}</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_inicio')}</label><input type="date" id="t-start"></div><div class="fg"><label>${window.t('fld_prazo')}</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>${window.t('fld_data_conclusao')}</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">${window.t('lbl_responsaveis')}</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_adicionar')}</button><div class="fg-row"><div class="fg"><label>${window.t('fld_status')}</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${window.t('fld_progresso')}</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${window.t('chk_critica_tarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="t-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${window.t('chk_marco')}</label></div><div class="fg"><label>${window.t('fld_depende_de')}</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>${window.t('fld_tipo_dep')}</label><select id="t-deptype"><option value="TI">${window.t('dep_ti_full')}</option><option value="II">${window.t('dep_ii_full')}</option><option value="TT">${window.t('dep_tt_full')}</option><option value="IT">${window.t('dep_it_full')}</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>${window.t('lbl_como_relaciona')}</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">${window.t('btn_bloqueia')}</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">${window.t('btn_paralelo')}</button></div></div></div><div class="fg"><label>${window.t('fld_links')}</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_add_link')}</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>${window.t('fld_observacoes')}</label><textarea id="t-notes" rows="2"></textarea></div>`,
+  `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">${window.t('btn_excluir')}</button><button class="btn-c" id="t-cancel-btn" onclick="closeM('task-modal')">${window.t('btn_cancelar')}</button><button class="btn-s" id="t-save-btn" onclick="saveTask()">${window.t('btn_salvar')}</button>`);
   document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:ds(addD(TODAY,14));document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-marco').checked=t?!!t.isMarco:false;document.getElementById('t-del-btn').style.display=(t&&editable)?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);
   document.getElementById('t-progress').value=t?taskProg(t):0;
   // Mapa de números (coluna #) ↔ id, mesmo usado na tabela do cronograma
@@ -7209,7 +7430,7 @@ function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert('Você n
     const preview=document.getElementById('t-dep-preview');
     if(!preview)return;
     const vals=depInput.value.split(',').map(s=>s.trim()).filter(Boolean);
-    const names=vals.map(v=>{const id=numToId[parseInt(v)];const tx=(sched.tasks||[]).find(x=>x.id===id);return tx?`${v}: ${tx.name.slice(0,30)}`:v?`${v}: não encontrado`:null;}).filter(Boolean);
+    const names=vals.map(v=>{const id=numToId[parseInt(v)];const tx=(sched.tasks||[]).find(x=>x.id===id);return tx?`${v}: ${tx.name.slice(0,30)}`:v?`${v}: ${window.t('not_found_short')}`:null;}).filter(Boolean);
     preview.textContent=names.length?names.join(' | '):'';
     const hasD=vals.length>0&&vals.some(v=>numToId[parseInt(v)]);
     const dtw=document.getElementById('t-deptype-wrap');const dmw=document.getElementById('t-dep-mode-wrap');
@@ -7222,7 +7443,7 @@ function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert('Você n
   const tAddResp=document.getElementById('t-add-resp-btn');if(tAddResp)tAddResp.style.display=editable?'':'none';
   const tAddLink=document.getElementById('t-add-link-btn');if(tAddLink)tAddLink.style.display=editable?'':'none';
   document.getElementById('t-save-btn').style.display=editable?'':'none';
-  document.getElementById('t-cancel-btn').textContent=editable?'Cancelar':'Fechar';
+  document.getElementById('t-cancel-btn').textContent=editable?window.t('btn_cancelar'):window.t('btn_fechar');
   openM('task-modal');}
 function onStatusChangeFromSelect(){
   progressTouched=false;
@@ -7278,7 +7499,7 @@ function onProgressInput(){
   const st=v>=100?'done':v<=0?'not_started':'in_progress';
   document.getElementById('t-status').value=st;
 }
-function saveTask(){if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}const name=document.getElementById('t-name').value.trim();if(!name){alert('Informe o nome');return;}const sched=schedules[curKey];// Parse line numbers to IDs
+function saveTask(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}const name=document.getElementById('t-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}const sched=schedules[curKey];// Parse line numbers to IDs
   const sched2=schedules[curKey];const{numToId:numToId2}=buildRowNumMap(sched2);
   const depRaw=document.getElementById('t-dep').value;
   const depIds=depRaw.split(',').map(s=>s.trim()).filter(Boolean).map(v=>numToId2[parseInt(v)]).filter(Boolean);
@@ -7307,8 +7528,8 @@ function saveTask(){if(!canEdit(curKey)){alert('Você não tem permissão para e
   }
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);const casc3=cascadeReschedule(curKey);logCascadeChanges(curKey,casc3.changed);closeM('task-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);}
 function deleteTask(){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
-  if(!confirm('Excluir tarefa?'))return;
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
+  if(!confirm(t('confirm_excluir_tarefa')))return;
   const sched=schedules[curKey];const delT=sched.tasks.find(x=>x.id===editTaskId);
   sched.tasks=sched.tasks.filter(t=>t.id!==editTaskId);
   sched.tasks.forEach(t=>{if(t.depId===editTaskId)t.depId='';if(t.depIds&&t.depIds.length)t.depIds=t.depIds.filter(id=>id!==editTaskId);});
@@ -7318,9 +7539,9 @@ function deleteTask(){
 }
 function deleteTaskDirect(taskId,msId,ev){
   if(ev)ev.stopPropagation();
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(window.t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const t=sched.tasks.find(x=>x.id===taskId);if(!t)return;
-  if(!confirm(`Excluir a tarefa "${t.name}"? Essa ação não pode ser desfeita.`))return;
+  if(!confirm(`${window.t('confirm_del_task_named').replace('{name}',t.name)} ${window.t('confirm_irreversible')}`))return;
   sched.tasks=sched.tasks.filter(x=>x.id!==taskId);
   sched.tasks.forEach(x=>{if(x.depId===taskId)x.depId='';if(x.depIds&&x.depIds.length)x.depIds=x.depIds.filter(id=>id!==taskId);});
   sched.subtasks=(sched.subtasks||[]).filter(s=>s.taskId!==taskId); // exclui subtarefas órfãs junto
@@ -7337,18 +7558,18 @@ function deleteTaskDirect(taskId,msId,ev){
 // disso). Progresso/status da Tarefa-mãe são derivados das Subtarefas automaticamente quando
 // ela tiver pelo menos uma (ver taskProg/autoUpdateTaskStatus/computeTaskEndReal).
 function openSubtaskModal(taskId,subId){
-  if(!subId&&!canEdit(curKey)){alert('Você não tem permissão para criar subtarefas neste cronograma.');return;}
+  if(!subId&&!canEdit(curKey)){alert(t('alert_no_perm_create_sub'));return;}
   editSubTaskId=taskId;editSubId=subId;subProgressTouched=false;populateAssigneeDatalist();
   const sched=schedules[curKey];const s=subId?(sched.subtasks||[]).find(x=>x.id===subId):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('subtask-modal','Subtarefa',`<div class="fg"><label>Nome *</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>Início</label><input type="date" id="s-start"></div><div class="fg"><label>Prazo</label><input type="date" id="s-deadline"></div></div><div class="fg"><label>Data de conclusão</label><input type="date" id="s-endreal"></div><div class="section-lbl">Responsáveis</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar</button><div class="fg-row"><div class="fg"><label>Status</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">Não iniciada</option><option value="in_progress">Em andamento</option><option value="done">Concluída</option><option value="blocked">Bloqueada</option><option value="cancelled">Cancelada</option></select></div><div class="fg"><label>Progresso (%)</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> Subtarefa crítica</label></div><div class="fg"><label>Links (Jira, Confluence, etc.)</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> Adicionar link</button></div><div class="fg"><label>Observações</label><textarea id="s-notes" rows="2"></textarea></div>`,
-  `<button class="btn-d" id="s-del-btn" onclick="deleteSubtask()" style="display:none">Excluir</button><button class="btn-c" id="s-cancel-btn" onclick="closeM('subtask-modal')">Cancelar</button><button class="btn-s" id="s-save-btn" onclick="saveSubtask()">Salvar</button>`);
+  const modal=getOrBuildModal('subtask-modal',t('sub_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="s-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="s-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="s-endreal"></div><div class="section-lbl">${t('lbl_responsaveis')}</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><div class="fg-row"><div class="fg"><label>${t('fld_status')}</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${t('fld_progresso')}</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${t('chk_critica_subtarefa')}</label></div><div class="fg"><label>${t('fld_links')}</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_add_link')}</button></div><div class="fg"><label>${t('fld_observacoes')}</label><textarea id="s-notes" rows="2"></textarea></div>`,
+  `<button class="btn-d" id="s-del-btn" onclick="deleteSubtask()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="s-cancel-btn" onclick="closeM('subtask-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="s-save-btn" onclick="saveSubtask()">${t('btn_salvar')}</button>`);
   document.getElementById('s-name').value=s?s.name:'';document.getElementById('s-start').value=s?s.start:ds(TODAY);document.getElementById('s-deadline').value=s?s.deadline:ds(addD(TODAY,7));document.getElementById('s-endreal').value=s?s.endReal:'';document.getElementById('s-status').value=s?s.status:'not_started';document.getElementById('s-notes').value=s?s.notes:'';setLinks('s-link-list',s?getTaskLinks(s):[]);document.getElementById('s-critical').checked=s?!!s.critical:false;document.getElementById('s-del-btn').style.display=(s&&editable)?'':'none';setAs('s-a-list',s?s.assignees:[]);
   document.getElementById('s-progress').value=s?taskProg(s):0;
   ['s-name','s-start','s-deadline','s-endreal','s-status','s-progress','s-critical','s-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
   const sAddResp=document.getElementById('s-add-resp-btn');if(sAddResp)sAddResp.style.display=editable?'':'none';
   const sAddLink=document.getElementById('s-add-link-btn');if(sAddLink)sAddLink.style.display=editable?'':'none';
   document.getElementById('s-save-btn').style.display=editable?'':'none';
-  document.getElementById('s-cancel-btn').textContent=editable?'Cancelar':'Fechar';
+  document.getElementById('s-cancel-btn').textContent=editable?t('btn_cancelar'):t('btn_fechar');
   openM('subtask-modal');
 }
 function onSubStatusChangeFromSelect(){
@@ -7368,8 +7589,8 @@ function onSubProgressInput(){
   document.getElementById('s-status').value=st;
 }
 function saveSubtask(){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
-  const name=document.getElementById('s-name').value.trim();if(!name){alert('Informe o nome');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
+  const name=document.getElementById('s-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}
   const sched=schedules[curKey];if(!sched.subtasks)sched.subtasks=[];
   const progRaw=parseInt(document.getElementById('s-progress').value);const progress=subProgressTouched&&!isNaN(progRaw)?Math.max(0,Math.min(100,progRaw)):null;
   const deadlineVal=document.getElementById('s-deadline').value;
@@ -7387,8 +7608,8 @@ function saveSubtask(){
   closeM('subtask-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
 }
 function deleteSubtask(){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
-  if(!confirm('Excluir subtarefa?'))return;
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
+  if(!confirm(t('confirm_excluir_subtarefa')))return;
   const sched=schedules[curKey];const delS=(sched.subtasks||[]).find(x=>x.id===editSubId);
   sched.subtasks=(sched.subtasks||[]).filter(x=>x.id!==editSubId);
   if(delS)logChange(curKey,`Subtarefa "${delS.name}" excluída`,'#dc2626');
@@ -7397,9 +7618,9 @@ function deleteSubtask(){
 }
 function deleteSubtaskDirect(subId,taskId,ev){
   if(ev)ev.stopPropagation();
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const s=(sched.subtasks||[]).find(x=>x.id===subId);if(!s)return;
-  if(!confirm(`Excluir a subtarefa "${s.name}"? Essa ação não pode ser desfeita.`))return;
+  if(!confirm(`${t('confirm_del_sub_named').replace('{name}',s.name)} ${t('confirm_irreversible')}`))return;
   sched.subtasks=sched.subtasks.filter(x=>x.id!==subId);
   logChange(curKey,`Subtarefa "${s.name}" excluída`,'#dc2626');
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);
@@ -7407,7 +7628,7 @@ function deleteSubtaskDirect(subId,taskId,ev){
 }
 function inlineDoneSub(subId,taskId,ev){
   ev.stopPropagation();
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const s=(sched.subtasks||[]).find(x=>x.id===subId);if(!s)return;
   s.endReal=ds(TODAY);s.status='done';
   logChange(curKey,`Subtarefa "${s.name}" concluída`,'#16a34a');
@@ -7415,7 +7636,7 @@ function inlineDoneSub(subId,taskId,ev){
   renderSchedule();syncToJira(curKey);persistSchedule(curKey);
 }
 function cloneSubtask(taskId,subId){
-  if(!canEdit(curKey)){alert('Você não tem permissão para editar este cronograma.');return;}
+  if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const sched=schedules[curKey];const s=(sched.subtasks||[]).find(x=>x.id===subId);if(!s)return;
   sched.subtasks.push({...JSON.parse(JSON.stringify(s)),id:uid(),name:s.name+' (cópia)',endReal:'',status:'not_started',origDeadline:s.origDeadline||s.deadline});
   logChange(curKey,`Subtarefa "${s.name}" clonada`,'#6924E1');
