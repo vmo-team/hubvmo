@@ -4582,7 +4582,7 @@ function renderPortfolio(){
     }
     tbody.appendChild(tr);shown++;
   });
-  document.getElementById('badge-pf').textContent=shown;
+  document.getElementById('badge-pf').textContent=carteiraTotal(); // badge da aba sempre bate com o total do card "Dados Gerais", nao com o filtro local da tabela de Prioridades
   const sub=document.getElementById('portfolio-subtitle');
   if(sub)sub.textContent=fmtLog('prio_ordenado_por_prioridade_shown_tpl',{n:shown,projetos:shown!==1?t('prio_projeto_plural'):t('prio_projeto_singular')});
   // Show active filters as chips
@@ -4738,6 +4738,12 @@ function secHdr(sec, iconBg, iconColor, iconClass, title, subtitle, extraRight='
 }
 
 const DELIVERED_STATUS='Pós produção';
+// Carteira "de verdade" do portfólio (usada no card TOTAL de Dados Gerais e no badge da aba
+// Visão Geral, que precisam sempre bater o mesmo número) — Backlog, Pausado e Cancelado ficam
+// de fora, só disponíveis por consulta na seção Histórico. Respeita o filtro de time da Visão
+// Geral (vgTeamFilter) quando ele estiver ativo.
+const CARTEIRA_EXCLUDED_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO']);
+function carteiraTotal(){return PROJECTS.filter(p=>!CARTEIRA_EXCLUDED_STATUS.has(p.status)&&(typeof projectMatchesTeamFilter!=='function'||projectMatchesTeamFilter(p))).length;}
 // Status "fora da fila" — Presales, Backlog, Pausado, Cancelado e Pós produção (Entregue) não
 // contam como projeto realmente ativo pra fins de cronograma: são o mesmo grupo que já ficava
 // de fora da priorização (ver PRIORITY_LIST_EXCLUDED_STATUS, mais abaixo no arquivo). Usado pra
@@ -4761,7 +4767,7 @@ function renderKPI(){
   // "Dados Gerais" (carteira/métricas) não conta Backlog, Pausados e Cancelados — eles saem da
   // carteira ativa e das métricas, e ficam disponíveis só pra consulta na seção "Histórico"
   // (pedido explícito da Amanda). Alertas/Cronograma continuam usando activeProjects como antes.
-  const DADOS_GERAIS_EXCLUDED_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO']);
+  const DADOS_GERAIS_EXCLUDED_STATUS=CARTEIRA_EXCLUDED_STATUS;
   const carteiraProjects=vgProjects.filter(p=>!DADOS_GERAIS_EXCLUDED_STATUS.has(p.status));
   const excludedCounts={
     BACKLOG:vgProjects.filter(p=>p.status==='BACKLOG').length,
@@ -4855,10 +4861,9 @@ function renderKPI(){
   }).join('');
 
   document.getElementById('pf-kpi').innerHTML=
-    // Filtro global de time — segrega TODA a Visão Geral (Alertas, Status do Portfólio, Dados
-    // Gerais, Impacto por Time, Histórico e Próximas Entregas). Carga de Trabalho tem seu próprio
-    // filtro (Time VMO/Transformação/Outras/Sem GP, ver cargaViewMode) e fica de fora deste, de
-    // propósito — pedido explícito da Amanda pra manter os dois independentes.
+    // Filtro global de time — segrega TODA a Visão Geral, inclusive Carga de Trabalho (que antes
+    // tinha um filtro próprio à parte; agora usa este mesmo daqui — pedido explícito da Amanda:
+    // um filtro só, aplicado em tudo).
     `<div style="display:flex;align-items:center;gap:8px;padding:12px 14px 2px;flex-wrap:wrap">
       <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px">Filtrar por time:</span>
       <div class="cal-mode-btns" id="vg-team-tabs">
@@ -4966,13 +4971,7 @@ function renderKPI(){
     `<div id="team-impact-body"></div>
     </div>`+
 
-    secHdr('carga','#fff7ed','#c2410c','ti-scale',t('sec_carga'),'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i>',
-      `<div class="cal-mode-btns" id="carga-tabs" onclick="event.stopPropagation()">
-        <button class="cmb on" onclick="setCargaView('VMO',this)">Time VMO</button>
-        <button class="cmb" onclick="setCargaView('PMO',this)">Time Transformação</button>
-        <button class="cmb" onclick="setCargaView('OUTRAS',this)">Outras Áreas</button>
-        <button class="cmb" onclick="setCargaView('TBD',this)">Sem GP</button>
-      </div>`)+
+    secHdr('carga','#fff7ed','#c2410c','ti-scale',t('sec_carga'),'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i>')+
     `<div id="carga-body"></div>
     </div>`+
 
@@ -5255,8 +5254,9 @@ function nameMatches(gpValue,rosterName){
 }
 function isInRoster(gpValue,roster){return roster.some(n=>nameMatches(gpValue,n));}
 // ── Filtro global de time da aba "Visão Geral" (Todos/Time VMO/Time Transformação/Outras Áreas/Sem GP) ──
-// Independente do filtro de Carga de Trabalho (cargaViewMode/setCargaView) — pedido explícito da
-// Amanda pra manter as duas coisas sem se afetar. Default 'all' (Todos), sem nenhum recorte.
+// Agora é o ÚNICO filtro de time da Visão Geral — inclusive Carga de Trabalho, que antes tinha seu
+// próprio filtro à parte (cargaViewMode/setCargaView), passou a seguir este daqui (pedido
+// explícito da Amanda: um filtro só, aplicado em tudo). Default 'all' (Todos), sem nenhum recorte.
 let vgTeamFilter='all'; // 'all' | 'VMO' | 'PMO' | 'OUTRAS' | 'TBD'
 function projectMatchesTeamFilter(p){
   if(vgTeamFilter==='all')return true;
@@ -5268,10 +5268,8 @@ function projectMatchesTeamFilter(p){
   return true;
 }
 function setVgTeamFilter(mode,el){vgTeamFilter=mode;document.querySelectorAll('#vg-team-tabs .cmb').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderKPI();}
-let cargaViewMode='VMO';
 let cargaExpanded=new Set();
 function toggleCargaCard(name){if(cargaExpanded.has(name))cargaExpanded.delete(name);else cargaExpanded.add(name);renderCargaTrabalho();}
-function setCargaView(mode,el){cargaViewMode=mode;document.querySelectorAll('#carga-tabs .cmb').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderCargaTrabalho();}
 // Detalhe completo de carga de uma pessoa: projetos ativos (lista), e quantos estão ainda em
 // negociação comercial (não contam como carga ainda, mas sinalizam demanda que pode chegar).
 function computeWorkloadDetail(name){
@@ -5418,15 +5416,20 @@ function renderCargaTrabalho(){
       <span><span class="ti-legend-dot" style="background:#ef4444"></span>4 ou mais · alta carga</span>
     </div>
   </div>`;
-  let bodyHtml;
-  if(cargaViewMode==='VMO')bodyHtml=cargaCapacityHeroHtml('Time VMO',computeTeamCapacitySummary(TEAM_ROSTER.VMO),'VMO')+cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
-  else if(cargaViewMode==='PMO')bodyHtml=cargaCapacityHeroHtml('Time Transformação',computeTeamCapacitySummary(TEAM_ROSTER.PMO),'PMO')+cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.');
-  else if(cargaViewMode==='OUTRAS')bodyHtml=cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.');
-  else{
+  // Segue o filtro global de time da Visão Geral (vgTeamFilter) — não tem mais botão próprio.
+  // Em "Todos" mostra os 4 blocos (VMO, Transformação, Outras Áreas, Sem GP) empilhados, um
+  // embaixo do outro, em vez de escolher um só (pedido: um filtro único, aplicado em tudo).
+  const cargaBlock=mode=>{
+    if(mode==='VMO')return cargaCapacityHeroHtml('Time VMO',computeTeamCapacitySummary(TEAM_ROSTER.VMO),'VMO')+cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
+    if(mode==='PMO')return cargaCapacityHeroHtml('Time Transformação',computeTeamCapacitySummary(TEAM_ROSTER.PMO),'PMO')+cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.');
+    if(mode==='OUTRAS')return cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.');
     const tbd=computeTBDDetail();
-    bodyHtml=`<div class="carga-team-divider tbd">Sem GP (TBD)</div>`+
+    return `<div class="carga-team-divider tbd">Sem GP (TBD)</div>`+
       (tbd.count||tbd.negocCount?`<div class="carga-card-grid">${cargaPersonCard(tbd,'tbd')}</div>`:`<div class="ti-empty">Nenhum projeto sem GP no momento. 🎉</div>`);
-  }
+  };
+  const bodyHtml=vgTeamFilter==='all'
+    ?['VMO','PMO','OUTRAS','TBD'].map(cargaBlock).join('<div style="height:14px"></div>')
+    :cargaBlock(vgTeamFilter);
   wrap.innerHTML=summaryHtml+`<div style="padding:6px 14px 14px">${bodyHtml}</div>`;
 }
 
@@ -11468,7 +11471,7 @@ async function autoSyncProjectsFromJira() {
           removeProjectsByKeys(new Set(PROJECTS.filter(p => !cachedKeys.has(p.key)).map(p => p.key)));
         }
         renderKPI(); renderPortfolio(); renderUpdatesProjectList();
-        document.getElementById('badge-pf').textContent = PROJECTS.length;
+        document.getElementById('badge-pf').textContent = carteiraTotal();
       }
     } catch(e) { console.warn('loadCachedProjects error:', e); }
   }
@@ -11730,7 +11733,7 @@ function applyJiraSync(freshProjects,opts={}){
   // Re-sort by Nova Prioridade after sync
   PROJECTS.sort((a,b)=>(a.priority??9999)-(b.priority??9999));
   renderKPI();renderPortfolio();renderUpdatesProjectList();
-  document.getElementById('badge-pf').textContent=PROJECTS.length;
+  document.getElementById('badge-pf').textContent=carteiraTotal();
   showSyncSuccess(freshProjects.length);
   persistProjects();
   clientNameTouched.forEach(k=>persistSchedule(k));
@@ -11740,7 +11743,7 @@ function applyJiraSync(freshProjects,opts={}){
       const staleKeys=new Set(staleProjects.map(p=>p.key));
       removeProjectsByKeys(staleKeys);
       renderKPI();renderPortfolio();renderUpdatesProjectList();
-      document.getElementById('badge-pf').textContent=PROJECTS.length;
+      document.getElementById('badge-pf').textContent=carteiraTotal();
       persistProjects();
       if(firebaseReady&&db){staleKeys.forEach(k=>{db.collection('schedules').doc(k).delete().catch(e=>console.warn('delete schedule error',k,e));});}
     }
