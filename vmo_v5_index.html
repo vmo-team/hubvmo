@@ -262,7 +262,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .team-impact-grid{display:flex;flex-direction:column;gap:14px;padding:12px 14px 14px}
 .team-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
 .team-card-row .kc2{min-width:0;padding-left:4px;padding-right:4px}
-.status-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+.status-card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px}
 .status-card-row .kc2{min-width:0;padding-left:4px;padding-right:4px}
 .gp-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
 .gp-card-row .kc2{min-width:0;padding-left:4px;padding-right:4px}
@@ -4742,7 +4742,7 @@ const DELIVERED_STATUS='Pós produção';
 // Visão Geral, que precisam sempre bater o mesmo número) — Backlog, Pausado e Cancelado ficam
 // de fora, só disponíveis por consulta na seção Histórico. Respeita o filtro de time da Visão
 // Geral (vgTeamFilter) quando ele estiver ativo.
-const CARTEIRA_EXCLUDED_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO']);
+const CARTEIRA_EXCLUDED_STATUS=new Set(['BACKLOG','PAUSADO','CANCELADO',DELIVERED_STATUS]);
 function carteiraTotal(){return PROJECTS.filter(p=>!CARTEIRA_EXCLUDED_STATUS.has(p.status)&&(typeof projectMatchesTeamFilter!=='function'||projectMatchesTeamFilter(p))).length;}
 // Status "fora da fila" — Presales, Backlog, Pausado, Cancelado e Pós produção (Entregue) não
 // contam como projeto realmente ativo pra fins de cronograma: são o mesmo grupo que já ficava
@@ -4764,9 +4764,10 @@ function renderKPI(){
   // nenhum recorte). Tudo que segue nesta função (Alertas, Status do Portfólio, Dados Gerais)
   // deriva de vgProjects — Carga de Trabalho e Prioridades NÃO usam essa base, de propósito.
   const vgProjects=vgTeamFilter==='all'?PROJECTS:PROJECTS.filter(projectMatchesTeamFilter);
-  // "Dados Gerais" (carteira/métricas) não conta Backlog, Pausados e Cancelados — eles saem da
-  // carteira ativa e das métricas, e ficam disponíveis só pra consulta na seção "Histórico"
-  // (pedido explícito da Amanda). Alertas/Cronograma continuam usando activeProjects como antes.
+  // "Dados Gerais" (carteira/métricas) não conta Backlog, Pausados, Cancelados e Pós Produção
+  // (entregues) — todos saem da carteira ativa e das métricas, e ficam disponíveis só pra consulta
+  // na seção "Histórico" (pedido explícito da Amanda). Alertas/Cronograma continuam usando
+  // activeProjects como antes (sem essa exclusão adicional de Pós Produção).
   const DADOS_GERAIS_EXCLUDED_STATUS=CARTEIRA_EXCLUDED_STATUS;
   const carteiraProjects=vgProjects.filter(p=>!DADOS_GERAIS_EXCLUDED_STATUS.has(p.status));
   const excludedCounts={
@@ -4791,11 +4792,11 @@ function renderKPI(){
       <div style="font-size:9px;color:${fg};margin-top:2px;line-height:1.3;font-weight:500;text-transform:uppercase">${s}</div>
     </div>`;
   };
-  // 6 cards de status na 1ª linha (+ o card TOTAL = 7 no total) e 6 na 2ª — com Backlog/Pausado/
-  // Cancelado fora da carteira, ficaram só 12 status; esse split de 6+6 deixa as duas linhas
-  // igualmente distribuídas (pedido da Amanda, antes ficava 7+5, com a 2ª linha capengando).
-  const statusCardsTop=statusOrder.slice(0,6).map(statusCardHtml).join('');
-  const statusCardsBottom=statusOrder.slice(6,12).map(statusCardHtml).join('');
+  // 5 cards de status na 1ª linha (+ o card TOTAL = 6 no total) e 6 na 2ª — com Backlog/Pausado/
+  // Cancelado/Pós Produção fora da carteira, ficaram só 11 status; esse split de 5+6 deixa as
+  // duas linhas igualmente distribuídas (pedido da Amanda: 6 em cima e 6 embaixo).
+  const statusCardsTop=statusOrder.slice(0,5).map(statusCardHtml).join('');
+  const statusCardsBottom=statusOrder.slice(5,11).map(statusCardHtml).join('');
   const statusChartData=statusOrder.map(s=>({name:s,count:byStatus[s]||0})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
   const maxStatusCount=Math.max(1,...statusChartData.map(d=>d.count));
   const STATUS_CHART_PAGE_SIZE=5;
@@ -4958,6 +4959,7 @@ function renderKPI(){
       <span style="cursor:pointer;text-decoration:underline" onclick="showBacklogProjects()">Backlog (${excludedCounts.BACKLOG})</span>
       <span style="cursor:pointer;text-decoration:underline" onclick="showPausedProjects()">Pausados (${excludedCounts.PAUSADO})</span>
       <span style="cursor:pointer;text-decoration:underline" onclick="showCancelledProjects()">Cancelados (${excludedCounts.CANCELADO})</span>
+      <span style="cursor:pointer;text-decoration:underline" onclick="showDeliveredProjects()">Pós Produção (${delivered.length})</span>
     </div>
     <div class="ti-panel" style="margin:10px 14px 2px">
       <div class="ti-panel-hdr">
@@ -5668,6 +5670,7 @@ function showHistoricoFiltered(view,label){
   if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function showCancelledProjects(){showHistoricoFiltered('cancelados','Projetos cancelados');}
+function showDeliveredProjects(){showHistoricoFiltered('entregues','Projetos entregues');}
 function showBacklogProjects(){showHistoricoFiltered('backlog','Backlog');}
 function showPausedProjects(){showHistoricoFiltered('pausado','Pausados');}
 function applySectionState(sec){
