@@ -3720,7 +3720,14 @@ function showView(v,resetSelection){
   // (nav-tab) agora passam resetSelection=true; quem abre um projeto específico por um link
   // (openProject/openProjectSchedule) continua passando só o nome da aba, sem esse parâmetro,
   // então continua caindo direto no projeto certo.
-  if(resetSelection){curKey=null;}
+  if(resetSelection){
+    curKey=null;
+    // Limpa o "?project=" da URL também — sem isso, um F5 ou fechar/reabrir a aba do navegador
+    // (bookmark, histórico) lia esse parâmetro de novo no carregamento da página e reabria o
+    // MESMO projeto sozinho, undoing o reset feito ao trocar de aba pelo menu lateral. Mesmo
+    // ajuste que o botão "Voltar" já fazia, agora replicado aqui.
+    if(window.location.search.includes('project='))history.replaceState(null,'',window.location.pathname);
+  }
   lastActiveView=v;
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
