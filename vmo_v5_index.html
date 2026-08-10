@@ -676,8 +676,8 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <button class="sidenav-toggle" onclick="toggleSidenav()" title="Recolher/expandir menu"><i class="ti ti-layout-sidebar-left-collapse" id="sidenav-toggle-icon"></i></button>
   </div>
   <div class="nav-tab active" onclick="showView('portfolio')" data-view="portfolio"><i class="ti ti-layout-dashboard" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_visao_geral">Visão Geral</span><span class="nt-badge" id="badge-pf">83</span></div>
-  <div class="nav-tab" onclick="showView('schedule')" data-view="schedule" id="nav-schedule"><i class="ti ti-calendar-stats" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_cronogramas">Cronogramas</span></div>
-  <div class="nav-tab" onclick="showView('resumo')" data-view="resumo" id="nav-resumo"><i class="ti ti-layout-grid" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_resumo">Resumo dos Projetos</span></div>
+  <div class="nav-tab" onclick="showView('schedule',true)" data-view="schedule" id="nav-schedule"><i class="ti ti-calendar-stats" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_cronogramas">Cronogramas</span></div>
+  <div class="nav-tab" onclick="showView('resumo',true)" data-view="resumo" id="nav-resumo"><i class="ti ti-layout-grid" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_resumo">Resumo dos Projetos</span></div>
   <div class="nav-tab" onclick="showView('updates')" data-view="updates"><i class="ti ti-speakerphone" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_atualizacoes">Atualizações</span></div>
   <div class="nav-tab" onclick="showView('prioridades')" data-view="prioridades"><i class="ti ti-sort-ascending" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_prioridades">Prioridades</span></div>
   <div class="nav-tab" onclick="showView('scoring')" data-view="scoring"><i class="ti ti-star" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_scoring">Scoring</span></div>
@@ -3692,10 +3692,18 @@ function resetTabFilters(){
   ['fbtn-all','scfbtn-all','sctypebtn-all'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('on');});
   document.querySelector('#docs-filters [data-doccat="all"]')?.classList.add('on');
 }
-function showView(v){
+function showView(v,resetSelection){
   // Block tab access based on role
   if(!canViewTab(v)){return;}
   if(v!==lastActiveView){resetTabFilters();}
+  // Bug reportado pela Amanda: clicar na aba Cronogramas (ou Resumo dos Projetos) pelo menu
+  // lateral voltava pro MESMO projeto que estava aberto antes, em vez de voltar pra lista —
+  // curKey (projeto atualmente selecionado) é uma variável global compartilhada entre várias
+  // abas e nunca era limpa ao trocar de aba, só ao trocar de projeto. Os cliques no menu lateral
+  // (nav-tab) agora passam resetSelection=true; quem abre um projeto específico por um link
+  // (openProject/openProjectSchedule) continua passando só o nome da aba, sem esse parâmetro,
+  // então continua caindo direto no projeto certo.
+  if(resetSelection){curKey=null;}
   lastActiveView=v;
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
