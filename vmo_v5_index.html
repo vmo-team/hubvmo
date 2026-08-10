@@ -1302,6 +1302,11 @@ const I18N = {
     rsm_confirm_substituir_escopo_tpl:'Texto encontrado no Confluence:\n\n{preview}\n\nSubstituir o resumo do escopo macro por esse texto?',
     rsm_alert_timeout_confluence:'Tempo esgotado ao buscar no Confluence. Tente novamente.',
     rsm_alert_erro_buscar_confluence_prefix:'Erro ao buscar no Confluence: ',
+    rsm_alert_erro_buscar_atas_confluence:'Não foi possível buscar as atas no Confluence.',
+    rsm_atas_confluence_carregando:'Buscando atas no Confluence…',
+    rsm_atas_confluence_erro:'Não foi possível carregar as atas do Confluence.',
+    rsm_atas_confluence_vazio:'Nenhuma ata encontrada na página do Confluence ainda.',
+    rsm_atualizar_atas_confluence_title:'Buscar atas mais recentes no Confluence',
     rsm_escopo_vazio_editor:'Nenhum resumo de escopo cadastrado. Clique no lápis para adicionar.',
     rsm_escopo_vazio_viewer:'Nenhum resumo de escopo cadastrado ainda.',
     rsm_escopo_detalhado:'Escopo detalhado',
@@ -1900,6 +1905,11 @@ const I18N = {
     rsm_confirm_substituir_escopo_tpl:'Texto encontrado en Confluence:\n\n{preview}\n\n¿Reemplazar el resumen del alcance macro por este texto?',
     rsm_alert_timeout_confluence:'Tiempo agotado al buscar en Confluence. Intenta de nuevo.',
     rsm_alert_erro_buscar_confluence_prefix:'Error al buscar en Confluence: ',
+    rsm_alert_erro_buscar_atas_confluence:'No fue posible buscar las actas en Confluence.',
+    rsm_atas_confluence_carregando:'Buscando actas en Confluence…',
+    rsm_atas_confluence_erro:'No fue posible cargar las actas de Confluence.',
+    rsm_atas_confluence_vazio:'Todavía no se encontraron actas en la página de Confluence.',
+    rsm_atualizar_atas_confluence_title:'Buscar las actas más recientes en Confluence',
     rsm_escopo_vazio_editor:'Ningún resumen de alcance registrado. Haz clic en el lápiz para agregar.',
     rsm_escopo_vazio_viewer:'Ningún resumen de alcance registrado todavía.',
     rsm_escopo_detalhado:'Alcance detallado',
@@ -2498,6 +2508,11 @@ const I18N = {
     rsm_confirm_substituir_escopo_tpl:'Text found on Confluence:\n\n{preview}\n\nReplace the macro scope summary with this text?',
     rsm_alert_timeout_confluence:'Timed out while fetching from Confluence. Please try again.',
     rsm_alert_erro_buscar_confluence_prefix:'Error fetching from Confluence: ',
+    rsm_alert_erro_buscar_atas_confluence:'Could not fetch minutes from Confluence.',
+    rsm_atas_confluence_carregando:'Fetching minutes from Confluence…',
+    rsm_atas_confluence_erro:'Could not load minutes from Confluence.',
+    rsm_atas_confluence_vazio:'No minutes found on the Confluence page yet.',
+    rsm_atualizar_atas_confluence_title:'Fetch the latest minutes from Confluence',
     rsm_escopo_vazio_editor:'No scope summary yet. Click the pencil icon to add one.',
     rsm_escopo_vazio_viewer:'No scope summary yet.',
     rsm_escopo_detalhado:'Detailed scope',
@@ -4261,7 +4276,7 @@ function manualFieldCellHtml(p,field,label){
   // Continua editável pra quem tem permissão (clicando no valor abre o mesmo modal de antes),
   // só sem o ícone de lápis do lado — o cursor de "mãozinha" já indica que dá pra clicar.
   return `<div style="display:flex;align-items:center;gap:3px;overflow:hidden">
-    <span style="font-size:9.5px;color:${val?'var(--text2)':'var(--text3)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap${canEd?';cursor:pointer':''}" title="${canEd?t('shared_editar_prefix')+' '+label:escHtml(val||'')}"${canEd?` onclick="event.stopPropagation();editManualField('${p.key}','${field}',${JSON.stringify(label)})"`:''}>${val?escHtml(val):'—'}</span>
+    <span style="font-size:9.5px;color:${val?'var(--text2)':'var(--text3)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap${canEd?';cursor:pointer':''}" title="${canEd?t('shared_editar_prefix')+' '+label:escHtml(val||'')}"${canEd?` onclick="event.stopPropagation();editManualField('${p.key}','${field}',${JSON.stringify(label).replace(/"/g,'&quot;')})"`:''}>${val?escHtml(val):'—'}</span>
   </div>`;
 }
 function editManualField(key,field,label){
@@ -4275,7 +4290,7 @@ function editManualField(key,field,label){
   getOrBuildModal('edit-manual-field-modal',t('shared_editar_prefix')+' '+label,`
     <div class="info-box" style="margin-bottom:8px">${infoTxt}</div>
     <input id="edit-manual-field-input" type="text" value="${escHtml(cur)}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
-  `,`<button class="btn-c" onclick="closeM('edit-manual-field-modal')">${t('btn_cancelar')}</button><button class="btn-s" onclick="saveManualField('${key}','${field}',${JSON.stringify(label)})">${t('btn_salvar')}</button>`);
+  `,`<button class="btn-c" onclick="closeM('edit-manual-field-modal')">${t('btn_cancelar')}</button><button class="btn-s" onclick="saveManualField('${key}','${field}',${JSON.stringify(label).replace(/"/g,'&quot;')})">${t('btn_salvar')}</button>`);
   openM('edit-manual-field-modal');
   setTimeout(()=>{const inp=document.getElementById('edit-manual-field-input');if(inp)inp.focus();},50);
 }
@@ -5369,13 +5384,37 @@ function computeTeamCapacitySummary(roster){
   const negocProjects=[...negocSeen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
   return{recursos:roster.length,total:projects.length,clienteCount,projects,negocProjects};
 }
+// Mesma ideia de computeTeamCapacitySummary, só que sem filtrar por roster — junta VMO,
+// Transformação e Outras Áreas numa lista só, ordenada por prioridade geral (pedido explícito
+// da Amanda: no filtro "Todos" da Visão Geral, quer uma lista de Capacidade UNIFICADA, com todo
+// mundo que tem GP, em vez de listas separadas por time e projetos de Outras Áreas ficando de
+// fora). Projetos sem GP (TBD) continuam fora daqui — sem GP não tem "capacidade de pessoa".
+function computeAllTeamsCapacitySummary(){
+  const relevant=gpRelevantProjects();
+  const seen=new Map();
+  relevant.forEach(p=>{if(!isNoGP(p.gp))seen.set(p.key,p);});
+  const projects=[...seen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  const clienteCount=projects.filter(p=>p.type==='Comercial').length;
+  const negocSeen=new Map();
+  PROJECTS.forEach(p=>{if(p.status==='PRESALES'&&!isNoGP(p.gp))negocSeen.set(p.key,p);});
+  const negocProjects=[...negocSeen.values()].sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  // Recursos = pessoas distintas que aparecem como GP em algum desses projetos (ativos ou
+  // presales) — cobre VMO, Transformação e Outras Áreas de uma vez, sem precisar somar rosters.
+  const names=new Set();
+  [...projects,...negocProjects].forEach(p=>p.gp.split(',').map(x=>x.trim()).forEach(g=>{if(g&&g!=='—')names.add(normName(g));}));
+  return{recursos:names.size,total:projects.length,clienteCount,projects,negocProjects};
+}
 function cargaFlatRowHtml(p,dim,teamKey){
   const gp=(p.gp||'').split(',')[0].trim();
   // Time Transformação (ex-PMO) trabalha só com projetos de Produto/TI/Regulatório — o campo de
   // receita não se aplica a esses projetos (não há R$ previsto) e, na prática, acaba usado pra
   // anotar o driver do projeto, que é sempre o mesmo pra esse time. Por isso não mostramos essa
   // tag aqui: pra Time VMO (projetos comerciais) o campo continua aparecendo normalmente.
-  const rev=teamKey==='PMO'?null:p.receitaLiquidaPrevista;
+  // Decide por PROJETO (olhando o GP dele), não pela lista inteira — necessário pra funcionar
+  // certo na lista unificada (filtro "Todos"), que mistura projetos de VMO e Transformação
+  // numa lista só ordenada por prioridade.
+  const isPmoProject=isInRoster(gp,TEAM_ROSTER.PMO);
+  const rev=isPmoProject?null:p.receitaLiquidaPrevista;
   const stCls=JIRA_SC[p.status]||'s-bkl';
   return `<div class="carga-flat-row${dim?' dim':''}" onclick="openProject('${p.key}')">
     <span class="carga-flat-num">#${p.priority??'—'}</span>
@@ -5427,18 +5466,27 @@ function renderCargaTrabalho(){
     </div>
   </div>`;
   // Segue o filtro global de time da Visão Geral (vgTeamFilter) — não tem mais botão próprio.
-  // Em "Todos" mostra os 4 blocos (VMO, Transformação, Outras Áreas, Sem GP) empilhados, um
-  // embaixo do outro, em vez de escolher um só (pedido: um filtro único, aplicado em tudo).
-  const cargaBlock=mode=>{
-    if(mode==='VMO')return cargaCapacityHeroHtml('Time VMO',computeTeamCapacitySummary(TEAM_ROSTER.VMO),'VMO')+cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
-    if(mode==='PMO')return cargaCapacityHeroHtml('Time Transformação',computeTeamCapacitySummary(TEAM_ROSTER.PMO),'PMO')+cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.');
-    if(mode==='OUTRAS')return cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.');
+  const tbdBlock=()=>{
     const tbd=computeTBDDetail();
     return `<div class="carga-team-divider tbd">Sem GP (TBD)</div>`+
       (tbd.count||tbd.negocCount?`<div class="carga-card-grid">${cargaPersonCard(tbd,'tbd')}</div>`:`<div class="ti-empty">Nenhum projeto sem GP no momento. 🎉</div>`);
   };
+  const cargaBlock=mode=>{
+    if(mode==='VMO')return cargaCapacityHeroHtml('Time VMO',computeTeamCapacitySummary(TEAM_ROSTER.VMO),'VMO')+cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.');
+    if(mode==='PMO')return cargaCapacityHeroHtml('Time Transformação',computeTeamCapacitySummary(TEAM_ROSTER.PMO),'PMO')+cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.');
+    if(mode==='OUTRAS')return cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.');
+    return tbdBlock();
+  };
+  // Em "Todos": UMA lista de Capacidade só, unificando VMO + Transformação + Outras Áreas
+  // ordenada por prioridade geral (em vez de listas separadas, com Outras Áreas ficando de fora
+  // da lista de prioridade) — e, embaixo, a visão de carga continua dividida por time, igual
+  // já era (pedido explícito da Amanda).
   const bodyHtml=vgTeamFilter==='all'
-    ?['VMO','PMO','OUTRAS','TBD'].map(cargaBlock).join('<div style="height:14px"></div>')
+    ?cargaCapacityHeroHtml('Todos os Times',computeAllTeamsCapacitySummary())
+      +cargaGroupHtml('Time VMO',vmoData,'Nenhum projeto ativo no momento.')
+      +cargaGroupHtml('Time Transformação',pmoData,'Nenhum projeto ativo no momento.')
+      +cargaGroupHtml('Outras Áreas',computeOutrasAreasWorkload(),'Nenhuma pessoa de outra área com projeto ativo no momento.')
+      +tbdBlock()
     :cargaBlock(vgTeamFilter);
   wrap.innerHTML=summaryHtml+`<div style="padding:6px 14px 14px">${bodyHtml}</div>`;
 }
@@ -5712,7 +5760,7 @@ function toggleCalCat(seg){if(calCatExpanded.has(seg))calCatExpanded.delete(seg)
 // Próximas Entregas agrupadas por Categoria = Segmento de mercado (Jira: Segmento/Segment).
 // Projetos comerciais entram no segmento cadastrado (Utilities/Education/Telco/Health/Others);
 // projetos de Produtos (que não têm esse campo no Jira) caem todos juntos em 'Produtos'.
-const SEGMENT_ORDER=['Utilities','Education','Telco','Health','Others','Produtos'];
+const SEGMENT_ORDER=['Utilities','Education','Telco','Health','Others','Produtos','LATAM'];
 let calCatExpanded=new Set(); // segmentos que o usuário expandiu para ver além do mês atual
 function renderCalendarByCategory(grid){
   // "Próximas Entregas" — só entregas que ainda vão acontecer (data >= hoje). Datas já passadas
@@ -5725,7 +5773,11 @@ function renderCalendarByCategory(grid){
   }).filter(Boolean).filter(x=>x.d>=TODAY);
   if(!withDate.length){grid.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px">Nenhuma entrega prevista cadastrada ainda.</div>';return;}
   const groups={};
-  withDate.forEach(x=>{const seg=x.p.segment||'Produtos';(groups[seg]=groups[seg]||[]).push(x);});
+  // LATAM é REGIÃO (p.region), não Vertical (p.segment) — pedido explícito da Amanda pra
+  // aparecer como se fosse mais uma coluna de Vertical aqui. Projeto com região LATAM sai da
+  // coluna da vertical dele e entra só na coluna LATAM (sem duplicar); a vertical original dele
+  // continua visível como uma tag em cada item, pra não perder essa informação.
+  withDate.forEach(x=>{const seg=x.p.region==='LATAM'?'LATAM':(x.p.segment||'Produtos');(groups[seg]=groups[seg]||[]).push(x);});
   const order=Object.keys(groups).sort((a,b)=>{
     const ia=SEGMENT_ORDER.indexOf(a),ib=SEGMENT_ORDER.indexOf(b);
     const pa=ia===-1?999:ia,pb=ib===-1?999:ib;
@@ -5750,7 +5802,10 @@ function renderCalendarByCategory(grid){
     toShow.forEach(x=>{
       const cls=x.p.status===DELIVERED_STATUS?'delivered':(x.health==='on-track'?'on-track':x.health==='alert'?'alert':x.health==='off-track'?'off-track':'no-sched');
       const el=document.createElement('div');el.className='cal-item '+cls;
-      el.innerHTML='<b>'+x.p.key+'</b> · '+x.p.summary+'<br><span style="font-size:8px;opacity:.75">'+(x.isJira?'Go Live: ':'Fim cron.: ')+fmtBR(x.dLbl)+'</span>';
+      // Na coluna LATAM, mostra a vertical original do projeto como uma tag — como ele saiu da
+      // coluna dela pra entrar aqui, senão essa informação se perderia.
+      const segTag=s==='LATAM'?' <span style="font-size:7.5px;font-weight:700;padding:0 4px;border-radius:3px;background:#ede9fe;color:#6d28d9;white-space:nowrap">'+escHtml(x.p.segment||'Produtos')+'</span>':'';
+      el.innerHTML='<b>'+x.p.key+'</b> · '+x.p.summary+segTag+'<br><span style="font-size:8px;opacity:.75">'+(x.isJira?'Go Live: ':'Fim cron.: ')+fmtBR(x.dLbl)+'</span>';
       el.onclick=()=>openProject(x.p.key);
       items.appendChild(el);
     });
@@ -6960,10 +7015,10 @@ function renderResumoIndicadores(){
   wrap.innerHTML=
     resumoStatBoxHtml('ti-currency-dollar',t('rsm_tpv_previsto'),
       p.tpvPrevisto?`<span style="font-size:13px;font-weight:700;color:var(--text)">${escHtml(String(p.tpvPrevisto))}</span>`:`<span style="font-size:9.5px;color:var(--text3)">—</span>`,
-      canEdBasic,`editManualField('${curKey}','tpvPrevisto',${JSON.stringify(t('rsm_tpv_previsto'))})`)+
+      canEdBasic,`editManualField('${curKey}','tpvPrevisto',${JSON.stringify(t('rsm_tpv_previsto')).replace(/"/g,'&quot;')})`)+
     resumoStatBoxHtml('ti-cash',t('rsm_receita_liquida'),
       p.receitaLiquidaPrevista?`<span style="font-size:13px;font-weight:700;color:var(--text)">${escHtml(String(p.receitaLiquidaPrevista))}</span>`:`<span style="font-size:9.5px;color:var(--text3)">—</span>`,
-      canEdBasic,`editManualField('${curKey}','receitaLiquidaPrevista',${JSON.stringify(t('rsm_receita_liquida'))})`);
+      canEdBasic,`editManualField('${curKey}','receitaLiquidaPrevista',${JSON.stringify(t('rsm_receita_liquida')).replace(/"/g,'&quot;')})`);
 }
 // ── Times Envolvidos: usa p.times (já sincronizado do Jira/import), só exibição em chips ──
 function renderResumoTimesEnvolvidos(){
@@ -7093,7 +7148,13 @@ function renderResumoMinutesConfluenceLinkRow(){
   const sched=schedules[curKey];const link=sched&&sched.minutesConfluenceLink;
   const canEd=isEditorOrAbove();
   if(link){
-    row.innerHTML=`<a href="${link}" target="_blank" class="upd-golive-chip" style="text-decoration:none;background:#e0f2fe;color:#0369a1"><i class="ti ti-brand-confluence" style="font-size:10px"></i> ${t('rsm_atas_confluence')}</a>${canEd?` <button class="btn-c" style="font-size:9px;padding:2px 7px" onclick="editMinutesConfluenceLinkFromResumo()"><i class="ti ti-pencil" style="font-size:9px"></i></button>`:''}`;
+    row.innerHTML=`<a href="${link}" target="_blank" class="upd-golive-chip" style="text-decoration:none;background:#e0f2fe;color:#0369a1"><i class="ti ti-brand-confluence" style="font-size:10px"></i> ${t('rsm_atas_confluence')}</a>`
+      +` <button class="btn-c" style="font-size:9px;padding:2px 6px" title="${t('rsm_atualizar_atas_confluence_title')}" onclick="fetchConfluenceAtasList(curKey,true)"><i class="ti ti-refresh" style="font-size:9px"></i></button>`
+      +(canEd?` <button class="btn-c" style="font-size:9px;padding:2px 7px" onclick="editMinutesConfluenceLinkFromResumo()"><i class="ti ti-pencil" style="font-size:9px"></i></button>`:'');
+    // Busca automática — toda vez que este projeto é aberto/o link é definido, já traz as atas
+    // criadas direto no Confluence, sem precisar clicar em nada (o botão de refresh acima é só
+    // pra forçar uma busca de novo, ex.: depois de criar uma ata agora mesmo).
+    fetchConfluenceAtasList(curKey);
   } else if(canEd){
     row.innerHTML=`<button class="btn-c" style="font-size:9px;padding:3px 8px;display:flex;gap:4px;align-items:center" onclick="editMinutesConfluenceLinkFromResumo()"><i class="ti ti-link" style="font-size:9px"></i> ${t('rsm_add_link_atas')}</button>`;
   } else {
@@ -7379,6 +7440,52 @@ function extractConfluencePageId(url){
   const m=url.match(/\/pages\/(\d+)/);
   return m?m[1]:null;
 }
+// ── Atas de Reuniões: busca automática das páginas-filhas da página do Confluence vinculada
+// em "Atas no Confluence" (schedules[key].minutesConfluenceLink) — assim, toda ata criada
+// diretamente lá aparece aqui como um item clicável com a data, sem precisar cadastrar de novo
+// no HUB VMO. Mesmo padrão de proxy usado em fetchScopeFromConfluence()/getConfluenceScope,
+// só que aqui é uma NOVA action no Google Apps Script (GAS): 'getConfluenceChildPages'.
+// IMPORTANTE: o Apps Script (GAS_URL) precisa implementar essa action pra isso funcionar de
+// verdade — este arquivo só faz a chamada; a busca na API do Confluence (com autenticação)
+// acontece do lado do GAS, igual já acontece com 'getConfluenceScope'. Contrato esperado:
+//   requisição: {action:'getConfluenceChildPages', pageId}
+//   resposta OK: {ok:true, pages:[{id, title, url, created}]} — created em ISO (ex.: "2026-08-04" ou "2026-08-04T10:15:00Z")
+//   resposta erro: {ok:false, error:'mensagem'}
+const confluenceAtasCache={}; // {[projectKey]: {status:'idle'|'loading'|'ok'|'error', pages:[], error:null}}
+function getConfluenceAtasCache(key){
+  return confluenceAtasCache[key]||(confluenceAtasCache[key]={status:'idle',pages:[],error:null});
+}
+async function fetchConfluenceAtasList(key,force){
+  const sched=schedules[key];if(!sched)return;
+  const link=sched.minutesConfluenceLink;
+  const cache=getConfluenceAtasCache(key);
+  if(!link){cache.status='idle';cache.pages=[];cache.error=null;return;}
+  const pageId=extractConfluencePageId(link);
+  if(!pageId){cache.status='error';cache.error=t('rsm_alert_id_pagina_nao_identificado');if(key===curKey)renderResumoMinutesList();return;}
+  if(!force&&(cache.status==='loading'||cache.status==='ok'))return;
+  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){cache.status='error';cache.error=t('rsm_alert_busca_nao_configurada');if(key===curKey)renderResumoMinutesList();return;}
+  cache.status='loading';
+  if(key===curKey){renderResumoMinutesList();refreshMinutesModalIfOpen();}
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),20000);
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action:'getConfluenceChildPages',pageId})});
+    clearTimeout(timer);
+    const d=await r.json();
+    if(!d.ok){cache.status='error';cache.error=d.error||t('rsm_alert_erro_buscar_atas_confluence');return;}
+    cache.status='ok';cache.pages=(d.pages||[]).slice().sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));cache.error=null;
+  }catch(e){
+    cache.status='error';
+    cache.error=e.name==='AbortError'?t('rsm_alert_timeout_confluence'):(t('rsm_alert_erro_buscar_confluence_prefix')+e.message);
+  }finally{
+    if(key===curKey){renderResumoMinutesList();refreshMinutesModalIfOpen();}
+  }
+}
+// O modal "Ver todas" (Atas de Reuniões) não escuta sozinho o fim da busca no Confluence — se
+// ele já estiver aberto na hora em que a busca termina, precisa ser atualizado manualmente.
+function refreshMinutesModalIfOpen(){
+  if(document.getElementById('minutes-modal')?.classList.contains('open'))renderMinutesModalList();
+}
 async function fetchScopeFromConfluence(){
   if(!curKey||!schedules[curKey])return;
   if(!isEditorOrAbove()){alert(t('rsm_alert_only_editor_escopo'));return;}
@@ -7518,10 +7625,30 @@ function getCombinedMinutesForProject(key){
   }));
   return[...own,...fromDebriefing].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 }
+// Junta as atas do próprio HUB + Debriefing (getCombinedMinutesForProject) com as páginas
+// buscadas em tempo real na página do Confluence vinculada (confluenceAtasCache) — cada uma
+// clicável (abre a página), com a data. Pedido explícito da Amanda: ata criada direto no
+// Confluence deve aparecer aqui sem precisar recadastrar no HUB.
+function getConfluenceAtasAsMinuteItems(key){
+  const cache=key?getConfluenceAtasCache(key):null;
+  if(!cache||cache.status!=='ok')return[];
+  return cache.pages.map(pg=>({id:'conf-'+pg.id,title:pg.title,date:String(pg.created||'').slice(0,10),link:pg.url,summary:'',author:t('rsm_atas_confluence'),addedAt:'',source:'confluence'}));
+}
 function renderResumoMinutesList(){
   const list=document.getElementById('rsm-minutes-list');if(!list)return;
-  const recent=getCombinedMinutesForProject(curKey).slice(0,3);
-  list.innerHTML=recent.length?recent.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:#0d9488"></div><div style="min-width:0"><div style="font-size:10.5px;font-weight:600">${m.title}${m.source==='debriefing'?' <span style="font-weight:600;color:#7c3aed;font-size:8.5px">· Debriefing</span>':''}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${fmtBRFull(m.date)}${m.link?' · <a href="'+m.link+'" target="_blank">link</a>':''}</div>${m.summary?`<div style="font-size:9.5px;color:var(--text2);margin-top:2px">${m.summary.length>90?m.summary.slice(0,90)+'…':m.summary}</div>`:''}</div></div>`).join(''):`<div class="rsm-empty">${t('rsm_nenhuma_ata_cadastrada')}</div>`;
+  const sched=curKey?schedules[curKey]:null;
+  const cache=curKey?getConfluenceAtasCache(curKey):null;
+  const recent=[...getCombinedMinutesForProject(curKey),...getConfluenceAtasAsMinuteItems(curKey)]
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,3);
+  const badge=m=>m.source==='debriefing'?' <span style="font-weight:600;color:#7c3aed;font-size:8.5px">· Debriefing</span>'
+    :m.source==='confluence'?' <span style="font-weight:600;color:#0369a1;font-size:8.5px">· Confluence</span>':'';
+  const itemsHtml=recent.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${m.source==='confluence'?'#0369a1':'#0d9488'}"></div><div style="min-width:0"><div style="font-size:10.5px;font-weight:600">${escHtml(m.title)}${badge(m)}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${fmtBRFull(m.date)}${m.link?' · <a href="'+m.link+'" target="_blank">link</a>':''}</div>${m.summary?`<div style="font-size:9.5px;color:var(--text2);margin-top:2px">${escHtml(m.summary.length>90?m.summary.slice(0,90)+'…':m.summary)}</div>`:''}</div></div>`).join('');
+  let statusNote='';
+  if(sched&&sched.minutesConfluenceLink&&cache){
+    if(cache.status==='loading')statusNote=`<div class="rsm-empty" style="padding-top:2px">${t('rsm_atas_confluence_carregando')}</div>`;
+    else if(cache.status==='error')statusNote=`<div class="rsm-empty" style="padding-top:2px;color:#b91c1c">${escHtml(cache.error||t('rsm_atas_confluence_erro'))}</div>`;
+  }
+  list.innerHTML=(itemsHtml||(statusNote?'':`<div class="rsm-empty">${t('rsm_nenhuma_ata_cadastrada')}</div>`))+statusNote;
 }
 // ── Atas de Reuniões: modal de cadastro/consulta ──
 function openMinutesModal(){
@@ -7548,25 +7675,35 @@ function openMinutesModal(){
 }
 function minuteCardHtml(m){
   const isDeb=m.source==='debriefing';
+  const isConf=m.source==='confluence';
   return `<div style="display:flex;gap:8px;padding:7px 9px;background:var(--bg2);border-radius:6px">
-      <div style="width:7px;height:7px;border-radius:50%;background:${isDeb?'#7c3aed':'#0d9488'};flex-shrink:0;margin-top:4px"></div>
+      <div style="width:7px;height:7px;border-radius:50%;background:${isDeb?'#7c3aed':isConf?'#0369a1':'#0d9488'};flex-shrink:0;margin-top:4px"></div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:10.5px;font-weight:700;color:var(--text)">${m.title}</span>
+          <span style="font-size:10.5px;font-weight:700;color:var(--text)">${escHtml(m.title)}</span>
           ${isDeb?`<span style="font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#6d28d9">${t('rsm_badge_debriefing')}</span>`:''}
+          ${isConf?`<span style="font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;background:#e0f2fe;color:#0369a1"><i class="ti ti-brand-confluence" style="font-size:8px"></i> Confluence</span>`:''}
           <span style="font-size:9px;color:var(--text3)">${fmtBRFull(m.date)}</span>
           ${m.link?`<a href="${m.link}" target="_blank" style="font-size:9px">🔗 link</a>`:''}
         </div>
-        ${m.summary?`<div style="font-size:10.5px;color:var(--text2);margin-top:2px;white-space:pre-wrap">${m.summary}</div>`:''}
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">${m.author} · ${m.addedAt}${isDeb?' · '+t('rsm_cadastrada_docs'):''}</div>
+        ${m.summary?`<div style="font-size:10.5px;color:var(--text2);margin-top:2px;white-space:pre-wrap">${escHtml(m.summary)}</div>`:''}
+        ${isConf?'':`<div style="font-size:9px;color:var(--text3);margin-top:3px">${escHtml(m.author)} · ${m.addedAt}${isDeb?' · '+t('rsm_cadastrada_docs'):''}</div>`}
       </div>
-      ${(isAdmin()&&!isDeb)?`<button class="rm" onclick="removeMinute('${m.id}')">×</button>`:''}
+      ${(isAdmin()&&!isDeb&&!isConf)?`<button class="rm" onclick="removeMinute('${m.id}')">×</button>`:''}
     </div>`;
 }
 function renderMinutesModalList(){
   const list=document.getElementById('minutes-list');if(!curKey||!list)return;
-  const all=getCombinedMinutesForProject(curKey);
-  list.innerHTML=all.length?all.map(m=>minuteCardHtml(m)).join(''):`<div style="font-size:10.5px;color:var(--text3);padding:4px">${t('rsm_nenhuma_ata_registrada')}</div>`;
+  const all=[...getCombinedMinutesForProject(curKey),...getConfluenceAtasAsMinuteItems(curKey)].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const cache=getConfluenceAtasCache(curKey);
+  const sched=schedules[curKey];
+  let statusNote='';
+  if(sched&&sched.minutesConfluenceLink){
+    if(cache.status==='loading')statusNote=`<div style="font-size:10px;color:var(--text3);padding:4px">${t('rsm_atas_confluence_carregando')}</div>`;
+    else if(cache.status==='error')statusNote=`<div style="font-size:10px;color:#b91c1c;padding:4px">${escHtml(cache.error||t('rsm_atas_confluence_erro'))}</div>`;
+    else if(cache.status==='ok'&&!cache.pages.length)statusNote=`<div style="font-size:10px;color:var(--text3);padding:4px">${t('rsm_atas_confluence_vazio')}</div>`;
+  }
+  list.innerHTML=(all.length?all.map(m=>minuteCardHtml(m)).join(''):(statusNote?'':`<div style="font-size:10.5px;color:var(--text3);padding:4px">${t('rsm_nenhuma_ata_registrada')}</div>`))+statusNote;
 }
 function addMinuteToProject(key,title,date,link,summary){
   const t=(title||'').trim();
