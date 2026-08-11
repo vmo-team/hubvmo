@@ -126,6 +126,18 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .btn-s{background:linear-gradient(135deg,var(--purple),#027BFF);color:#fff;border:none;padding:6px 16px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer}
 .btn-d{background:transparent;border:1px solid #fca5a5;color:var(--red);padding:6px 13px;border-radius:6px;font-size:11px;cursor:pointer;margin-right:auto}
 .hint{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4}
+/* Onboarding tour (coach marks) */
+#tour-backdrop{position:fixed;inset:0;background:rgba(11,27,115,.45);z-index:900;display:none}
+#tour-backdrop.open{display:block}
+#tour-spot{position:fixed;border-radius:10px;box-shadow:0 0 0 4px rgba(255,255,255,.9),0 0 0 9999px rgba(11,27,115,.45);z-index:901;transition:all .25s ease;pointer-events:none}
+#tour-tip{position:fixed;z-index:902;background:var(--bg);border-radius:12px;box-shadow:0 12px 40px rgba(11,27,115,.28);width:290px;padding:16px 18px;transition:top .25s ease,left .25s ease}
+#tour-tip .tour-step-count{font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.03em;text-transform:uppercase;margin-bottom:5px}
+#tour-tip h4{font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--text)}
+#tour-tip p{font-size:10.8px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+#tour-tip .tour-ftr{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#tour-tip .tour-dots{display:flex;gap:4px}
+#tour-tip .tour-dots span{width:5px;height:5px;border-radius:50%;background:var(--border2)}
+#tour-tip .tour-dots span.on{background:var(--purple)}
 .info-box{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:10.5px;color:var(--text2);line-height:1.6}
 .cs-dd{position:relative}
 .cs-dd-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-size:10.5px;font-weight:600;text-transform:uppercase;cursor:pointer;box-sizing:border-box}
@@ -326,6 +338,101 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .carga-flat-row.dim .carga-flat-dot{background:#cbd5e1}
 .carga-proj-text{font-size:inherit}
 .carga-proj-status{display:flex;justify-content:flex-end}
+/* ── Cards de "Distribuição dos GPs" v2 (formato pedido pela Amanda, com receita por projeto) ── */
+.carga-person-hdr-v2{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.carga-counts-v2{font-size:10px;color:var(--text3);margin-top:2px}
+.carga-revenue-box{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:9.5px;color:#065f46;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.carga-revenue-box b{font-size:11px;color:#047857}
+.carga-proj-item-v2{padding:5px 4px;border-bottom:1px solid var(--border);cursor:pointer}
+.carga-proj-item-v2:last-child{border-bottom:none}
+.carga-proj-item-v2:hover{background:var(--bg2)}
+.carga-proj-top-v2{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.carga-proj-name-v2{font-size:9.5px;font-weight:500;color:var(--text);line-height:1.4}
+.carga-proj-bottom-v2{font-size:9px;color:var(--text3);margin-top:2px}
+.carga-presales-title-v2{font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:6px 4px 3px;border-top:1px dashed var(--border);margin-top:4px}
+.carga-presales-item-v2{display:flex;align-items:baseline;justify-content:space-between;gap:6px;padding:2px 4px;font-size:9.5px;color:var(--text3);font-style:italic;line-height:1.4}
+.carga-presales-item-v2 .rev{font-style:normal;white-space:nowrap;flex-shrink:0}
+/* ── Times Impactados: sub-abas Resumo / Carga por Times / Visão de Gargalos ── */
+.tc-stats-row{display:flex;gap:8px;padding:10px 12px 4px;flex-wrap:wrap}
+.tc-stat-box{flex:1;min-width:100px;text-align:center;padding:10px;background:var(--bg2);border-radius:8px}
+.tc-stat-box .n{font-size:20px;font-weight:800;color:var(--navy)}
+.tc-stat-box .l{font-size:8.5px;color:var(--text3);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:2px}
+.tc-semtimes-box{margin:0 12px 10px;padding:10px 12px;background:var(--bg);border:1px dashed var(--border2);border-radius:8px}
+.tc-semtimes-title{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.tc-semtimes-chip{font-size:10px;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:10px;display:inline-block;margin:0 4px 4px 0}
+.tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;padding:2px 12px 12px}
+.tc-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tc-card.alta{border-color:#fca5a5}
+.tc-card.media{border-color:#fde68a}
+.tc-card-hdr{padding:10px 12px 8px}
+.tc-card-hdr.alta{background:#fef2f2}
+.tc-card-hdr.media{background:#fffbeb}
+.tc-card-title-row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.tc-card-name{font-weight:700;font-size:12.5px;color:var(--navy)}
+.tc-card-count{font-weight:700;font-size:11.5px;white-space:nowrap}
+.tc-badge-alta{font-size:8px;font-weight:700;padding:2px 7px;border-radius:9px;text-transform:uppercase;letter-spacing:.3px;background:#fee2e2;color:#b91c1c;white-space:nowrap}
+.tc-badge-media{font-size:8px;font-weight:700;padding:2px 7px;border-radius:9px;text-transform:uppercase;letter-spacing:.3px;background:#fef3c7;color:#92400e;white-space:nowrap}
+.tc-tags-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tc-tag{font-size:8.5px;font-weight:600;padding:1px 7px;border-radius:9px;white-space:nowrap}
+.tc-tag.prod{background:#e8f5e9;color:#1b5e20}
+.tc-tag.com{background:#e3f2fd;color:#1565c0}
+.tc-tag.auto{background:#f3e5f5;color:#6a1b9a}
+.tc-revenue-box{margin-top:7px;display:inline-flex;align-items:baseline;gap:6px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:9px;padding:3px 10px}
+.tc-revenue-box .lbl{font-size:9px;font-weight:500;color:#2e7d32}
+.tc-revenue-box .val{font-size:11px;font-weight:700;color:#1b5e20}
+.tc-card-body{padding:8px 10px 10px}
+.tc-month-hdr{display:flex;align-items:center;gap:8px;margin:8px 0 5px}
+.tc-month-hdr:first-child{margin-top:0}
+.tc-month-label{font-size:8.5px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.tc-month-line{flex:1;height:1px;background:var(--border2)}
+.tc-month-count{font-size:8.5px;font-weight:700;padding:1px 7px;border-radius:8px;background:var(--bg2);color:var(--text3)}
+.tc-proj-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.tc-proj-row:last-child{border-bottom:none}
+.tc-proj-row:hover{background:var(--bg2)}
+.tc-proj-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tc-proj-name{font-size:10.5px;color:var(--navy);flex:1;line-height:1.3}
+.tc-proj-pri{font-size:9px;color:var(--text3);margin-right:3px}
+.tc-proj-rev{font-size:9px;color:#16a34a;font-weight:600;margin-left:4px}
+.tc-esmaecidos{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border2)}
+.tc-esmaecidos-title{font-size:8.5px;font-weight:700;color:var(--text3);letter-spacing:.5px;margin-bottom:4px}
+.tc-esmaecido-row{display:flex;align-items:center;gap:6px;padding:3px 0;opacity:.65;cursor:pointer}
+.tc-esmaecido-name{font-size:10px;color:var(--text2);font-style:italic;flex:1}
+.crit-alert-box{margin:0 12px 10px;padding:10px 12px;background:var(--bg);border:2px solid #ef4444;border-radius:10px}
+.crit-alert-title{font-size:10.5px;font-weight:700;color:#b91c1c;margin-bottom:7px}
+.crit-alert-chip{font-size:9.5px;background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:10px;display:inline-block;margin:0 4px 4px 0}
+.crit-legend{margin:0 12px 10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:8px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:9.5px}
+.crit-legend-title{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px}
+.crit-legend-item{display:flex;align-items:center;gap:5px}
+.crit-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.crit-list{padding:0 12px 12px}
+.crit-card{background:var(--bg);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;overflow:hidden}
+.crit-card-main{padding:9px 12px;display:grid;grid-template-columns:1fr 70px 90px 20px;gap:8px;align-items:center;cursor:pointer}
+.crit-card-main:hover{background:var(--bg2)}
+.crit-title-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.crit-pri{font-size:9px;font-weight:700;color:var(--text3);min-width:22px}
+.crit-name{font-size:11.5px;font-weight:600;color:var(--navy)}
+.crit-tags-row{display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.crit-badge{font-size:8.5px;font-weight:700;padding:1px 7px;border-radius:9px;white-space:nowrap}
+.crit-badge.critico{background:#fee2e2;color:#b91c1c}
+.crit-badge.concorrido{background:#fef3c7;color:#92400e}
+.crit-badge.livre{background:#dcfce7;color:#15803d}
+.crit-col-lbl{font-size:9px;color:var(--text3);text-align:center;margin-bottom:2px}
+.crit-col-val{font-size:10.5px;font-weight:600;color:var(--navy);text-align:center}
+.crit-col-val.rev{color:#16a34a}
+.crit-chevron{color:var(--text3);font-size:12px;transition:transform .2s;text-align:right}
+.crit-chevron.open{transform:rotate(180deg)}
+.crit-detail{display:none;padding:0 12px 10px;border-top:1px solid var(--border)}
+.crit-detail-title{font-size:8.5px;font-weight:700;color:var(--text3);letter-spacing:.5px;padding:8px 0 4px}
+.crit-time-row{padding:6px 0;border-bottom:1px solid var(--border)}
+.crit-time-row:last-child{border-bottom:none}
+.crit-time-top{display:flex;align-items:center;gap:8px}
+.crit-time-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.crit-time-name{font-size:10.5px;color:var(--navy);flex:1}
+.crit-time-pressao{font-size:9.5px;color:var(--text3);margin-right:6px;white-space:nowrap}
+.crit-concorrentes-box{margin-top:5px;padding:6px 8px;border-radius:6px}
+.crit-concorrentes-title{font-size:8.5px;font-weight:700;margin-bottom:4px;letter-spacing:.4px}
+.crit-concorrente-row{font-size:9.5px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:6px}
+.crit-esmaecidos-section{margin:10px 12px 0;padding:10px 12px;background:var(--bg);border:1px dashed var(--border2);border-radius:8px}
 .gp-tag{font-size:9px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:10px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
 .pf-act{font-size:9.5px;padding:3px 8px;border:1px solid var(--border2);border-radius:5px;cursor:pointer;background:var(--bg);color:var(--text2);white-space:nowrap}
 .pf-act:hover{background:var(--off);border-color:var(--purple);color:var(--purple)}
@@ -504,6 +611,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 #se-hdr h2{font-size:12px;font-weight:600;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .se-jira{font-size:9.5px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:2px}
 .seb{font-size:10px;padding:3px 9px;border:1px solid var(--border2);border-radius:5px;cursor:pointer;background:var(--bg);color:var(--text2);display:flex;align-items:center;gap:3px;white-space:nowrap}
+.seb:disabled{opacity:.35;cursor:not-allowed}
 .seb.on{background:#ede9fe;border-color:var(--purple);color:var(--purple)}
 .seb:hover{background:var(--off)}.seb.pri{background:linear-gradient(135deg,var(--purple),#027BFF);color:#fff;border:none}
 .vg{display:flex;gap:1px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:2px}
@@ -700,10 +808,10 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   <div class="tn-sep"></div>
   <button class="tn-btn hdr-dd-trigger" id="sched-more-btn" onclick="toggleHdrMenu(event,'schedmore')" style="display:none"><i class="ti ti-dots" style="font-size:12px"></i></button>
   <div class="hdr-dd-menu" id="hdr-menu-schedmore">
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openExportModal()"><i class="ti ti-download"></i> Exportar</div>
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openAuditModal()"><i class="ti ti-history"></i> Histórico</div>
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openStakeholdersModal()"><i class="ti ti-users"></i> Stakeholders</div>
-    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openDecisionsModal()"><i class="ti ti-gavel"></i> Decisões</div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openExportModal()"><i class="ti ti-download"></i> <span data-i18n="sch_menu_exportar">Exportar</span></div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openAuditModal()"><i class="ti ti-history"></i> <span data-i18n="sec_historico">Histórico</span></div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openStakeholdersModal()"><i class="ti ti-users"></i> <span data-i18n="rsm_modal_title_stakeholders">Stakeholders</span></div>
+    <div class="hdr-dd-item" onclick="closeAllHdrMenus();openDecisionsModal()"><i class="ti ti-gavel"></i> <span data-i18n="rsm_modal_title_decisoes">Decisões</span></div>
   </div>
   <div class="tn-sep"></div>
   <!-- Profile button -->
@@ -940,7 +1048,12 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <button class="seb" onclick="shiftV(1)"><i class="ti ti-chevron-right" style="font-size:10px"></i></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'exibicao')"><i class="ti ti-adjustments" style="font-size:10px"></i> <span data-i18n="sch_exibicao">Exibição</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'ferramentas')"><i class="ti ti-tools" style="font-size:10px"></i> <span data-i18n="sch_ferramentas">Ferramentas</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
+    <button class="seb" id="gantt-toggle-btn" onclick="toggleGantt()" title="Exibir/ocultar o diagrama de Gantt" data-i18n-title="sch_gantt_title"><i class="ti ti-chart-gantt" style="font-size:10px"></i> <span data-i18n="sch_gantt">Gantt</span></button>
+    <button class="seb" id="sch-undo-btn" onclick="undoSchedule()" title="Desfazer última alteração (Ctrl+Z)" data-i18n-title="sch_undo_title" disabled><i class="ti ti-arrow-back-up" style="font-size:10px"></i></button>
+    <button class="seb" id="sch-redo-btn" onclick="redoSchedule()" title="Refazer (Ctrl+Shift+Z)" data-i18n-title="sch_redo_title" disabled><i class="ti ti-arrow-forward-up" style="font-size:10px"></i></button>
     <div style="flex:1"></div>
+    <span id="sch-dirty-indicator" style="display:none;font-size:9.5px;color:var(--text3);margin-right:6px;white-space:nowrap"></span>
+    <button class="seb pri" id="sch-save-btn" onclick="confirmScheduleChanges()" style="display:none"><i class="ti ti-device-floppy" style="font-size:10px"></i> <span data-i18n="sch_save_btn">Salvar Alterações</span></button>
     <button class="seb pri" id="new-ms-btn" onclick="openMsModal(null)"><i class="ti ti-flag-plus" style="font-size:10px"></i> <span data-i18n="btn_nova_etapa">Nova etapa</span></button>
   </div>
   <div class="hdr-dd-menu" id="hdr-menu-exibicao">
@@ -953,7 +1066,6 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div class="hdr-dd-item" id="baseline-compare-btn" onclick="closeAllHdrMenus();openBaselineCompareModal()" title="Comparação detalhada: datas alteradas e tarefas/etapas criadas ou removidas desde o planejamento original." data-i18n-title="sch_comparar_title"><i class="ti ti-list-details"></i> <span data-i18n="sch_comparar">Comparar</span></div>
     <div class="hdr-dd-item" onclick="closeAllHdrMenus();openImportModal()" id="import-btn" style="display:none"><i class="ti ti-file-import"></i> <span data-i18n="sch_importar">Importar</span></div>
     <div class="hdr-dd-item" onclick="closeAllHdrMenus();openTemplateModal()" id="template-btn" style="display:none"><i class="ti ti-template"></i> <span data-i18n="sch_modelos">Modelos</span></div>
-    <div class="hdr-dd-item" id="gantt-toggle-btn" onclick="toggleGantt()" title="Exibir/ocultar o diagrama de Gantt" data-i18n-title="sch_gantt_title"><i class="ti ti-layout-sidebar-right"></i> <span data-i18n="sch_gantt">Gantt</span></div>
   </div>
   <div id="delivered-banner" style="display:none;padding:6px 14px;background:#f1f5f9;border-bottom:1px solid var(--border);font-size:10.5px;color:#475569;align-items:center;gap:6px"><i class="ti ti-archive" style="font-size:12px"></i><span id="delivered-banner-txt"></span></div>
   <div id="proj-sum"></div>
@@ -1019,6 +1131,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <h2><i class="ti ti-folder" style="font-size:13px;color:var(--purple)"></i> <span data-i18n="nav_docs">Documentos Úteis</span></h2>
     <div class="docs-search"><i class="ti ti-search"></i><input type="text" id="docs-search" placeholder="Buscar por título, descrição ou tag..." data-i18n-placeholder="docs_search_placeholder" oninput="renderDocsLibrary()"></div>
     <a class="btn-c" href="https://one-bemobi.atlassian.net/wiki/spaces/VHDGP/overview" target="_blank" style="font-size:9.5px;padding:4px 9px"><i class="ti ti-external-link" style="font-size:10px"></i> <span data-i18n="docs_link_confluence">Ver página no Confluence</span></a>
+    <button class="btn-c" id="docs-tour-btn" style="font-size:9.5px;padding:4px 9px" onclick="startOnboardingTour(true)"><i class="ti ti-route" style="font-size:10px"></i> <span data-i18n="docs_btn_ver_tour">Tour de boas-vindas</span></button>
     <button class="tn-btn pri" id="docs-add-btn" style="display:none;font-size:9.5px;padding:4px 9px" onclick="openDocModal()"><i class="ti ti-plus" style="font-size:9px"></i> <span data-i18n="docs_btn_add_material">Adicionar material</span></button>
     <button class="tn-btn pri" id="docs-add-debriefing-btn" style="display:none;font-size:9.5px;padding:4px 9px" onclick="openDebriefingModal()"><i class="ti ti-plus" style="font-size:9px"></i> <span data-i18n="docs_btn_add_debriefing">Nova Ata de Reunião</span></button>
     <button class="btn-c" id="docs-fetch-debriefing-confluence-btn" style="display:none;font-size:9.5px;padding:4px 9px;gap:4px;align-items:center" onclick="fetchDebriefingConfluenceList(true)"><i class="ti ti-refresh" style="font-size:9px"></i> <span data-i18n="docs_btn_buscar_confluence">Buscar do Confluence</span></button>
@@ -1144,7 +1257,7 @@ const I18N = {
     btn_cancelar:'Cancelar', btn_fechar:'Fechar', btn_salvar:'Salvar', btn_excluir:'Excluir', btn_adicionar:'Adicionar',
     sch_excluir_selecionadas:'Excluir selecionadas', sch_linha_tempo:'LINHA DO TEMPO',
     sch_empty_title:'Nenhuma etapa ainda.', sch_empty_sub:'Clique em', sch_empty_sub2:'para começar ou use um', sch_modelo:'Modelo',
-    col_num:'#', col_nome:'Nome', col_inicio:'Início', col_conclusao:'Conclusão',
+    col_num:'#', col_nome:'Nome', col_inicio:'Início', col_conclusao:'Conclusão', tt_num_hier_title:'Numeração ligada à Tarefa-mãe — muda automaticamente se a subtarefa for movida para outra tarefa ou trocar de posição',
     col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferença entre a data original da tarefa e o prazo atual',
     col_est:'Est.', col_real:'Real', col_prog:'Progresso', col_resp:'Responsáveis', col_dep:'Dep.',
     col_status:'Status', col_tempo:'Tempo', col_link:'Link', col_prazo:'Prazo',
@@ -1305,6 +1418,7 @@ const I18N = {
     rsm_alert_timeout_confluence:'Tempo esgotado ao buscar no Confluence. Tente novamente.',
     rsm_alert_erro_buscar_confluence_prefix:'Erro ao buscar no Confluence: ',
     rsm_alert_erro_buscar_atas_confluence:'Não foi possível buscar as atas no Confluence.',
+    rsm_alert_action_nao_reconhecida:'O backend (Apps Script) respondeu de um jeito inesperado — confira se a ação "getConfluenceChildPages" foi mesmo adicionada e publicada no Apps Script.',
     rsm_atas_confluence_carregando:'Buscando atas no Confluence…',
     rsm_atas_confluence_erro:'Não foi possível carregar as atas do Confluence.',
     rsm_atas_confluence_vazio:'Nenhuma ata encontrada na página do Confluence ainda.',
@@ -1559,6 +1673,9 @@ const I18N = {
     prio_chip_regiao_tpl:'Região: {v}',
     prio_chip_gp_tpl:'GP: {v}',
     prio_chip_time_tpl:'Time: {v}',
+    alert_chip_stale:'Sem Atualização',
+    alert_chip_never:'Nunca Atualizado',
+    alert_chip_updated:'Projetos Atualizados',
     prio_chip_health_ontrack:'Nos trilhos',
     prio_chip_health_alert:'Em risco',
     prio_chip_health_offtrack:'Fora dos trilhos',
@@ -1643,6 +1760,11 @@ const I18N = {
     rsm_alert_only_editor_comp_inicial:'Apenas editores e administradores podem alterar a nota de complexidade inicial.',
     rsm_comp_inicial_label_full:'Nota de complexidade inicial (avaliação do time de VMO)',
     rsm_alert_only_gp_julia_comp_tecnica:'Só o GP deste projeto ou a Julia Machareth podem alterar a nota de complexidade técnica/gestão.',
+    rsm_alert_only_gp_data_alvo:'Só o GP deste projeto ou a Amanda podem alterar a Data Alvo.',
+    rsm_modal_title_editar_dataalvo:'Editar Data Alvo',
+    rsm_info_dataalvo:'O campo "Data Alvo" representa a estimativa de término do projeto, definida pelo GP a partir do levantamento de escopo.',
+    rsm_lg_dataalvo_manual:'Data Alvo atualizada manualmente',
+    rsm_data_alvo_edit_title:'Clique para alterar a Data Alvo',
     rsm_comp_tecnica_label_full:'Nota de complexidade técnica/gestão (GP ou Julia Machareth)',
     rsm_comp_inicial_modal_title:'Complexidade Inicial (G&E)',
     rsm_comp_tecnica_modal_title:'Complexidade Técnica (S&D)',
@@ -1722,7 +1844,7 @@ const I18N = {
     shared_erro_enviar_slack_suffix:'não foi possível enviar ao Slack.',
     shared_erro_conectar_slack:'Erro ao conectar com o Slack.',
     sc_btn_com_score:'Com score', sc_btn_sem_score:'Sem score', sc_btn_todos_tipos:'Todos os tipos', sc_hint_clique_projeto:'Clique em um projeto para preencher/editar o scoring', sc_th_classificacao:'Classificação', sc_th_alerta:'Alerta', sc_cls_alta:'Alta', sc_cls_media:'Média', sc_cls_baixa:'Baixa', sc_alert_viab_critica:'⚠️ Viab. Crítica', sc_alert_obrigatoriedade:'⚠️ Obrigatoriedade Regulatória/Contratual', sc_info_title:'Como funciona o Score de Priorização', sc_info_intro:'O Score ajuda a priorizar os projetos combinando critérios em uma nota única, de <b>1,00 a 3,00</b> — a mesma escala e as mesmas bandas de classificação valem para os dois modelos abaixo, então dá pra comparar Comercial e Produtos/TI lado a lado. Ele existe pra tirar a priorização do "achismo" e deixar mais visível o que mais pesa na hora de decidir o que entra na fila primeiro.', sc_info_comercial_hdr:'Comercial — 4 critérios', sc_info_produtos_hdr:'Produtos/TI — 4 critérios', sc_info_crit_tpv:'TPV Previsto', sc_info_crit_tpv_desc:'Porte financeiro estimado do cliente/projeto.', sc_info_crit_receita:'Receita Mensal Média Prevista', sc_info_crit_receita_desc:'Quanto de receita recorrente o projeto deve gerar por mês.', sc_info_crit_risco:'Risco de Relacionamento', sc_info_crit_risco_desc:'Risco de perder o cliente, sofrer multa ou pressão competitiva se o projeto não avançar.', sc_info_crit_complex_com:'Complexidade de Implementação', sc_info_crit_complex_com_desc:'Quão pronta a Bemobi já está tecnicamente — soluções já existentes pontuam mais que soluções novas ou inéditas.', sc_info_crit_obrigatoriedade:'Obrigatoriedade Regulatória/Contratual', sc_info_crit_obrigatoriedade_desc:'Exigência legal, de bandeira ou de parceiro, com ou sem prazo/penalidade formal definidos.', sc_info_crit_abrangencia:'Abrangência no Portfólio', sc_info_crit_abrangencia_desc:'Quantos produtos, segmentos, clientes ou parceiros a mudança afeta.', sc_info_crit_riscotec:'Risco Técnico/Segurança', sc_info_crit_riscotec_desc:'Exposição a segurança, fraude ou dado sensível envolvida na implementação.', sc_info_crit_complex_prod_desc:'Aqui a lógica é invertida em relação ao Comercial: soluções novas ou de alta complexidade técnica pontuam mais, não menos.', sc_info_pontos_note:'Em cada modelo, todo critério recebe de 1 a 3 pontos (você escolhe a faixa no formulário de scoring do projeto); o score final é a soma desses pontos já ponderada pelos pesos do modelo aplicável ao tipo do projeto (Comercial ou Produtos/TI).', sc_info_cls_hdr:'Classificação automática (vale para os dois modelos)', sc_info_cls_alta:'🟢 <b>Alta</b> (2,50 a 3,00) — prioridade estratégica alta', sc_info_cls_media:'🟡 <b>Média</b> (1,80 a 2,49) — prioridade intermediária', sc_info_cls_baixa:'🔴 <b>Baixa</b> (abaixo de 1,80) — prioridade mais baixa', sc_info_alert_note:'⚠️ Um alerta aparece automaticamente quando o critério mais sensível de cada modelo indicar o cenário mais crítico — Complexidade alta no Comercial, ou Obrigatoriedade Regulatória/Contratual alta em Produtos/TI — mesmo com um score bom nos outros critérios, vale reforçar a atenção nesse ponto antes de comprometer prazo.', sc_alert_no_permission:'Você não tem permissão para editar o scoring deste projeto.', sc_alert_delivered_readonly:'Projeto entregue: disponível apenas para consulta histórica.', sc_alert_tipo_invalido:'Scoring disponível apenas para projetos Comerciais ou de Produtos/TI.', sc_modal_title:'Scoring do Projeto', sc_modal_title_prod:'Scoring do Projeto (Produtos/TI)', sc_modal_info:'Mesmos critérios e bandas da planilha de Scoring VMO. Score e classificação são calculados automaticamente.', sc_modal_info_prod:'Critérios próprios para priorização de projetos de Produtos/TI. Score e classificação são calculados automaticamente, na mesma escala (1,00 a 3,00) do scoring Comercial.', sc_fld_tpv:'TPV Previsto (peso 30%)', sc_fld_receita:'Receita Mensal Média Prevista (peso 30%)', sc_fld_risco:'Risco de Relacionamento (peso 20%)', sc_fld_complexidade:'Complexidade de Implementação (peso 20%)', sc_fld_complexidade_prod:'Complexidade de Implementação (peso 25%)', sc_fld_obrigatoriedade:'Obrigatoriedade Regulatória/Contratual (peso 35%)', sc_fld_abrangencia:'Abrangência no Portfólio (peso 20%)', sc_fld_riscotec:'Risco Técnico/Segurança (peso 20%)', sc_fld_obs:'Observações', sc_select_placeholder:'Selecione...', sc_btn_remover:'Remover Scoring', sc_preview_preencha:'Preencha os 4 critérios para calcular o score.', sc_alert_preencha_salvar:'Preencha os 4 critérios antes de salvar.', sc_lg_atualizado:'Scoring do projeto atualizado', sc_lg_atualizado_prod:'Scoring (Produtos/TI) do projeto atualizado', sc_lg_removido:'Scoring do projeto removido', sc_lg_removido_prod:'Scoring (Produtos/TI) do projeto removido', sc_confirm_remover:'Remover o scoring deste projeto? Essa ação não pode ser desfeita.', sc_title_editar:'Clique para editar o scoring', sc_title_preencher:'Clique para preencher o scoring',
-    docs_search_placeholder:'Buscar por título, descrição ou tag...', docs_link_confluence:'Ver página no Confluence', docs_btn_add_material:'Adicionar material', docs_btn_add_debriefing:'Nova Ata de Reunião', docs_btn_buscar_confluence:'Buscar do Confluence', docs_btn_config_pasta_confluence:'Configurar pasta do Confluence', docs_prompt_link_debriefing_confluence:'Link da página/pasta do Confluence onde ficam as atas de debriefing:', docs_ata_confluence_desc:'Ata cadastrada direto no Confluence.', docs_atas_confluence_carregando:'Buscando atas no Confluence…', docs_atas_confluence_erro_prefix:'Não foi possível buscar as atas no Confluence: ', docs_alert_only_editor_link_debriefing:'Apenas editores e administradores podem configurar o link do Confluence de atas.', docs_cat_apresentacoes:'🖼️ Apresentações', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planilhas', docs_cat_priorizacao:'📌 Histórico de Priorização', docs_cat_debriefing:'📝 Atas de Reunião', docs_cat_label_apresentacoes:'Apresentações', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planilhas', docs_cat_label_priorizacao:'Histórico de Priorização', docs_cat_label_debriefing:'Ata de Reunião', docs_month_filter_all:'Todos os meses', docs_priorizacao_sing:'priorização', docs_priorizacao_plural:'priorizações', docs_ata_sing:'ata', docs_ata_plural:'atas', docs_subfolder_unificada:'Priorização Unificada', docs_subfolder_segreg:'Por Segmento/Região', docs_empty_priorizacao:'Nenhuma priorização encontrada. Tente outro mês ou busca.', docs_empty_debriefing:'Nenhuma ata de reunião encontrada. Tente outro mês ou busca.', docs_empty_material:'Nenhum material encontrado. Tente outra busca ou categoria.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sem link cadastrado', docs_card_ver_ata:'Ver ata', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Remover', docs_priorizacao_titulo:'Priorização', docs_sem_notas:'Sem notas adicionais.', docs_alert_only_admin_material:'Apenas administradores podem cadastrar ou editar materiais.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descrição', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por vírgula', docs_alert_informe_titulo:'Informe o título do material.', docs_alert_informe_link:'Informe o link do material.', docs_alert_only_admin_remove:'Apenas administradores podem remover materiais.', docs_confirm_remover_material_tpl:'Remover "{title}" da biblioteca?', docs_alert_only_editor_debriefing:'Apenas editores e administradores podem cadastrar atas de reunião.', docs_deb_fld_titulo:'Título da reunião', docs_deb_fld_data:'Data da reunião', docs_deb_fld_link:'Link da ata (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumo (opcional)', docs_deb_fld_projetos:'Projetos discutidos', docs_deb_search_placeholder:'Buscar projeto por nome ou chave...', docs_deb_modal_title_new:'Nova ata de reunião', docs_deb_modal_title_edit:'Editar ata de reunião', docs_alert_informe_titulo_reuniao:'Informe o título da reunião.', docs_alert_informe_data_reuniao:'Informe a data da reunião.', docs_alert_only_admin_remove_ata:'Apenas administradores podem remover atas de reunião.', docs_confirm_remover_ata_tpl:'Remover a ata "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · salvo por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · salvo por {name} em {datetime}', docs_btn_baixar_excel:'Baixar Excel', docs_alert_only_admin_remove_hist:'Apenas administradores podem remover históricos de priorização.', docs_confirm_remover_hist_tpl:'Remover o histórico de priorização de {date}?', upd_tt_inserir_link:'Inserir link', upd_tt_inserir_arquivo:'Inserir arquivo ou imagem', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Texto do link (opcional):', upd_alert_arquivo_grande:'Arquivo muito grande (máx. 600 KB). Para arquivos maiores, compartilhe um link (Google Drive, Confluence etc.) no texto da atualização.', upd_alert_falha_salvar:'Não foi possível salvar esta atualização no servidor (pode ser um arquivo/imagem grande demais ou falta de conexão). A atualização ficou visível só nesta tela — recarregue a página com cuidado.', upd_tt_ver_imagem:'Clique para ver a imagem em tamanho completo', rsm_data_alvo_label:'Data Alvo:', rsm_ver_todas_atualizacoes:'Ver todas as atualizações', rsm_modal_todas_atualizacoes_title:'Todas as Atualizações',
+    docs_search_placeholder:'Buscar por título, descrição ou tag...', docs_link_confluence:'Ver página no Confluence', docs_btn_add_material:'Adicionar material', docs_btn_add_debriefing:'Nova Ata de Reunião', docs_btn_buscar_confluence:'Buscar do Confluence', docs_btn_config_pasta_confluence:'Configurar pasta do Confluence', docs_prompt_link_debriefing_confluence:'Link da PÁGINA ou PASTA do Confluence onde ficam as atas de debriefing (como sub-páginas ou itens da pasta) — o link precisa conter /pages/123456789/... ou /folder/123456789:', docs_ata_confluence_desc:'Ata cadastrada direto no Confluence.', docs_atas_confluence_carregando:'Buscando atas no Confluence…', docs_atas_confluence_erro_prefix:'Não foi possível buscar as atas no Confluence: ', docs_alert_only_editor_link_debriefing:'Apenas editores e administradores podem configurar o link do Confluence de atas.', docs_cat_apresentacoes:'🖼️ Apresentações', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planilhas', docs_cat_priorizacao:'📌 Histórico de Priorização', docs_cat_debriefing:'📝 Atas de Reunião', docs_cat_label_apresentacoes:'Apresentações', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planilhas', docs_cat_label_priorizacao:'Histórico de Priorização', docs_cat_label_debriefing:'Ata de Reunião', docs_month_filter_all:'Todos os meses', docs_priorizacao_sing:'priorização', docs_priorizacao_plural:'priorizações', docs_ata_sing:'ata', docs_ata_plural:'atas', docs_subfolder_unificada:'Priorização Unificada', docs_subfolder_segreg:'Por Segmento/Região', docs_empty_priorizacao:'Nenhuma priorização encontrada. Tente outro mês ou busca.', docs_empty_debriefing:'Nenhuma ata de reunião encontrada. Tente outro mês ou busca.', docs_empty_material:'Nenhum material encontrado. Tente outra busca ou categoria.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sem link cadastrado', docs_card_ver_ata:'Ver ata', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Remover', docs_priorizacao_titulo:'Priorização', docs_sem_notas:'Sem notas adicionais.', docs_alert_only_admin_material:'Apenas administradores podem cadastrar ou editar materiais.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descrição', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por vírgula', docs_alert_informe_titulo:'Informe o título do material.', docs_alert_informe_link:'Informe o link do material.', docs_alert_only_admin_remove:'Apenas administradores podem remover materiais.', docs_confirm_remover_material_tpl:'Remover "{title}" da biblioteca?', docs_alert_only_editor_debriefing:'Apenas editores e administradores podem cadastrar atas de reunião.', docs_deb_fld_titulo:'Título da reunião', docs_deb_fld_data:'Data da reunião', docs_deb_fld_link:'Link da ata (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumo (opcional)', docs_deb_fld_projetos:'Projetos discutidos', docs_deb_search_placeholder:'Buscar projeto por nome ou chave...', docs_deb_modal_title_new:'Nova ata de reunião', docs_deb_modal_title_edit:'Editar ata de reunião', docs_alert_informe_titulo_reuniao:'Informe o título da reunião.', docs_alert_informe_data_reuniao:'Informe a data da reunião.', docs_alert_only_admin_remove_ata:'Apenas administradores podem remover atas de reunião.', docs_confirm_remover_ata_tpl:'Remover a ata "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · salvo por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · salvo por {name} em {datetime}', docs_btn_baixar_excel:'Baixar Excel', docs_alert_only_admin_remove_hist:'Apenas administradores podem remover históricos de priorização.', docs_confirm_remover_hist_tpl:'Remover o histórico de priorização de {date}?', upd_tt_inserir_link:'Inserir link', upd_tt_inserir_arquivo:'Inserir arquivo ou imagem', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Texto do link (opcional):', upd_alert_arquivo_grande:'Arquivo muito grande (máx. 600 KB). Para arquivos maiores, compartilhe um link (Google Drive, Confluence etc.) no texto da atualização.', upd_alert_falha_salvar:'Não foi possível salvar esta atualização no servidor (pode ser um arquivo/imagem grande demais ou falta de conexão). A atualização ficou visível só nesta tela — recarregue a página com cuidado.', upd_tt_ver_imagem:'Clique para ver a imagem em tamanho completo', rsm_data_alvo_label:'Data Alvo:', rsm_ver_todas_atualizacoes:'Ver todas as atualizações', rsm_modal_todas_atualizacoes_title:'Todas as Atualizações', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Cronograma', kpi_group_saude_cronograma:'Saúde do Cronograma', sec_alertas_subtitle_tpl:'Pontos de atenção do portfólio ativo · {n} projetos ativos', vg_filtrar_por_time:'Filtrar por time:', vg_time_vmo:'Time VMO', vg_time_transformacao:'Time Transformação', vg_outras_areas:'Outras Áreas', vg_sem_gp_tbd:'Sem GP (TBD)', kpi_card_novos_projetos:'🆕 Novos projetos', sec_status_portfolio_subtitle:'Top 10 projetos por fase (ativos)', sec_dados_gerais_subtitle_tpl:'{n} projetos na carteira VMO', sec_impacto_subtitle_tpl:'Quantidade de projetos ativos que cada time está tocando · {n} times', sec_carga_subtitle:'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa', sec_carga_info_title:'Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem', sec_proximas_entregas_subtitle:'Datas de Go Live cadastradas no Jira', sec_historico_subtitle_tpl:'Consulta apenas leitura · {n} projetos em Pós Produção', hist_btn_entregues:'Projetos entregues', hist_btn_cancelados:'Projetos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} projetos em Pós Produção', hist_count_cancelados_tpl:'{n} projetos cancelados', hist_count_backlog_tpl:'{n} projetos em Backlog', hist_count_pausado_tpl:'{n} projetos pausados', hist_empty_entregues:'Nenhum projeto entregue ainda.', hist_empty_cancelados:'Nenhum projeto cancelado ainda.', hist_empty_backlog:'Nenhum projeto no Backlog ainda.', hist_empty_pausado:'Nenhum projeto pausado ainda.', hist_btn_ver_historico:'Ver histórico', shared_mais_n_tpl:'+{n} mais', docs_btn_ver_tour:'Tour de boas-vindas', tour_step_welcome_title:'Bem-vindo(a) ao HUB VMO!', tour_step_welcome_desc:'Este é um tour rápido pelas principais áreas da ferramenta. Você pode pular a qualquer momento e revê-lo depois em Documentos Úteis.', tour_step_portfolio_title:'Visão Geral', tour_step_portfolio_desc:'Painel com a saúde do cronograma de todos os projetos, próximas entregas e calendário de marcos — seu ponto de partida no dia a dia.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abra o cronograma detalhado de cada projeto: marcos, tarefas, subtarefas e, se precisar, o gráfico de Gantt.', tour_step_resumo_title:'Resumo dos Projetos', tour_step_resumo_desc:'Um dashboard executivo por projeto, com os principais indicadores e status num só lugar.', tour_step_updates_title:'Atualizações', tour_step_updates_desc:'Publique atualizações de status e gere o email executivo semanal para stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'A fila priorizada do portfólio, com filtros por saúde, status e time — e onde os cards da Visão Geral te trazem.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projetos ordenados por critérios de avaliação específicos por tipo de projeto (TI/Produto ou Comercial).', tour_step_docs_title:'Documentos Úteis', tour_step_docs_desc:'Materiais, atas de reunião e histórico de priorização — e é aqui que você pode rever este tour quando quiser.', tour_btn_pular:'Pular', tour_btn_proximo:'Próximo', tour_btn_concluir:'Concluir', sch_undo_title:'Desfazer última alteração (Ctrl+Z)', sch_redo_title:'Refazer (Ctrl+Shift+Z)', sch_save_btn:'Salvar Alterações', sch_dirty_count_tpl:'{n} alteração(ões) desde a última confirmação', sch_saved_toast:'Alterações confirmadas', sch_confirm_leave_title:'Alterações não confirmadas', sch_confirm_leave_desc_tpl:'Você fez {n} alteração(ões) neste cronograma que ainda não foram confirmadas com "Salvar Alterações". Elas já foram salvas automaticamente, mas vale revisar antes de continuar. O que deseja fazer?', sch_confirm_leave_stay_btn:'Continuar editando', sch_confirm_leave_btn:'Confirmar e sair', sch_confirm_leave_discard_btn:'Não salvar',
     upd_alert_selecione_projeto_slack:'Selecione ao menos um projeto para enviar ao Slack.',
   },
   es: {
@@ -1747,7 +1869,7 @@ const I18N = {
     btn_cancelar:'Cancelar', btn_fechar:'Cerrar', btn_salvar:'Guardar', btn_excluir:'Eliminar', btn_adicionar:'Agregar',
     sch_excluir_selecionadas:'Eliminar seleccionadas', sch_linha_tempo:'LÍNEA DE TIEMPO',
     sch_empty_title:'Todavía no hay etapas.', sch_empty_sub:'Haga clic en', sch_empty_sub2:'para empezar o use una', sch_modelo:'Plantilla',
-    col_num:'#', col_nome:'Nombre', col_inicio:'Inicio', col_conclusao:'Conclusión',
+    col_num:'#', col_nome:'Nombre', col_inicio:'Inicio', col_conclusao:'Conclusión', tt_num_hier_title:'Numeración ligada a la Tarea principal — cambia automáticamente si la subtarea se mueve a otra tarea o cambia de posición',
     col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferencia entre la fecha original de la tarea y el plazo actual',
     col_est:'Est.', col_real:'Real', col_prog:'Progreso', col_resp:'Responsables', col_dep:'Dep.',
     col_status:'Estado', col_tempo:'Tiempo', col_link:'Enlace', col_prazo:'Plazo',
@@ -1908,6 +2030,7 @@ const I18N = {
     rsm_alert_timeout_confluence:'Tiempo agotado al buscar en Confluence. Intenta de nuevo.',
     rsm_alert_erro_buscar_confluence_prefix:'Error al buscar en Confluence: ',
     rsm_alert_erro_buscar_atas_confluence:'No fue posible buscar las actas en Confluence.',
+    rsm_alert_action_nao_reconhecida:'El backend (Apps Script) respondió de forma inesperada — verifica si la acción "getConfluenceChildPages" fue realmente agregada y publicada en el Apps Script.',
     rsm_atas_confluence_carregando:'Buscando actas en Confluence…',
     rsm_atas_confluence_erro:'No fue posible cargar las actas de Confluence.',
     rsm_atas_confluence_vazio:'Todavía no se encontraron actas en la página de Confluence.',
@@ -2004,7 +2127,7 @@ const I18N = {
     rsm_lg_acesso_concedido_stakeholders_tpl:'Acceso de edición otorgado a {email} (vía Stakeholders)',
     rsm_lg_acesso_removido_stakeholders_tpl:'Acceso de edición eliminado de {email} (vía Stakeholders)',
     rsm_alert_email_invalido:'Correo inválido',
-    rsm_alert_informe_papel:'Indica el rol del stakeholder (ej.: Editor, Visualizador, Cliente...) — él define el nivel de acceso.',
+    rsm_alert_informe_papel:'Indica el rol del stakeholder (ej.: Editor, Visualizador, Cliente...) — este define el nivel de acceso.',
     rsm_alert_email_ja_cadastrado:'Ese correo ya está registrado para este proyecto.',
     rsm_lg_stakeholder_adicionado_tpl:'Stakeholder agregado: {name}',
     rsm_lg_acesso_papel_editor_tpl:'Acceso de edición otorgado a {email} (rol Editor en Stakeholders)',
@@ -2162,6 +2285,9 @@ const I18N = {
     prio_chip_regiao_tpl:'Región: {v}',
     prio_chip_gp_tpl:'GP: {v}',
     prio_chip_time_tpl:'Equipo: {v}',
+    alert_chip_stale:'Sin Actualización',
+    alert_chip_never:'Nunca Actualizado',
+    alert_chip_updated:'Proyectos Actualizados',
     prio_chip_health_ontrack:'En camino',
     prio_chip_health_alert:'En riesgo',
     prio_chip_health_offtrack:'Fuera de curso',
@@ -2246,6 +2372,11 @@ const I18N = {
     rsm_alert_only_editor_comp_inicial:'Solo editores y administradores pueden modificar la nota de complejidad inicial.',
     rsm_comp_inicial_label_full:'Nota de complejidad inicial (evaluación del equipo de VMO)',
     rsm_alert_only_gp_julia_comp_tecnica:'Solo el GP de este proyecto o Julia Machareth pueden modificar la nota de complejidad técnica/gestión.',
+    rsm_alert_only_gp_data_alvo:'Solo el GP de este proyecto o Amanda pueden modificar la Fecha Objetivo.',
+    rsm_modal_title_editar_dataalvo:'Editar Fecha Objetivo',
+    rsm_info_dataalvo:'El campo "Fecha Objetivo" representa la estimación de finalización del proyecto, definida por el GP a partir del levantamiento de alcance.',
+    rsm_lg_dataalvo_manual:'Fecha Objetivo actualizada manualmente',
+    rsm_data_alvo_edit_title:'Haz clic para modificar la Fecha Objetivo',
     rsm_comp_tecnica_label_full:'Nota de complejidad técnica/gestión (GP o Julia Machareth)',
     rsm_comp_inicial_modal_title:'Complejidad Inicial (G&E)',
     rsm_comp_tecnica_modal_title:'Complejidad Técnica (S&D)',
@@ -2324,8 +2455,8 @@ const I18N = {
     shared_enviado_slack:'✓ Enviado a Slack.',
     shared_erro_enviar_slack_suffix:'no fue posible enviar a Slack.',
     shared_erro_conectar_slack:'Error al conectar con Slack.',
-    sc_btn_com_score:'Con score', sc_btn_sem_score:'Sin score', sc_btn_todos_tipos:'Todos los tipos', sc_hint_clique_projeto:'Haz clic en un proyecto para completar/editar el scoring', sc_th_classificacao:'Clasificación', sc_th_alerta:'Alerta', sc_cls_alta:'Alta', sc_cls_media:'Media', sc_cls_baixa:'Baja', sc_alert_viab_critica:'⚠️ Viab. Crítica', sc_alert_obrigatoriedade:'⚠️ Obligatoriedad Regulatoria/Contractual', sc_info_title:'Cómo funciona el Score de Priorización', sc_info_intro:'El Score ayuda a priorizar los proyectos combinando criterios en una nota única, de <b>1,00 a 3,00</b> — la misma escala y las mismas bandas de clasificación valen para los dos modelos abajo, así se puede comparar Comercial y Productos/TI lado a lado. Existe para sacar la priorización del "me parece" y dejar más visible lo que más pesa al decidir qué entra primero en la fila.', sc_info_comercial_hdr:'Comercial — 4 criterios', sc_info_produtos_hdr:'Productos/TI — 4 criterios', sc_info_crit_tpv:'TPV Previsto', sc_info_crit_tpv_desc:'Porte financiero estimado del cliente/proyecto.', sc_info_crit_receita:'Ingreso Mensual Promedio Previsto', sc_info_crit_receita_desc:'Cuánto ingreso recurrente el proyecto debe generar por mes.', sc_info_crit_risco:'Riesgo de Relación', sc_info_crit_risco_desc:'Riesgo de perder al cliente, sufrir multa o presión competitiva si el proyecto no avanza.', sc_info_crit_complex_com:'Complejidad de Implementación', sc_info_crit_complex_com_desc:'Qué tan lista está Bemobi técnicamente — soluciones ya existentes puntúan más que soluciones nuevas o inéditas.', sc_info_crit_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual', sc_info_crit_obrigatoriedade_desc:'Exigencia legal, de marca o de socio, con o sin plazo/penalidad formal definidos.', sc_info_crit_abrangencia:'Alcance en el Portafolio', sc_info_crit_abrangencia_desc:'Cuántos productos, segmentos, clientes o socios afecta el cambio.', sc_info_crit_riscotec:'Riesgo Técnico/Seguridad', sc_info_crit_riscotec_desc:'Exposición a seguridad, fraude o dato sensible involucrada en la implementación.', sc_info_crit_complex_prod_desc:'Aquí la lógica es invertida respecto al Comercial: soluciones nuevas o de alta complejidad técnica puntúan más, no menos.', sc_info_pontos_note:'En cada modelo, todo criterio recibe de 1 a 3 puntos (usted elige el rango en el formulario de scoring del proyecto); el score final es la suma de esos puntos ya ponderada por los pesos del modelo aplicable al tipo del proyecto (Comercial o Productos/TI).', sc_info_cls_hdr:'Clasificación automática (vale para los dos modelos)', sc_info_cls_alta:'🟢 <b>Alta</b> (2,50 a 3,00) — prioridad estratégica alta', sc_info_cls_media:'🟡 <b>Media</b> (1,80 a 2,49) — prioridad intermedia', sc_info_cls_baixa:'🔴 <b>Baja</b> (por debajo de 1,80) — prioridad más baja', sc_info_alert_note:'⚠️ Un alerta aparece automáticamente cuando el criterio más sensible de cada modelo indica el escenario más crítico — Complejidad alta en Comercial, u Obligatoriedad Regulatoria/Contractual alta en Productos/TI — incluso con un buen score en los demás criterios, vale la pena reforzar la atención en ese punto antes de comprometer el plazo.', sc_alert_no_permission:'No tiene permiso para editar el scoring de este proyecto.', sc_alert_delivered_readonly:'Proyecto entregado: disponible solo para consulta histórica.', sc_alert_tipo_invalido:'Scoring disponible solo para proyectos Comerciales o de Productos/TI.', sc_modal_title:'Scoring del Proyecto', sc_modal_title_prod:'Scoring del Proyecto (Productos/TI)', sc_modal_info:'Mismos criterios y bandas de la planilla de Scoring VMO. Score y clasificación se calculan automáticamente.', sc_modal_info_prod:'Criterios propios para priorización de proyectos de Productos/TI. Score y clasificación se calculan automáticamente, en la misma escala (1,00 a 3,00) del scoring Comercial.', sc_fld_tpv:'TPV Previsto (peso 30%)', sc_fld_receita:'Ingreso Mensual Promedio Previsto (peso 30%)', sc_fld_risco:'Riesgo de Relación (peso 20%)', sc_fld_complexidade:'Complejidad de Implementación (peso 20%)', sc_fld_complexidade_prod:'Complejidad de Implementación (peso 25%)', sc_fld_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual (peso 35%)', sc_fld_abrangencia:'Alcance en el Portafolio (peso 20%)', sc_fld_riscotec:'Riesgo Técnico/Seguridad (peso 20%)', sc_fld_obs:'Observaciones', sc_select_placeholder:'Seleccione...', sc_btn_remover:'Eliminar Scoring', sc_preview_preencha:'Complete los 4 criterios para calcular el score.', sc_alert_preencha_salvar:'Complete los 4 criterios antes de guardar.', sc_lg_atualizado:'Scoring del proyecto actualizado', sc_lg_atualizado_prod:'Scoring (Productos/TI) del proyecto actualizado', sc_lg_removido:'Scoring del proyecto eliminado', sc_lg_removido_prod:'Scoring (Productos/TI) del proyecto eliminado', sc_confirm_remover:'¿Eliminar el scoring de este proyecto? Esta acción no se puede deshacer.', sc_title_editar:'Haz clic para editar el scoring', sc_title_preencher:'Haz clic para completar el scoring',
-    docs_search_placeholder:'Buscar por título, descripción o tag...', docs_link_confluence:'Ver página en Confluence', docs_btn_add_material:'Agregar material', docs_btn_add_debriefing:'Nueva Acta de Reunión', docs_btn_buscar_confluence:'Buscar en Confluence', docs_btn_config_pasta_confluence:'Configurar carpeta de Confluence', docs_prompt_link_debriefing_confluence:'Enlace de la página/carpeta de Confluence donde están las actas de debriefing:', docs_ata_confluence_desc:'Acta registrada directamente en Confluence.', docs_atas_confluence_carregando:'Buscando actas en Confluence…', docs_atas_confluence_erro_prefix:'No fue posible buscar las actas en Confluence: ', docs_alert_only_editor_link_debriefing:'Solo los editores y administradores pueden configurar el enlace de Confluence de actas.', docs_cat_apresentacoes:'🖼️ Presentaciones', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planillas', docs_cat_priorizacao:'📌 Historial de Priorización', docs_cat_debriefing:'📝 Actas de Reunión', docs_cat_label_apresentacoes:'Presentaciones', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planillas', docs_cat_label_priorizacao:'Historial de Priorización', docs_cat_label_debriefing:'Acta de Reunión', docs_month_filter_all:'Todos los meses', docs_priorizacao_sing:'priorización', docs_priorizacao_plural:'priorizaciones', docs_ata_sing:'acta', docs_ata_plural:'actas', docs_subfolder_unificada:'Priorización Unificada', docs_subfolder_segreg:'Por Segmento/Región', docs_empty_priorizacao:'No se encontró ninguna priorización. Intente otro mes o búsqueda.', docs_empty_debriefing:'No se encontró ninguna acta de reunión. Intente otro mes o búsqueda.', docs_empty_material:'No se encontró ningún material. Intente otra búsqueda o categoría.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sin link registrado', docs_card_ver_ata:'Ver acta', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Eliminar', docs_priorizacao_titulo:'Priorización', docs_sem_notas:'Sin notas adicionales.', docs_alert_only_admin_material:'Solo los administradores pueden registrar o editar materiales.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descripción', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por coma', docs_alert_informe_titulo:'Indique el título del material.', docs_alert_informe_link:'Indique el link del material.', docs_alert_only_admin_remove:'Solo los administradores pueden eliminar materiales.', docs_confirm_remover_material_tpl:'¿Eliminar "{title}" de la biblioteca?', docs_alert_only_editor_debriefing:'Solo los editores y administradores pueden registrar actas de reunión.', docs_deb_fld_titulo:'Título de la reunión', docs_deb_fld_data:'Fecha de la reunión', docs_deb_fld_link:'Link del acta (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumen (opcional)', docs_deb_fld_projetos:'Proyectos discutidos', docs_deb_search_placeholder:'Buscar proyecto por nombre o clave...', docs_deb_modal_title_new:'Nueva acta de reunión', docs_deb_modal_title_edit:'Editar acta de reunión', docs_alert_informe_titulo_reuniao:'Indique el título de la reunión.', docs_alert_informe_data_reuniao:'Indique la fecha de la reunión.', docs_alert_only_admin_remove_ata:'Solo los administradores pueden eliminar actas de reunión.', docs_confirm_remover_ata_tpl:'¿Eliminar el acta "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · guardado por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · guardado por {name} el {datetime}', docs_btn_baixar_excel:'Descargar Excel', docs_alert_only_admin_remove_hist:'Solo los administradores pueden eliminar historiales de priorización.', docs_confirm_remover_hist_tpl:'¿Eliminar el historial de priorización de {date}?', upd_tt_inserir_link:'Insertar enlace', upd_tt_inserir_arquivo:'Insertar archivo o imagen', upd_prompt_link_url:'Enlace (URL):', upd_prompt_link_text:'Texto del enlace (opcional):', upd_alert_arquivo_grande:'Archivo demasiado grande (máx. 600 KB). Para archivos más grandes, comparta un link (Google Drive, Confluence, etc.) en el texto de la actualización.', upd_alert_falha_salvar:'No se pudo guardar esta actualización en el servidor (puede ser un archivo/imagen demasiado grande o falta de conexión). La actualización quedó visible solo en esta pantalla — recargue la página con cuidado.', upd_tt_ver_imagem:'Haz clic para ver la imagen en tamaño completo', rsm_data_alvo_label:'Fecha Objetivo:', rsm_ver_todas_atualizacoes:'Ver todas las actualizaciones', rsm_modal_todas_atualizacoes_title:'Todas las Actualizaciones',
+    sc_btn_com_score:'Con score', sc_btn_sem_score:'Sin score', sc_btn_todos_tipos:'Todos los tipos', sc_hint_clique_projeto:'Haz clic en un proyecto para completar/editar el scoring', sc_th_classificacao:'Clasificación', sc_th_alerta:'Alerta', sc_cls_alta:'Alta', sc_cls_media:'Media', sc_cls_baixa:'Baja', sc_alert_viab_critica:'⚠️ Viab. Crítica', sc_alert_obrigatoriedade:'⚠️ Obligatoriedad Regulatoria/Contractual', sc_info_title:'Cómo funciona el Score de Priorización', sc_info_intro:'El Score ayuda a priorizar los proyectos combinando criterios en una nota única, de <b>1,00 a 3,00</b> — la misma escala y las mismas bandas de clasificación valen para los dos modelos abajo, así se puede comparar Comercial y Productos/TI lado a lado. Existe para sacar la priorización del "me parece" y dejar más visible lo que más pesa al decidir qué entra primero en la fila.', sc_info_comercial_hdr:'Comercial — 4 criterios', sc_info_produtos_hdr:'Productos/TI — 4 criterios', sc_info_crit_tpv:'TPV Previsto', sc_info_crit_tpv_desc:'Porte financiero estimado del cliente/proyecto.', sc_info_crit_receita:'Ingreso Mensual Promedio Previsto', sc_info_crit_receita_desc:'Cuánto ingreso recurrente debe generar el proyecto por mes.', sc_info_crit_risco:'Riesgo de Relación', sc_info_crit_risco_desc:'Riesgo de perder al cliente, sufrir multa o presión competitiva si el proyecto no avanza.', sc_info_crit_complex_com:'Complejidad de Implementación', sc_info_crit_complex_com_desc:'Qué tan lista está Bemobi técnicamente — soluciones ya existentes puntúan más que soluciones nuevas o inéditas.', sc_info_crit_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual', sc_info_crit_obrigatoriedade_desc:'Exigencia legal, de marca o de socio, con o sin plazo/penalidad formal definidos.', sc_info_crit_abrangencia:'Alcance en el Portafolio', sc_info_crit_abrangencia_desc:'Cuántos productos, segmentos, clientes o socios afecta el cambio.', sc_info_crit_riscotec:'Riesgo Técnico/Seguridad', sc_info_crit_riscotec_desc:'Exposición a seguridad, fraude o dato sensible involucrada en la implementación.', sc_info_crit_complex_prod_desc:'Aquí la lógica es invertida respecto al Comercial: soluciones nuevas o de alta complejidad técnica puntúan más, no menos.', sc_info_pontos_note:'En cada modelo, todo criterio recibe de 1 a 3 puntos (usted elige el rango en el formulario de scoring del proyecto); el score final es la suma de esos puntos ya ponderada por los pesos del modelo aplicable al tipo del proyecto (Comercial o Productos/TI).', sc_info_cls_hdr:'Clasificación automática (vale para los dos modelos)', sc_info_cls_alta:'🟢 <b>Alta</b> (2,50 a 3,00) — prioridad estratégica alta', sc_info_cls_media:'🟡 <b>Media</b> (1,80 a 2,49) — prioridad intermedia', sc_info_cls_baixa:'🔴 <b>Baja</b> (por debajo de 1,80) — prioridad más baja', sc_info_alert_note:'⚠️ Un alerta aparece automáticamente cuando el criterio más sensible de cada modelo indica el escenario más crítico — Complejidad alta en Comercial, u Obligatoriedad Regulatoria/Contractual alta en Productos/TI — incluso con un buen score en los demás criterios, vale la pena reforzar la atención en ese punto antes de comprometer el plazo.', sc_alert_no_permission:'No tiene permiso para editar el scoring de este proyecto.', sc_alert_delivered_readonly:'Proyecto entregado: disponible solo para consulta histórica.', sc_alert_tipo_invalido:'Scoring disponible solo para proyectos Comerciales o de Productos/TI.', sc_modal_title:'Scoring del Proyecto', sc_modal_title_prod:'Scoring del Proyecto (Productos/TI)', sc_modal_info:'Mismos criterios y bandas de la planilla de Scoring VMO. Score y clasificación se calculan automáticamente.', sc_modal_info_prod:'Criterios propios para priorización de proyectos de Productos/TI. Score y clasificación se calculan automáticamente, en la misma escala (1,00 a 3,00) del scoring Comercial.', sc_fld_tpv:'TPV Previsto (peso 30%)', sc_fld_receita:'Ingreso Mensual Promedio Previsto (peso 30%)', sc_fld_risco:'Riesgo de Relación (peso 20%)', sc_fld_complexidade:'Complejidad de Implementación (peso 20%)', sc_fld_complexidade_prod:'Complejidad de Implementación (peso 25%)', sc_fld_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual (peso 35%)', sc_fld_abrangencia:'Alcance en el Portafolio (peso 20%)', sc_fld_riscotec:'Riesgo Técnico/Seguridad (peso 20%)', sc_fld_obs:'Observaciones', sc_select_placeholder:'Seleccione...', sc_btn_remover:'Eliminar Scoring', sc_preview_preencha:'Complete los 4 criterios para calcular el score.', sc_alert_preencha_salvar:'Complete los 4 criterios antes de guardar.', sc_lg_atualizado:'Scoring del proyecto actualizado', sc_lg_atualizado_prod:'Scoring (Productos/TI) del proyecto actualizado', sc_lg_removido:'Scoring del proyecto eliminado', sc_lg_removido_prod:'Scoring (Productos/TI) del proyecto eliminado', sc_confirm_remover:'¿Eliminar el scoring de este proyecto? Esta acción no se puede deshacer.', sc_title_editar:'Haz clic para editar el scoring', sc_title_preencher:'Haz clic para completar el scoring',
+    docs_search_placeholder:'Buscar por título, descripción o tag...', docs_link_confluence:'Ver página en Confluence', docs_btn_add_material:'Agregar material', docs_btn_add_debriefing:'Nueva Acta de Reunión', docs_btn_buscar_confluence:'Buscar en Confluence', docs_btn_config_pasta_confluence:'Configurar carpeta de Confluence', docs_prompt_link_debriefing_confluence:'Enlace de la PÁGINA o CARPETA de Confluence donde están las actas de debriefing (como subpáginas o elementos de la carpeta) — el enlace debe contener /pages/123456789/... o /folder/123456789:', docs_ata_confluence_desc:'Acta registrada directamente en Confluence.', docs_atas_confluence_carregando:'Buscando actas en Confluence…', docs_atas_confluence_erro_prefix:'No fue posible buscar las actas en Confluence: ', docs_alert_only_editor_link_debriefing:'Solo los editores y administradores pueden configurar el enlace de Confluence de actas.', docs_cat_apresentacoes:'🖼️ Presentaciones', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planillas', docs_cat_priorizacao:'📌 Historial de Priorización', docs_cat_debriefing:'📝 Actas de Reunión', docs_cat_label_apresentacoes:'Presentaciones', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planillas', docs_cat_label_priorizacao:'Historial de Priorización', docs_cat_label_debriefing:'Acta de Reunión', docs_month_filter_all:'Todos los meses', docs_priorizacao_sing:'priorización', docs_priorizacao_plural:'priorizaciones', docs_ata_sing:'acta', docs_ata_plural:'actas', docs_subfolder_unificada:'Priorización Unificada', docs_subfolder_segreg:'Por Segmento/Región', docs_empty_priorizacao:'No se encontró ninguna priorización. Intente otro mes o búsqueda.', docs_empty_debriefing:'No se encontró ninguna acta de reunión. Intente otro mes o búsqueda.', docs_empty_material:'No se encontró ningún material. Intente otra búsqueda o categoría.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sin link registrado', docs_card_ver_ata:'Ver acta', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Eliminar', docs_priorizacao_titulo:'Priorización', docs_sem_notas:'Sin notas adicionales.', docs_alert_only_admin_material:'Solo los administradores pueden registrar o editar materiales.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descripción', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por coma', docs_alert_informe_titulo:'Indique el título del material.', docs_alert_informe_link:'Indique el link del material.', docs_alert_only_admin_remove:'Solo los administradores pueden eliminar materiales.', docs_confirm_remover_material_tpl:'¿Eliminar "{title}" de la biblioteca?', docs_alert_only_editor_debriefing:'Solo los editores y administradores pueden registrar actas de reunión.', docs_deb_fld_titulo:'Título de la reunión', docs_deb_fld_data:'Fecha de la reunión', docs_deb_fld_link:'Link del acta (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumen (opcional)', docs_deb_fld_projetos:'Proyectos discutidos', docs_deb_search_placeholder:'Buscar proyecto por nombre o clave...', docs_deb_modal_title_new:'Nueva acta de reunión', docs_deb_modal_title_edit:'Editar acta de reunión', docs_alert_informe_titulo_reuniao:'Indique el título de la reunión.', docs_alert_informe_data_reuniao:'Indique la fecha de la reunión.', docs_alert_only_admin_remove_ata:'Solo los administradores pueden eliminar actas de reunión.', docs_confirm_remover_ata_tpl:'¿Eliminar el acta "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · guardado por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · guardado por {name} el {datetime}', docs_btn_baixar_excel:'Descargar Excel', docs_alert_only_admin_remove_hist:'Solo los administradores pueden eliminar historiales de priorización.', docs_confirm_remover_hist_tpl:'¿Eliminar el historial de priorización de {date}?', upd_tt_inserir_link:'Insertar enlace', upd_tt_inserir_arquivo:'Insertar archivo o imagen', upd_prompt_link_url:'Enlace (URL):', upd_prompt_link_text:'Texto del enlace (opcional):', upd_alert_arquivo_grande:'Archivo demasiado grande (máx. 600 KB). Para archivos más grandes, comparta un link (Google Drive, Confluence, etc.) en el texto de la actualización.', upd_alert_falha_salvar:'No se pudo guardar esta actualización en el servidor (puede ser un archivo/imagen demasiado grande o falta de conexión). La actualización quedó visible solo en esta pantalla — recargue la página con cuidado.', upd_tt_ver_imagem:'Haz clic para ver la imagen en tamaño completo', rsm_data_alvo_label:'Fecha Objetivo:', rsm_ver_todas_atualizacoes:'Ver todas las actualizaciones', rsm_modal_todas_atualizacoes_title:'Todas las Actualizaciones', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Cronograma', kpi_group_saude_cronograma:'Salud del Cronograma', sec_alertas_subtitle_tpl:'Puntos de atención del portafolio activo · {n} proyectos activos', vg_filtrar_por_time:'Filtrar por equipo:', vg_time_vmo:'Equipo VMO', vg_time_transformacao:'Equipo Transformación', vg_outras_areas:'Otras Áreas', vg_sem_gp_tbd:'Sin GP (TBD)', kpi_card_novos_projetos:'🆕 Proyectos nuevos', sec_status_portfolio_subtitle:'Top 10 proyectos por fase (activos)', sec_dados_gerais_subtitle_tpl:'{n} proyectos en la cartera VMO', sec_impacto_subtitle_tpl:'Cantidad de proyectos activos que cada equipo está tocando · {n} equipos', sec_carga_subtitle:'Asignación y sobrecarga de los equipos, comparando demanda (proyectos activos) con la capacidad de cada persona', sec_carga_info_title:'Considera solo proyectos activos. Los proyectos con estado Cancelados, Backlog, Pausados, Posproducción y Presales se filtran de este conteo', sec_proximas_entregas_subtitle:'Fechas de Go Live registradas en Jira', sec_historico_subtitle_tpl:'Consulta solo de lectura · {n} proyectos en Posproducción', hist_btn_entregues:'Proyectos entregados', hist_btn_cancelados:'Proyectos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} proyectos en Posproducción', hist_count_cancelados_tpl:'{n} proyectos cancelados', hist_count_backlog_tpl:'{n} proyectos en Backlog', hist_count_pausado_tpl:'{n} proyectos pausados', hist_empty_entregues:'Ningún proyecto entregado todavía.', hist_empty_cancelados:'Ningún proyecto cancelado todavía.', hist_empty_backlog:'Ningún proyecto en Backlog todavía.', hist_empty_pausado:'Ningún proyecto pausado todavía.', hist_btn_ver_historico:'Ver historial', shared_mais_n_tpl:'+{n} más', docs_btn_ver_tour:'Tour de bienvenida', tour_step_welcome_title:'¡Bienvenido(a) al HUB VMO!', tour_step_welcome_desc:'Este es un recorrido rápido por las principales áreas de la herramienta. Puedes saltarlo en cualquier momento y volver a verlo después en Documentos Útiles.', tour_step_portfolio_title:'Visión General', tour_step_portfolio_desc:'Panel con la salud del cronograma de todos los proyectos, próximas entregas y calendario de hitos — tu punto de partida en el día a día.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abre el cronograma detallado de cada proyecto: hitos, tareas, subtareas y, si lo necesitas, el gráfico de Gantt.', tour_step_resumo_title:'Resumen de Proyectos', tour_step_resumo_desc:'Un dashboard ejecutivo por proyecto, con los principales indicadores y estado en un solo lugar.', tour_step_updates_title:'Actualizaciones', tour_step_updates_desc:'Publica actualizaciones de estado y genera el email ejecutivo semanal para los stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'La fila priorizada del portafolio, con filtros por salud, estado y equipo — y adonde te llevan las tarjetas de la Visión General.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Proyectos ordenados por criterios de evaluación específicos según el tipo de proyecto (TI/Producto o Comercial).', tour_step_docs_title:'Documentos Útiles', tour_step_docs_desc:'Materiales, actas de reunión e historial de priorización — y aquí puedes volver a ver este tour cuando quieras.', tour_btn_pular:'Saltar', tour_btn_proximo:'Siguiente', tour_btn_concluir:'Finalizar', sch_undo_title:'Deshacer el último cambio (Ctrl+Z)', sch_redo_title:'Rehacer (Ctrl+Shift+Z)', sch_save_btn:'Guardar Cambios', sch_dirty_count_tpl:'{n} cambio(s) desde la última confirmación', sch_saved_toast:'Cambios confirmados', sch_confirm_leave_title:'Cambios sin confirmar', sch_confirm_leave_desc_tpl:'Hiciste {n} cambio(s) en este cronograma que aún no han sido confirmados con "Guardar Cambios". Ya se guardaron automáticamente, pero vale la pena revisarlos antes de continuar. ¿Qué deseas hacer?', sch_confirm_leave_stay_btn:'Seguir editando', sch_confirm_leave_btn:'Confirmar y salir', sch_confirm_leave_discard_btn:'No guardar',
     upd_alert_selecione_projeto_slack:'Selecciona al menos un proyecto para enviar a Slack.',
   },
   en: {
@@ -2350,7 +2481,7 @@ const I18N = {
     btn_cancelar:'Cancel', btn_fechar:'Close', btn_salvar:'Save', btn_excluir:'Delete', btn_adicionar:'Add',
     sch_excluir_selecionadas:'Delete selected', sch_linha_tempo:'TIMELINE',
     sch_empty_title:'No milestones yet.', sch_empty_sub:'Click', sch_empty_sub2:'to get started or use a', sch_modelo:'Template',
-    col_num:'#', col_nome:'Name', col_inicio:'Start', col_conclusao:'Completion',
+    col_num:'#', col_nome:'Name', col_inicio:'Start', col_conclusao:'Completion', tt_num_hier_title:'Numbering linked to the parent Task — updates automatically if the subtask moves to another task or changes position',
     col_atraso:'Accum. Delay', col_atraso_title:'Accumulated delay: difference between the task\'s original date and the current deadline',
     col_est:'Est.', col_real:'Actual', col_prog:'Progress', col_resp:'Assignees', col_dep:'Dep.',
     col_status:'Status', col_tempo:'Time', col_link:'Link', col_prazo:'Deadline',
@@ -2511,6 +2642,7 @@ const I18N = {
     rsm_alert_timeout_confluence:'Timed out while fetching from Confluence. Please try again.',
     rsm_alert_erro_buscar_confluence_prefix:'Error fetching from Confluence: ',
     rsm_alert_erro_buscar_atas_confluence:'Could not fetch minutes from Confluence.',
+    rsm_alert_action_nao_reconhecida:'The backend (Apps Script) responded unexpectedly — check whether the "getConfluenceChildPages" action was actually added and published in Apps Script.',
     rsm_atas_confluence_carregando:'Fetching minutes from Confluence…',
     rsm_atas_confluence_erro:'Could not load minutes from Confluence.',
     rsm_atas_confluence_vazio:'No minutes found on the Confluence page yet.',
@@ -2765,6 +2897,9 @@ const I18N = {
     prio_chip_regiao_tpl:'Region: {v}',
     prio_chip_gp_tpl:'PM: {v}',
     prio_chip_time_tpl:'Team: {v}',
+    alert_chip_stale:'No Update',
+    alert_chip_never:'Never Updated',
+    alert_chip_updated:'Updated Projects',
     prio_chip_health_ontrack:'On track',
     prio_chip_health_alert:'At risk',
     prio_chip_health_offtrack:'Off track',
@@ -2849,6 +2984,11 @@ const I18N = {
     rsm_alert_only_editor_comp_inicial:'Only editors and admins can change the initial complexity score.',
     rsm_comp_inicial_label_full:'Initial complexity score (VMO team assessment)',
     rsm_alert_only_gp_julia_comp_tecnica:'Only this project\'s PM or Julia Machareth can change the technical/management complexity score.',
+    rsm_alert_only_gp_data_alvo:'Only this project\'s PM or Amanda can change the Target Date.',
+    rsm_modal_title_editar_dataalvo:'Edit Target Date',
+    rsm_info_dataalvo:'The "Target Date" field represents the project\'s estimated completion, defined by the PM based on the scope assessment.',
+    rsm_lg_dataalvo_manual:'Target Date manually updated',
+    rsm_data_alvo_edit_title:'Click to change the Target Date',
     rsm_comp_tecnica_label_full:'Technical/management complexity score (PM or Julia Machareth)',
     rsm_comp_inicial_modal_title:'Initial Complexity (G&E)',
     rsm_comp_tecnica_modal_title:'Technical Complexity (S&D)',
@@ -2928,7 +3068,7 @@ const I18N = {
     shared_erro_enviar_slack_suffix:'could not be sent to Slack.',
     shared_erro_conectar_slack:'Error connecting to Slack.',
     sc_btn_com_score:'Scored', sc_btn_sem_score:'Unscored', sc_btn_todos_tipos:'All types', sc_hint_clique_projeto:'Click a project to fill in/edit the scoring', sc_th_classificacao:'Classification', sc_th_alerta:'Alert', sc_cls_alta:'High', sc_cls_media:'Medium', sc_cls_baixa:'Low', sc_alert_viab_critica:'⚠️ Critical Feasibility', sc_alert_obrigatoriedade:'⚠️ Regulatory/Contractual Requirement', sc_info_title:'How the Priority Score works', sc_info_intro:'The Score helps prioritize projects by combining criteria into a single rating, from <b>1.00 to 3.00</b> — the same scale and classification bands apply to both models below, so you can compare Commercial and Products/IT side by side. It exists to take prioritization out of "gut feeling" and make clearer what weighs most when deciding what gets in line first.', sc_info_comercial_hdr:'Commercial — 4 criteria', sc_info_produtos_hdr:'Products/IT — 4 criteria', sc_info_crit_tpv:'Expected TPV', sc_info_crit_tpv_desc:'Estimated financial size of the client/project.', sc_info_crit_receita:'Expected Average Monthly Revenue', sc_info_crit_receita_desc:'How much recurring revenue the project should generate per month.', sc_info_crit_risco:'Relationship Risk', sc_info_crit_risco_desc:'Risk of losing the client, incurring a penalty, or facing competitive pressure if the project doesn\'t move forward.', sc_info_crit_complex_com:'Implementation Complexity', sc_info_crit_complex_com_desc:'How technically ready Bemobi already is — existing solutions score higher than new or unprecedented ones.', sc_info_crit_obrigatoriedade:'Regulatory/Contractual Requirement', sc_info_crit_obrigatoriedade_desc:'Legal, card-network, or partner requirement, with or without a formally defined deadline/penalty.', sc_info_crit_abrangencia:'Portfolio Reach', sc_info_crit_abrangencia_desc:'How many products, segments, clients, or partners the change affects.', sc_info_crit_riscotec:'Technical/Security Risk', sc_info_crit_riscotec_desc:'Exposure to security, fraud, or sensitive data involved in the implementation.', sc_info_crit_complex_prod_desc:'Here the logic is inverted compared to Commercial: new or highly technically complex solutions score higher, not lower.', sc_info_pontos_note:'In each model, every criterion receives 1 to 3 points (you choose the range in the project\'s scoring form); the final score is the sum of those points already weighted by the model applicable to the project type (Commercial or Products/IT).', sc_info_cls_hdr:'Automatic classification (applies to both models)', sc_info_cls_alta:'🟢 <b>High</b> (2.50 to 3.00) — high strategic priority', sc_info_cls_media:'🟡 <b>Medium</b> (1.80 to 2.49) — intermediate priority', sc_info_cls_baixa:'🔴 <b>Low</b> (below 1.80) — lower priority', sc_info_alert_note:'⚠️ An alert appears automatically when the most sensitive criterion of each model indicates the most critical scenario — high Complexity in Commercial, or high Regulatory/Contractual Requirement in Products/IT — even with a good score on the other criteria, it\'s worth paying extra attention to that point before committing to a deadline.', sc_alert_no_permission:'You don\'t have permission to edit this project\'s scoring.', sc_alert_delivered_readonly:'Delivered project: available for historical reference only.', sc_alert_tipo_invalido:'Scoring is only available for Commercial or Products/IT projects.', sc_modal_title:'Project Scoring', sc_modal_title_prod:'Project Scoring (Products/IT)', sc_modal_info:'Same criteria and bands as the VMO Scoring spreadsheet. Score and classification are calculated automatically.', sc_modal_info_prod:'Its own criteria for prioritizing Products/IT projects. Score and classification are calculated automatically, on the same scale (1.00 to 3.00) as Commercial scoring.', sc_fld_tpv:'Expected TPV (weight 30%)', sc_fld_receita:'Expected Average Monthly Revenue (weight 30%)', sc_fld_risco:'Relationship Risk (weight 20%)', sc_fld_complexidade:'Implementation Complexity (weight 20%)', sc_fld_complexidade_prod:'Implementation Complexity (weight 25%)', sc_fld_obrigatoriedade:'Regulatory/Contractual Requirement (weight 35%)', sc_fld_abrangencia:'Portfolio Reach (weight 20%)', sc_fld_riscotec:'Technical/Security Risk (weight 20%)', sc_fld_obs:'Notes', sc_select_placeholder:'Select...', sc_btn_remover:'Remove Scoring', sc_preview_preencha:'Fill in all 4 criteria to calculate the score.', sc_alert_preencha_salvar:'Fill in all 4 criteria before saving.', sc_lg_atualizado:'Project scoring updated', sc_lg_atualizado_prod:'Project scoring (Products/IT) updated', sc_lg_removido:'Project scoring removed', sc_lg_removido_prod:'Project scoring (Products/IT) removed', sc_confirm_remover:'Remove this project\'s scoring? This action cannot be undone.', sc_title_editar:'Click to edit the scoring', sc_title_preencher:'Click to fill in the scoring',
-    docs_search_placeholder:'Search by title, description, or tag...', docs_link_confluence:'View page on Confluence', docs_btn_add_material:'Add material', docs_btn_add_debriefing:'New Meeting Minutes', docs_btn_buscar_confluence:'Fetch from Confluence', docs_btn_config_pasta_confluence:'Configure Confluence folder', docs_prompt_link_debriefing_confluence:'Link to the Confluence page/folder where debriefing minutes are kept:', docs_ata_confluence_desc:'Minutes registered directly on Confluence.', docs_atas_confluence_carregando:'Fetching minutes from Confluence…', docs_atas_confluence_erro_prefix:'Could not fetch minutes from Confluence: ', docs_alert_only_editor_link_debriefing:'Only editors and administrators can configure the Confluence minutes link.', docs_cat_apresentacoes:'🖼️ Presentations', docs_cat_documentos:'📄 Documents', docs_cat_planilhas:'📊 Spreadsheets', docs_cat_priorizacao:'📌 Prioritization History', docs_cat_debriefing:'📝 Meeting Minutes', docs_cat_label_apresentacoes:'Presentations', docs_cat_label_documentos:'Documents', docs_cat_label_planilhas:'Spreadsheets', docs_cat_label_priorizacao:'Prioritization History', docs_cat_label_debriefing:'Meeting Minutes', docs_month_filter_all:'All months', docs_priorizacao_sing:'prioritization', docs_priorizacao_plural:'prioritizations', docs_ata_sing:'minutes entry', docs_ata_plural:'minutes entries', docs_subfolder_unificada:'Unified Prioritization', docs_subfolder_segreg:'By Segment/Region', docs_empty_priorizacao:'No prioritization found. Try another month or search.', docs_empty_debriefing:'No meeting minutes found. Try another month or search.', docs_empty_material:'No material found. Try another search or category.', docs_card_ver_lista:'View list', docs_card_sem_link:'No link on file', docs_card_ver_ata:'View minutes', docs_card_abrir:'Open', docs_title_editar:'Edit', docs_title_remover:'Remove', docs_priorizacao_titulo:'Prioritization', docs_sem_notas:'No additional notes.', docs_alert_only_admin_material:'Only administrators can register or edit materials.', docs_modal_title_edit_material:'Edit material', docs_fld_titulo:'Title', docs_fld_descricao:'Description', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separated by comma', docs_alert_informe_titulo:'Enter the material\'s title.', docs_alert_informe_link:'Enter the material\'s link.', docs_alert_only_admin_remove:'Only administrators can remove materials.', docs_confirm_remover_material_tpl:'Remove "{title}" from the library?', docs_alert_only_editor_debriefing:'Only editors and administrators can register meeting minutes.', docs_deb_fld_titulo:'Meeting title', docs_deb_fld_data:'Meeting date', docs_deb_fld_link:'Minutes link (Confluence/Google Docs) — optional', docs_deb_fld_notas:'Notes/summary (optional)', docs_deb_fld_projetos:'Projects discussed', docs_deb_search_placeholder:'Search project by name or key...', docs_deb_modal_title_new:'New meeting minutes', docs_deb_modal_title_edit:'Edit meeting minutes', docs_alert_informe_titulo_reuniao:'Enter the meeting title.', docs_alert_informe_data_reuniao:'Enter the meeting date.', docs_alert_only_admin_remove_ata:'Only administrators can remove meeting minutes.', docs_confirm_remover_ata_tpl:'Remove the minutes "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · saved by {name}', docs_salvo_por_em_tpl:'{n} {projeto} · saved by {name} on {datetime}', docs_btn_baixar_excel:'Download Excel', docs_alert_only_admin_remove_hist:'Only administrators can remove prioritization history.', docs_confirm_remover_hist_tpl:'Remove the prioritization history from {date}?', upd_tt_inserir_link:'Insert link', upd_tt_inserir_arquivo:'Insert file or image', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Link text (optional):', upd_alert_arquivo_grande:'File too large (max. 600 KB). For larger files, share a link (Google Drive, Confluence, etc.) in the update text.', upd_alert_falha_salvar:'Could not save this update to the server (it may be too large a file/image, or a connection issue). The update is only visible on this screen for now — reload the page with caution.', upd_tt_ver_imagem:'Click to view the image at full size', rsm_data_alvo_label:'Target Date:', rsm_ver_todas_atualizacoes:'View all updates', rsm_modal_todas_atualizacoes_title:'All Updates',
+    docs_search_placeholder:'Search by title, description, or tag...', docs_link_confluence:'View page on Confluence', docs_btn_add_material:'Add material', docs_btn_add_debriefing:'New Meeting Minutes', docs_btn_buscar_confluence:'Fetch from Confluence', docs_btn_config_pasta_confluence:'Configure Confluence folder', docs_prompt_link_debriefing_confluence:'Link to the Confluence PAGE or FOLDER where debriefing minutes live (as sub-pages or folder items) — the link must contain /pages/123456789/... or /folder/123456789:', docs_ata_confluence_desc:'Minutes registered directly on Confluence.', docs_atas_confluence_carregando:'Fetching minutes from Confluence…', docs_atas_confluence_erro_prefix:'Could not fetch minutes from Confluence: ', docs_alert_only_editor_link_debriefing:'Only editors and administrators can configure the Confluence minutes link.', docs_cat_apresentacoes:'🖼️ Presentations', docs_cat_documentos:'📄 Documents', docs_cat_planilhas:'📊 Spreadsheets', docs_cat_priorizacao:'📌 Prioritization History', docs_cat_debriefing:'📝 Meeting Minutes', docs_cat_label_apresentacoes:'Presentations', docs_cat_label_documentos:'Documents', docs_cat_label_planilhas:'Spreadsheets', docs_cat_label_priorizacao:'Prioritization History', docs_cat_label_debriefing:'Meeting Minutes', docs_month_filter_all:'All months', docs_priorizacao_sing:'prioritization', docs_priorizacao_plural:'prioritizations', docs_ata_sing:'minutes entry', docs_ata_plural:'minutes entries', docs_subfolder_unificada:'Unified Prioritization', docs_subfolder_segreg:'By Segment/Region', docs_empty_priorizacao:'No prioritization found. Try another month or search.', docs_empty_debriefing:'No meeting minutes found. Try another month or search.', docs_empty_material:'No material found. Try another search or category.', docs_card_ver_lista:'View list', docs_card_sem_link:'No link on file', docs_card_ver_ata:'View minutes', docs_card_abrir:'Open', docs_title_editar:'Edit', docs_title_remover:'Remove', docs_priorizacao_titulo:'Prioritization', docs_sem_notas:'No additional notes.', docs_alert_only_admin_material:'Only administrators can register or edit materials.', docs_modal_title_edit_material:'Edit material', docs_fld_titulo:'Title', docs_fld_descricao:'Description', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separated by comma', docs_alert_informe_titulo:'Enter the material\'s title.', docs_alert_informe_link:'Enter the material\'s link.', docs_alert_only_admin_remove:'Only administrators can remove materials.', docs_confirm_remover_material_tpl:'Remove "{title}" from the library?', docs_alert_only_editor_debriefing:'Only editors and administrators can register meeting minutes.', docs_deb_fld_titulo:'Meeting title', docs_deb_fld_data:'Meeting date', docs_deb_fld_link:'Minutes link (Confluence/Google Docs) — optional', docs_deb_fld_notas:'Notes/summary (optional)', docs_deb_fld_projetos:'Projects discussed', docs_deb_search_placeholder:'Search project by name or key...', docs_deb_modal_title_new:'New meeting minutes', docs_deb_modal_title_edit:'Edit meeting minutes', docs_alert_informe_titulo_reuniao:'Enter the meeting title.', docs_alert_informe_data_reuniao:'Enter the meeting date.', docs_alert_only_admin_remove_ata:'Only administrators can remove meeting minutes.', docs_confirm_remover_ata_tpl:'Remove the minutes "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · saved by {name}', docs_salvo_por_em_tpl:'{n} {projeto} · saved by {name} on {datetime}', docs_btn_baixar_excel:'Download Excel', docs_alert_only_admin_remove_hist:'Only administrators can remove prioritization history.', docs_confirm_remover_hist_tpl:'Remove the prioritization history from {date}?', upd_tt_inserir_link:'Insert link', upd_tt_inserir_arquivo:'Insert file or image', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Link text (optional):', upd_alert_arquivo_grande:'File too large (max. 600 KB). For larger files, share a link (Google Drive, Confluence, etc.) in the update text.', upd_alert_falha_salvar:'Could not save this update to the server (it may be too large a file/image, or a connection issue). The update is only visible on this screen for now — reload the page with caution.', upd_tt_ver_imagem:'Click to view the image at full size', rsm_data_alvo_label:'Target Date:', rsm_ver_todas_atualizacoes:'View all updates', rsm_modal_todas_atualizacoes_title:'All Updates', sch_menu_exportar:'Export', kpi_group_cronograma:'Schedule', kpi_group_saude_cronograma:'Schedule Health', sec_alertas_subtitle_tpl:'Attention points of the active portfolio · {n} active projects', vg_filtrar_por_time:'Filter by team:', vg_time_vmo:'VMO Team', vg_time_transformacao:'Transformation Team', vg_outras_areas:'Other Areas', vg_sem_gp_tbd:'No PM (TBD)', kpi_card_novos_projetos:'🆕 New projects', sec_status_portfolio_subtitle:'Top 10 projects by phase (active)', sec_dados_gerais_subtitle_tpl:'{n} projects in the VMO portfolio', sec_impacto_subtitle_tpl:'Number of active projects each team is touching · {n} teams', sec_carga_subtitle:'Team allocation and overload, comparing demand (active projects) with each person\'s capacity', sec_carga_info_title:'Considers active projects only. Projects with status Cancelled, Backlog, Paused, Post-Production and Presales are filtered out of this count', sec_proximas_entregas_subtitle:'Go Live dates registered in Jira', sec_historico_subtitle_tpl:'Read-only view · {n} projects in Post-Production', hist_btn_entregues:'Delivered projects', hist_btn_cancelados:'Cancelled projects', hist_btn_backlog:'Backlog', hist_btn_pausados:'Paused', hist_count_entregues_tpl:'{n} projects in Post-Production', hist_count_cancelados_tpl:'{n} cancelled projects', hist_count_backlog_tpl:'{n} projects in Backlog', hist_count_pausado_tpl:'{n} paused projects', hist_empty_entregues:'No delivered projects yet.', hist_empty_cancelados:'No cancelled projects yet.', hist_empty_backlog:'No projects in Backlog yet.', hist_empty_pausado:'No paused projects yet.', hist_btn_ver_historico:'View history', shared_mais_n_tpl:'+{n} more', docs_btn_ver_tour:'Welcome tour', tour_step_welcome_title:'Welcome to HUB VMO!', tour_step_welcome_desc:'This is a quick tour of the main areas of the tool. You can skip it at any time and revisit it later under Useful Documents.', tour_step_portfolio_title:'Overview', tour_step_portfolio_desc:'A dashboard with the schedule health of every project, upcoming deliveries, and a milestone calendar — your daily starting point.', tour_step_schedule_title:'Schedules', tour_step_schedule_desc:'Open the detailed schedule for each project: milestones, tasks, subtasks and, if needed, the Gantt chart.', tour_step_resumo_title:'Project Summary', tour_step_resumo_desc:'An executive dashboard per project, with the main indicators and status in one place.', tour_step_updates_title:'Updates', tour_step_updates_desc:'Post status updates and generate the weekly executive email for stakeholders.', tour_step_prioridades_title:'Priorities', tour_step_prioridades_desc:'The portfolio\'s prioritized queue, with filters by health, status and team — and where the Overview cards bring you.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projects ranked by evaluation criteria specific to each project type (IT/Product or Commercial).', tour_step_docs_title:'Useful Documents', tour_step_docs_desc:'Materials, meeting minutes and prioritization history — and this is where you can revisit this tour whenever you need.', tour_btn_pular:'Skip', tour_btn_proximo:'Next', tour_btn_concluir:'Finish', sch_undo_title:'Undo last change (Ctrl+Z)', sch_redo_title:'Redo (Ctrl+Shift+Z)', sch_save_btn:'Save Changes', sch_dirty_count_tpl:'{n} change(s) since last confirmation', sch_saved_toast:'Changes confirmed', sch_confirm_leave_title:'Unconfirmed changes', sch_confirm_leave_desc_tpl:'You made {n} change(s) to this schedule that haven\'t been confirmed with "Save Changes" yet. They were already auto-saved, but it\'s worth reviewing them before continuing. What would you like to do?', sch_confirm_leave_stay_btn:'Keep editing', sch_confirm_leave_btn:'Confirm and leave', sch_confirm_leave_discard_btn:'Don\'t save',
     upd_alert_selecione_projeto_slack:'Select at least one project to send to Slack.',
   },
 };
@@ -3082,6 +3222,16 @@ function canEditComplexidadeTecnica(projectKey) {
   const uName = normPersonKey_(currentUser.name);
   const uHandle = normPersonKey_((currentUser.email || '').split('@')[0]);
   return uName === 'julia machareth' || uHandle === 'julia machareth';
+}
+// Data Alvo (Expectativa de Entrega/duedate) — pedido explícito da Amanda: só o GP daquele
+// projeto específico ou ela mesma podem alterar, igual já vale pra Nota de Complexidade
+// Técnica (ver canEditComplexidadeTecnica) — sem bypass de admin/editor genérico aqui.
+function canEditDataAlvo(projectKey) {
+  if (!currentUser) return false;
+  if ((currentUser.email || '').toLowerCase() === 'amanda.valentim@bemobi.com') return true;
+  const p = PROJECTS.find(x => x.key === projectKey);
+  if (!p) return false;
+  return isGPOfProject(currentUser, p);
 }
 function canEdit(projectKey) {
   if (!currentUser) return false;
@@ -3648,6 +3798,153 @@ let editSubId = null, editSubTaskId = null, editSubNewParentId = null;
 let subProgressTouched = false;
 let depModeVal2 = 'blocked';
 let curUpdKey = null;
+
+// ── UNDO/REDO + SALVAR ALTERAÇÕES (Cronograma) ──
+// Pedido da Amanda: manter o autosave já existente (Firestore+Jira a cada edição) e acrescentar uma
+// camada de segurança por cima — histórico tipo "Ctrl+Z" (múltiplos passos, não só o último), um
+// botão explícito "Salvar Alterações" e um pop-up de confirmação antes de sair do cronograma com
+// alterações ainda não confirmadas. O snapshot é tirado DEPOIS de cada edição, dentro de
+// persistSchedule() (o único ponto de gravação no Firestore) — assim não precisa instrumentar cada
+// função de edição (saveMs, deleteMs, saveTask, drag-reorder, indent/outdent etc.) uma por uma.
+const SCHED_UNDO_MAX = 20;
+const SCHED_UNDO_FIELDS = ['milestones','tasks','subtasks','decisions','minutes','stakeholders','access','calendar','holidays'];
+let scheduleUndoHistory = {}; // {[key]: [snapshot, snapshot, ...]}
+let scheduleUndoIndex = {};   // {[key]: índice do snapshot atual dentro do histórico}
+let scheduleUndoSuppressed = false; // true durante um undo/redo, pra não recapturar o próprio resultado como uma edição nova
+let scheduleDirtyCount = {};  // {[key]: nº de edições desde o último "Salvar Alterações"}
+let schedulePendingNav = null; // callback guardado enquanto o pop-up de confirmação de saída está aberto
+let scheduleConfirmedSnapshot = {}; // {[key]: snapshot do último estado CONFIRMADO (baseline ao abrir o projeto, ou último "Salvar Alterações") — usado pra reverter no "Não salvar"
+
+function snapshotScheduleFields(key){
+  const s = schedules[key]; if(!s) return null;
+  const snap = {};
+  SCHED_UNDO_FIELDS.forEach(f=>{ snap[f] = JSON.parse(JSON.stringify((s[f] !== undefined && s[f] !== null) ? s[f] : (f==='calendar'?'BR':[]))); });
+  return snap;
+}
+function applyScheduleSnapshot(key, snap){
+  if(!schedules[key] || !snap) return;
+  SCHED_UNDO_FIELDS.forEach(f=>{ schedules[key][f] = JSON.parse(JSON.stringify(snap[f])); });
+}
+function initScheduleUndo(key){
+  const snap = snapshotScheduleFields(key);
+  scheduleUndoHistory[key] = snap ? [snap] : [];
+  scheduleUndoIndex[key] = 0;
+  scheduleDirtyCount[key] = 0;
+  scheduleConfirmedSnapshot[key] = snap;
+  updateScheduleUndoUI();
+}
+// Reverte o cronograma pro último estado CONFIRMADO (baseline ao abrir, ou último "Salvar
+// Alterações") e regrava isso no Firestore/Jira, desfazendo o que o autosave já tinha salvo.
+function discardScheduleChanges(key){
+  const snap = scheduleConfirmedSnapshot[key];
+  if(!schedules[key] || !snap) return;
+  applyScheduleSnapshot(key, snap);
+  scheduleUndoSuppressed = true;
+  persistSchedule(key).finally(()=>{ scheduleUndoSuppressed=false; });
+  initScheduleUndo(key); // recomeça o histórico já a partir do estado revertido
+}
+function recordScheduleSnapshot(key){
+  if(scheduleUndoSuppressed) return;
+  if(!scheduleUndoHistory[key]){ initScheduleUndo(key); return; } // primeira gravação vira a própria baseline
+  const hist = scheduleUndoHistory[key];
+  let idx = scheduleUndoIndex[key] ?? 0;
+  hist.length = idx+1; // se o usuário desfez algo e editou de novo, o "futuro" (redo) deixa de existir
+  hist.push(snapshotScheduleFields(key));
+  if(hist.length > SCHED_UNDO_MAX) hist.shift(); else idx++;
+  scheduleUndoIndex[key] = Math.min(idx, hist.length-1);
+  scheduleDirtyCount[key] = (scheduleDirtyCount[key]||0) + 1;
+  updateScheduleUndoUI();
+}
+function canUndoSchedule(key){ return (scheduleUndoIndex[key]||0) > 0; }
+function canRedoSchedule(key){ const hist=scheduleUndoHistory[key]||[]; return (scheduleUndoIndex[key]||0) < hist.length-1; }
+function undoSchedule(){
+  const key=curKey; if(!key || !canUndoSchedule(key)) return;
+  scheduleUndoIndex[key]--;
+  applyScheduleSnapshot(key, scheduleUndoHistory[key][scheduleUndoIndex[key]]);
+  scheduleUndoSuppressed = true;
+  persistSchedule(key).finally(()=>{ scheduleUndoSuppressed=false; });
+  scheduleDirtyCount[key] = (scheduleDirtyCount[key]||0) + 1;
+  renderSchedule();
+  updateScheduleUndoUI();
+}
+function redoSchedule(){
+  const key=curKey; if(!key || !canRedoSchedule(key)) return;
+  scheduleUndoIndex[key]++;
+  applyScheduleSnapshot(key, scheduleUndoHistory[key][scheduleUndoIndex[key]]);
+  scheduleUndoSuppressed = true;
+  persistSchedule(key).finally(()=>{ scheduleUndoSuppressed=false; });
+  scheduleDirtyCount[key] = (scheduleDirtyCount[key]||0) + 1;
+  renderSchedule();
+  updateScheduleUndoUI();
+}
+function updateScheduleUndoUI(){
+  const key=curKey;
+  const undoBtn=document.getElementById('sch-undo-btn'), redoBtn=document.getElementById('sch-redo-btn');
+  if(undoBtn) undoBtn.disabled = !key || !canUndoSchedule(key);
+  if(redoBtn) redoBtn.disabled = !key || !canRedoSchedule(key);
+  const dirty = key ? (scheduleDirtyCount[key]||0) : 0;
+  const ind=document.getElementById('sch-dirty-indicator'), saveBtn=document.getElementById('sch-save-btn');
+  if(ind){ ind.style.display = dirty>0?'':'none'; ind.textContent = dirty>0?fmtLog('sch_dirty_count_tpl',{n:dirty}):''; }
+  if(saveBtn) saveBtn.style.display = (key && dirty>0) ? '' : 'none';
+}
+function confirmScheduleChanges(){
+  const key=curKey; if(!key) return;
+  persistSchedule(key).then(()=>{
+    scheduleDirtyCount[key]=0;
+    scheduleConfirmedSnapshot[key]=snapshotScheduleFields(key);
+    const saveBtn=document.getElementById('sch-save-btn');
+    if(saveBtn){ saveBtn.innerHTML=`<i class="ti ti-check" style="font-size:10px"></i> ${t('sch_saved_toast')}`; setTimeout(()=>{ updateScheduleUndoUI(); if(document.getElementById('sch-save-btn'))document.getElementById('sch-save-btn').innerHTML=`<i class="ti ti-device-floppy" style="font-size:10px"></i> <span data-i18n="sch_save_btn">${t('sch_save_btn')}</span>`; },1800); }
+    else updateScheduleUndoUI();
+  });
+}
+function scheduleHasUnsavedChanges(){
+  return !!(curKey && (scheduleDirtyCount[curKey]||0) > 0);
+}
+// Intercepta uma navegação (trocar de aba, trocar de projeto) quando há alterações no cronograma
+// atual ainda não confirmadas com "Salvar Alterações". Se não houver pendência, executa direto.
+function guardScheduleLeave(proceedCallback){
+  if(!scheduleHasUnsavedChanges()){ proceedCallback(); return true; }
+  schedulePendingNav = proceedCallback;
+  const n = scheduleDirtyCount[curKey]||0;
+  getOrBuildModal('sch-leave-modal', t('sch_confirm_leave_title'),
+    `<div class="info-box">${fmtLog('sch_confirm_leave_desc_tpl',{n})}</div>`,
+    `<button class="btn-d" onclick="discardScheduleLeave()">${t('sch_confirm_leave_discard_btn')}</button><button class="btn-c" onclick="cancelScheduleLeave()">${t('sch_confirm_leave_stay_btn')}</button><button class="btn-s" onclick="confirmScheduleLeave()">${t('sch_confirm_leave_btn')}</button>`);
+  openM('sch-leave-modal');
+  return false;
+}
+function cancelScheduleLeave(){ schedulePendingNav=null; closeM('sch-leave-modal'); }
+function confirmScheduleLeave(){
+  const key=curKey;
+  const cb=schedulePendingNav; schedulePendingNav=null;
+  closeM('sch-leave-modal');
+  if(key){ scheduleConfirmedSnapshot[key]=snapshotScheduleFields(key); scheduleDirtyCount[key]=0; }
+  if(cb) cb();
+}
+// "Não salvar": descarta as edições feitas desde a última confirmação, revertendo pro último
+// estado confirmado (e regravando isso no Firestore/Jira), e só então sai.
+function discardScheduleLeave(){
+  const key=curKey;
+  const cb=schedulePendingNav; schedulePendingNav=null;
+  closeM('sch-leave-modal');
+  if(key) discardScheduleChanges(key);
+  if(cb) cb();
+}
+window.addEventListener('beforeunload', function(e){
+  if(scheduleHasUnsavedChanges()){ e.preventDefault(); e.returnValue=''; }
+});
+document.addEventListener('keydown', function(e){
+  if(!document.getElementById('view-schedule')?.classList.contains('active')) return;
+  const tag=(e.target&&e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||(e.target&&e.target.isContentEditable)) return;
+  const mod = e.ctrlKey||e.metaKey;
+  if(!mod) return;
+  if(e.key==='z'||e.key==='Z'){
+    if(e.shiftKey){ e.preventDefault(); redoSchedule(); } else { e.preventDefault(); undoSchedule(); }
+  } else if(e.key==='y'||e.key==='Y'){
+    e.preventDefault(); redoSchedule();
+  }
+});
+
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 const EMAIL_RECIPIENTS = ['tainah.andrade@bemobi.com', 'julia.machareth@bemobi.com', 'gabriel.oliveira@bemobi.com', 'erik.moulin@bemobi.com', 'amanda.valentim@bemobi.com'];
 
@@ -3709,9 +4006,37 @@ function resetTabFilters(){
   ['fbtn-all','scfbtn-all','sctypebtn-all'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('on');});
   document.querySelector('#docs-filters [data-doccat="all"]')?.classList.add('on');
 }
+// Achado o resto do bug do Cronograma "continua no mesmo projeto": o overlay "sch-empty-state"
+// (que mostra "Escolha um projeto...") só cobre a área da tabela/Gantt (#se-body) — o cabeçalho
+// de cima (título do projeto, link do Jira, "Copiar link", banner de "Pós produção", resumo do
+// projeto, barra de seleção em massa, mini linha do tempo) fica FORA dessa área e continuava
+// mostrando os dados do último projeto aberto, mesmo com curKey já zerado. Por isso na prática
+// "parecia" que nada tinha sido resetado, mesmo o projeto selecionado já estando limpo por
+// dentro. Esta função limpa/esconde tudo isso também.
+function resetScheduleHeaderToEmpty(){
+  const title_=document.getElementById('se-title');if(title_)title_.textContent=t('select_project');
+  const jl_=document.getElementById('se-jira-lnk');if(jl_)jl_.style.display='none';
+  const clb_=document.getElementById('copy-link-btn');if(clb_)clb_.style.display='none';
+  const banner_=document.getElementById('delivered-banner');if(banner_)banner_.style.display='none';
+  const projSum_=document.getElementById('proj-sum');if(projSum_)projSum_.innerHTML='';
+  const bulkBar_=document.getElementById('ms-bulk-bar');if(bulkBar_)bulkBar_.style.display='none';
+  const ganttTl_=document.getElementById('gantt-timeline');if(ganttTl_)ganttTl_.style.display='none';
+  const tblHdr_=document.getElementById('tbl-hdr');if(tblHdr_)tblHdr_.innerHTML='';
+  const tblRows_=document.getElementById('tbl-rows');if(tblRows_)tblRows_.innerHTML='';
+  const monthRow_=document.getElementById('month-row');if(monthRow_)monthRow_.innerHTML='';
+  const daysRow_=document.getElementById('days-row');if(daysRow_)daysRow_.innerHTML='';
+  const chartRows_=document.getElementById('chart-rows');if(chartRows_)chartRows_.innerHTML='';
+  const es_=document.getElementById('sch-empty-state');if(es_)es_.style.display='flex';
+  updateScheduleUndoUI();
+}
 function showView(v,resetSelection){
   // Block tab access based on role
   if(!canViewTab(v)){return;}
+  // Saindo do Cronograma com alterações ainda não confirmadas ("Salvar Alterações")? Confirma antes
+  // de trocar de aba — pedido da Amanda, camada de segurança em cima do autosave já existente.
+  if(lastActiveView==='schedule' && v!=='schedule' && scheduleHasUnsavedChanges()){
+    if(!guardScheduleLeave(()=>showView(v,resetSelection)))return;
+  }
   if(v!==lastActiveView){resetTabFilters();}
   // Bug reportado pela Amanda: clicar na aba Cronogramas (ou Resumo dos Projetos) pelo menu
   // lateral voltava pro MESMO projeto que estava aberto antes, em vez de voltar pra lista —
@@ -3743,7 +4068,14 @@ function showView(v,resetSelection){
   if(v==='scoring')renderScoringView();
   if(v==='prioridades')renderPortfolio();
   if(v==='resumo'){renderResumoProjectList();if(curKey){renderResumoDashboard();}else{const re_=document.getElementById('rsm-empty');const rb_=document.getElementById('rsm-body');if(re_)re_.style.display='flex';if(rb_)rb_.style.display='none';}}
-  if(v==='schedule'){renderScheduleProjectList();applySchSidebarVisibility();if(curKey){renderSchedule();}else{const es_=document.getElementById('sch-empty-state');if(es_)es_.style.display='flex';}}
+  if(v==='schedule'){
+    renderScheduleProjectList();
+    // Sem projeto selecionado (tela de lista): resincroniza com a preferência salva da lista
+    // lateral — desfaz qualquer auto-esconder que tenha ficado de um projeto visto antes.
+    if(!curKey){try{schSidebarHidden=localStorage.getItem(SCH_SIDEBAR_HIDDEN_KEY)==='1';}catch(e){}}
+    applySchSidebarVisibility();
+    if(curKey){renderSchedule();}else{resetScheduleHeaderToEmpty();}
+  }
   if(v==='docs')renderDocsLibrary();
 }
 
@@ -4266,6 +4598,11 @@ function clearOtherFilterCategories(except){
   }
 }
 function setF(f,el){
+  // showView() primeiro: se estiver vindo de outra aba (ex.: card da Visão Geral), o
+  // resetTabFilters() interno dele roda AGORA, antes da gente setar o filtro de verdade —
+  // assim ele não apaga o filtro que a pessoa acabou de escolher (bug reportado pela Amanda:
+  // clique nos cards não aplicava o filtro em Prioridades).
+  showView('prioridades');
   clearOtherFilterCategories('pf');
   if(f==='all'){pfFilter=new Set(['all']);document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
   else{pfFilter.delete('all');document.getElementById('fbtn-all').classList.remove('on');
@@ -4273,7 +4610,7 @@ function setF(f,el){
     else{pfFilter.add(f);el.classList.add('on');}
     if(!pfFilter.size){pfFilter=new Set(['all']);document.getElementById('fbtn-all').classList.add('on');}
   }
-  showView('prioridades');
+  renderPortfolio();
 }
 // ── Campos manuais do Portfólio (não vêm do Jira, editados direto no HUB) ──
 // TPV Previsto, Receita Líquida Prevista, Driver Estratégico/Regulatório e Driver Data.
@@ -4359,6 +4696,36 @@ async function pushGoLiveToJira(key,golive){
     if(!d.ok)console.warn('pushGoLiveToJira:',key,d.error);
     return d;
   }catch(e){console.warn('pushGoLiveToJira error:',key,e.message);return{ok:false,error:e.message};}
+}
+// ── Data Alvo editável no Resumo dos Projetos ──────────────────────────────
+// Mesmo campo por baixo do Go Live (Jira: Data limite/duedate) — reaproveita o mesmo push
+// (pushGoLiveToJira/updateGoLive) em vez de criar uma action nova no Apps Script. Só quem
+// passa por canEditDataAlvo() (GP daquele projeto ou Amanda) vê a opção de editar.
+function editDataAlvo(key){
+  if(!canEditDataAlvo(key)){alert(t('rsm_alert_only_gp_data_alvo'));return;}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  getOrBuildModal('edit-dataalvo-modal',t('rsm_modal_title_editar_dataalvo'),`
+    <div class="info-box" style="margin-bottom:8px">${t('rsm_info_dataalvo')}</div>
+    <input id="edit-dataalvo-input" type="date" value="${p.duedate||''}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+  `,`<button class="btn-c" onclick="closeM('edit-dataalvo-modal')">${t('btn_cancelar')}</button><button class="btn-s" onclick="saveDataAlvo('${key}')">${t('btn_salvar')}</button>`);
+  openM('edit-dataalvo-modal');
+}
+function saveDataAlvo(key){
+  if(!canEditDataAlvo(key))return;
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  const val=document.getElementById('edit-dataalvo-input').value;
+  p.duedate=val||null;
+  logChange(key,t('rsm_lg_dataalvo_manual'),'#0369a1');
+  persistProjects();
+  closeM('edit-dataalvo-modal');
+  if(key===curKey)renderResumoDashboard();
+  renderPortfolio();
+  // Campo dedicado "Data Alvo" no Jira (customfield_31229, criado pela Amanda especificamente
+  // pra esse fluxo: nasce vazio no Jira e é documentado lá só depois que o GP preenche aqui no
+  // HUB). Usa o mesmo mecanismo genérico de MANUAL_FIELD_JIRA_MAP/pushManualFieldToJira já usado
+  // pra TPV Previsto/Receita — NÃO é o mesmo campo de Go Live (p.golive, "Data limite"/duedate
+  // nativo) nem "Expectativa de Entrega" (customfield_27831/27946).
+  pushManualFieldToJira(key,'customfield_31229',p.duedate);
 }
 // ── Nota de Complexidade (1 a 5) ──────────────────────────────────────────
 // Dois campos independentes, com público e permissão diferentes:
@@ -4524,6 +4891,9 @@ function renderPortfolio(){
   const tbody=document.getElementById('pf-body');tbody.innerHTML='';
   const visible=PROJECTS.filter(p=>{
     if(p.status===DELIVERED_STATUS)return false; // entregues ficam só no Histórico
+    // Backlog e Pausado saem da visão de Portfólio (pedido explícito da Amanda) — continuam
+    // acessíveis só pra consulta na seção Histórico, igual já valia pros entregues/cancelados.
+    if(p.status==='BACKLOG'||p.status==='PAUSADO')return false;
     if(q&&!p.summary.toLowerCase().includes(q)&&!p.key.toLowerCase().includes(q))return false;
     if(!pfFilter.has('all')){
       const st0=getStats(p.key);
@@ -4628,6 +4998,11 @@ function renderPortfolio(){
     if(gpF.size>0)gpF.forEach(g=>filters2.push({label:window.fmtLog('prio_chip_gp_tpl',{v:g.split(' ')[0]}),clear:()=>{msFilters.gp.delete(g);updateDD('dd-gp','dd-gp-lbl','gp','prio_ph_gp');renderPortfolio();},col:'#5b21b6',bg:'#ede9fe'}));
     if(healthF.size>0)healthF.forEach(h=>filters2.push({label:h==='on-track'?window.t('prio_chip_health_ontrack'):h==='alert'?window.t('prio_chip_health_alert'):h==='off-track'?window.t('prio_chip_health_offtrack'):window.t('prio_chip_health_none'),clear:()=>{msFilters.health.delete(h);updateDD('dd-health','dd-health-lbl','health','prio_ph_health');renderPortfolio();},col:'#166534',bg:'#dcfce7'}));
     if(timesF.size>0)timesF.forEach(t=>filters2.push({label:window.fmtLog('prio_chip_time_tpl',{v:t.slice(0,12)}),clear:()=>{msFilters.times.delete(t);updateDD('dd-times','dd-times-lbl','times','prio_ph_times');renderPortfolio();},col:'#0369a1',bg:'#e0f2fe'}));
+    // Chips dos filtros disparados pelos cards da Visão Geral (Saúde do Go Live / Alertas) —
+    // antes não apareciam aqui, então quem clicava num card não tinha como confirmar visualmente
+    // qual filtro estava ativo (a tabela só mostra "Saúde Cron.", métrica diferente da que esses
+    // cards filtram), nem um jeito fácil de limpar sem voltar pra Visão Geral e clicar de novo.
+    if(alertFilter)filters2.push({label:alertFilter==='critical'?window.t('prio_caminho_critico_badge'):alertFilter==='stale'?window.t('alert_chip_stale'):alertFilter==='never'?window.t('alert_chip_never'):alertFilter==='updated'?window.t('alert_chip_updated'):window.t('prio_em_risco_badge'),clear:()=>{alertFilter=null;document.querySelectorAll('.alert-kc').forEach(e=>e.classList.remove('alert-kc-on'));renderPortfolio();},col:'#9a3412',bg:'#fed7aa'});
     filters2.forEach(fc=>{const chip=document.createElement('span');chip.style.cssText='font-size:9.5px;background:'+fc.bg+';color:'+fc.col+';padding:2px 8px;border-radius:10px;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap';chip.innerHTML=fc.label+' ×';chip.onclick=fc.clear;afr.appendChild(chip);});
   }
   if(_pfScrollEl){_pfScrollEl.scrollTop=_pfScrollTop;_pfScrollEl.scrollLeft=_pfScrollLeft;}
@@ -4646,6 +5021,7 @@ function getPrioridadesExportRows(){
   const scopedReorder = soloSeg?{priKey:'segmentPriority'}:soloReg?{priKey:'regionPriority'}:null;
   const visible=PROJECTS.filter(p=>{
     if(p.status===DELIVERED_STATUS)return false;
+    if(p.status==='BACKLOG'||p.status==='PAUSADO')return false;
     if(q&&!p.summary.toLowerCase().includes(q)&&!p.key.toLowerCase().includes(q))return false;
     if(!pfFilter.has('all')){
       const st0=getStats(p.key);
@@ -4808,7 +5184,10 @@ function renderKPI(){
     CANCELADO:vgProjects.filter(p=>p.status==='CANCELADO').length,
   };
   const total=carteiraProjects.length;
-  const activeProjects=vgProjects.filter(p=>p.status!==DELIVERED_STATUS);
+  // Presales (Pré-vendas) sai da contagem dos cards de Alertas/Overview — pedido explícito da
+  // Amanda: são oportunidades que ainda nem entraram de fato na carteira ativa, então não fazem
+  // sentido pesando em "Novos projetos", Saúde do Cronograma, Atualizações etc.
+  const activeProjects=vgProjects.filter(p=>p.status!==DELIVERED_STATUS&&p.status!=='PRESALES');
   const delivered=vgProjects.filter(p=>p.status===DELIVERED_STATUS);
   const byStatus={};
   carteiraProjects.forEach(p=>{byStatus[p.status]=(byStatus[p.status]||0)+1;});
@@ -4857,17 +5236,23 @@ function renderKPI(){
   const staleCount=activeProjects.filter(p=>{const a=getStaleAlert(p.key);return a&&!a.never;}).length;
   const neverUpdatedCount=activeProjects.filter(p=>{const a=getStaleAlert(p.key);return a&&a.never;}).length;
   const updatedCount=activeProjects.filter(p=>isRecentlyUpdated(p.key)).length;
-  // Nos trilhos / Em risco / Fora dos trilhos (aba Cronogramas): usa glHealth, que compara o fim
-  // estimado do cronograma com a data de Go Live do Jira (ver getStats).
-  const onTrackActive=activeProjects.filter(p=>getStats(p.key).glHealth==='on-track').length;
-  const alertActive=activeProjects.filter(p=>getStats(p.key).glHealth==='alert').length;
-  const offTrackActive=activeProjects.filter(p=>getStats(p.key).glHealth==='off-track').length;
+  // Nos trilhos / Em risco / Fora dos trilhos: usa a MESMA "Saúde Cron." automática (por
+  // tarefas atrasadas, ver getStats/health) que já aparece na coluna "Saúde Cron." da tabela de
+  // Prioridades — pedido da Amanda pra não ter duas métricas parecidas (esse card usava antes
+  // glHealth, que comparava o fim estimado do cronograma com a data de Go Live do Jira).
+  const onTrackActive=activeProjects.filter(p=>getStats(p.key).health==='on-track').length;
+  const alertActive=activeProjects.filter(p=>getStats(p.key).health==='alert').length;
+  const offTrackActive=activeProjects.filter(p=>getStats(p.key).health==='off-track').length;
 
   // ── Status do Portfólio: Top 10 por fase (todos os projetos ativos, menos cancelados —
   // Pós produção já sai de activeProjects. Não exige cronograma definido: esse recorte é
   // separado do "Com cronograma/Sem cronograma" acima, que sim usa cronogramaBase.) ──
+  // Status do Portfólio usa uma base própria: mantém Presales (1ª coluna, já é o primeiro item
+  // de ETAPA_ORDER) mas tira Backlog e Pausado das colunas — pedido explícito da Amanda.
+  // Diferente de activeProjects, que já exclui Presales só pros cards de saúde/alertas (Overview).
+  const etapaBase=vgProjects.filter(p=>p.status!==DELIVERED_STATUS&&p.status!=='CANCELADO'&&p.status!=='BACKLOG'&&p.status!=='PAUSADO');
   const etapaGroups={};
-  activeProjects.filter(p=>p.status!=='CANCELADO').forEach(p=>{(etapaGroups[p.status]=etapaGroups[p.status]||[]).push(p);});
+  etapaBase.forEach(p=>{(etapaGroups[p.status]=etapaGroups[p.status]||[]).push(p);});
   const etapaOrder=Object.keys(etapaGroups).sort((a,b)=>{
     const ia=ETAPA_ORDER_NORM.indexOf(normEtapa_(a)),ib=ETAPA_ORDER_NORM.indexOf(normEtapa_(b));
     const pa=ia===-1?999:ia,pb=ib===-1?999:ib;
@@ -4888,7 +5273,7 @@ function renderKPI(){
       </div>
       <div class="cal-items">
         ${toShow.map(p=>`<div class="cal-item no-sched" style="cursor:pointer" onclick="openProject('${p.key}')"><b>${p.key}</b> · ${p.summary.length>32?p.summary.slice(0,32)+'…':p.summary}</div>`).join('')}
-        ${rest>0?`<div style="font-size:8.5px;color:var(--purple);font-weight:600;padding:3px 7px;cursor:pointer" onclick="toggleEtapaCol('${escEtapa(s)}')">${isExp?'Ver menos':'+'+rest+' mais'}</div>`:''}
+        ${rest>0?`<div style="font-size:8.5px;color:var(--purple);font-weight:600;padding:3px 7px;cursor:pointer" onclick="toggleEtapaCol('${escEtapa(s)}')">${isExp?t('rsm_ver_menos_btn'):fmtLog('shared_mais_n_tpl',{n:rest})}</div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -4898,87 +5283,87 @@ function renderKPI(){
     // tinha um filtro próprio à parte; agora usa este mesmo daqui — pedido explícito da Amanda:
     // um filtro só, aplicado em tudo).
     `<div style="display:flex;align-items:center;gap:8px;padding:12px 14px 2px;flex-wrap:wrap">
-      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px">Filtrar por time:</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px">${t('vg_filtrar_por_time')}</span>
       <div class="cal-mode-btns" id="vg-team-tabs">
-        <button class="cmb ${vgTeamFilter==='all'?'on':''}" onclick="setVgTeamFilter('all',this)">Todos</button>
-        <button class="cmb ${vgTeamFilter==='VMO'?'on':''}" onclick="setVgTeamFilter('VMO',this)">Time VMO</button>
-        <button class="cmb ${vgTeamFilter==='PMO'?'on':''}" onclick="setVgTeamFilter('PMO',this)">Time Transformação</button>
-        <button class="cmb ${vgTeamFilter==='OUTRAS'?'on':''}" onclick="setVgTeamFilter('OUTRAS',this)">Outras Áreas</button>
-        <button class="cmb ${vgTeamFilter==='TBD'?'on':''}" onclick="setVgTeamFilter('TBD',this)">Sem GP (TBD)</button>
+        <button class="cmb ${vgTeamFilter==='all'?'on':''}" onclick="setVgTeamFilter('all',this)">${t('prio_todos')}</button>
+        <button class="cmb ${vgTeamFilter==='VMO'?'on':''}" onclick="setVgTeamFilter('VMO',this)">${t('vg_time_vmo')}</button>
+        <button class="cmb ${vgTeamFilter==='PMO'?'on':''}" onclick="setVgTeamFilter('PMO',this)">${t('vg_time_transformacao')}</button>
+        <button class="cmb ${vgTeamFilter==='OUTRAS'?'on':''}" onclick="setVgTeamFilter('OUTRAS',this)">${t('vg_outras_areas')}</button>
+        <button class="cmb ${vgTeamFilter==='TBD'?'on':''}" onclick="setVgTeamFilter('TBD',this)">${t('vg_sem_gp_tbd')}</button>
       </div>
     </div>`+
     // Alertas e Cronogramas voltaram a ficar juntos numa única seção, chamada só de "Alertas" —
     // ela abre expandida por padrão (ver sectionState); as demais seções começam fechadas.
-    secHdr('alertas','#fee2e2','#b91c1c','ti-alert-triangle',t('sec_alertas'),'Pontos de atenção do portfólio ativo · '+activeProjects.length+' projetos ativos')+
+    secHdr('alertas','#fee2e2','#b91c1c','ti-alert-triangle',t('sec_alertas'),fmtLog('sec_alertas_subtitle_tpl',{n:activeProjects.length}))+
     `<div class="kpi-row2">
       <div class="kpi-group">
-      <div class="kpi-group-label">Cronograma</div>
+      <div class="kpi-group-label">${t('kpi_group_cronograma')}</div>
       <div class="kpi-group-cards">
       <div class="kc2" style="background:#ede9fe;border-color:#ddd6fe;cursor:pointer" title="Filtrar: com cronograma" onclick="setF('sched',document.getElementById('fbtn-sched'))">
         <div style="font-size:20px;font-weight:700;color:#6d28d9;line-height:1">${withSchedActive}</div>
         <div style="font-size:8.5px;color:#6d28d9;opacity:.75;font-weight:600">${cronogramaBase.length?Math.round(withSchedActive/cronogramaBase.length*100):0}%</div>
-        <div style="font-size:9px;color:#6d28d9;margin-top:2px;font-weight:500">Com cronograma</div>
+        <div style="font-size:9px;color:#6d28d9;margin-top:2px;font-weight:500">${t('prio_com_cronograma')}</div>
       </div>
       <div class="kc2" style="background:#f1f5f9;border-color:#cbd5e1;cursor:pointer" title="Filtrar: sem cronograma" onclick="setF('nosched',document.getElementById('fbtn-nosched'))">
         <div style="font-size:20px;font-weight:700;color:#475569;line-height:1">${noSchedActive}</div>
         <div style="font-size:8.5px;color:#475569;opacity:.75;font-weight:600">${cronogramaBase.length?Math.round(noSchedActive/cronogramaBase.length*100):0}%</div>
-        <div style="font-size:9px;color:#475569;margin-top:2px;font-weight:500">📋 Sem cronograma</div>
+        <div style="font-size:9px;color:#475569;margin-top:2px;font-weight:500">📋 ${t('prio_sem_cronograma')}</div>
       </div>
       <div class="kc2" style="background:#dbeafe;border-color:#bfdbfe;cursor:pointer" title="Filtrar: novos projetos" onclick="filterByStatus('Novos projetos')">
         <div style="font-size:20px;font-weight:700;color:#2563eb;line-height:1">${novosCount}</div>
         <div style="font-size:8.5px;color:#2563eb;opacity:.75;font-weight:600">${activeProjects.length?Math.round(novosCount/activeProjects.length*100):0}%</div>
-        <div style="font-size:9px;color:#2563eb;margin-top:2px;font-weight:500">🆕 Novos projetos</div>
+        <div style="font-size:9px;color:#2563eb;margin-top:2px;font-weight:500">${t('kpi_card_novos_projetos')}</div>
       </div>
       </div>
       </div>
       <div class="kpi-divider2"></div>
       <div class="kpi-group">
-      <div class="kpi-group-label">Saúde do Go Live</div>
+      <div class="kpi-group-label">${t('kpi_group_saude_cronograma')}</div>
       <div class="kpi-group-cards">
-      <div class="kc2" style="background:#dcfce7;border-color:#86efac;cursor:pointer" title="Filtrar: nos trilhos — fim estimado do cronograma com folga confortável antes do Go Live" onclick="filterByGoLiveHealth('on-track')">
+      <div class="kc2${msFilters.health.has('on-track')?' alert-kc-on':''}" style="background:#dcfce7;border-color:#86efac;cursor:pointer" title="Filtrar: nos trilhos — sem tarefas atrasadas no cronograma" onclick="filterByHealth('on-track')">
         <div style="font-size:20px;font-weight:700;color:#166534;line-height:1">${onTrackActive}</div>
         <div style="font-size:8.5px;color:#166534;opacity:.75;font-weight:600">${withSchedActive?Math.round(onTrackActive/withSchedActive*100):0}%</div>
-        <div style="font-size:9px;color:#166534;margin-top:2px;font-weight:500">✓ Nos trilhos</div>
+        <div style="font-size:9px;color:#166534;margin-top:2px;font-weight:500">${t('hb_on_track')}</div>
       </div>
-      <div class="kc2" style="background:#fef9c3;border-color:#fde047;cursor:pointer" title="Filtrar: em risco — fim estimado do cronograma até ${HEALTH_AT_RISK_BUFFER_DAYS} dias antes do Go Live" onclick="filterByGoLiveHealth('alert')">
+      <div class="kc2${msFilters.health.has('alert')?' alert-kc-on':''}" style="background:#fef9c3;border-color:#fde047;cursor:pointer" title="Filtrar: em risco — até 3 tarefas atrasadas no cronograma" onclick="filterByHealth('alert')">
         <div style="font-size:20px;font-weight:700;color:#854d0e;line-height:1">${alertActive}</div>
         <div style="font-size:8.5px;color:#854d0e;opacity:.75;font-weight:600">${withSchedActive?Math.round(alertActive/withSchedActive*100):0}%</div>
-        <div style="font-size:9px;color:#854d0e;margin-top:2px;font-weight:500">⚠ Em risco</div>
+        <div style="font-size:9px;color:#854d0e;margin-top:2px;font-weight:500">${t('hb_alert')}</div>
       </div>
-      <div class="kc2" style="background:#fee2e2;border-color:#fca5a5;cursor:pointer" title="Filtrar: fora dos trilhos — fim estimado do cronograma depois do Go Live" onclick="filterByGoLiveHealth('off-track')">
+      <div class="kc2${msFilters.health.has('off-track')?' alert-kc-on':''}" style="background:#fee2e2;border-color:#fca5a5;cursor:pointer" title="Filtrar: fora dos trilhos — mais de 3 tarefas atrasadas no cronograma" onclick="filterByHealth('off-track')">
         <div style="font-size:20px;font-weight:700;color:#b91c1c;line-height:1">${offTrackActive}</div>
         <div style="font-size:8.5px;color:#b91c1c;opacity:.75;font-weight:600">${withSchedActive?Math.round(offTrackActive/withSchedActive*100):0}%</div>
-        <div style="font-size:9px;color:#b91c1c;margin-top:2px;font-weight:500">✗ Fora dos trilhos</div>
+        <div style="font-size:9px;color:#b91c1c;margin-top:2px;font-weight:500">${t('hb_off_track')}</div>
       </div>
       </div>
       </div>
       <div class="kpi-divider2"></div>
       <div class="kpi-group">
-      <div class="kpi-group-label">Atualizações</div>
+      <div class="kpi-group-label">${t('upd_title_tab')}</div>
       <div class="kpi-group-cards">
       <div class="kc2 alert-kc${alertFilter==='stale'?' alert-kc-on':''}" style="background:#ffedd5;border-color:#fdba74;cursor:pointer" title="Filtrar: já publicou atualização alguma vez, mas está há 7+ dias sem nenhuma nova" onclick="filterByAlert('stale',this)">
         <div style="font-size:20px;font-weight:700;color:#c2410c;line-height:1">${staleCount}</div>
         <div style="font-size:8.5px;color:#c2410c;opacity:.75;font-weight:600">${activeProjects.length?Math.round(staleCount/activeProjects.length*100):0}%</div>
-        <div style="font-size:9px;color:#c2410c;margin-top:2px;font-weight:500">🟠 Sem Atualização</div>
+        <div style="font-size:9px;color:#c2410c;margin-top:2px;font-weight:500">🟠 ${t('alert_chip_stale')}</div>
       </div>
       <div class="kc2 alert-kc${alertFilter==='never'?' alert-kc-on':''}" style="background:#fed7aa;border-color:#fb923c;cursor:pointer" title="Filtrar: projetos ativos que nunca tiveram nenhuma atualização publicada" onclick="filterByAlert('never',this)">
         <div style="font-size:20px;font-weight:700;color:#9a3412;line-height:1">${neverUpdatedCount}</div>
         <div style="font-size:8.5px;color:#9a3412;opacity:.75;font-weight:600">${activeProjects.length?Math.round(neverUpdatedCount/activeProjects.length*100):0}%</div>
-        <div style="font-size:9px;color:#9a3412;margin-top:2px;font-weight:500">⭕ Nunca Atualizado</div>
+        <div style="font-size:9px;color:#9a3412;margin-top:2px;font-weight:500">⭕ ${t('alert_chip_never')}</div>
       </div>
       <div class="kc2 alert-kc${alertFilter==='updated'?' alert-kc-on':''}" style="background:#dcfce7;border-color:#86efac;cursor:pointer" title="Filtrar: projetos ativos que publicaram atualização há menos de ${STALE_DAYS_THRESHOLD} dias" onclick="filterByAlert('updated',this)">
         <div style="font-size:20px;font-weight:700;color:#166534;line-height:1">${updatedCount}</div>
         <div style="font-size:8.5px;color:#166534;opacity:.75;font-weight:600">${activeProjects.length?Math.round(updatedCount/activeProjects.length*100):0}%</div>
-        <div style="font-size:9px;color:#166534;margin-top:2px;font-weight:500">🟢 Projetos Atualizados</div>
+        <div style="font-size:9px;color:#166534;margin-top:2px;font-weight:500">🟢 ${t('alert_chip_updated')}</div>
       </div>
       </div>
       </div>
     </div></div>`+
 
-    secHdr('etapas','#fef3c7','#92400e','ti-columns',t('sec_status_portfolio'),'Top 10 projetos por fase (ativos)')+
+    secHdr('etapas','#fef3c7','#92400e','ti-columns',t('sec_status_portfolio'),t('sec_status_portfolio_subtitle'))+
     `<div id="etapa-grid" style="display:flex;gap:8px;overflow-x:auto;padding:10px 14px 12px">${etapaCols||'<div style="font-size:11px;color:var(--text3);padding:8px">Nenhum projeto ativo.</div>'}</div></div>`+
 
-    secHdr('status','#ede9fe','#6924E1','ti-chart-pie',t('sec_dados_gerais'),total+' projetos na carteira VMO')+
+    secHdr('status','#ede9fe','#6924E1','ti-chart-pie',t('sec_dados_gerais'),fmtLog('sec_dados_gerais_subtitle_tpl',{n:total}))+
     `<div class="status-card-row">
       <div class="kc2 total-card" title="Filtrar: Todos os projetos" onclick="filterAllStatus()">
         <div style="font-size:26px;font-weight:700;color:var(--navy);line-height:1">${total}</div>
@@ -5001,47 +5386,48 @@ function renderKPI(){
       ${statusChartMoreBtn}
     </div></div>`+
 
-    secHdr('impacto','#ecfeff','#0e7490','ti-users',t('sec_impacto_time'),'Quantidade de projetos ativos que cada time está tocando · '+getAllTeams().length+' time'+(getAllTeams().length!==1?'s':''))+
+    secHdr('impacto','#ecfeff','#0e7490','ti-users',t('sec_impacto_time'),fmtLog('sec_impacto_subtitle_tpl',{n:getAllTeams().length}))+
     `<div id="team-impact-body"></div>
     </div>`+
 
-    secHdr('carga','#fff7ed','#c2410c','ti-scale',t('sec_carga'),'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i>')+
+    secHdr('carga','#fff7ed','#c2410c','ti-scale',t('sec_carga'),t('sec_carga_subtitle')+' <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="'+t('sec_carga_info_title')+'"></i>')+
     `<div id="carga-body"></div>
     </div>`+
 
-    secHdr('cal','#e0f9ff','#0369a1','ti-calendar-check',t('sec_proximas_entregas'),'Datas de Go Live cadastradas no Jira','')+
+    secHdr('cal','#e0f9ff','#0369a1','ti-calendar-check',t('sec_proximas_entregas'),t('sec_proximas_entregas_subtitle'),'')+
     `<div style="padding:8px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border2);flex-wrap:wrap">
       <span style="font-size:10px;color:var(--text3);font-weight:500">Visualizar por:</span>
       <div class="cal-mode-btns">
-        <button class="cmb on" onclick="setCalMode('month',this)">Mês</button>
-        <button class="cmb" onclick="setCalMode('fortnight',this)">Quinzena</button>
-        <button class="cmb" onclick="setCalMode('week',this)">Semana</button>
-        <button class="cmb" onclick="setCalMode('category',this)">Verticais</button>
+        <button class="cmb ${calModeVal==='month'?'on':''}" onclick="setCalMode('month',this)">Mês</button>
+        <button class="cmb ${calModeVal==='fortnight'?'on':''}" onclick="setCalMode('fortnight',this)">Quinzena</button>
+        <button class="cmb ${calModeVal==='week'?'on':''}" onclick="setCalMode('week',this)">Semana</button>
+        <button class="cmb ${calModeVal==='category'?'on':''}" onclick="setCalMode('category',this)">Verticais</button>
       </div>
       <div style="flex:1"></div>
-      <button class="cmb" id="cal-historico-btn" title="Mostrar também os meses/períodos que já passaram" onclick="toggleCalHistorico(this)"><i class="ti ti-history" style="font-size:10px"></i> Histórico</button>
+      <button class="cmb${calShowHistorico?' on':''}" id="cal-historico-btn" title="Mostrar também os meses/períodos que já passaram" onclick="toggleCalHistorico(this)"><i class="ti ti-history" style="font-size:10px"></i> Histórico</button>
     </div>
     <div id="cal-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
     </div>`+
 
-    secHdr('historico','#f1f5f9','#475569','ti-archive',t('sec_historico'),'Consulta apenas leitura · <span id="historico-count">'+delivered.length+' projeto'+(delivered.length!==1?'s':'')+' em Pós produção</span>',
+    secHdr('historico','#f1f5f9','#475569','ti-archive',t('sec_historico'),'<span id="historico-count">'+fmtLog('sec_historico_subtitle_tpl',{n:delivered.length})+'</span>',
       `<div class="cal-mode-btns" id="historico-view-btns" onclick="event.stopPropagation()">
-        <button class="cmb ${historicoView==='entregues'?'on':''}" onclick="setHistoricoView('entregues',this)">Projetos entregues</button>
-        <button class="cmb ${historicoView==='cancelados'?'on':''}" onclick="setHistoricoView('cancelados',this)">Projetos cancelados</button>
-        <button class="cmb ${historicoView==='backlog'?'on':''}" onclick="setHistoricoView('backlog',this)">Backlog</button>
-        <button class="cmb ${historicoView==='pausado'?'on':''}" onclick="setHistoricoView('pausado',this)">Pausados</button>
+        <button class="cmb ${historicoView==='entregues'?'on':''}" onclick="setHistoricoView('entregues',this)">${t('hist_btn_entregues')}</button>
+        <button class="cmb ${historicoView==='cancelados'?'on':''}" onclick="setHistoricoView('cancelados',this)">${t('hist_btn_cancelados')}</button>
+        <button class="cmb ${historicoView==='backlog'?'on':''}" onclick="setHistoricoView('backlog',this)">${t('hist_btn_backlog')}</button>
+        <button class="cmb ${historicoView==='pausado'?'on':''}" onclick="setHistoricoView('pausado',this)">${t('hist_btn_pausados')}</button>
       </div>`)+
     `<table class="pft"><thead><tr>
-      <th style="width:360px">Projeto</th>
-      <th style="width:75px">Tipo</th>
-      <th style="width:90px">GP Alocado</th>
-      <th style="width:85px">Go Live</th>
-      <th style="width:110px">Ação</th>
+      <th style="width:360px">${t('prio_col_projeto')}</th>
+      <th style="width:75px">${t('prio_col_tipo')}</th>
+      <th style="width:90px">${t('prio_col_gp_alocado')}</th>
+      <th style="width:85px">${t('prio_col_golive')}</th>
+      <th style="width:110px">${t('prio_col_acao')}</th>
     </tr></thead><tbody id="hist-body"></tbody></table>
     </div>`;
   renderHistorico();
   renderTeamImpact();
   renderCargaTrabalho();
+  renderCalendar();
   // Passa a contagem SEM o filtro de time da Visão Geral — esse número alimenta o título da aba
   // Prioridades (outra aba, que não tem esse filtro), então não pode variar com vgTeamFilter.
   renderPrioridadesShell(PROJECTS.filter(p=>p.status!==DELIVERED_STATUS).length);
@@ -5056,15 +5442,17 @@ function renderKPI(){
 }
 
 function filterAllStatus(){
+  showView('prioridades');
   clearOtherFilterCategories(null);
   msFilters.status.clear();
   document.querySelectorAll('#dd-status-menu .ms-dd-item').forEach(item=>{
     const cb=item.querySelector('input');if(cb){cb.checked=false;}item.classList.remove('checked');
   });
   updateDD('dd-status','dd-status-lbl','status','prio_ph_status');
-  showView('prioridades');
+  renderPortfolio();
 }
 function filterByStatus(s){
+  showView('prioridades');
   clearOtherFilterCategories('status');
   msFilters.status.clear();msFilters.status.add(s);
   document.querySelectorAll('#dd-status-menu .ms-dd-item').forEach(item=>{
@@ -5072,33 +5460,36 @@ function filterByStatus(s){
     if(lbl&&lbl.textContent.trim()===s.slice(0,28)){cb.checked=msFilters.status.has(s);item.classList.toggle('checked',cb.checked);}
   });
   updateDD('dd-status','dd-status-lbl','status','prio_ph_status');
-  showView('prioridades');
+  renderPortfolio();
 }
 function filterByHealth(h){
+  showView('prioridades');
   clearOtherFilterCategories('health');
   if(msFilters.health.has(h))msFilters.health.delete(h);else{msFilters.health.clear();msFilters.health.add(h);}
   const safe=h.replace(/[^a-z0-9]/gi,'_');
   const cb=document.getElementById('chk-health-'+safe);
   if(cb){cb.checked=msFilters.health.has(h);cb.closest('.ms-dd-item')?.classList.toggle('checked',cb.checked);}
   updateDD('dd-health','dd-health-lbl','health','prio_ph_health');
-  showView('prioridades');
+  renderPortfolio();
 }
 // Filtro dos cards Nos trilhos/Em risco/Fora dos trilhos da Visão Geral (fim estimado do
 // cronograma x Go Live do Jira) — categoria própria (msFilters.glHealth), separada do filtro
 // "Saúde do cronograma" acima (que é por tarefas atrasadas), pra não misturar os dois critérios.
 function filterByGoLiveHealth(h){
+  showView('prioridades');
   clearOtherFilterCategories('glHealth');
   if(msFilters.glHealth.has(h))msFilters.glHealth.delete(h);else{msFilters.glHealth.clear();msFilters.glHealth.add(h);}
-  showView('prioridades');
+  renderPortfolio();
 }
 // Filtro dos cards de Caminho Crítico / Sem Atualização / Em Risco (Alertas) — clique alterna
 // (clicar de novo no mesmo card remove o filtro), igual ao padrão dos outros cards de KPI.
 function filterByAlert(type,el){
+  showView('prioridades');
   clearOtherFilterCategories('alert');
   alertFilter=(alertFilter===type)?null:type;
   document.querySelectorAll('.alert-kc').forEach(e=>e.classList.remove('alert-kc-on'));
   if(alertFilter&&el)el.classList.add('alert-kc-on');
-  showView('prioridades');
+  renderPortfolio();
 }
 // ── IMPACTO POR TIME (Visão Geral) ──
 // Quantos projetos ativos (não entregues, não cancelados) cada time está tocando,
@@ -5106,6 +5497,235 @@ function filterByAlert(type,el){
 let teamImpactSelected='';
 let teamChartExpanded=false;
 function toggleTeamChartExpand(){teamChartExpanded=!teamChartExpanded;renderTeamImpact();}
+// ── Sub-abas de "Times Impactados": Resumo (já existia) + Carga por Times + Visão de Gargalos
+// (portadas do Apps Script de mesmo nome que a Amanda já usava — mesmos limiares e regras de
+// pressão por time, mas lendo os dados que o próprio HUB já tem carregados, sem chamar o Jira
+// de novo). PT-only por enquanto, igual o Apps Script original.
+let teamImpactMode='resumo'; // 'resumo' | 'times' | 'critico'
+function setTeamImpactMode(mode,el){teamImpactMode=mode;document.querySelectorAll('#ti-mode-tabs .cmb').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderTeamImpact();}
+const TI_STATUS_ESMAECIDO=new Set(['aguardando produção','aguardando producao']);
+const TI_THRESHOLD_ALTA=15,TI_THRESHOLD_MEDIA=10,TI_THRESHOLD_NORMAL=5;
+const TI_CRITICO_LIVRE=2,TI_CRITICO_CONCORRIDO=6;
+function tiIsEsmaecido(p){return TI_STATUS_ESMAECIDO.has(String(p.status||'').toLowerCase().trim());}
+function tiClassificacao(p){return p.type==='Comercial'?'Comercial':p.type==='Produtos'?'Produto/TI':(p.type||'');}
+// "Ativos" pra fins de Times Impactados: mesmo corte de Cancelados/Backlog/Pausados/Entregues já
+// usado no resto da Visão Geral, MAIS excluindo Novos Projetos/Presales (prioridade>=98) dos
+// cards de time -- mesma regra do Apps Script original (issue.prioridade >= 98 não pesa carga).
+function tiRelevantProjects(){
+  return PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG'].includes(p.status)&&(p.priority??9999)<98);
+}
+function computeTimesImpactoData(){
+  const relevant=tiRelevantProjects();
+  const porTime={};
+  relevant.forEach(p=>{
+    (p.times||[]).forEach(time=>{
+      if(!porTime[time])porTime[time]={ativos:[],esmaecidos:[]};
+      if(tiIsEsmaecido(p))porTime[time].esmaecidos.push(p);
+      else porTime[time].ativos.push(p);
+    });
+  });
+  const timesOrdenados=Object.entries(porTime).sort((a,b)=>b[1].ativos.length-a[1].ativos.length);
+  const pressaoPorTime={};
+  const projetosPorTimeOrdenado={};
+  timesOrdenados.forEach(([time,entry])=>{
+    const ativosOrdenados=entry.ativos.slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+    projetosPorTimeOrdenado[time]=ativosOrdenados;
+    ativosOrdenados.forEach((p,idx)=>{
+      if(!pressaoPorTime[p.key])pressaoPorTime[p.key]={};
+      pressaoPorTime[p.key][time]=idx;
+    });
+  });
+  const ativosComCritico=relevant.filter(p=>!tiIsEsmaecido(p)&&(p.times||[]).length).map(p=>{
+    const perfil=pressaoPorTime[p.key]||{};
+    const timesPerfil=(p.times||[]).map(time=>{
+      const pressao=perfil[time]??0;
+      const nivel=pressao<=TI_CRITICO_LIVRE?'livre':pressao<=TI_CRITICO_CONCORRIDO?'concorrido':'critico';
+      const concorrentes=(projetosPorTimeOrdenado[time]||[]).filter(c=>c.key!==p.key&&(c.priority??9999)<(p.priority??9999));
+      return{time,pressao,nivel,concorrentes};
+    }).sort((a,b)=>b.pressao-a.pressao);
+    const nCriticos=timesPerfil.filter(t=>t.nivel==='critico').length;
+    const nConcorridos=timesPerfil.filter(t=>t.nivel==='concorrido').length;
+    return Object.assign({},p,{timesPerfil,nCriticos,nConcorridos});
+  }).sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+  const semTimes=relevant.filter(p=>!(p.times&&p.times.length)&&!tiIsEsmaecido(p));
+  const esmaecidosAll=relevant.filter(tiIsEsmaecido);
+  return{relevant,porTime:timesOrdenados,ativosComCritico,semTimes,esmaecidosAll,totalAtivos:relevant.filter(p=>!tiIsEsmaecido(p)).length};
+}
+const TI_MESES_PT=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function tiMesGoLive(p){
+  if(!p.golive)return'TBD';
+  const partes=String(p.golive).split('-');
+  return partes.length>=2?partes[0]+'-'+partes[1]:'TBD';
+}
+function tiFormatarMes(chave){
+  if(chave==='TBD')return'TBD';
+  const partes=chave.split('-');
+  const idx=parseInt(partes[1],10)-1;
+  return(TI_MESES_PT[idx]||chave)+' '+partes[0];
+}
+function STATUS_DOT_COLOR(status){
+  const cls=JIRA_SC[status]||'s-bkl';
+  // Mesma cor de texto usada no badge .spill dessa classe (definida no CSS), só que como um
+  // dot sólido — mantém a paleta de status igual ao resto do HUB.
+  const map={'s-novos':'#2563eb','s-neg':'#854d0e','s-ref':'#b45309','s-doc':'#c2410c','s-dev':'#7c3aed','s-hom':'#16a34a','s-pos':'#15803d','s-pau':'#374151','s-agp':'#0f766e','s-roll':'#3730a3','s-bkl':'#1e293b','s-can':'#b91c1c','s-kick':'#be185d','s-precom':'#7c4a23','s-com':'#6b4423'};
+  return map[cls]||'#94a3b8';
+}
+function renderCargaTimesView(){
+  const dados=computeTimesImpactoData();
+  const totalAtivos=dados.totalAtivos;
+  const timesAlta=dados.porTime.filter(([,e])=>e.ativos.length>=TI_THRESHOLD_ALTA);
+  const timesMedia=dados.porTime.filter(([,e])=>e.ativos.length>=TI_THRESHOLD_MEDIA&&e.ativos.length<TI_THRESHOLD_ALTA);
+  const statsHtml=`<div class="tc-stats-row">
+    <div class="tc-stat-box"><div class="n">${dados.porTime.length}</div><div class="l">Times com projetos</div></div>
+    <div class="tc-stat-box"><div class="n">${totalAtivos}</div><div class="l">Projetos ativos</div></div>
+    <div class="tc-stat-box" style="background:#fee2e2"><div class="n" style="color:#dc2626">${timesAlta.length}</div><div class="l" style="color:#dc2626">Alta carga (>=${TI_THRESHOLD_ALTA})</div></div>
+    <div class="tc-stat-box" style="background:#fef3c7"><div class="n" style="color:#b45309">${timesMedia.length}</div><div class="l" style="color:#b45309">Média carga (${TI_THRESHOLD_MEDIA}-${TI_THRESHOLD_ALTA-1})</div></div>
+  </div>`;
+  const semTimesHtml=dados.semTimes.length?`<div class="tc-semtimes-box">
+    <div class="tc-semtimes-title">Sem times impactados preenchidos (${dados.semTimes.length})</div>
+    ${dados.semTimes.map(p=>`<span class="tc-semtimes-chip" style="cursor:pointer" onclick="openProject('${p.key}')">${escHtml(p.summary)}</span>`).join('')}
+  </div>`:'';
+  const cardsHtml=dados.porTime.map(([time,entry])=>{
+    const total=entry.ativos.length;
+    const isAlta=total>=TI_THRESHOLD_ALTA,isMedia=!isAlta&&total>=TI_THRESHOLD_MEDIA;
+    const tierCls=isAlta?'alta':isMedia?'media':'';
+    const countProd=entry.ativos.filter(p=>tiClassificacao(p)==='Produto/TI').length;
+    const countCom=entry.ativos.filter(p=>tiClassificacao(p)==='Comercial').length;
+    const revTotal=cargaRevenueTotal(entry.ativos);
+    const grupos={};const ordemMeses=[];
+    entry.ativos.slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999)).forEach(p=>{
+      const mes=tiMesGoLive(p);
+      if(!grupos[mes]){grupos[mes]=[];ordemMeses.push(mes);}
+      grupos[mes].push(p);
+    });
+    ordemMeses.sort((a,b)=>a==='TBD'?1:b==='TBD'?-1:a.localeCompare(b));
+    const listHtml=ordemMeses.map(mes=>{
+      const projs=grupos[mes];
+      const rows=projs.map(p=>{
+        const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+        return `<div class="tc-proj-row" onclick="openProject('${p.key}')">
+          <span class="tc-proj-dot" style="background:${STATUS_DOT_COLOR(p.status)}"></span>
+          <span class="tc-proj-name">${p.priority!=null&&p.priority<98?`<span class="tc-proj-pri">#${Math.trunc(p.priority)}</span>`:''}${escHtml(p.summary)}${rev?`<span class="tc-proj-rev">${rev}</span>`:''}</span>
+          <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
+        </div>`;
+      }).join('');
+      return `<div class="tc-month-hdr"><span class="tc-month-label">${tiFormatarMes(mes)}</span><div class="tc-month-line"></div><span class="tc-month-count">${projs.length} projeto${projs.length!==1?'s':''}</span></div>${rows}`;
+    }).join('');
+    const esmaecidosHtml=entry.esmaecidos.length?`<div class="tc-esmaecidos">
+      <div class="tc-esmaecidos-title">Em rollout / aguardando produção</div>
+      ${entry.esmaecidos.map(p=>{
+        const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+        return `<div class="tc-esmaecido-row" onclick="openProject('${p.key}')">
+          <span class="tc-proj-dot" style="background:#9ca3af"></span>
+          <span class="tc-esmaecido-name">${escHtml(p.summary)}${rev?' · '+rev:''}</span>
+          <span class="spill ${JIRA_SC[p.status]||'s-bkl'}" style="opacity:.7">${p.status}</span>
+        </div>`;
+      }).join('')}
+    </div>`:'';
+    return `<div class="tc-card ${tierCls}">
+      <div class="tc-card-hdr ${tierCls}">
+        <div class="tc-card-title-row">
+          <span class="tc-card-name">${escHtml(time)}${isAlta?'<span class="tc-badge-alta" style="margin-left:6px">Alta carga</span>':isMedia?'<span class="tc-badge-media" style="margin-left:6px">Média carga</span>':''}</span>
+          <span class="tc-card-count" style="color:${isAlta?'#b91c1c':isMedia?'#92400e':'var(--navy)'}">${total} ativo${total!==1?'s':''}</span>
+        </div>
+        <div class="tc-tags-row">
+          ${countProd?`<span class="tc-tag prod">${countProd} Produto/TI</span>`:''}
+          ${countCom?`<span class="tc-tag com">${countCom} Comercial</span>`:''}
+        </div>
+        ${revTotal!=null?`<div class="tc-revenue-box"><span class="lbl">Bemobi Net Revenue</span><span class="val">${formatRevenueMM(revTotal)}</span></div>`:''}
+      </div>
+      <div class="tc-card-body">${listHtml}${esmaecidosHtml}</div>
+    </div>`;
+  }).join('');
+  return statsHtml+semTimesHtml+`<div class="tc-grid">${cardsHtml||'<div class="ti-empty">Nenhum time com projeto ativo no momento.</div>'}</div>`;
+}
+let critExpanded=new Set();
+function toggleCritDetail(key){if(critExpanded.has(key))critExpanded.delete(key);else critExpanded.add(key);renderTeamImpact();}
+function renderGargalosView(){
+  const dados=computeTimesImpactoData();
+  const comCritico=dados.ativosComCritico.filter(p=>p.nCriticos>0);
+  const comConcorrido=dados.ativosComCritico.filter(p=>p.nConcorridos>0&&p.nCriticos===0);
+  const statsHtml=`<div class="tc-stats-row">
+    <div class="tc-stat-box"><div class="n">${dados.totalAtivos}</div><div class="l">Projetos ativos</div></div>
+    <div class="tc-stat-box" style="background:#fee2e2"><div class="n" style="color:#dc2626">${comCritico.length}</div><div class="l" style="color:#dc2626">Com time crítico</div></div>
+    <div class="tc-stat-box" style="background:#fef3c7"><div class="n" style="color:#b45309">${comConcorrido.length}</div><div class="l" style="color:#b45309">Concorridos</div></div>
+    <div class="tc-stat-box"><div class="n">${dados.esmaecidosAll.length}</div><div class="l">Rollout/Aguardando</div></div>
+  </div>`;
+  const alertaHtml=comCritico.length?`<div class="crit-alert-box">
+    <div class="crit-alert-title">Projetos com times críticos (${comCritico.length})</div>
+    ${comCritico.slice(0,5).map(p=>`<span class="crit-alert-chip">${p.priority!=null&&p.priority<98?'#'+Math.trunc(p.priority)+' ':''}${escHtml(p.summary)} (${p.nCriticos} crítico${p.nCriticos!==1?'s':''})</span>`).join('')}
+    ${comCritico.length>5?`<span style="font-size:9.5px;color:var(--text3)">+ ${comCritico.length-5} outros</span>`:''}
+  </div>`:'';
+  const legendaHtml=`<div class="crit-legend">
+    <span class="crit-legend-title">Legenda</span>
+    <span class="crit-legend-item" style="color:#b91c1c"><span class="crit-legend-dot" style="background:#ef4444"></span><b>Crítico</b> — 7+ projetos a frente no mesmo time</span>
+    <span class="crit-legend-item" style="color:#92400e"><span class="crit-legend-dot" style="background:#f59e0b"></span><b>Concorrido</b> — 3 a 6 projetos a frente no mesmo time</span>
+    <span class="crit-legend-item" style="color:#15803d"><span class="crit-legend-dot" style="background:#22c55e"></span><b>Livre</b> — 0 a 2 projetos a frente no mesmo time</span>
+  </div>`;
+  const nivelCor={critico:{bg:'#fee2e2',txt:'#b91c1c',dot:'#ef4444'},concorrido:{bg:'#fef3c7',txt:'#92400e',dot:'#f59e0b'},livre:{bg:'#dcfce7',txt:'#15803d',dot:'#22c55e'}};
+  const listHtml=dados.ativosComCritico.map(p=>{
+    const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+    const gpFirst=(p.gp||'—').split(',')[0].trim().split(' ')[0];
+    const criticos=p.timesPerfil.filter(t=>t.nivel==='critico');
+    const concorridos=p.timesPerfil.filter(t=>t.nivel==='concorrido');
+    const livres=p.timesPerfil.filter(t=>t.nivel==='livre');
+    const resumo=(criticos.length?`<span class="crit-badge critico">CRÍTICO ${criticos.length}x</span>`:'')+
+      (concorridos.length?`<span class="crit-badge concorrido">CONCORRIDO ${concorridos.length}x</span>`:'')+
+      (livres.length?`<span class="crit-badge livre">LIVRE ${livres.length}x</span>`:'');
+    const isOpen=critExpanded.has(p.key);
+    const detailHtml=p.timesPerfil.map(tp=>{
+      const c=nivelCor[tp.nivel];
+      const label=tp.nivel==='critico'?'CRÍTICO':tp.nivel==='concorrido'?'CONCORRIDO':'LIVRE';
+      const concorrentesHtml=tp.concorrentes.length?`<div class="crit-concorrentes-box" style="background:${c.bg}">
+        <div class="crit-concorrentes-title" style="color:${c.txt}">Projetos a frente neste time</div>
+        ${tp.concorrentes.map(cx=>`<div class="crit-concorrente-row"><span style="color:var(--text3);min-width:26px;flex-shrink:0">${cx.priority!=null&&cx.priority<98?'#'+Math.trunc(cx.priority):'—'}</span><span style="flex:1">${escHtml(cx.summary)}</span><span class="spill ${JIRA_SC[cx.status]||'s-bkl'}">${cx.status}</span></div>`).join('')}
+      </div>`:'';
+      return `<div class="crit-time-row">
+        <div class="crit-time-top">
+          <span class="crit-time-dot" style="background:${c.dot}"></span>
+          <span class="crit-time-name">${escHtml(tp.time)}</span>
+          <span class="crit-time-pressao">${tp.pressao} projeto${tp.pressao!==1?'s':''} a frente</span>
+          <span class="crit-badge ${tp.nivel}">${label}</span>
+        </div>
+        ${concorrentesHtml}
+      </div>`;
+    }).join('');
+    return `<div class="crit-card">
+      <div class="crit-card-main" onclick="toggleCritDetail('${p.key}')">
+        <div>
+          <div class="crit-title-row">
+            <span class="crit-pri">${p.priority!=null&&p.priority<98?'#'+Math.trunc(p.priority):'—'}</span>
+            <span class="crit-name">${escHtml(p.summary)}</span>
+            <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
+          </div>
+          <div class="crit-tags-row">${resumo}</div>
+        </div>
+        <div><div class="crit-col-lbl">GP</div><div class="crit-col-val">${escHtml(gpFirst)}</div></div>
+        <div><div class="crit-col-lbl">Receita</div><div class="crit-col-val rev">${rev||'—'}</div></div>
+        <div class="crit-chevron${isOpen?' open':''}">▾</div>
+      </div>
+      <div class="crit-detail" style="display:${isOpen?'block':'none'}">
+        <div class="crit-detail-title">Pressão por time</div>
+        ${detailHtml}
+      </div>
+    </div>`;
+  }).join('');
+  const esmaecidosHtml=dados.esmaecidosAll.length?`<div class="crit-esmaecidos-section">
+    <div class="tc-esmaecidos-title">Em rollout / aguardando produção (${dados.esmaecidosAll.length})</div>
+    ${dados.esmaecidosAll.map(p=>{
+      const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+      const gpFirst=(p.gp||'—').split(',')[0].trim().split(' ')[0];
+      return `<div class="tc-esmaecido-row" onclick="openProject('${p.key}')">
+        <span class="tc-proj-dot" style="background:#9ca3af"></span>
+        <span class="tc-esmaecido-name">${escHtml(p.summary)}</span>
+        <span style="font-size:10px;color:var(--text3);margin-right:8px">${escHtml(gpFirst)}</span>
+        ${rev?`<span style="font-size:10px;color:#9ca3af;margin-right:8px">${rev}</span>`:''}
+        <span class="spill ${JIRA_SC[p.status]||'s-bkl'}" style="opacity:.7">${p.status}</span>
+      </div>`;
+    }).join('')}
+  </div>`:'';
+  return statsHtml+alertaHtml+legendaHtml+`<div class="crit-list">${listHtml||'<div class="ti-empty">Nenhum projeto ativo no momento.</div>'}</div>`+esmaecidosHtml;
+}
 let statusChartExpanded=false;
 function toggleStatusChartExpand(){statusChartExpanded=!statusChartExpanded;renderKPI();}
 let etapaExpanded=new Set();
@@ -5164,6 +5784,7 @@ function openTeamQueueModal(team){
   openM('team-queue-modal');
 }
 function filterByTeamLink(team){
+  showView('prioridades');
   clearOtherFilterCategories('times');
   msFilters.times.clear();msFilters.times.add(team);
   const safe=team.replace(/[^a-z0-9]/gi,'_');
@@ -5174,12 +5795,19 @@ function filterByTeamLink(team){
     item.classList.toggle('checked',match);
   });
   updateDD('dd-times','dd-times-lbl','times','prio_ph_times');
-  showView('prioridades');
+  renderPortfolio();
 }
 function renderTeamImpact(){
   const wrap=document.getElementById('team-impact-body');if(!wrap)return;
+  const tabsHtml=`<div class="cal-mode-btns" id="ti-mode-tabs" style="margin:8px 12px 4px;width:fit-content">
+    <button class="cmb ${teamImpactMode==='resumo'?'on':''}" onclick="setTeamImpactMode('resumo',this)">Resumo</button>
+    <button class="cmb ${teamImpactMode==='times'?'on':''}" onclick="setTeamImpactMode('times',this)">Carga por Times</button>
+    <button class="cmb ${teamImpactMode==='critico'?'on':''}" onclick="setTeamImpactMode('critico',this)">Visão de Gargalos</button>
+  </div>`;
+  if(teamImpactMode==='times'){wrap.innerHTML=tabsHtml+renderCargaTimesView();return;}
+  if(teamImpactMode==='critico'){wrap.innerHTML=tabsHtml+renderGargalosView();return;}
   const data=computeTeamImpactData();
-  if(!data.length){wrap.innerHTML='<div class="ti-empty">Nenhum time cadastrado ainda.</div>';return;}
+  if(!data.length){wrap.innerHTML=tabsHtml+'<div class="ti-empty">Nenhum time cadastrado ainda.</div>';return;}
   const cardsSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
   const chartSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
   const maxCount=Math.max(1,...data.map(d=>d.count));
@@ -5209,7 +5837,7 @@ function renderTeamImpact(){
   const chartMoreBtn=chartRest>0?`<div style="text-align:center;padding:6px 0 2px">
       <button class="pf-act" onclick="toggleTeamChartExpand()">${teamChartExpanded?'Ver menos':'Ver mais ('+chartRest+')'}</button>
     </div>`:'';
-  wrap.innerHTML=`<div class="team-impact-grid">
+  wrap.innerHTML=tabsHtml+`<div class="team-impact-grid">
     <div class="ti-panel">
       <div class="ti-panel-hdr">
         <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-list-check" style="font-size:13px"></i> Times &amp; Projetos Impactados <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i></div>
@@ -5326,6 +5954,32 @@ function computeTBDDetail(){
   const negocList=PROJECTS.filter(p=>p.status==='PRESALES'&&isNoGP(p.gp));
   return{name:'TBD',count:activeList.length,activeList,negocCount:negocList.length,negocList};
 }
+// Extrai o valor numérico (em milhões) de um texto tipo "R$21MM/ano" ou "R$0,37MM/ano" —
+// campo é texto livre preenchido no Jira (customfield_28026), formato nem sempre 100% consistente.
+function parseRevenueMM(s){
+  if(!s)return null;
+  const m=String(s).match(/([\d.,]+)\s*MM/i);
+  if(!m)return null;
+  const raw=m[1];
+  const n=raw.includes(',')?parseFloat(raw.replace(/\./g,'').replace(',','.')):parseFloat(raw);
+  return isNaN(n)?null:n;
+}
+// Reformata de volta pro padrão "R$ X,XMM/ano" (uma casa decimal, vírgula, sem decimal quando é
+// um número redondo) — garante visual consistente mesmo quando o texto original no Jira variou.
+function formatRevenueMM(n){
+  if(n==null)return null;
+  const rounded=Math.round(n*10)/10;
+  const isInt=Math.abs(rounded-Math.round(rounded))<0.001;
+  const numStr=isInt?String(Math.round(rounded)):rounded.toFixed(1).replace('.',',');
+  return 'R$ '+numStr+'MM/ano';
+}
+// Soma a receita líquida prevista de uma lista de projetos (usado pro card de "Bemobi Net
+// Revenue" agregado por GP) — null se nenhum projeto da lista tem receita cadastrada ainda.
+function cargaRevenueTotal(list){
+  let sum=0,any=false;
+  (list||[]).forEach(p=>{const v=parseRevenueMM(p.receitaLiquidaPrevista);if(v!=null){sum+=v;any=true;}});
+  return any?sum:null;
+}
 function cargaPersonCard(d,variant){
   const isTbd=variant==='tbd';
   const isAlta=!isTbd&&isAltaCarga(d.count,d.negocCount);
@@ -5334,25 +5988,36 @@ function cargaPersonCard(d,variant){
   const rest=d.activeList.length-4;
   const esc=s=>String(s).replace(/'/g,"\\'");
   const cardCls='carga-person-card'+(isTbd?' tbd':'');
-  const negocListHtml=(d.negocList&&d.negocList.length)?`<div class="carga-negoc-list">
-      <div class="carga-negoc-list-title">${isTbd?'Negociação':'Presales'}</div>
-      ${d.negocList.map(p=>`<div class="carga-negoc-item" style="cursor:pointer" onclick="openProject('${p.key}')">${p.summary.length>40?p.summary.slice(0,40)+'…':p.summary}</div>`).join('')}
-    </div>`:'';
+  const revTotal=isTbd?null:cargaRevenueTotal(d.activeList);
+  const revenueBoxHtml=revTotal!=null?`<div class="carga-revenue-box">Bemobi Net Revenue <b>${formatRevenueMM(revTotal)}</b></div>`:'';
+  const projItemHtml=p=>{
+    const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+    return `<div class="carga-proj-item-v2" onclick="openProject('${p.key}')">
+      <div class="carga-proj-top-v2">
+        <span class="carga-proj-name-v2">${escHtml(p.summary)}</span>
+        <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
+      </div>
+      <div class="carga-proj-bottom-v2">${escHtml(p.type||'')}${rev?' · <b style="color:#16a34a">'+rev+'</b>':''}</div>
+    </div>`;
+  };
+  const presalesItemHtml=p=>{
+    const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+    return `<div class="carga-presales-item-v2" style="cursor:pointer" onclick="openProject('${p.key}')"><span>${escHtml(p.summary)}</span>${rev?`<span class="rev">${rev}</span>`:''}</div>`;
+  };
+  const negocListHtml=(d.negocList&&d.negocList.length)?`<div class="carga-presales-title-v2">${isTbd?'Negociação':'Presales'}</div>${d.negocList.map(presalesItemHtml).join('')}`:'';
   return `<div class="${cardCls}" style="${isAlta?'border-color:#fca5a5':''}">
     <div class="carga-person-hdr" style="${isAlta?'background:#fef2f2':''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">
+      <div class="carga-person-hdr-v2">
         <span style="font-weight:700;font-size:12px;color:${isTbd?'#92400e':isAlta?'#b91c1c':'var(--navy)'}">${d.name}</span>
-        ${(!isTbd&&d.negocCount>0)?`<span class="carga-negoc-badge">${d.negocCount} presales</span>`:''}
+        ${isAlta?`<span class="carga-tier-badge">Alta carga</span>`:''}
       </div>
       ${isTbd?`<div style="font-size:9.5px;color:#92400e;font-weight:500;margin-top:1px">Sem GP</div>`:''}
-      <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-        ${isAlta?`<span class="carga-tier-badge">Alta carga</span>`:''}
-        <span style="font-size:10.5px;font-weight:700;color:${isTbd?'#92400e':isAlta?'#b91c1c':'#0369a1'}">${d.count} projeto${d.count!==1?'s':''}</span>
-      </div>
+      <div class="carga-counts-v2">${d.count} ativo${d.count!==1?'s':''}${(!isTbd&&d.negocCount>0)?' · '+d.negocCount+' presales':''}</div>
+      ${revenueBoxHtml}
     </div>
-    <div class="cal-items" style="padding:6px">
-      ${toShow.length?toShow.map(p=>`<div class="cal-item no-sched carga-proj-item" style="cursor:pointer" onclick="openProject('${p.key}')"><div class="carga-proj-text"><b>${p.key}</b> · ${p.summary.length>26?p.summary.slice(0,26)+'…':p.summary}</div><div class="carga-proj-status"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span></div></div>`).join(''):'<div style="font-size:9.5px;color:var(--text3);padding:3px 4px">Nenhum projeto ativo no momento.</div>'}
-      ${rest>0?`<div style="font-size:8.5px;color:var(--purple);font-weight:600;padding:3px 4px;cursor:pointer" onclick="toggleCargaCard('${esc(d.name)}')">${isExp?'Ver menos':'+'+rest+' mais'}</div>`:''}
+    <div style="padding:0 6px 6px">
+      ${toShow.length?toShow.map(projItemHtml).join(''):'<div style="font-size:9.5px;color:var(--text3);padding:3px 4px">Nenhum projeto ativo no momento.</div>'}
+      ${rest>0?`<div style="font-size:8.5px;color:var(--purple);font-weight:600;padding:4px 4px 0;cursor:pointer" onclick="toggleCargaCard('${esc(d.name)}')">${isExp?t('rsm_ver_menos_btn'):fmtLog('shared_mais_n_tpl',{n:rest})}</div>`:''}
       ${negocListHtml}
     </div>
   </div>`;
@@ -5675,19 +6340,19 @@ function getHistoricoList(){
   return PROJECTS.filter(p=>p.status===st&&projectMatchesTeamFilter(p));
 }
 const HISTORICO_LABELS={
-  entregues:{suffix:'em Pós produção',adj:'entregue',empty:'entregue'},
-  cancelados:{suffix:'cancelado(s)',adj:'cancelado',empty:'cancelado'},
-  backlog:{suffix:'em Backlog',adj:'em Backlog',empty:'no Backlog'},
-  pausado:{suffix:'pausado(s)',adj:'pausado',empty:'pausado'},
+  entregues:{countKey:'hist_count_entregues_tpl',emptyKey:'hist_empty_entregues'},
+  cancelados:{countKey:'hist_count_cancelados_tpl',emptyKey:'hist_empty_cancelados'},
+  backlog:{countKey:'hist_count_backlog_tpl',emptyKey:'hist_empty_backlog'},
+  pausado:{countKey:'hist_count_pausado_tpl',emptyKey:'hist_empty_pausado'},
 };
 function renderHistorico(){
   histLastList=getHistoricoList();
   const tbody=document.getElementById('hist-body');if(!tbody)return;
   const countEl=document.getElementById('historico-count');
   const lbl=HISTORICO_LABELS[historicoView]||HISTORICO_LABELS.entregues;
-  if(countEl)countEl.textContent=histLastList.length+' projeto'+(histLastList.length!==1?'s':'')+' '+lbl.suffix;
+  if(countEl)countEl.textContent=fmtLog(lbl.countKey,{n:histLastList.length});
   tbody.innerHTML='';
-  if(!histLastList.length){tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:22px;color:var(--text3)">Nenhum projeto ${lbl.empty} ainda.</td></tr>`;return;}
+  if(!histLastList.length){tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:22px;color:var(--text3)">${t(lbl.emptyKey)}</td></tr>`;return;}
   const sorted=histLastList.slice().sort((a,b)=>(a.golive&&b.golive)?(a.golive<b.golive?1:-1):(a.golive?-1:1));
   const toShow=histExpanded?sorted:sorted.slice(0,HIST_PAGE_SIZE);
   toShow.forEach(p=>{
@@ -5701,12 +6366,12 @@ function renderHistorico(){
       <td><span class="spill" style="background:${ib};color:${ic}">${p.type||'—'}</span></td>
       <td><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
       <td><span style="font-size:10px;color:var(--text2)">${fmtBR(p.golive)||'—'}</span></td>
-      <td><button class="pf-act" onclick="openProject('${p.key}')">Ver histórico</button></td>`;
+      <td><button class="pf-act" onclick="openProject('${p.key}')">${t('hist_btn_ver_historico')}</button></td>`;
     tbody.appendChild(tr);
   });
   if(sorted.length>HIST_PAGE_SIZE){
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td colspan="5" style="text-align:center;padding:9px"><button class="pf-act" onclick="toggleHistExpand()">${histExpanded?'Ver menos':'Ver mais ('+(sorted.length-HIST_PAGE_SIZE)+')'}</button></td>`;
+    tr.innerHTML=`<td colspan="5" style="text-align:center;padding:9px"><button class="pf-act" onclick="toggleHistExpand()">${histExpanded?t('rsm_ver_menos_btn'):fmtLog('rsm_ver_mais_n_tpl',{n:sorted.length-HIST_PAGE_SIZE})}</button></td>`;
     tbody.appendChild(tr);
   }
 }
@@ -5940,7 +6605,7 @@ function renderCalendar(){
     if(restCount>0){
       const more=document.createElement('div');
       more.style.cssText='font-size:8.5px;color:var(--purple);font-weight:600;padding:3px 7px;cursor:pointer';
-      more.textContent=isExp?'Ver menos':'+'+restCount+' mais';
+      more.textContent=isExp?t('rsm_ver_menos_btn'):fmtLog('shared_mais_n_tpl',{n:restCount});
       more.onclick=()=>toggleCalCol(b.lbl);
       items.appendChild(more);
     }
@@ -6803,11 +7468,16 @@ function prepareProjectContext(key){
     alert('Projeto '+key+' não encontrado. Aguarde a sincronização terminar (alguns segundos) e tente novamente.');
     return false;
   }
+  const keyChanged = curKey!==key;
   curKey=key;
   // Update browser URL so this page can be shared/bookmarked
   const schedUrl=window.location.href.split('?')[0]+'?project='+key;
   history.replaceState(null,'',schedUrl);
   if(!schedules[key])schedules[key]={milestones:[],tasks:[],subtasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,slackChannelLink:null,followers:[]};
+  // Histórico de undo/redo é por projeto: só reinicia a baseline quando o projeto ABERTO muda de
+  // fato (reentrar no mesmo projeto, ex. trocando de Cronograma pra Resumo e voltando, preserva
+  // o histórico e o contador de alterações não confirmadas).
+  if(keyChanged || !scheduleUndoHistory[key]) initScheduleUndo(key);
   collapsed.clear();viewOffset=0;selectedMs.clear();
   document.getElementById('se-title').textContent=p.summary.length>35?p.summary.slice(0,35)+'…':p.summary;
   const jl=document.getElementById('se-jira-lnk');jl.style.display='';
@@ -6818,12 +7488,19 @@ function prepareProjectContext(key){
 // Abre o Dashboard de Visão Geral (Resumo) do projeto — usado pela maioria dos pontos de
 // clique do app (Status do Portfólio, Carga de Trabalho, Histórico, Alertas, Resumo dos Projetos).
 function openProject(key){
+  // Se está saindo do Cronograma de OUTRO projeto com alterações ainda não confirmadas, confirma antes.
+  if(curKey && curKey!==key && lastActiveView==='schedule' && scheduleHasUnsavedChanges()){
+    if(!guardScheduleLeave(()=>openProject(key)))return;
+  }
   if(!prepareProjectContext(key))return;
   showView('resumo');renderResumoDashboard();
 }
 // Abre o Cronograma completo direto — usado na aba Prioridades (e por extensão nos cards
 // do widget "Cronogramas" da Visão Geral, que já caem na aba Prioridades ao filtrar).
 function openProjectSchedule(key){
+  if(curKey && curKey!==key && lastActiveView==='schedule' && scheduleHasUnsavedChanges()){
+    if(!guardScheduleLeave(()=>openProjectSchedule(key)))return;
+  }
   if(!prepareProjectContext(key))return;
   showView('schedule');renderSchedule();hideSchSidebar();
 }
@@ -6857,7 +7534,17 @@ function renderScheduleProjectList(){
 }
 // Lista de projetos oculta/exibida na aba Cronograma — some automaticamente ao abrir um
 // cronograma (mais espaço pra tabela/Gantt), com um botão no cabeçalho pra trazer de volta.
+// Preferência de mostrar/esconder a lista lateral de projetos, salva no navegador — pedido
+// explícito da Amanda: por padrão vem ABERTA, mas se ela recolher manualmente (botão
+// "Projetos"), essa escolha fica salva e continua recolhida da próxima vez que voltar pra tela
+// do Cronograma (antes resetava pra aberta de novo a cada visita/recarregamento da página).
+// O auto-esconder ao abrir um projeto específico (mais espaço pra tabela/Gantt) continua
+// existindo do mesmo jeito, mas não sobrescreve essa preferência salva — ela só vale de fato
+// pra tela de lista (sem projeto selecionado), que é resincronizada com o valor salvo em
+// showView() sempre que volta pra esse estado.
+const SCH_SIDEBAR_HIDDEN_KEY='vmo_sch_sidebar_hidden';
 let schSidebarHidden=false;
+try{schSidebarHidden=localStorage.getItem(SCH_SIDEBAR_HIDDEN_KEY)==='1';}catch(e){}
 function applySchSidebarVisibility(){
   const sb=document.getElementById('sch-sidebar');if(sb)sb.style.display=schSidebarHidden?'none':'';
   const btn=document.getElementById('sch-sidebar-toggle-btn');
@@ -6865,7 +7552,11 @@ function applySchSidebarVisibility(){
 }
 function hideSchSidebar(){schSidebarHidden=true;applySchSidebarVisibility();}
 function showSchSidebar(){schSidebarHidden=false;applySchSidebarVisibility();}
-function toggleSchSidebar(){schSidebarHidden=!schSidebarHidden;applySchSidebarVisibility();}
+function toggleSchSidebar(){
+  schSidebarHidden=!schSidebarHidden;
+  applySchSidebarVisibility();
+  try{localStorage.setItem(SCH_SIDEBAR_HIDDEN_KEY,schSidebarHidden?'1':'0');}catch(e){}
+}
 
 function goToCronograma(){
   if(!curKey)return;
@@ -6959,8 +7650,12 @@ function renderResumoDashboard(){
   // colunas de Prioridades/exportação, só exibido aqui também no cabeçalho do Resumo.
   const daChip=document.getElementById('rsm-dataalvo');const daVal=document.getElementById('rsm-dataalvo-val');
   if(daChip&&daVal){
-    if(p.duedate){daChip.style.display='';daVal.textContent=fmtBRFull(p.duedate);}
+    const canEdDA=canEditDataAlvo(curKey);
+    if(p.duedate||canEdDA){daChip.style.display='';daVal.textContent=p.duedate?fmtBRFull(p.duedate):'—';}
     else daChip.style.display='none';
+    daChip.style.cursor=canEdDA?'pointer':'';
+    daChip.title=canEdDA?t('rsm_data_alvo_edit_title'):'';
+    daChip.onclick=canEdDA?(()=>editDataAlvo(curKey)):null;
   }
   document.getElementById('rsm-health-slot').innerHTML=st.has?healthBadge(st.health,st.lateTasks):'';
   document.getElementById('rsm-goto-cronograma-btn').style.display=''; // visível pra todo projeto, com ou sem cronograma cadastrado
@@ -7459,8 +8154,23 @@ function isConfluenceLink(url){
 }
 function extractConfluencePageId(url){
   if(!url)return null;
-  const m=url.match(/\/pages\/(\d+)/);
+  // Aceita tanto o formato novo do Confluence Cloud (.../pages/123456789/Titulo) quanto o
+  // formato antigo (?pageId=123456789) — o link colado pode vir de qualquer um dos dois.
+  const m=url.match(/\/pages\/(\d+)/)||url.match(/pageId=(\d+)/);
   return m?m[1]:null;
+}
+// Como extractConfluencePageId, mas também reconhece links de PASTA do Confluence
+// (.../folder/123456789) — usado nas Atas de Reunião, que podem estar organizadas tanto numa
+// página (sub-páginas) quanto numa pasta. Retorna {id,type:'page'|'folder'} ou null.
+function extractConfluenceContentRef(url){
+  if(!url)return null;
+  let m=url.match(/\/pages\/(\d+)/);
+  if(m)return{id:m[1],type:'page'};
+  m=url.match(/\/folder\/(\d+)/);
+  if(m)return{id:m[1],type:'folder'};
+  m=url.match(/pageId=(\d+)/);
+  if(m)return{id:m[1],type:'page'};
+  return null;
 }
 // ── Atas de Reuniões: busca automática das páginas-filhas da página do Confluence vinculada
 // em "Atas no Confluence" (schedules[key].minutesConfluenceLink) — assim, toda ata criada
@@ -7482,18 +8192,22 @@ async function fetchConfluenceAtasList(key,force){
   const link=sched.minutesConfluenceLink;
   const cache=getConfluenceAtasCache(key);
   if(!link){cache.status='idle';cache.pages=[];cache.error=null;return;}
-  const pageId=extractConfluencePageId(link);
-  if(!pageId){cache.status='error';cache.error=t('rsm_alert_id_pagina_nao_identificado');if(key===curKey)renderResumoMinutesList();return;}
+  const ref=extractConfluenceContentRef(link);
+  if(!ref){cache.status='error';cache.error=t('rsm_alert_id_pagina_nao_identificado');if(key===curKey)renderResumoMinutesList();return;}
   if(!force&&(cache.status==='loading'||cache.status==='ok'))return;
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){cache.status='error';cache.error=t('rsm_alert_busca_nao_configurada');if(key===curKey)renderResumoMinutesList();return;}
   cache.status='loading';
   if(key===curKey){renderResumoMinutesList();refreshMinutesModalIfOpen();}
+  const action=ref.type==='folder'?'getConfluenceFolderChildren':'getConfluenceChildPages';
   try{
     const ctrl=new AbortController();
     const timer=setTimeout(()=>ctrl.abort(),20000);
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action:'getConfluenceChildPages',pageId})});
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action,pageId:ref.id})});
     clearTimeout(timer);
-    const d=await r.json();
+    const rawText=await r.text();
+    let d;
+    try{d=JSON.parse(rawText);}
+    catch(parseErr){throw new Error(t('rsm_alert_action_nao_reconhecida'));}
     if(!d.ok){cache.status='error';cache.error=d.error||t('rsm_alert_erro_buscar_atas_confluence');return;}
     cache.status='ok';cache.pages=(d.pages||[]).slice().sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));cache.error=null;
   }catch(e){
@@ -7525,7 +8239,10 @@ async function fetchScopeFromConfluence(){
     const timer=setTimeout(()=>ctrl.abort(),20000);
     const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action:'getConfluenceScope',pageId})});
     clearTimeout(timer);
-    const d=await r.json();
+    const rawText=await r.text();
+    let d;
+    try{d=JSON.parse(rawText);}
+    catch(parseErr){alert(t('rsm_alert_action_nao_reconhecida'));return;}
     if(!d.ok){alert(d.error||t('rsm_alert_erro_buscar_escopo'));return;}
     if(!d.text||!d.text.trim()){alert(t('rsm_alert_secao_nao_encontrada'));return;}
     const preview=d.text.length>400?d.text.slice(0,400)+'…':d.text;
@@ -7925,19 +8642,23 @@ async function fetchDebriefingConfluenceList(force){
   const link=debriefingConfluenceLink;
   const cache=debriefingConfluenceCache;
   if(!link){cache.status='idle';cache.pages=[];cache.error=null;return;}
-  const pageId=extractConfluencePageId(link);
-  if(!pageId){cache.status='error';cache.error=t('rsm_alert_id_pagina_nao_identificado');if(curDocCat==='debriefing')renderDocsLibrary();return;}
+  const ref=extractConfluenceContentRef(link);
+  if(!ref){cache.status='error';cache.error=t('rsm_alert_id_pagina_nao_identificado');if(curDocCat==='debriefing')renderDocsLibrary();return;}
   if(!force&&(cache.status==='loading'||cache.status==='ok'))return;
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){cache.status='error';cache.error=t('rsm_alert_busca_nao_configurada');if(curDocCat==='debriefing')renderDocsLibrary();return;}
   cache.status='loading';
   if(curDocCat==='debriefing')renderDocsLibrary();
+  const action=ref.type==='folder'?'getConfluenceFolderChildren':'getConfluenceChildPages';
   try{
     const ctrl=new AbortController();
     const timer=setTimeout(()=>ctrl.abort(),20000);
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action:'getConfluenceChildPages',pageId})});
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action,pageId:ref.id})});
     clearTimeout(timer);
-    const d=await r.json();
-    if(!d.ok){cache.status='error';cache.error=d.error||t('docs_atas_confluence_erro_prefix');return;}
+    const rawText=await r.text();
+    let d;
+    try{d=JSON.parse(rawText);}
+    catch(parseErr){throw new Error(t('rsm_alert_action_nao_reconhecida'));}
+    if(!d.ok){cache.status='error';cache.error=d.error||t('rsm_alert_erro_buscar_atas_confluence');return;}
     cache.status='ok';cache.pages=(d.pages||[]).slice().sort((a,b)=>String(b.created||'').localeCompare(String(a.created||'')));cache.error=null;
   }catch(e){
     cache.status='error';
@@ -8023,8 +8744,14 @@ function renderDocsLibrary(){
       };
     });
     // Busca automática das atas na pasta do Confluence (se configurada) — junta com as
-    // manuais na mesma lista, ordenada por mês, igual pedido pela Amanda.
-    if(debriefingConfluenceLink)fetchDebriefingConfluenceList();
+    // manuais na mesma lista, ordenada por mês, igual pedido pela Amanda. IMPORTANTE: só
+    // dispara a partir do estado 'idle' (nunca tentou ainda) — o próprio fetch chama
+    // renderDocsLibrary() de novo no final (pra atualizar a tela com o resultado), e sem essa
+    // guarda isso reacionava fetchDebriefingConfluenceList() a cada render, inclusive depois de
+    // um erro, criando um loop de retry infinito que travava a tela em "Buscando atas…" pra
+    // sempre. Buscar de novo depois de um erro real agora só acontece pelo botão de refresh
+    // (que já chama com force=true).
+    if(debriefingConfluenceLink&&debriefingConfluenceCache.status==='idle')fetchDebriefingConfluenceList();
     let allItems=[...debItems,...getDebriefingConfluenceAsDocItems()].sort((a,b)=>b._date.localeCompare(a._date));
     populateDocsMonthFilterOptions();
     let items=allItems;
@@ -8529,10 +9256,11 @@ function saveColWidths(){try{localStorage.setItem(CRON_COLW_KEY,JSON.stringify(C
 
 function renderSchedule(){
   if(!curKey)return;
+  updateScheduleUndoUI();
   const es_=document.getElementById('sch-empty-state');if(es_)es_.style.display='none';
   const lg=document.getElementById('baseline-legend');if(lg)lg.style.display=showBaseline?'flex':'none';
   const bBtn=document.getElementById('baseline-btn');if(bBtn){bBtn.style.background=showBaseline?'var(--navy)':'';bBtn.style.color=showBaseline?'#fff':'';}
-  const _sl=document.getElementById('se-left');if(_sl){_sl.style.width=ganttVisible?userLeftW+'px':'100%';_sl.style.minWidth=ganttVisible?'260px':'100%';}
+  applyGanttVisibility();
   const pProj=PROJECTS.find(x=>x.key===curKey);
   const isDelivered=pProj?.status===DELIVERED_STATUS;
   // Show/hide edit controls based on permission (entregues ficam somente-leitura)
@@ -8685,13 +9413,24 @@ function taskProg(t){
 // Etapas e tarefas recebem um número único e contínuo na ordem em que aparecem no cronograma.
 function buildRowNumMap(sched){
   const numToId={};const idToNum={};let seq=0;
+  const idToLabel={}; // rótulo hierárquico exibido na coluna # — igual a idToNum pra Etapa/Tarefa
+  // (número inteiro simples), mas com sufixo decimal pra Subtarefa/Sub-subtarefa (ex.: "2.1",
+  // "2.2.1"), preso ao número da Tarefa-mãe em vez de continuar a sequência inteira global.
+  // Recalculado do zero a cada render — se a pessoa arrasta uma subtarefa pra outra Tarefa/
+  // muda a ordem, o número já sai certo no próximo render, sem precisar de lógica extra.
   (sched.milestones||[]).forEach(ms=>{
-    seq++;numToId[seq]=ms.id;idToNum[ms.id]=seq;
+    seq++;numToId[seq]=ms.id;idToNum[ms.id]=seq;idToLabel[ms.id]=String(seq);
     (sched.tasks||[]).filter(t=>t.msId===ms.id).forEach(t=>{
-      seq++;numToId[seq]=t.id;idToNum[t.id]=seq;
+      seq++;numToId[seq]=t.id;idToNum[t.id]=seq;idToLabel[t.id]=String(seq);
+      const subs=(sched.subtasks||[]).filter(s=>s.taskId===t.id&&!s.parentSubId);
+      subs.forEach((s,si)=>{
+        idToLabel[s.id]=idToLabel[t.id]+'.'+(si+1);
+        const children4=(sched.subtasks||[]).filter(cs=>cs.taskId===t.id&&cs.parentSubId===s.id);
+        children4.forEach((cs,ci)=>{idToLabel[cs.id]=idToLabel[s.id]+'.'+(ci+1);});
+      });
     });
   });
-  return{numToId,idToNum};
+  return{numToId,idToNum,idToLabel};
 }
 function renderRows(){
   LW=Object.values(C).reduce((a,b)=>a+b,0);
@@ -8701,7 +9440,7 @@ function renderRows(){
   cont.classList.toggle('no-edit',!canEd);
   const mss=sched.milestones||[];const tasks=sched.tasks||[];const subtasksAll=sched.subtasks||[];
   if(!mss.length){cont.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:9px;color:var(--text3)"><i class="ti ti-calendar-plus" style="font-size:34px;opacity:.3"></i><p style="font-size:12px;text-align:center;max-width:260px;line-height:1.6">${t('sch_empty_title')}<br>${t('sch_empty_sub')} <b>${t('btn_nova_etapa')}</b> ${t('sch_empty_sub2')} <b>${t('sch_modelo')}</b>.</p></div>`;return;}
-  const {idToNum}=buildRowNumMap(sched);
+  const {idToNum,idToLabel}=buildRowNumMap(sched);
   mss.forEach((ms,mi)=>{
     const msTasks=tasks.filter(t=>t.msId===ms.id);const isCl=collapsed.has(ms.id);
     const prog=msTasks.length?Math.round(msTasks.reduce((a,t)=>a+taskProg(t),0)/msTasks.length):0;
@@ -8821,9 +9560,9 @@ function renderRows(){
       subsOfTask.forEach((s,si)=>{
         const children4=subtasksAll.filter(x=>x.taskId===t.id&&x.parentSubId===s.id);
         const prevL3=si>0?subsOfTask[si-1]:null;
-        const isClS=buildSubRowEl(s,3,t,ms,canEd,cont,LW,subHidden,prevL3,children4.length>0);
+        const isClS=buildSubRowEl(s,3,t,ms,canEd,cont,LW,subHidden,prevL3,children4.length>0,idToLabel[s.id]);
         const subSubHidden=subHidden||isClS;
-        children4.forEach(cs=>{buildSubRowEl(cs,4,t,ms,canEd,cont,LW,subSubHidden,null,false);});
+        children4.forEach(cs=>{buildSubRowEl(cs,4,t,ms,canEd,cont,LW,subSubHidden,null,false,idToLabel[cs.id]);});
         // Caminho direto pra criar o 4º nível — sem isso, só dava pra chegar lá indentando/
         // arrastando uma 2ª subtarefa já existente, o que a Amanda não conseguiu descobrir.
         if(canEd){
@@ -8876,7 +9615,7 @@ function toggleMsMarco(msId,ev){
 // parametrizado por 'depth'. Nível 4 nunca tem filhos (limite de 4 níveis: Etapa→Tarefa→
 // Subtarefa→Sub-subtarefa), então só nível 3 pode mostrar seta de expandir/recolher e o botão
 // de indentar (indent). Retorna se a própria linha está colapsada (usado pra esconder os filhos).
-function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren4){
+function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren4,label){
   const prog3=taskProg(s);const de3=s.start&&s.deadline?diffD(pd(s.start),pd(s.deadline))+'d':'—';const dr3=s.start&&s.endReal?diffD(pd(s.start),pd(s.endReal))+'d':'—';
   const atraso3=subtaskAtraso(s);
   const aHtml3=(s.assignees||[]).map(a=>`<span class="atag ${a.type==='external'?'ext':''}">${a.name.split(' ')[0]}</span>`).join('');
@@ -8903,7 +9642,7 @@ function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren
   const tr=document.createElement('div');const hasExt3=(s.assignees||[]).some(a=>a.type==='external');
   tr.className='trow sub-row'+(hidden?' hidden':'')+(hasExt3?' has-external':'');tr.dataset.msid=ms.id;tr.dataset.tid=t.id;tr.dataset.subid=s.id;tr.dataset.depth=depth;tr.style.width=LW+'px';
   tr.innerHTML=`
-    <div class="td" data-col="num" style="width:${C.num}px"><span class="rnum" style="opacity:.4">–</span></div>
+    <div class="td" data-col="num" style="width:${C.num}px"><span class="rnum" style="opacity:.65;font-size:8.5px" title="${window.t('tt_num_hier_title')}">${label||'–'}</span></div>
     <div class="td" data-col="name" style="width:${C.name}px;padding-left:${nameCellPad}px;padding-top:2px;padding-bottom:2px;gap:0;flex-direction:column;align-items:flex-start;justify-content:center">
       <div style="display:flex;align-items:center;gap:3px;width:100%">
         ${canEd?`<span class="drag-handle" title="${window.t('tt_drag')}" onmousedown="this.closest('.sub-row').setAttribute('draggable','true')" onmouseup="this.closest('.sub-row').setAttribute('draggable','false')"><i class="ti ti-grip-vertical" style="font-size:9px"></i></span>`:''}
@@ -9330,18 +10069,23 @@ function startColResize(e,col){
   document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
 }
 
-let ganttVisible=true;
-function toggleGantt(){
-  ganttVisible=!ganttVisible;
+let ganttVisible=false; // pedido da Amanda: Gantt some por padrão ao abrir o cronograma; botao pra reexibir ficou mais visivel na barra (fora do menu Ferramentas)
+// Aplica o estado atual de ganttVisible no DOM (sem alterna-lo) - chamada tanto pelo toggle
+// manual quanto por renderSchedule(), garantindo que o painel do Gantt comece sempre escondido
+// quando um projeto e aberto, sem depender de a pessoa ja ter clicado no botao antes.
+function applyGanttVisibility(){
   const r=document.getElementById('se-right');
   const rh=document.getElementById('resize-handle');
   const sl=document.getElementById('se-left');
   const btn=document.getElementById('gantt-toggle-btn');
   if(r)r.style.display=ganttVisible?'':'none';
   if(rh)rh.style.display=ganttVisible?'':'none';
-  // When gantt is hidden, left panel fills full width
   if(sl){sl.style.width=ganttVisible?userLeftW+'px':'100%';sl.style.minWidth=ganttVisible?'260px':'100%';sl.style.borderRight=ganttVisible?'2px solid var(--border2)':'none';}
   if(btn){btn.style.background=ganttVisible?'':'var(--navy)';btn.style.color=ganttVisible?'':'#fff';}
+}
+function toggleGantt(){
+  ganttVisible=!ganttVisible;
+  applyGanttVisibility();
   if(ganttVisible){renderSchedule();}
 }
 
@@ -10424,6 +11168,97 @@ function captureBaselineEntries(key,newMilestones,newTasks){
 function applyTemplate(k){if(!confirm('Adicionar etapas e tarefas padrão?'))return;const tpl=TEMPLATES[k];const sched=schedules[curKey];let d=new Date(TODAY);const newMs=[];const newTasks=[];tpl.milestones.forEach(m=>{const msId=uid();const start=ds(d);const end=ds(addD(d,m.days));const msObj={id:msId,name:m.name,start,deadline:end,endReal:'',color:m.color,status:'not_started',assignees:[]};sched.milestones.push(msObj);newMs.push(msObj);m.tasks.forEach((t,i)=>{const tDl=ds(addD(d,Math.floor(m.days/m.tasks.length*(i+1))));const tObj={id:uid(),msId,name:t.name,start:ds(addD(d,Math.floor(m.days/m.tasks.length*i))),deadline:tDl,origDeadline:tDl,endReal:'',assignees:[],depId:'',depType:'TI',depMode:'blocked',status:'not_started',notes:'',jiraLink:'',jiraLinkStatus:''};sched.tasks.push(tObj);newTasks.push(tObj);});d=addD(d,m.days+1);});captureBaselineEntries(curKey,newMs,newTasks);logChange(curKey,`Modelo "${tpl.name}" aplicado`,'#6924E1');closeM('tpl-modal');renderSchedule();renderPortfolio();}
 
 // Access
+// ── ONBOARDING TOUR ──────────────────────────────────────────────────────
+const TOUR_SEEN_KEY = 'vmo_tour_seen_emails';
+function hasSeenTour(email){
+  try{ const arr=JSON.parse(localStorage.getItem(TOUR_SEEN_KEY)||'[]'); return arr.includes((email||'').toLowerCase()); }catch(e){ return false; }
+}
+function markTourSeen(email){
+  try{
+    const arr=JSON.parse(localStorage.getItem(TOUR_SEEN_KEY)||'[]');
+    const em=(email||'').toLowerCase();
+    if(!arr.includes(em)){ arr.push(em); localStorage.setItem(TOUR_SEEN_KEY, JSON.stringify(arr)); }
+  }catch(e){}
+}
+const TOUR_STEPS = [
+  {view:null,        titleKey:'tour_step_welcome_title',     descKey:'tour_step_welcome_desc'},
+  {view:'portfolio',  titleKey:'tour_step_portfolio_title',   descKey:'tour_step_portfolio_desc'},
+  {view:'schedule',   titleKey:'tour_step_schedule_title',    descKey:'tour_step_schedule_desc'},
+  {view:'resumo',     titleKey:'tour_step_resumo_title',      descKey:'tour_step_resumo_desc'},
+  {view:'updates',    titleKey:'tour_step_updates_title',     descKey:'tour_step_updates_desc'},
+  {view:'prioridades',titleKey:'tour_step_prioridades_title', descKey:'tour_step_prioridades_desc'},
+  {view:'scoring',    titleKey:'tour_step_scoring_title',     descKey:'tour_step_scoring_desc'},
+  {view:'docs',       titleKey:'tour_step_docs_title',        descKey:'tour_step_docs_desc'}
+];
+let tourActiveSteps = [];
+let tourIdx = 0;
+// manual=true quando disparado pelo botão em Documentos Úteis (não marca "visto" de novo nem interfere no fluxo automático)
+function startOnboardingTour(manual){
+  if(!currentUser) return;
+  tourActiveSteps = TOUR_STEPS.filter(s => !s.view || canViewTab(s.view));
+  if(!tourActiveSteps.length) return;
+  tourIdx = 0;
+  document.getElementById('tour-backdrop').classList.add('open');
+  document.getElementById('tour-tip').style.display = 'block';
+  renderTourStep();
+  if(!manual) markTourSeen(currentUser.email);
+}
+function renderTourStep(){
+  const step = tourActiveSteps[tourIdx];
+  if(!step){ finishOnboardingTour(); return; }
+  if(step.view) showView(step.view, true);
+  const spot = document.getElementById('tour-spot');
+  const tip  = document.getElementById('tour-tip');
+  const target = step.view ? document.querySelector(`.nav-tab[data-view="${step.view}"]`) : null;
+  document.getElementById('tour-step-count').textContent = `${tourIdx+1} / ${tourActiveSteps.length}`;
+  document.getElementById('tour-tip-title').textContent = t(step.titleKey);
+  document.getElementById('tour-tip-desc').textContent = t(step.descKey);
+  document.getElementById('tour-skip-btn').textContent = t('tour_btn_pular');
+  document.getElementById('tour-next-btn').textContent = tourIdx === tourActiveSteps.length-1 ? t('tour_btn_concluir') : t('tour_btn_proximo');
+  document.getElementById('tour-dots').innerHTML = tourActiveSteps.map((_,i)=>`<span class="${i===tourIdx?'on':''}"></span>`).join('');
+  if(target){
+    const r = target.getBoundingClientRect();
+    spot.style.display = 'block';
+    spot.style.top = (r.top-6)+'px'; spot.style.left = (r.left-6)+'px';
+    spot.style.width = (r.width+12)+'px'; spot.style.height = (r.height+12)+'px';
+    let tipTop = r.top, tipLeft = r.right+16;
+    if(tipLeft+290 > window.innerWidth-16) tipLeft = Math.max(16, r.left);
+    if(tipTop+230 > window.innerHeight) tipTop = Math.max(16, window.innerHeight-240);
+    tip.style.top = tipTop+'px'; tip.style.left = tipLeft+'px';
+  } else {
+    spot.style.display = 'none';
+    tip.style.top = 'calc(50vh - 110px)'; tip.style.left = 'calc(50vw - 145px)';
+  }
+}
+function nextTourStep(){
+  tourIdx++;
+  if(tourIdx >= tourActiveSteps.length){ finishOnboardingTour(); return; }
+  renderTourStep();
+}
+function skipOnboardingTour(){ finishOnboardingTour(); }
+function finishOnboardingTour(){
+  document.getElementById('tour-backdrop').classList.remove('open');
+  document.getElementById('tour-tip').style.display = 'none';
+  document.getElementById('tour-spot').style.display = 'none';
+  showView('portfolio');
+}
+function openPermissionDocsModal(){
+  getOrBuildModal('permission-docs-modal','Níveis de permissão do HUB VMO',`
+  <div class="info-box">Estes são os 4 níveis atribuídos em "Gerenciar usuários" (só administradores veem essa tela). Existem também 2 acessos especiais, de convidado, explicados no final.</div>
+  <div class="section-lbl" style="margin-top:8px">👑 Administrador</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Acesso total: todas as abas, todos os projetos, todas as edições. É o único perfil que pode gerenciar usuários e conceder acessos de convidado (Stakeholder/Externo). Pode editar campos restritos ao GP (ex.: Data Alvo, Nota de Complexidade Técnica) em qualquer projeto, mesmo sem ser o GP cadastrado.</div>
+  <div class="section-lbl" style="margin-top:10px">✏️ Editor</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Vê todas as abas e todos os projetos. Só pode <b>editar</b> cronograma, atualizações e a maioria dos campos nos projetos onde está cadastrado como GP Alocado — em projetos de outros GPs, o acesso é de leitura.</div>
+  <div class="section-lbl" style="margin-top:10px">👁️ Visualizador</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Vê todas as abas e todos os projetos, mas em modo somente leitura — não edita nada. É o papel padrão de quem tem e-mail @bemobi.com e ainda não foi promovido a Editor/Admin/Consulta.</div>
+  <div class="section-lbl" style="margin-top:10px">🔍 Consulta</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Acesso restrito só às abas <b>Cronogramas</b> e <b>Resumo dos Projetos</b>, sempre em modo leitura — não vê Visão Geral, Prioridades, Atualizações, Scoring nem Documentos Úteis. Pensado pra quem só precisa acompanhar o andamento sem participar de decisões de portfólio.</div>
+  <div class="section-lbl" style="margin-top:12px">🔒 Acessos de convidado (por projeto, não pelo cadastro geral)</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5"><b>Stakeholder</b> — pessoa cadastrada em "Stakeholders" dentro de um projeto específico; só vê Cronograma+Resumo <i>daquele</i> projeto, sempre em leitura.<br><br><b>Externo</b> — acesso dado por um admin em "Gerenciar Acessos" pra alguém de fora da Bemobi; só vê Cronograma+Resumo do projeto liberado, podendo ou não editar o cronograma dependendo do nível concedido (Editor/Visualizador/Externo).</div>
+  <div class="info-box" style="margin-top:12px">💡 Alguns campos (Data Alvo, Nota de Complexidade Técnica) são liberados especificamente pra quem está cadastrado como GP Alocado daquele projeto, <i>independente</i> do nível de acesso geral (mesmo um Visualizador consegue editar esses campos específicos, se for o GP do projeto) — mais a Amanda, que sempre tem acesso a eles.</div>
+  `,`<button class="btn-c" onclick="closeM('permission-docs-modal')">Fechar</button>`);
+  openM('permission-docs-modal');
+}
 function openAccessModal(){
   if(!isAdmin()){
     const w=document.getElementById('access-admin-warn');
@@ -11518,6 +12353,7 @@ async function persistSchedule(key) {
   // repetido na lista de stakeholders (ex.: corrida entre duas abas), nunca escreve isso de
   // volta pro Firestore — limpa aqui, no ponto único de gravação, antes de qualquer coisa.
   if (schedules[key].stakeholders) schedules[key].stakeholders = dedupeStakeholders(schedules[key].stakeholders);
+  recordScheduleSnapshot(key);
   setSyncTxt('syncing', 'Salvando...');
   try {
     if (firebaseReady && db) {
@@ -11683,6 +12519,12 @@ async function autoLoadOnLogin() {
     // Idem: "Consulta" não vê Visão Geral — manda direto pro Resumo dos Projetos (sem
     // pré-selecionar nenhum, já que enxerga a carteira inteira, não um projeto só).
     showView('resumo');
+  }
+  // Tour de onboarding automático no primeiro login — só para perfis internos (admin, editor,
+  // viewer, consulta); convidados de projeto (external/stakeholder) já caem direto no
+  // cronograma/resumo do projeto deles e não precisam do tour geral da ferramenta.
+  if (currentUser && !['external','stakeholder'].includes(currentUser.role) && !hasSeenTour(currentUser.email) && !isUsingDefaultPassword(currentUser.email)) {
+    setTimeout(() => startOnboardingTour(false), 400);
   }
 }
 
@@ -12504,9 +13346,31 @@ schedules['VMO-304']={
   <div id="pm-access-btn" style="display:none;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;font-size:11px;color:#0f1623;transition:background .1s" onmouseenter="this.style.background='#f8f9fc'" onmouseleave="this.style.background=''" onclick="closeProfileMenu();openAccessModal()">
     <i class="ti ti-shield-lock" style="font-size:13px;color:#8a94a8;width:16px"></i> Gerenciar acessos
   </div>
+  <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;font-size:11px;color:#0f1623;transition:background .1s" onmouseenter="this.style.background='#f8f9fc'" onmouseleave="this.style.background=''" onclick="closeProfileMenu();openPermissionDocsModal()">
+    <i class="ti ti-help-circle" style="font-size:13px;color:#8a94a8;width:16px"></i> Níveis de permissão
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;font-size:11px;color:#0f1623;transition:background .1s" onmouseenter="this.style.background='#f8f9fc'" onmouseleave="this.style.background=''" onclick="closeProfileMenu();startOnboardingTour(true)">
+    <i class="ti ti-route" style="font-size:13px;color:#8a94a8;width:16px"></i> <span data-i18n="docs_btn_ver_tour">Tour de boas-vindas</span>
+  </div>
   <div style="height:1px;background:#e2e6f0;margin:3px 0"></div>
   <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;font-size:11px;color:#dc2626;transition:background .1s" onmouseenter="this.style.background='#fee2e2'" onmouseleave="this.style.background=''" onclick="closeProfileMenu();doLogout()">
     <i class="ti ti-logout" style="font-size:13px;color:#dc2626;width:16px"></i> Sair da conta
+  </div>
+</div>
+
+<!-- Onboarding tour (coach marks) -->
+<div id="tour-backdrop"></div>
+<div id="tour-spot" style="display:none"></div>
+<div id="tour-tip" style="display:none">
+  <div class="tour-step-count" id="tour-step-count"></div>
+  <h4 id="tour-tip-title"></h4>
+  <p id="tour-tip-desc"></p>
+  <div class="tour-ftr">
+    <div class="tour-dots" id="tour-dots"></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-c" id="tour-skip-btn" style="font-size:9.5px;padding:5px 10px" onclick="skipOnboardingTour()"></button>
+      <button class="btn-s" id="tour-next-btn" style="font-size:9.5px;padding:5px 12px" onclick="nextTourStep()"></button>
+    </div>
   </div>
 </div>
 
