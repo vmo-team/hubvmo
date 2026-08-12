@@ -472,7 +472,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 #se-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 #upd-proj-hdr{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--bg);flex-wrap:wrap}
 #upd-proj-hdr h2{font-size:12px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.upd-golive-chip{font-size:9.5px;background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;gap:3px}
+.upd-golive-chip{font-size:9.5px;background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;gap:3px}.upd-golive-chip.chip-xs{font-size:8.5px;padding:2px 6px;flex-shrink:0}
 #upd-feed{flex:1;min-height:0;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:11px}
 .upd-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
 .upd-card-hdr{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--border);background:var(--bg2)}
@@ -508,8 +508,8 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .rsm-proj-item{display:flex;align-items:center;gap:6px;padding:6px 11px;cursor:pointer;border-bottom:.5px solid var(--border);transition:background .1s}
 .rsm-proj-item:hover{background:var(--bg)}.rsm-proj-item.active{background:#ede9fe;border-left:3px solid var(--purple)}
 #rsm-main{flex:1;display:flex;flex-direction:column;overflow-y:auto}
-#rsm-hdr{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--bg);flex-wrap:wrap}
-#rsm-hdr h2{font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:120px}
+#rsm-hdr{padding:9px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0;background:var(--bg);flex-wrap:nowrap}
+#rsm-hdr h2{font-size:12px;font-weight:600;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:60px}
 #rsm-body{flex:1;display:grid;grid-template-columns:1.4fr 1fr;gap:12px;padding:14px 16px;align-content:start}
 @media(max-width:900px){#rsm-body{grid-template-columns:1fr}}
 .rsm-col{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -626,7 +626,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
    resto da barra de ferramentas (pedido explícito da Amanda). Visibilidade controlada por
    applyGanttVisibility(), a partir do estado ganttVisible. */
 #gantt-controls-bar{display:none;align-items:center;justify-content:flex-end;gap:6px;padding:6px 13px;background:var(--bg2);border-bottom:1px solid var(--border2);flex-shrink:0;flex-wrap:wrap}
-.se-jira{font-size:9.5px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:2px;flex-shrink:0}
+.se-jira{font-size:8.5px;font-weight:700;color:#0052CC;background:#e9f2ff;padding:2px 6px;border-radius:9px;text-decoration:none;display:flex;align-items:center;gap:3px;flex-shrink:0;letter-spacing:.2px;transition:background .15s}.se-jira:hover{background:#d6e6ff}.se-jira i{font-size:9px}
 .seb{font-size:10px;padding:3px 9px;border:1px solid var(--border2);border-radius:5px;cursor:pointer;background:var(--bg);color:var(--text2);display:flex;align-items:center;gap:3px;white-space:nowrap}
 .seb:disabled{opacity:.35;cursor:not-allowed}
 .seb.on{background:#ede9fe;border-color:var(--purple);color:var(--purple)}
@@ -949,13 +949,13 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   <div id="rsm-main">
     <div id="rsm-hdr">
       <h2 id="rsm-title" data-i18n="select_project">Selecione um projeto</h2>
-      <a class="se-jira" id="rsm-jira-lnk" href="#" target="_blank" style="display:none"><i class="ti ti-brand-jira"></i><span id="rsm-jira-key"></span></a>
-      <span class="upd-golive-chip" id="rsm-dataalvo" style="display:none"><i class="ti ti-calendar-event" style="font-size:10px"></i> <span data-i18n="rsm_data_alvo_label">Data Alvo:</span> <b id="rsm-dataalvo-val"></b></span>
-      <span class="upd-golive-chip" id="rsm-golive" style="display:none"><i class="ti ti-calendar-check" style="font-size:10px"></i> Go Live: <b id="rsm-golive-val"></b></span>
-      <span id="rsm-health-slot"></span><button class="btn-c" id="rsm-health-config-btn" style="display:none;font-size:8px;padding:2px 5px;margin-left:-2px;border:none" onclick="editHealthThreshold(curKey)" title="Configurar limite de tarefas críticas atrasadas para 'Em risco'/'Fora dos trilhos'"><i class="ti ti-settings" style="font-size:10px"></i></button>
-      <span id="rsm-slack-row" style="display:flex;align-items:center;gap:5px"></span>
-      <button class="btn-c" id="rsm-follow-btn" style="display:none;font-size:9.5px;padding:4px 9px;margin-left:auto;gap:4px;align-items:center" onclick="onFollowBtnClick(curKey)" data-i18n-title="rsm_follow_tooltip" title="Seguir este projeto pra receber avisos automáticos"></button>
-      <button class="btn-s" id="rsm-goto-cronograma-btn" style="display:none;font-size:10px;padding:6px 12px;gap:4px;align-items:center" onclick="goToCronograma()"><i class="ti ti-calendar-stats" style="font-size:11px"></i> <span data-i18n="rsm_ver_cronograma_completo">Ver Cronograma Completo</span></button>
+      <a class="se-jira" id="rsm-jira-lnk" href="#" target="_blank" style="display:none;flex-shrink:0"><i class="ti ti-brand-jira"></i><span id="rsm-jira-key"></span></a>
+      <span class="upd-golive-chip chip-xs" id="rsm-dataalvo" style="display:none"><i class="ti ti-calendar-event" style="font-size:9px"></i> <span data-i18n="rsm_data_alvo_label">Data Alvo:</span> <b id="rsm-dataalvo-val"></b></span>
+      <span class="upd-golive-chip chip-xs" id="rsm-golive" style="display:none"><i class="ti ti-calendar-check" style="font-size:9px"></i> Go Live: <b id="rsm-golive-val"></b></span>
+      <span id="rsm-health-slot" style="flex-shrink:0"></span><button class="btn-c" id="rsm-health-config-btn" style="display:none;flex-shrink:0;font-size:7px;padding:1px 4px;margin-left:-2px;border:none" onclick="editHealthThreshold(curKey)" title="Sobrepor manualmente o status de saúde do projeto"><i class="ti ti-pencil" style="font-size:9px"></i></button>
+      <span id="rsm-slack-row" style="display:flex;align-items:center;gap:4px;flex-shrink:0"></span>
+      <button class="btn-c" id="rsm-follow-btn" style="display:none;flex-shrink:0;font-size:8.5px;padding:3px 7px;margin-left:auto;gap:3px;align-items:center" onclick="onFollowBtnClick(curKey)" data-i18n-title="rsm_follow_tooltip" title="Seguir este projeto pra receber avisos automáticos"></button>
+      <button class="btn-s" id="rsm-goto-cronograma-btn" style="display:none;flex-shrink:0;font-size:9px;padding:4px 9px;gap:3px;align-items:center" onclick="goToCronograma()"><i class="ti ti-calendar-stats" style="font-size:10px"></i> <span data-i18n="rsm_ver_cronograma_completo">Ver Cronograma Completo</span></button>
     </div>
     <div id="rsm-hdr-meta" style="display:flex;align-items:center;gap:8px;padding:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--bg)">
       <span class="upd-golive-chip" style="background:#ede9fe;color:#5b21b6"><i class="ti ti-building" style="font-size:10px"></i> <span data-i18n="rsm_cliente_label">Cliente:</span> <b id="rsm-client-val">—</b><button class="btn-c" id="rsm-client-edit-btn" style="display:none;font-size:8px;padding:0 5px;margin-left:5px;border:none" onclick="editClientName()" data-i18n-title="rsm_editar_cliente" title="Editar cliente"><i class="ti ti-pencil" style="font-size:8px"></i></button></span>
@@ -970,12 +970,12 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
       <div class="rsm-col">
         <div class="rsm-card">
           <div class="rsm-card-hdr"><i class="ti ti-file-description" style="font-size:11px;color:var(--text3)"></i><h4 data-i18n="rsm_escopo_macro">Escopo Macro</h4>
+            <div id="rsm-scope-link-row" style="display:flex;align-items:center"></div>
             <button class="btn-c" id="rsm-scope-fetch-btn" style="display:none;font-size:9px;padding:2px 7px;gap:4px;align-items:center" onclick="fetchScopeFromConfluence()" data-i18n-title="rsm_buscar_confluence_title" title="Buscar automaticamente a seção 'Escopo Macro' da página do Confluence"><i class="ti ti-refresh" style="font-size:9px"></i> <span data-i18n="rsm_buscar_confluence_btn">Buscar do Confluence</span></button>
             <button class="btn-c" id="rsm-scope-edit-btn" style="display:none;font-size:9px;padding:2px 7px" onclick="editScopeSummary()" data-i18n-title="rsm_editar_escopo_title" title="Editar resumo do escopo"><i class="ti ti-pencil" style="font-size:9px"></i></button>
           </div>
           <div class="rsm-card-body">
             <div id="rsm-scope-text"></div>
-            <div id="rsm-scope-link-row" style="margin-top:7px"></div>
           </div>
         </div>
         <div class="rsm-card">
@@ -1060,7 +1060,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
       <div id="se-proj-dropdown"></div>
     </div>
     <button class="seb" id="copy-link-btn" onclick="copyScheduleLink()" style="display:none" title="Copiar link direto para este cronograma" data-i18n-title="sch_copy_link_title"><i class="ti ti-link" style="font-size:10px"></i> <span data-i18n="sch_copy_link">Copiar link</span></button>
-    <button class="seb" id="share-email-btn" onclick="shareScheduleByEmail()" style="display:none;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;font-weight:700" title="Enviar este cronograma por email" data-i18n-title="sch_compartilhar_email_title"><i class="ti ti-mail" style="font-size:10px"></i> <span data-i18n="sch_compartilhar_email">Compartilhar por email</span></button>
+    <button class="seb" id="share-email-btn" onclick="shareScheduleByEmail()" style="display:none" title="Enviar este cronograma por email" data-i18n-title="sch_compartilhar_email_title"><i class="ti ti-mail" style="font-size:10px"></i> <span data-i18n="sch_compartilhar_email">Compartilhar por email</span></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'exibicao')"><i class="ti ti-adjustments" style="font-size:10px"></i> <span data-i18n="sch_exibicao">Exibição</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'ferramentas')"><i class="ti ti-tools" style="font-size:10px"></i> <span data-i18n="sch_ferramentas">Ferramentas</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <button class="seb hdr-dd-trigger" id="sched-more-btn" onclick="toggleHdrMenu(event,'schedmore')"><i class="ti ti-dots" style="font-size:10px"></i> <span data-i18n="sch_mais">Mais detalhes</span></button>
@@ -1484,9 +1484,13 @@ const I18N = {
     rsm_complexidade_tecnica_info:'Nota de 1 a 5 que representa a complexidade técnica/de gestão do projeto, avaliada pelo GP responsável ou pela Julia Machareth. Clique para ver o detalhe.',
     rsm_follow_modal_title:'Seguir projeto',
     rsm_follow_about_label:'Sobre o que você quer ser avisado?',
-    rsm_follow_ev_milestone:'🏁 Atualização do cronograma — quando um marco (etapa) for concluído',
+    rsm_follow_default_role:'Seguidor',
+    rsm_contact_count_tpl:'+{n} contato{s}',
+    rsm_contact_count_title:'Ver todos os pontos de contato e seguidores',
+    rsm_follow_ev_milestone:'🏁 Quando um marco (etapa) for concluído',
     rsm_follow_ev_datechange:'📅 Se a data final do projeto sofrer alteração',
     rsm_follow_ev_decision:'📌 Principais decisões tomadas',
+    rsm_follow_ev_scheduleupdate:'🛠️ Qualquer atualização no cronograma (etapa, tarefa ou subtarefa criada, editada ou excluída)',
     rsm_follow_how_label:'Como você quer receber os avisos?',
     rsm_follow_ch_email:'📧 E-mail',
     rsm_follow_ch_slack:'💬 Slack (mensagem direta)',
@@ -1541,6 +1545,7 @@ const I18N = {
     rsm_chk_feed:'Feed',
     rsm_atualizacoes_feed_title:'Atualizações do feed geral',
     rsm_editor_cronograma_badge:'· ✏️ Editor do cronograma',
+    rsm_func_editor:'Editor', rsm_func_seguidor:'Seguidor', rsm_func_visualizador:'Visualizador',
     rsm_remover_edicao_title:'Remover acesso de edição',
     rsm_remover_edicao_btn:'Remover edição',
     rsm_dar_edicao_title:'Dar acesso de edição',
@@ -1795,6 +1800,7 @@ const I18N = {
     rsm_alert_only_gp_julia_comp_tecnica:'Só o GP deste projeto ou a Julia Machareth podem alterar a nota de complexidade técnica/gestão.',
     rsm_alert_only_gp_data_alvo:'Só o GP deste projeto ou a Amanda podem alterar a Data Alvo.',
     rsm_modal_title_editar_dataalvo:'Editar Data Alvo', rsm_health_threshold_modal_title:'Configurar limite de saúde do projeto', rsm_health_threshold_info:'Define a partir de quantas tarefas críticas atrasadas o projeto passa de "Nos trilhos" para "Em risco", e de "Em risco" para "Fora dos trilhos" (mais de N). Padrão: 4.', rsm_health_threshold_label:'Limite de tarefas críticas atrasadas para "Em risco"', rsm_health_threshold_invalid:'Informe um número válido, maior que zero.', rsm_lg_health_threshold_tpl:'Limite de saúde do projeto alterado para {n} tarefa(s) crítica(s) atrasada(s).',
+    rsm_health_status_modal_title:'Status de saúde do projeto', rsm_health_status_info:'Por padrão, o status é calculado automaticamente pela quantidade de tarefas críticas atrasadas. Aqui você pode sobrepor esse cálculo e definir manualmente o status exibido, se o automático não refletir a situação real do projeto.', rsm_health_status_label:'Status', rsm_health_status_auto:'Automático (calculado pelo sistema)', rsm_lg_health_status_tpl:'Status de saúde do projeto alterado manualmente para "{status}".', rsm_lg_health_status_auto_tpl:'Status de saúde do projeto voltou a ser calculado automaticamente.',
     rsm_info_dataalvo:'O campo "Data Alvo" representa a estimativa de término do projeto, definida pelo GP a partir do levantamento de escopo.',
     rsm_lg_dataalvo_manual:'Data Alvo atualizada manualmente',
     rsm_data_alvo_edit_title:'Clique para alterar a Data Alvo',
@@ -2101,9 +2107,13 @@ const I18N = {
     rsm_complexidade_tecnica_info:'Nota de 1 a 5 que representa la complejidad técnica/de gestión del proyecto, evaluada por el GP responsable o por Julia Machareth. Haz clic para ver el detalle.',
     rsm_follow_modal_title:'Seguir proyecto',
     rsm_follow_about_label:'¿Sobre qué quieres ser avisado?',
-    rsm_follow_ev_milestone:'🏁 Actualización del cronograma — cuando se complete un hito (etapa)',
+    rsm_follow_default_role:'Seguidor',
+    rsm_contact_count_tpl:'+{n} contacto{s}',
+    rsm_contact_count_title:'Ver todos los puntos de contacto y seguidores',
+    rsm_follow_ev_milestone:'🏁 Cuando se complete un hito (etapa)',
     rsm_follow_ev_datechange:'📅 Si la fecha final del proyecto cambia',
     rsm_follow_ev_decision:'📌 Principales decisiones tomadas',
+    rsm_follow_ev_scheduleupdate:'🛠️ Cualquier actualización en el cronograma (etapa, tarea o subtarea creada, editada o eliminada)',
     rsm_follow_how_label:'¿Cómo quieres recibir los avisos?',
     rsm_follow_ch_email:'📧 Correo electrónico',
     rsm_follow_ch_slack:'💬 Slack (mensaje directo)',
@@ -2158,6 +2168,7 @@ const I18N = {
     rsm_chk_feed:'Feed',
     rsm_atualizacoes_feed_title:'Actualizaciones del feed general',
     rsm_editor_cronograma_badge:'· ✏️ Editor del cronograma',
+    rsm_func_editor:'Editor', rsm_func_seguidor:'Seguidor', rsm_func_visualizador:'Visualizador',
     rsm_remover_edicao_title:'Eliminar acceso de edición',
     rsm_remover_edicao_btn:'Eliminar edición',
     rsm_dar_edicao_title:'Dar acceso de edición',
@@ -2412,6 +2423,7 @@ const I18N = {
     rsm_alert_only_gp_julia_comp_tecnica:'Solo el GP de este proyecto o Julia Machareth pueden modificar la nota de complejidad técnica/gestión.',
     rsm_alert_only_gp_data_alvo:'Solo el GP de este proyecto o Amanda pueden modificar la Fecha Objetivo.',
     rsm_modal_title_editar_dataalvo:'Editar Fecha Objetivo', rsm_health_threshold_modal_title:'Configurar límite de salud del proyecto', rsm_health_threshold_info:'Define a partir de cuántas tareas críticas atrasadas el proyecto pasa de "En trilhos" a "En riesgo", y de "En riesgo" a "Fuera de trilhos" (más de N). Predeterminado: 4.', rsm_health_threshold_label:'Límite de tareas críticas atrasadas para "En riesgo"', rsm_health_threshold_invalid:'Ingrese un número válido, mayor que cero.', rsm_lg_health_threshold_tpl:'Límite de salud del proyecto cambiado a {n} tarea(s) crítica(s) atrasada(s).',
+    rsm_health_status_modal_title:'Estado de salud del proyecto', rsm_health_status_info:'Por defecto, el estado se calcula automáticamente según la cantidad de tareas críticas atrasadas. Aquí puedes anular ese cálculo y definir manualmente el estado mostrado, si el automático no refleja la situación real del proyecto.', rsm_health_status_label:'Estado', rsm_health_status_auto:'Automático (calculado por el sistema)', rsm_lg_health_status_tpl:'Estado de salud del proyecto cambiado manualmente a "{status}".', rsm_lg_health_status_auto_tpl:'El estado de salud del proyecto volvió a calcularse automáticamente.',
     rsm_info_dataalvo:'El campo "Fecha Objetivo" representa la estimación de finalización del proyecto, definida por el GP a partir del levantamiento de alcance.',
     rsm_lg_dataalvo_manual:'Fecha Objetivo actualizada manualmente',
     rsm_data_alvo_edit_title:'Haz clic para modificar la Fecha Objetivo',
@@ -2718,9 +2730,13 @@ const I18N = {
     rsm_complexidade_tecnica_info:'Score from 1 to 5 representing the project\'s technical/management complexity, assessed by the responsible PM or by Julia Machareth. Click to see the detail.',
     rsm_follow_modal_title:'Follow project',
     rsm_follow_about_label:'What do you want to be notified about?',
-    rsm_follow_ev_milestone:'🏁 Schedule update — when a milestone is completed',
+    rsm_follow_default_role:'Follower',
+    rsm_contact_count_tpl:'+{n} contact{s}',
+    rsm_contact_count_title:'View all points of contact and followers',
+    rsm_follow_ev_milestone:'🏁 When a milestone is completed',
     rsm_follow_ev_datechange:'📅 If the project\'s final date changes',
     rsm_follow_ev_decision:'📌 Key decisions made',
+    rsm_follow_ev_scheduleupdate:'🛠️ Any schedule update (milestone, task or subtask created, edited or deleted)',
     rsm_follow_how_label:'How do you want to receive alerts?',
     rsm_follow_ch_email:'📧 Email',
     rsm_follow_ch_slack:'💬 Slack (direct message)',
@@ -2775,6 +2791,7 @@ const I18N = {
     rsm_chk_feed:'Feed',
     rsm_atualizacoes_feed_title:'General feed updates',
     rsm_editor_cronograma_badge:'· ✏️ Schedule editor',
+    rsm_func_editor:'Editor', rsm_func_seguidor:'Follower', rsm_func_visualizador:'Viewer',
     rsm_remover_edicao_title:'Remove edit access',
     rsm_remover_edicao_btn:'Remove edit',
     rsm_dar_edicao_title:'Grant edit access',
@@ -3029,6 +3046,7 @@ const I18N = {
     rsm_alert_only_gp_julia_comp_tecnica:'Only this project\'s PM or Julia Machareth can change the technical/management complexity score.',
     rsm_alert_only_gp_data_alvo:'Only this project\'s PM or Amanda can change the Target Date.',
     rsm_modal_title_editar_dataalvo:'Edit Target Date', rsm_health_threshold_modal_title:'Configure project health threshold', rsm_health_threshold_info:'Sets how many overdue critical tasks move the project from "On track" to "At risk", and from "At risk" to "Off track" (more than N). Default: 4.', rsm_health_threshold_label:'Overdue critical tasks threshold for "At risk"', rsm_health_threshold_invalid:'Enter a valid number greater than zero.', rsm_lg_health_threshold_tpl:'Project health threshold changed to {n} overdue critical task(s).',
+    rsm_health_status_modal_title:'Project health status', rsm_health_status_info:'By default, the status is calculated automatically from the number of overdue critical tasks. Here you can override that calculation and set the displayed status manually, if the automatic one doesn\'t reflect the project\'s real situation.', rsm_health_status_label:'Status', rsm_health_status_auto:'Automatic (calculated by the system)', rsm_lg_health_status_tpl:'Project health status manually changed to "{status}".', rsm_lg_health_status_auto_tpl:'Project health status is automatic again.',
     rsm_info_dataalvo:'The "Target Date" field represents the project\'s estimated completion, defined by the PM based on the scope assessment.',
     rsm_lg_dataalvo_manual:'Target Date manually updated',
     rsm_data_alvo_edit_title:'Click to change the Target Date',
@@ -3280,9 +3298,21 @@ function canEdit(projectKey) {
   if (!currentUser) return false;
   const r = currentUser.role;
   if (r === 'admin') return true;
+  // Causa raiz real do bug reportado pela Amanda (⋮ e "adicionar tarefa/subtarefa" some pro
+  // GP alocado no projeto): isGPOfProject só era checado DENTRO do bloco `r === 'editor'` —
+  // então um GP cujo papel de conta no HUB não fosse exatamente 'editor' (ex.: cadastrado como
+  // 'viewer'/'consulta' por padrão) caía direto no `return false`, mesmo sendo o GP de verdade
+  // do projeto. canEditDataAlvo/canEditComplexidadeTecnica já tratavam isso corretamente
+  // (checam isGPOfProject ANTES de olhar o papel da conta) — canEdit() ficou desalinhado.
+  // Agora: ser o GP do projeto libera edição do cronograma independente do papel da conta.
+  const p = PROJECTS.find(x => x.key === projectKey);
+  if (isGPOfProject(currentUser, p)) return true;
   if (r === 'editor') {
-    const p = PROJECTS.find(x => x.key === projectKey);
-    return isGPOfProject(currentUser, p);
+    // Editor que não é o GP daquele projeto específico: só edita se tiver recebido acesso
+    // explícito (via "Gerenciar Acessos" ou "Dar acesso de edição" na lista de Stakeholders) —
+    // esse grant já valia pra role 'external', faltava valer também pra 'editor'.
+    const sc = schedules[projectKey];
+    return (sc?.access || []).some(a => a.email.toLowerCase() === currentUser.email.toLowerCase() && a.role === 'editor');
   }
   if (r === 'external') {
     const sc = schedules[projectKey];
@@ -4289,13 +4319,12 @@ function updateDD(ddId,lblId,filterKey,placeholder){
 //    comparar, então tratamos como neutro ('on-track') em vez de inventar um 4º estado — mesmo
 //    padrão já usado em getAtRiscoAlert (que mostra essa mesma comparação por projeto, à parte).
 const HEALTH_AT_RISK_BUFFER_DAYS=5;
-const DEFAULT_HEALTH_THRESHOLD=4;
 // Limite de tarefas críticas atrasadas até "Em risco" — acima disso vira "Fora dos trilhos".
-// Configurável por projeto (schedules[key].healthThreshold); sem valor definido, usa o padrão.
+// Fixo pro cálculo automático — pedido explícito da Amanda: o GP/admin NÃO define esse
+// critério. O que ele pode fazer é sobrepor o resultado calculado (ver healthOverride abaixo).
+const DEFAULT_HEALTH_THRESHOLD=4;
 function getHealthThreshold(key){
-  const s=schedules[key];
-  const v=s&&s.healthThreshold;
-  return (typeof v==='number'&&v>0)?v:DEFAULT_HEALTH_THRESHOLD;
+  return DEFAULT_HEALTH_THRESHOLD;
 }
 function getStats(key){
   const s=schedules[key];
@@ -4308,7 +4337,11 @@ function getStats(key){
   const lateTasks=tasks.filter(isLate).length;
   const criticalLateTasks=tasks.filter(t=>t.critical&&isLate(t)).length+(s.subtasks||[]).filter(sub=>sub.critical&&isLate(sub)).length;
   const healthThreshold=getHealthThreshold(key);
-  const health=criticalLateTasks===0?'on-track':criticalLateTasks<=healthThreshold?'alert':'off-track';
+  const healthAuto=criticalLateTasks===0?'on-track':criticalLateTasks<=healthThreshold?'alert':'off-track';
+  // healthOverride: o GP/admin não define o CRITÉRIO (threshold), mas pode sobrepor o
+  // RESULTADO — travar o selo em "Nos trilhos"/"Em risco"/"Fora dos trilhos" manualmente,
+  // por ex. quando sabe de um contexto que o cálculo automático não capta.
+  const health=(s.healthOverride==='on-track'||s.healthOverride==='alert'||s.healthOverride==='off-track')?s.healthOverride:healthAuto;
   const msDates=(s.milestones).map(m=>m.deadline).filter(Boolean).sort();
   const goLiveLocal=msDates[msDates.length-1]||null;
   const p=PROJECTS.find(x=>x.key===key);
@@ -4320,7 +4353,7 @@ function getStats(key){
     const diff=diffD(pd(p2.golive),pd(goLiveLocal)); // goLiveLocal - golive, em dias
     return diff>0?'off-track':diff>=-HEALTH_AT_RISK_BUFFER_DAYS?'alert':'on-track';
   })();
-  return{has:true,ms:s.milestones.length,tasks:tasks.length,prog,lateTasks,criticalLateTasks,healthThreshold,health,glHealth,goLiveLocal};
+  return{has:true,ms:s.milestones.length,tasks:tasks.length,prog,lateTasks,criticalLateTasks,healthThreshold,health,healthAuto,healthOverride:s.healthOverride||null,glHealth,goLiveLocal};
 }
 // lateTasks (opcional): quando informado e > 0, acrescenta um aviso pequeno e discreto logo
 // abaixo do selo principal — "⚠ N tarefa(s) atrasada(s)" — pra manter as DUAS visibilidades
@@ -4760,27 +4793,39 @@ async function pushGoLiveToJira(key,golive){
 // Mesmo campo por baixo do Go Live (Jira: Data limite/duedate) — reaproveita o mesmo push
 // (pushGoLiveToJira/updateGoLive) em vez de criar uma action nova no Apps Script. Só quem
 // passa por canEditDataAlvo() (GP daquele projeto ou Amanda) vê a opção de editar.
-// Configura o limite de tarefas críticas atrasadas usado pra classificar a saúde do projeto
-// (Nos trilhos/Em risco/Fora dos trilhos) — pedido da Amanda pra virar configurável por
-// projeto, já que times diferentes toleram volumes diferentes de atraso em tarefa crítica.
-// Mesma permissão de edição do cronograma (GP daquele projeto ou admin — ver canEdit()).
+// Deixa o GP/admin sobrepor manualmente o selo de saúde do projeto (Nos trilhos/Em risco/Fora
+// dos trilhos) — pedido explícito da Amanda: eles NÃO definem o critério/limite usado no
+// cálculo automático (isso é fixo no sistema), só podem travar o resultado exibido quando o
+// cálculo automático não reflete a situação real. Mesma permissão de edição do cronograma
+// (GP daquele projeto ou admin — ver canEdit()).
 function editHealthThreshold(key){
-  if(!canEdit(key)){alert(t('alert_no_perm_edit'));return;}
-  const cur=getHealthThreshold(key);
-  getOrBuildModal('edit-health-threshold-modal',t('rsm_health_threshold_modal_title'),`
-    <div class="info-box" style="margin-bottom:8px">${t('rsm_health_threshold_info')}</div>
-    <div class="fg"><label>${t('rsm_health_threshold_label')}</label><input id="edit-health-threshold-input" type="number" min="1" step="1" value="${cur}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px"></div>
+  const p=PROJECTS.find(x=>x.key===key);
+  if(!isAdmin()&&!isGPOfProject(currentUser,p)){alert(t('alert_no_perm_edit'));return;}
+  const sched=schedules[key];if(!sched)return;
+  const cur=sched.healthOverride||'';
+  const opts=[
+    {v:'',l:t('rsm_health_status_auto')},
+    {v:'on-track',l:t('prio_health_on_track')},
+    {v:'alert',l:t('prio_health_alert')},
+    {v:'off-track',l:t('prio_health_off_track')},
+  ];
+  getOrBuildModal('edit-health-threshold-modal',t('rsm_health_status_modal_title'),`
+    <div class="info-box" style="margin-bottom:8px">${t('rsm_health_status_info')}</div>
+    <div class="fg"><label>${t('rsm_health_status_label')}</label><select id="edit-health-status-input" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+      ${opts.map(o=>`<option value="${o.v}" ${cur===o.v?'selected':''}>${o.l}</option>`).join('')}
+    </select></div>
   `,`<button class="btn-c" onclick="closeM('edit-health-threshold-modal')">${t('btn_cancelar')}</button><button class="btn-s" onclick="saveHealthThreshold('${key}')">${t('btn_salvar')}</button>`);
   openM('edit-health-threshold-modal');
 }
 function saveHealthThreshold(key){
-  if(!canEdit(key))return;
-  const raw=document.getElementById('edit-health-threshold-input').value;
-  const n=parseInt(raw);
-  if(isNaN(n)||n<1){alert(t('rsm_health_threshold_invalid'));return;}
+  const p=PROJECTS.find(x=>x.key===key);
+  if(!isAdmin()&&!isGPOfProject(currentUser,p))return;
+  const val=document.getElementById('edit-health-status-input').value;
   const sched=schedules[key];if(!sched)return;
-  sched.healthThreshold=n;
-  logChange(key,fmtLog('rsm_lg_health_threshold_tpl',{n}),'#0369a1');
+  sched.healthOverride=val||null;
+  const labelMap={'on-track':t('prio_health_on_track'),'alert':t('prio_health_alert'),'off-track':t('prio_health_off_track')};
+  if(val)logChange(key,fmtLog('rsm_lg_health_status_tpl',{status:labelMap[val]}),'#0369a1');
+  else logChange(key,t('rsm_lg_health_status_auto_tpl'),'#0369a1');
   persistSchedule(key);
   closeM('edit-health-threshold-modal');
   if(key===curKey){renderResumoDashboard();renderProjSum();}
@@ -6689,19 +6734,19 @@ function renderCalendar(){
       const glDate=p.golive;
       if(glDate){const d=pd(glDate);if(d>=b.s&&d<=b.e){
         const st=getStats(p.key);const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
-        const glLine='Go Live: <b>'+fmtBR(glDate)+'</b>';
-        let daLine=p.duedate?'Data Alvo: '+fmtBR(p.duedate):'';
-        if(p.gp&&p.gp!=='—')daLine+=(daLine?' · ':'')+'GP: '+p.gp.split(' ')[0];
-        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+glLine+(daLine?'<br>'+daLine:'')+'</span>',cls});
+        let daLine=p.duedate?'Data Alvo: <b>'+fmtBR(p.duedate)+'</b>':'';
+        let glLine='Go Live: '+fmtBR(glDate);
+        if(p.gp&&p.gp!=='—')glLine+=' · GP: '+p.gp.split(' ')[0];
+        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+(daLine?daLine+'<br>':'')+glLine+'</span>',cls});
       }}
     });
     calEligibleProjects().forEach(p=>{
       if(p.golive)return;const st=getStats(p.key);if(!st.has||!st.goLiveLocal)return;const d=pd(st.goLiveLocal);
       if(d>=b.s&&d<=b.e){
         const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
+        const daLineFc=p.duedate?'Data Alvo: <b>'+fmtBR(p.duedate)+'</b>':'';
         const fcLine='Fim cron.: '+fmtBR(ds(d));
-        const daLineFc=p.duedate?'Data Alvo: '+fmtBR(p.duedate):'';
-        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+fcLine+(daLineFc?'<br>'+daLineFc:'')+'</span>',cls});
+        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+(daLineFc?daLineFc+'<br>':'')+fcLine+'</span>',cls});
       }
     });
     if(!bucketItems.length&&calModeVal!=='month')return;
@@ -6794,7 +6839,7 @@ function openUpdatesProject(key){
   if(glDate){glChip.style.display='';glVal.textContent=fmtBRFull(glDate)+(p.golive?' (Jira)':' (local)');}
   else glChip.style.display='none';
   document.getElementById('upd-composer').style.display=isEditorOrAbove()?'':'none';
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],subtasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,slackChannelLink:null,followers:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],subtasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,slackChannelLink:null};
   renderScopeLinkChip(key);
   renderUpdates(key);renderUpdatesProjectList();
   setupRtePasteHandler('composer-text');
@@ -7608,7 +7653,7 @@ function prepareProjectContext(key){
   // Update browser URL so this page can be shared/bookmarked
   const schedUrl=window.location.href.split('?')[0]+'?project='+key;
   history.replaceState(null,'',schedUrl);
-  if(!schedules[key])schedules[key]={milestones:[],tasks:[],subtasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,hiddenConfluenceMinuteIds:[],slackChannelLink:null,followers:[]};
+  if(!schedules[key])schedules[key]={milestones:[],tasks:[],subtasks:[],access:[{email:(currentUser?.email||'tainah.andrade@bemobi.com'),role:'editor'}],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,hiddenConfluenceMinuteIds:[],slackChannelLink:null};
   // Histórico de undo/redo é por projeto: só reinicia a baseline quando o projeto ABERTO muda de
   // fato (reentrar no mesmo projeto, ex. trocando de Cronograma pra Resumo e voltando, preserva
   // o histórico e o contador de alterações não confirmadas).
@@ -7793,9 +7838,11 @@ function renderResumoDashboard(){
     daChip.title=canEdDA?t('rsm_data_alvo_edit_title'):'';
     daChip.onclick=canEdDA?(()=>editDataAlvo(curKey)):null;
   }
-  document.getElementById('rsm-health-slot').innerHTML=st.has?healthBadge(st.health,st.lateTasks):'';
+  document.getElementById('rsm-health-slot').innerHTML=st.has?healthBadge(st.health):'';
   const healthCfgBtn=document.getElementById('rsm-health-config-btn');
-  if(healthCfgBtn)healthCfgBtn.style.display=(st.has&&canEdit(curKey))?'':'none';
+  // Pedido da Amanda: só admin ou GP do projeto pode sobrepor o status de saúde — mais
+  // restrito que canEdit() (que também libera editor externo com acesso concedido).
+  if(healthCfgBtn)healthCfgBtn.style.display=(st.has&&(isAdmin()||isGPOfProject(currentUser,p)))?'':'none';
   document.getElementById('rsm-goto-cronograma-btn').style.display=''; // visível pra todo projeto, com ou sem cronograma cadastrado
   renderFollowButton();
 
@@ -7818,10 +7865,16 @@ function renderResumoDashboard(){
     :`<div class="rsm-empty">${isEditorOrAbove()?window.t('rsm_escopo_vazio_editor'):window.t('rsm_escopo_vazio_viewer')}</div>`;
   const linkRow=document.getElementById('rsm-scope-link-row');
   const link=sched.scopeLink;const canEditScope=isEditorOrAbove();
+  // Pedido da Amanda: o lápis de editar o link do Escopo Detalhado saiu de uma linha própria
+  // embaixo do resumo e foi pra dentro do próprio nome/chip, no cabeçalho do card — junto do
+  // título "Escopo Macro", ao lado do nome, em vez de ficar solto no rodapé do card.
   if(link){
-    linkRow.innerHTML=`<a href="${link}" target="_blank" class="upd-golive-chip" style="text-decoration:none"><i class="ti ti-file-text" style="font-size:10px"></i> ${t('rsm_escopo_detalhado')}</a>${canEditScope?` <button class="btn-c" style="font-size:9px;padding:2px 7px" onclick="editScopeLinkFromResumo()"><i class="ti ti-pencil" style="font-size:9px"></i></button>`:''}`;
+    linkRow.innerHTML=`<a href="${link}" target="_blank" class="upd-golive-chip" style="text-decoration:none;gap:4px">
+        <i class="ti ti-file-text" style="font-size:10px"></i> ${t('rsm_escopo_detalhado')}
+        ${canEditScope?`<i class="ti ti-pencil" style="font-size:9px;margin-left:2px;opacity:.7;cursor:pointer" onclick="event.preventDefault();event.stopPropagation();editScopeLinkFromResumo()" title="${t('rsm_editar_link_escopo_title')}"></i>`:''}
+      </a>`;
   } else if(canEditScope){
-    linkRow.innerHTML=`<button class="btn-c" style="font-size:9px;padding:3px 8px;display:flex;gap:4px;align-items:center" onclick="editScopeLinkFromResumo()"><i class="ti ti-link" style="font-size:9px"></i> ${t('rsm_add_link_escopo')}</button>`;
+    linkRow.innerHTML=`<button class="btn-c" style="font-size:9px;padding:2px 7px;display:flex;gap:4px;align-items:center" onclick="editScopeLinkFromResumo()"><i class="ti ti-link" style="font-size:9px"></i> ${t('rsm_add_link_escopo')}</button>`;
   } else {
     linkRow.innerHTML='';
   }
@@ -7889,21 +7942,23 @@ function renderResumoTimesEnvolvidos(){
 // se alguém marcar de propósito.
 function renderResumoDatesList(){
   const sched=schedules[curKey];const list=document.getElementById('rsm-dates-list');if(!list)return;
-  const msItems=(sched.milestones||[]).filter(m=>!m.marcoOff).map(m=>({name:m.name,deadline:m.deadline,color:m.color||'var(--purple)',icon:'ti-flag-2',kind:window.t('rsm_kind_etapa')}));
+  const msItems=(sched.milestones||[]).filter(m=>!m.marcoOff).map(m=>({name:m.name,start:m.start,deadline:m.deadline,color:m.color||'var(--purple)',icon:'ti-flag-2',kind:window.t('rsm_kind_etapa')}));
   const taskItems=(sched.tasks||[]).filter(t=>t.isMarco).map(t=>{
     const ms=(sched.milestones||[]).find(x=>x.id===t.msId);
-    return {name:t.name,deadline:t.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
+    return {name:t.name,start:t.start,deadline:t.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
   });
   // Se uma tarefa marcada como marco for indentada e virar subtarefa (ver indentTask), o isMarco
   // é preservado no objeto — precisa continuar aparecendo aqui, senão "desaparece" sem aviso.
   const subItems=(sched.subtasks||[]).filter(s=>s.isMarco).map(s=>{
     const tk=(sched.tasks||[]).find(x=>x.id===s.taskId);
     const ms=tk?(sched.milestones||[]).find(x=>x.id===tk.msId):null;
-    return {name:s.name,deadline:s.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
+    return {name:s.name,start:s.start,deadline:s.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
   });
   const all=[...msItems,...taskItems,...subItems].sort((a,b)=>(a.deadline||'').localeCompare(b.deadline||''));
   document.getElementById('rsm-dates-empty').style.display=all.length?'none':'block';
-  list.innerHTML=all.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${m.color}"></div><div style="min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:1"><span style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.kind}"><i class="ti ${m.icon}" style="font-size:9px;opacity:.6;margin-right:2px"></i>${m.name}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0">${fmtBRFull(m.deadline)}</span></div></div>`).join('');
+  // Ícone de bandeira/pin entre nome e bolinha removido (pedido da Amanda — a bolinha colorida
+  // já identifica a etapa) e adicionado o período completo (Início → Fim), não só a data final.
+  list.innerHTML=all.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${m.color}"></div><div style="min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:1"><span style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.kind}">${m.name}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap;flex-shrink:0">${fmtBR(m.start)} → ${fmtBRFull(m.deadline)}</span></div></div>`).join('');
 }
 // Combina Scoring + as duas notas de Complexidade num único card "Score & Complexidade",
 // com 3 caixinhas lado a lado (ver .rsm-stat-row) — antes eram 2 cards/listas separados
@@ -7921,9 +7976,14 @@ function renderResumoScoringCard(){
   } else {
     const scRes=computeProjectScoring(p);
     if(scRes){
-      scoringValHtml=`<span style="font-size:15px;font-weight:700;color:${scRes.cls.color};line-height:1">${scRes.score.toFixed(2)}</span>
-        <span style="font-size:9.5px;font-weight:600;color:${scRes.cls.color}">${scRes.cls.emoji} ${scRes.cls.label}</span>
-        ${scRes.alert?`<div style="font-size:8.5px;color:var(--red);width:100%;margin-top:1px">${scRes.alert}</div>`:''}`;
+      // Pedido da Amanda: número sempre em preto (neutro) em cima, e a classificação (bolinha +
+      // baixa/média/alta), essa sim colorida por nível, embaixo — antes os dois vinham na mesma
+      // cor da classificação, lado a lado.
+      scoringValHtml=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;width:100%">
+          <span style="font-size:15px;font-weight:700;color:var(--text);line-height:1">${scRes.score.toFixed(2)}</span>
+          <span style="font-size:9.5px;font-weight:600;color:${scRes.cls.color}">${scRes.cls.emoji} ${scRes.cls.label}</span>
+          ${scRes.alert?`<div style="font-size:8.5px;color:var(--red);width:100%;margin-top:1px;text-align:center">${scRes.alert}</div>`:''}
+        </div>`;
       if(canEdSc)scoringOnClick='openScoringModal()';
     } else if(canEdSc){
       scoringValHtml=`<button class="btn-c" style="font-size:9px;padding:3px 7px;display:flex;gap:4px;align-items:center" onclick="event.stopPropagation();openScoringModal()"><i class="ti ti-star" style="font-size:9px"></i> ${t('rsm_score_preencher')}</button>`;
@@ -8050,54 +8110,81 @@ function renderResumoSlackChannelLinkRow(){
 // ═══════════════════════════════════════════
 //  FOLLOW / NOTIFICAÇÕES AUTOMÁTICAS
 // ═══════════════════════════════════════════
-// Diferente de Stakeholders (cadastro manual feito pelo GP, geralmente de gente de fora), Follow
-// é self-service: qualquer usuário logado — de qualquer papel, incluindo quem só visualiza —
-// pode se inscrever pra acompanhar um projeto e escolher onde quer ser avisado. Guardado em
-// schedules[key].followers, no formato {email,name,channels:{email,slack}}.
+// Pedido explícito da Amanda: "Seguindo" e "Pontos de Contato" foram unificados numa lista só
+// — schedules[key].stakeholders — pra que o conteúdo seja sempre o mesmo nos dois lugares.
+// Cadastrar alguém como Ponto de Contato também o inclui em quem recebe avisos automáticos de
+// Follow; e clicar em "Seguir projeto" também o inclui na lista de Pontos de Contato (com o
+// papel padrão "Seguidor", que o GP pode depois trocar por um papel mais específico). Cada
+// entrada carrega dois blocos de preferência independentes, sem conflito: notifyChannels/
+// notifyTypes (usados pelo Email/Slack manual de atualização pro stakeholder) e channels/events
+// (usados pelos avisos automáticos de Follow — marco concluído, data alterada, decisão, etc.).
+function findContactEntry(key,email){
+  const sched=schedules[key];if(!sched)return null;
+  const e=(email||'').toLowerCase();
+  return (sched.stakeholders||[]).find(s=>(s.email||'').toLowerCase()===e)||null;
+}
+// Garante uma entrada única por e-mail em schedules[key].stakeholders — usado tanto por quem
+// segue o projeto (Follow) quanto por quem é cadastrado manualmente como Ponto de Contato.
+function ensureContactEntry(key,email,name,defaultRole){
+  const sched=schedules[key];if(!sched)return null;
+  if(!sched.stakeholders)sched.stakeholders=[];
+  let entry=findContactEntry(key,email);
+  if(!entry){
+    entry={id:uid(),name:name||email,email,role:defaultRole||'',addedAt:nowStr(),
+      notifyChannels:{email:true,slack:false},notifyTypes:{cronograma:true,risco:true,feed:false},
+      channels:{email:true,slack:true},events:{milestone:true,dateChange:true,decision:true,scheduleUpdate:true}};
+    sched.stakeholders.push(entry);
+    sched.stakeholders=dedupeStakeholders(sched.stakeholders);
+    entry=findContactEntry(key,email)||entry;
+  }
+  if(!entry.channels)entry.channels={email:true,slack:true};
+  if(!entry.events)entry.events={milestone:true,dateChange:true,decision:true,scheduleUpdate:true};
+  return entry;
+}
 function isFollowing(key){
   if(!currentUser)return false;
-  const sched=schedules[key];if(!sched)return false;
-  return (sched.followers||[]).some(f=>f.email.toLowerCase()===currentUser.email.toLowerCase());
+  return !!findContactEntry(key,currentUser.email);
 }
 function getFollowerEntry(key){
   if(!currentUser)return null;
-  const sched=schedules[key];if(!sched)return null;
-  return (sched.followers||[]).find(f=>f.email.toLowerCase()===currentUser.email.toLowerCase())||null;
+  return findContactEntry(key,currentUser.email);
 }
 function followProject(key){
   if(!currentUser)return;
   const sched=schedules[key];if(!sched)return;
-  if(!sched.followers)sched.followers=[];
-  if(sched.followers.some(f=>f.email.toLowerCase()===currentUser.email.toLowerCase()))return;
-  sched.followers.push({email:currentUser.email,name:currentUser.name||currentUser.email,channels:{email:true,slack:true},events:{milestone:true,dateChange:true,decision:true}});
-  logChange(key,fmtLog('rsm_lg_passou_seguir_tpl',{name:currentUser.name||currentUser.email}),'#166534');
-  persistSchedule(key);
+  const already=findContactEntry(key,currentUser.email);
+  ensureContactEntry(key,currentUser.email,currentUser.name||currentUser.email,t('rsm_follow_default_role'));
+  if(!already){
+    logChange(key,fmtLog('rsm_lg_passou_seguir_tpl',{name:currentUser.name||currentUser.email}),'#166534');
+    persistSchedule(key);
+  }
   renderFollowButton();
+  renderContactCard();
+  if(document.getElementById('stakeholders-list'))renderStakeholdersList();
 }
 function unfollowProject(key){
   if(!currentUser)return;
   const sched=schedules[key];if(!sched)return;
-  sched.followers=(sched.followers||[]).filter(f=>f.email.toLowerCase()!==currentUser.email.toLowerCase());
+  sched.stakeholders=(sched.stakeholders||[]).filter(f=>(f.email||'').toLowerCase()!==currentUser.email.toLowerCase());
   logChange(key,fmtLog('rsm_lg_deixou_seguir_tpl',{name:currentUser.name||currentUser.email}),'#64748b');
   persistSchedule(key);
   renderFollowButton();
+  renderContactCard();
+  if(document.getElementById('stakeholders-list'))renderStakeholdersList();
   closeM('follow-prefs-modal');
 }
 function updateFollowChannel(key,channel,checked){
   if(!currentUser)return;
-  const sched=schedules[key];if(!sched)return;
-  const f=(sched.followers||[]).find(x=>x.email.toLowerCase()===currentUser.email.toLowerCase());if(!f)return;
-  if(!f.channels)f.channels={email:true,slack:true};
+  const f=ensureContactEntry(key,currentUser.email,currentUser.name||currentUser.email,t('rsm_follow_default_role'));if(!f)return;
   f.channels[channel]=checked;
   persistSchedule(key);
 }
 // Qual(is) tipo(s) de evento a pessoa quer ser avisada — independente do canal (E-mail/Slack).
-// Pode marcar uma, duas ou as três: marco concluído, data final alterada, decisão registrada.
+// Pode marcar uma, duas, três ou as quatro: marco concluído, data final alterada, decisão
+// registrada, qualquer atualização no cronograma.
 function updateFollowEventPref(key,eventType,checked){
   if(!currentUser)return;
-  const sched=schedules[key];if(!sched)return;
-  const f=(sched.followers||[]).find(x=>x.email.toLowerCase()===currentUser.email.toLowerCase());if(!f)return;
-  if(!f.events)f.events={milestone:true,dateChange:true,decision:true};
+  const f=ensureContactEntry(key,currentUser.email,currentUser.name||currentUser.email,t('rsm_follow_default_role'));if(!f)return;
   f.events[eventType]=checked;
   persistSchedule(key);
 }
@@ -8122,12 +8209,13 @@ function onFollowBtnClick(key){
 function openFollowPrefsModal(key){
   const f=getFollowerEntry(key);if(!f)return;
   const ch=f.channels||{email:true,slack:true};
-  const ev=f.events||{milestone:true,dateChange:true,decision:true};
+  const ev=f.events||{milestone:true,dateChange:true,decision:true,scheduleUpdate:true};
   const modal=getOrBuildModal('follow-prefs-modal',t('rsm_follow_modal_title'),`
     <div class="section-lbl">${t('rsm_follow_about_label')}</div>
     <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ev-milestone" ${ev.milestone?'checked':''} onchange="updateFollowEventPref('${key}','milestone',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ev_milestone')}</label>
     <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ev-datechange" ${ev.dateChange?'checked':''} onchange="updateFollowEventPref('${key}','dateChange',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ev_datechange')}</label>
     <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ev-decision" ${ev.decision?'checked':''} onchange="updateFollowEventPref('${key}','decision',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ev_decision')}</label>
+    <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ev-scheduleupdate" ${ev.scheduleUpdate?'checked':''} onchange="updateFollowEventPref('${key}','scheduleUpdate',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ev_scheduleupdate')}</label>
     <div class="section-lbl" style="margin-top:10px">${t('rsm_follow_how_label')}</div>
     <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ch-email" ${ch.email?'checked':''} onchange="updateFollowChannel('${key}','email',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ch_email')}</label>
     <label style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:11px"><input type="checkbox" id="follow-ch-slack" ${ch.slack?'checked':''} onchange="updateFollowChannel('${key}','slack',this.checked)" style="width:13px;height:13px"> ${t('rsm_follow_ch_slack')}</label>
@@ -8187,11 +8275,13 @@ function buildFollowerEmailHtml(key,eventLabel,detailText){
 </body></html>`;
 }
 async function notifyFollowers(key,eventLabel,detailText,eventType){
-  const sched=schedules[key];if(!sched||!sched.followers||!sched.followers.length)return;
+  const sched=schedules[key];if(!sched||!sched.stakeholders||!sched.stakeholders.length)return;
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI'))return;
-  // Só notifica quem marcou esse tipo de evento (marco/dateChange/decision) nas preferências de
-  // "Seguir projeto" — segue ligado por padrão pra quem seguiu antes dessa opção existir.
-  const interested=eventType?sched.followers.filter(f=>f.events?.[eventType]!==false):sched.followers;
+  // Só notifica quem tem preferências de Follow (events) configuradas e marcou esse tipo de
+  // evento (marco/dateChange/decision/scheduleUpdate) — pontos de contato cadastrados só pelo
+  // GP, sem nunca ter clicado em "Seguir projeto", não recebem esse aviso automático.
+  const followEligible=sched.stakeholders.filter(f=>f.events);
+  const interested=eventType?followEligible.filter(f=>f.events?.[eventType]!==false):followEligible;
   if(!interested.length)return;
   const p=PROJECTS.find(x=>x.key===key);
   const subject=`[${key}] ${eventLabel}`;
@@ -8472,10 +8562,14 @@ function renderContactCard(){
   const body=document.getElementById('rsm-contact-body');if(!body)return;
   let html=`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:var(--purple)"></div><div style="min-width:0"><div style="font-weight:600;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:t('rsm_sem_gp')}</div><div style="font-size:9.5px;color:var(--text3)">${t('rsm_gp_responsavel')}</div></div></div>`;
   const stakeholders=(sched.stakeholders||[]);
+  // Pedido da Amanda: com Seguindo e Pontos de Contato unificados numa lista só, ela pode
+  // crescer bastante (qualquer um pode clicar em "Seguir projeto"). Na aba do projeto (fora do
+  // modal de Gerenciar), não lista cada visualizador/contato um a um — só mostra o GP e um
+  // resumo "+N contatos" clicável, que abre o modal completo (Gerenciar) com todo o detalhe.
   if(stakeholders.length){
-    stakeholders.forEach(s=>{
-      html+=`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:var(--blue)"></div><div style="min-width:0"><div style="font-weight:600;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name||s.email}${s.role?' <span style="font-weight:400;color:var(--text3)">· '+s.role+'</span>':''}</div><div style="font-size:9.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.email}</div></div></div>`;
-    });
+    const n=stakeholders.length;
+    // Pedido explícito da Amanda: só o número, sem nomes — nem em preview.
+    html+=`<div class="rsm-mini-item" style="cursor:pointer" onclick="openStakeholdersModal()" title="${t('rsm_contact_count_title')}"><div class="rsm-mini-dot" style="background:var(--blue)"></div><div style="min-width:0"><div style="font-weight:600;font-size:10.5px;color:var(--blue)">${fmtLog('rsm_contact_count_tpl',{n,s:n>1?'s':''})}</div></div></div>`;
   } else {
     html+=`<div class="rsm-empty" style="margin-top:6px">${t('rsm_nenhum_stakeholder')}</div>`;
   }
@@ -8484,9 +8578,13 @@ function renderContactCard(){
 function renderResumoDecisionsList(){
   const sched=schedules[curKey];const list=document.getElementById('rsm-decisions-list');if(!list)return;
   const active=(sched.decisions||[]).filter(d=>!d.deleted).slice(0,4);
-  list.innerHTML=active.length?active.map(d=>{
+  // Pedido da Amanda: a última decisão formalizada (a mais recente, índice 0 já que
+  // sched.decisions usa unshift) aparece inteira, sem cortar em 90 caracteres — só as
+  // decisões mais antigas da mini-lista continuam truncadas pra não estourar o card.
+  list.innerHTML=active.length?active.map((d,i)=>{
     const meta=DECISION_TYPES[d.type]||DECISION_TYPES.outro;
-    return `<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${meta.color}"></div><div style="min-width:0"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:${meta.color}">${d.typeLabel||meta.label}</div><div style="font-size:10px;color:var(--text2);margin-top:1px">${d.description.length>90?d.description.slice(0,90)+'…':d.description}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${d.who} · ${d.when}</div></div></div>`;
+    const descHtml=i===0?d.description:(d.description.length>90?d.description.slice(0,90)+'…':d.description);
+    return `<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${meta.color}"></div><div style="min-width:0"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:${meta.color}">${d.typeLabel||meta.label}</div><div style="font-size:10px;color:var(--text2);margin-top:1px;${i===0?'white-space:pre-wrap;word-break:break-word':''}">${descHtml}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${d.who} · ${d.when}</div></div></div>`;
   }).join(''):`<div class="rsm-empty">${t('rsm_nenhuma_decisao')}</div>`;
 }
 // Junta as atas cadastradas direto no projeto (schedules[key].minutes) com as atas de
@@ -10733,8 +10831,10 @@ function saveMs(){
   // Gatilho de Follow #2: data final do projeto mudou.
   const newGoLiveLocal=getStats(curKey).goLiveLocal;
   if(oldGoLiveLocal!==newGoLiveLocal)notifyFollowers(curKey,'Data final do projeto alterada',`Data final estimada: ${oldGoLiveLocal?fmtBR(oldGoLiveLocal):'—'} → ${newGoLiveLocal?fmtBR(newGoLiveLocal):'—'}`,'dateChange');
+  // Gatilho de Follow #3: qualquer atualização no cronograma (criação/edição de etapa).
+  notifyFollowers(curKey,'Cronograma atualizado',editMsId?`A etapa "${name}" foi editada.`:`Nova etapa criada: "${name}".`,'scheduleUpdate');
 }
-function deleteMs(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}if(!confirm(t('confirm_excluir_etapa_tarefas')))return;const sched=schedules[curKey];const delTaskIds=new Set(sched.tasks.filter(t=>t.msId===editMsId).map(t=>t.id));sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.subtasks=(sched.subtasks||[]).filter(s=>!delTaskIds.has(s.taskId));sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);}
+function deleteMs(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}if(!confirm(t('confirm_excluir_etapa_tarefas')))return;const sched=schedules[curKey];const delMsObj=sched.milestones.find(m=>m.id===editMsId);const delTaskIds=new Set(sched.tasks.filter(t=>t.msId===editMsId).map(t=>t.id));sched.tasks=sched.tasks.filter(t=>t.msId!==editMsId);sched.subtasks=(sched.subtasks||[]).filter(s=>!delTaskIds.has(s.taskId));sched.milestones=sched.milestones.filter(m=>m.id!==editMsId);closeM('ms-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);if(delMsObj)notifyFollowers(curKey,'Cronograma atualizado',`A etapa "${delMsObj.name}" foi excluída.`,'scheduleUpdate');}
 // Copia o(s) responsável(is) atualmente preenchido(s) na etapa para todas as tarefas dela —
 // só ADICIONA quem ainda não estiver na tarefa, nunca remove um responsável já atribuído.
 function applyMsAssigneesToTasks(){
@@ -10800,6 +10900,7 @@ function deleteMsDirect(msId){
   selectedMs.delete(msId);
   logChange(curKey,fmtLog('lg_excluida_tpl',{label:t('ms_title'),name:ms.name}),'#dc2626');
   renderSchedule();renderPortfolio();persistSchedule(curKey);
+  notifyFollowers(curKey,'Cronograma atualizado',`A etapa "${ms.name}" foi excluída.`,'scheduleUpdate');
 }
 let dragMsId=null;
 function onMsDragStart(e,msId){
@@ -11250,7 +11351,8 @@ function saveTask(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
     sched.tasks.push(data);logChange(curKey,fmtLog('lg_criada_tpl',{label:t('task_title'),name}),'#6924E1');
     if(!sched.baseline)sched.baseline={milestones:JSON.parse(JSON.stringify(sched.milestones)),tasks:[JSON.parse(JSON.stringify(data))]};else sched.baseline.tasks.push(JSON.parse(JSON.stringify(data)));
   }
-  autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);const casc3=cascadeReschedule(curKey);logCascadeChanges(curKey,casc3.changed);closeM('task-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);}
+  autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);const casc3=cascadeReschedule(curKey);logCascadeChanges(curKey,casc3.changed);closeM('task-modal');renderSchedule();renderPortfolio();syncToJira(curKey);persistSchedule(curKey);
+  notifyFollowers(curKey,'Cronograma atualizado',editTaskId?`A tarefa "${name}" foi editada.`:`Nova tarefa criada: "${name}".`,'scheduleUpdate');}
 function deleteTask(){
   if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   if(!confirm(t('confirm_excluir_tarefa')))return;
@@ -11260,6 +11362,7 @@ function deleteTask(){
   sched.subtasks=(sched.subtasks||[]).filter(s=>s.taskId!==editTaskId); // exclui subtarefas órfãs junto
   if(delT)logChange(curKey,fmtLog('lg_excluida_tpl',{label:t('task_title'),name:delT.name}),'#dc2626');
   closeM('task-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
+  if(delT)notifyFollowers(curKey,'Cronograma atualizado',`A tarefa "${delT.name}" foi excluída.`,'scheduleUpdate');
 }
 function deleteTaskDirect(taskId,msId,ev){
   if(ev)ev.stopPropagation();
@@ -11271,6 +11374,7 @@ function deleteTaskDirect(taskId,msId,ev){
   sched.subtasks=(sched.subtasks||[]).filter(s=>s.taskId!==taskId); // exclui subtarefas órfãs junto
   logChange(curKey,fmtLog('lg_excluida_tpl',{label:window.t('task_title'),name:t.name}),'#dc2626');
   renderSchedule();renderPortfolio();persistSchedule(curKey);
+  notifyFollowers(curKey,'Cronograma atualizado',`A tarefa "${t.name}" foi excluída.`,'scheduleUpdate');
 }
 
 // ═══════════════════════════════════════════
@@ -11339,6 +11443,7 @@ function saveSubtask(){
   }
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);
   closeM('subtask-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
+  notifyFollowers(curKey,'Cronograma atualizado',editSubId?`A subtarefa "${name}" foi editada.`:`Nova subtarefa criada: "${name}".`,'scheduleUpdate');
 }
 function deleteSubtask(){
   if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
@@ -11348,6 +11453,7 @@ function deleteSubtask(){
   if(delS)logChange(curKey,fmtLog('lg_excluida_tpl',{label:t('sub_title'),name:delS.name}),'#dc2626');
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);
   closeM('subtask-modal');renderSchedule();renderPortfolio();persistSchedule(curKey);
+  if(delS)notifyFollowers(curKey,'Cronograma atualizado',`A subtarefa "${delS.name}" foi excluída.`,'scheduleUpdate');
 }
 function deleteSubtaskDirect(subId,taskId,ev){
   if(ev)ev.stopPropagation();
@@ -11358,6 +11464,7 @@ function deleteSubtaskDirect(subId,taskId,ev){
   logChange(curKey,fmtLog('lg_excluida_tpl',{label:t('sub_title'),name:s.name}),'#dc2626');
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);
   renderSchedule();renderPortfolio();persistSchedule(curKey);
+  notifyFollowers(curKey,'Cronograma atualizado',`A subtarefa "${s.name}" foi excluída.`,'scheduleUpdate');
 }
 function inlineDoneSub(subId,taskId,ev){
   ev.stopPropagation();
@@ -11762,6 +11869,9 @@ async function saveStakeholdersChanges(){
   shDirty=false;
   const note=document.getElementById('sh-unsaved-note');if(note)note.style.display='none';
   if(btn){btn.disabled=false;btn.innerHTML=`<i class="ti ti-device-floppy"></i> ${t('rsm_salvo_check')}`;setTimeout(()=>{if(btn)btn.innerHTML=`<i class="ti ti-device-floppy"></i> ${t('btn_salvar')}`;},1800);}
+  // Mesmo bug do addDecision: sem isso, o card "Ponto de Contato" no Resumo (por trás do
+  // modal de Stakeholders) só refletia a mudança depois de recarregar a página.
+  renderContactCard();
 }
 // Preferências de notificação (canal + tipo de atualização) só podem ser alteradas pelo GP do
 // projeto ou por um admin — os demais (outros editores, viewers) veem os valores mas não mexem.
@@ -11781,15 +11891,31 @@ function renderStakeholdersList(){
   const sched=schedules[curKey];const list=document.getElementById('stakeholders-list');if(!sched||!list)return;
   list.innerHTML='';
   const canEditPrefs=canEditStakeholderPrefs();
+  // Pedido da Amanda: quem só tem papel de Visualizador ou Consulta vê uma versão bem mais
+  // simples da lista — só nome + função no projeto (Editor/Seguidor/Visualizador), sem os
+  // toggles de canal (E-mail/Slack) e tipo de aviso (Cronograma/Risco/Feed), que não fazem
+  // sentido pra quem não pode alterar nada aqui mesmo.
+  const simplifiedView=['viewer','consulta'].includes(currentUser?.role);
   (sched.stakeholders||[]).forEach(st=>{
     // Mesmo mecanismo do "Gerenciar Acessos" (sched.access com role 'editor') — só pra mostrar,
     // ao lado do stakeholder, se essa pessoa também tem permissão de editar o cronograma.
     const hasEditAccess=(sched.access||[]).some(a=>a.email.toLowerCase()===st.email.toLowerCase()&&a.role==='editor');
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg2);border-radius:5px;flex-wrap:wrap';
+    if(simplifiedView){
+      // Função computada: Editor (tem acesso de edição do cronograma) > Seguidor (tem
+      // preferências de Follow configuradas, ou seja, já seguiu o projeto em algum momento) >
+      // Visualizador (só está cadastrado como ponto de contato, nunca seguiu nem edita).
+      const funcLabel=hasEditAccess?t('rsm_func_editor'):st.events?t('rsm_func_seguidor'):t('rsm_func_visualizador');
+      div.innerHTML=`<div style="flex:1;min-width:160px">
+          <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email} <span style="font-weight:400;color:var(--text3)">· ${funcLabel}</span></div>
+        </div>`;
+      list.appendChild(div);
+      return;
+    }
     const ch=st.notifyChannels||{email:true,slack:false};
     const ty=st.notifyTypes||{cronograma:true,risco:true,feed:false};
     const chk=(checked,onFn,label,title)=>`<label style="display:flex;align-items:center;gap:2px;font-size:8.5px;color:var(--text3);cursor:${canEditPrefs?'pointer':'default'}" title="${title||''}"><input type="checkbox" ${checked?'checked':''} ${canEditPrefs?'':'disabled'} onchange="${onFn}" style="margin:0;width:10px;height:10px">${label}</label>`; // label/title já traduzidos pelos chamadores
-    const div=document.createElement('div');
-    div.style.cssText='display:flex;align-items:center;gap:7px;padding:5px 7px;background:var(--bg2);border-radius:5px;flex-wrap:wrap';
     div.innerHTML=`<div style="flex:1;min-width:160px">
         <div style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.name||st.email}${st.role?' <span style="font-weight:400;color:var(--text3)">· '+st.role+'</span>':''}${hasEditAccess?' <span style="font-weight:600;color:#166534;font-size:9px">'+t('rsm_editor_cronograma_badge')+'</span>':''}</div>
         <div style="font-size:9.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${st.email}</div>
@@ -11848,6 +11974,27 @@ function dedupeStakeholders(list){
     seen.add(k);out.push(st);
   });
   return out;
+}
+// Migração única do antigo schedules[key].followers (self-service, pré-unificação) pra dentro
+// de stakeholders — pedido da Amanda de unificar "Seguindo" e "Pontos de Contato" numa lista só.
+// Quem já seguia um projeto antes dessa unificação existir não perde a inscrição: entra na
+// lista de Pontos de Contato com o papel padrão "Seguidor" e mantém suas preferências de
+// canal/evento (channels/events).
+function mergeLegacyFollowersIntoStakeholders(stakeholdersArr,followersArr){
+  const list=dedupeStakeholders(stakeholdersArr||[]);
+  (followersArr||[]).forEach(f=>{
+    if(!f||!f.email)return;
+    const existing=list.find(s=>(s.email||'').toLowerCase()===f.email.toLowerCase());
+    if(existing){
+      if(!existing.channels)existing.channels=f.channels||{email:true,slack:true};
+      if(!existing.events)existing.events=f.events||{milestone:true,dateChange:true,decision:true,scheduleUpdate:true};
+    }else{
+      list.push({id:uid(),name:f.name||f.email,email:f.email,role:window.t?window.t('rsm_follow_default_role'):'Seguidor',addedAt:nowStr(),
+        notifyChannels:{email:true,slack:false},notifyTypes:{cronograma:true,risco:true,feed:false},
+        channels:f.channels||{email:true,slack:true},events:f.events||{milestone:true,dateChange:true,decision:true,scheduleUpdate:true}});
+    }
+  });
+  return list;
 }
 // Núcleo compartilhado — usado tanto pelo modal de Stakeholders do Cronograma
 // quanto pelo bloco de Stakeholders dentro do Email Executivo Semanal.
@@ -12084,6 +12231,9 @@ function addDecision(){
   if(!res.ok){alert(res.error);return;}
   descEl.value='';customEl.value='';
   renderDecisionsList();
+  // Bug reportado pela Amanda: sem isso, a mini-lista de decisões no card do Resumo (por trás
+  // do modal) só atualizava depois de recarregar a página inteira.
+  renderResumoDecisionsList();
 }
 // Abre um mini-modal pedindo a justificativa — a exclusão só é efetivada em confirmRemoveDecision().
 function openRemoveDecisionModal(id){
@@ -12121,6 +12271,7 @@ function confirmRemoveDecision(){
   pendingRemoveDecisionId=null;
   closeM('remove-decision-modal');
   renderDecisionsList();
+  renderResumoDecisionsList();
 }
 
 
@@ -12733,7 +12884,7 @@ async function persistSchedule(key) {
         minutes:       schedules[key].minutes       || [],
         minutesConfluenceLink: schedules[key].minutesConfluenceLink || null,
         hiddenConfluenceMinuteIds: schedules[key].hiddenConfluenceMinuteIds || [],
-        followers:     schedules[key].followers     || [],
+        healthOverride: schedules[key].healthOverride || null,
         updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy:     currentUser?.name || '',
       });
@@ -12786,7 +12937,7 @@ async function autoLoadOnLogin() {
             baseline:      raw.baseline      || null,
             scoring:       raw.scoring       || null,
             scoringProd:   raw.scoringProd   || null,
-            stakeholders:  dedupeStakeholders(raw.stakeholders  || []),
+            stakeholders:  mergeLegacyFollowersIntoStakeholders(raw.stakeholders, raw.followers),
             scopeLink:     raw.scopeLink     || null,
             formLink:      raw.formLink      || null,
             scopeSummary:  raw.scopeSummary  || '',
@@ -12795,7 +12946,7 @@ async function autoLoadOnLogin() {
             decisions:     raw.decisions     || [],
             minutes:       raw.minutes       || [],
             minutesConfluenceLink: raw.minutesConfluenceLink || null,
-            followers:     raw.followers     || [],
+            healthOverride: raw.healthOverride || null,
             updates:       schedules[doc.id]?.updates || [],
           };
         } catch(e) { console.warn('Error loading schedule', doc.id, e); }
@@ -12806,7 +12957,7 @@ async function autoLoadOnLogin() {
         try {
           const raw = JSON.parse(JSON.stringify(doc.data()));
           if (schedules[doc.id]) schedules[doc.id].updates = raw.updates || [];
-          else schedules[doc.id] = { milestones:[], tasks:[], subtasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, formLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[], minutesConfluenceLink:null,slackChannelLink:null, followers:[] };
+          else schedules[doc.id] = { milestones:[], tasks:[], subtasks:[], access:[], auditLog:[], updates: raw.updates||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, formLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[], minutesConfluenceLink:null,slackChannelLink:null };
         } catch(e) { console.warn('Error loading updates', doc.id, e); }
       });
       // Load users (compartilha a mesma lógica usada no pré-carregamento antes do login)
@@ -13193,7 +13344,7 @@ function applyJiraSync(freshProjects,opts={}){
     // só aplica se o Jira mandou um valor preenchido, e só se ninguém já definiu manualmente
     // pelo lápis do Resumo dos Projetos (ver editClientName/clientNameManual).
     if(fp.clientName){
-      if(!schedules[fp.key])schedules[fp.key]={milestones:[],tasks:[],subtasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,slackChannelLink:null,followers:[]};
+      if(!schedules[fp.key])schedules[fp.key]={milestones:[],tasks:[],subtasks:[],access:[],auditLog:[],updates:[],calendar:'BR',baseline:null,scoring:null,scoringProd:null,stakeholders:[],scopeLink:null,formLink:null,scopeSummary:'',clientName:'',clientNameManual:false,decisions:[],minutes:[],minutesConfluenceLink:null,slackChannelLink:null};
       if(!schedules[fp.key].clientNameManual&&schedules[fp.key].clientName!==fp.clientName){
         schedules[fp.key].clientName=fp.clientName;
         clientNameTouched.push(fp.key);
