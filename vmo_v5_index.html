@@ -168,6 +168,7 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .link-item input{flex:1;font-size:10.5px;padding:4px 7px;border-radius:5px;border:1px solid var(--border2)}
 .lk-badge{font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px;white-space:nowrap;background:#e0f2fe;color:#0369a1;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin 1s linear infinite}
+@keyframes rowLateFlash{0%,100%{background:transparent}20%,60%{background:#fee2e2}}.row-late-flash{animation:rowLateFlash 1.3s ease-in-out 2}
 
 /* ════════════ PORTFOLIO ════════════ */
 #pf-topbar{display:flex;align-items:center;gap:7px;padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap;position:sticky;top:0;z-index:10}
@@ -312,7 +313,6 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .carga-team-divider.tbd{background:#fef3c7;color:#92400e;border-left-color:#c2410c}
 /* ── Rótulo "Top 5" usado nos cards de time (Carga por Times / Análise de Capacidade) quando
    o card está condensado mostrando só os mais críticos/carregados. ── */
-.tc-top5-lbl{font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.4px;margin-top:6px}
 .carga-person-card.tbd{border:2px dashed #c2410c;background:#fffbeb}
 .carga-negoc-list{border-top:1px dashed var(--border);margin-top:4px;padding-top:5px}
 .carga-negoc-list-title{font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:0 4px 3px}
@@ -419,6 +419,11 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .crit-badge.critico{background:#fee2e2;color:#b91c1c}
 .crit-badge.concorrido{background:#fef3c7;color:#92400e}
 .crit-badge.livre{background:#dcfce7;color:#15803d}
+.gargalos-detail{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:6px}
+.gargalos-time-row{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:9.5px}
+.gargalos-time-name{font-weight:600;color:var(--navy)}
+.gargalos-time-count{color:var(--text3)}
+.gargalos-time-conc{flex:1 0 100%;font-size:9px;color:var(--text3);font-style:italic;margin-left:2px}
 .crit-col-lbl{font-size:9px;color:var(--text3);text-align:center;margin-bottom:2px}
 .crit-col-val{font-size:10.5px;font-weight:600;color:var(--navy);text-align:center}
 .crit-col-val.rev{color:#16a34a}
@@ -435,7 +440,6 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .crit-concorrentes-box{margin-top:5px;padding:6px 8px;border-radius:6px}
 .crit-concorrentes-title{font-size:8.5px;font-weight:700;margin-bottom:4px;letter-spacing:.4px}
 .crit-concorrente-row{font-size:9.5px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:6px}
-.crit-esmaecidos-section{margin:10px 12px 0;padding:10px 12px;background:var(--bg);border:1px dashed var(--border2);border-radius:8px}
 .gp-tag{font-size:9px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:10px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
 .pf-act{font-size:9.5px;padding:3px 8px;border:1px solid var(--border2);border-radius:5px;cursor:pointer;background:var(--bg);color:var(--text2);white-space:nowrap}
 .pf-act:hover{background:var(--off);border-color:var(--purple);color:var(--purple)}
@@ -675,13 +679,20 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 .atag.ext{background:#fef9c3;color:#a16207;border:1px solid #fde047}
 .atag.ext::before{content:"↗ ";font-size:8px}
 .tbadge2{font-size:8.5px;padding:2px 5px;border-radius:10px;font-weight:700;white-space:nowrap}
-.tb-on{background:#dcfce7;color:#166534}.tb-early{background:#d1fae5;color:#065f46}
-.tb-late{background:#fee2e2;color:#b91c1c}.tb-ip{background:#fef9c3;color:#854d0e}
-.tb-ns{background:#f1f5f9;color:#64748b}.tb-bl{background:#fee2e2;color:#7f1d1d}
 .inline-done-btn{display:none;font-size:8.5px;padding:1px 5px;border:1px solid #86efac;border-radius:4px;background:#f0fdf4;color:#166534;cursor:pointer;white-space:nowrap}
 .trow:hover .inline-done-btn{display:flex;align-items:center;gap:1px}
 .add-row{display:flex;align-items:center;gap:4px;padding:4px 7px;border-bottom:.5px solid var(--border);cursor:pointer;color:var(--text3);font-size:9.5px;transition:color .15s}
 .add-row:hover{color:var(--purple);background:var(--bg2)}
+.row-act-menu{position:fixed;z-index:900;min-width:150px;background:var(--bg);border:1px solid var(--border2);border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.14);padding:4px;display:flex;flex-direction:column;gap:1px}
+.row-act-item{display:flex;align-items:center;gap:6px;padding:6px 8px;border:none;background:transparent;border-radius:5px;font-size:10.5px;color:var(--text2);cursor:pointer;text-align:left;white-space:nowrap}
+.row-act-item:hover{background:var(--bg2);color:var(--purple)}
+/* Botão de menu (⋮) de cada linha — a Amanda não estava conseguindo achar ele (ficava discreto
+   demais, só um ícone cinza sem nada em volta). Agora tem um fundo circular sempre visível
+   (não só no hover), com contorno leve, pra parecer clicável de cara mesmo antes de passar o
+   mouse — e cresce/destaca mais ainda no hover. */
+.row-act-trigger{border:none;background:transparent;cursor:pointer;color:var(--text2);font-size:14px;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;transition:background .15s,color .15s}
+.row-act-trigger:hover{background:var(--bg2);color:var(--purple)}
+.trow .td[data-col="menu"]{overflow:visible}
 .clone-btn{display:none;font-size:8.5px;padding:1px 4px;border:1px solid var(--border2);border-radius:3px;background:var(--bg);cursor:pointer;color:var(--text3);z-index:2;margin-right:22px}
 .trow:hover .clone-btn{display:flex;align-items:center;gap:1px}
 .del-btn{display:none;position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:8.5px;padding:1px 4px;border:1px solid #fca5a5;border-radius:3px;background:#fef2f2;cursor:pointer;color:#dc2626;z-index:2}
@@ -801,10 +812,10 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   <div class="nav-tab" onclick="showView('resumo',true)" data-view="resumo" id="nav-resumo"><i class="ti ti-layout-grid" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_resumo">Resumo dos Projetos</span></div>
   <div class="nav-tab" onclick="showView('updates')" data-view="updates"><i class="ti ti-speakerphone" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_atualizacoes">Atualizações</span></div>
   <div class="nav-tab" onclick="showView('prioridades')" data-view="prioridades"><i class="ti ti-sort-ascending" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_prioridades">Prioridades</span></div>
-  <div class="nav-tab" onclick="showView('scoring')" data-view="scoring"><i class="ti ti-star" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_scoring">Scoring</span></div>
   <div class="nav-tab" onclick="showView('docs')" data-view="docs" id="nav-docs"><i class="ti ti-folder" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_docs">Documentos Úteis</span></div>
+  <div class="nav-tab" onclick="showView('scoring')" data-view="scoring" id="nav-scoring"><i class="ti ti-star" style="font-size:13px"></i><span class="stlabel" data-i18n="nav_scoring">Scoring</span></div>
   <div id="sidenav-spacer"></div>
-  <span class="tn-sync" id="sync-txt"><i class="ti ti-brand-jira" style="font-size:11px"></i><span class="stlabel">one-bemobi.atlassian.net</span></span>
+  <span class="tn-sync" id="sync-txt"><i class="ti ti-brand-jira" style="font-size:11px"></i><span class="stlabel">VMO - Value Management Office</span></span>
 </div>
 
 <div id="main-col">
@@ -939,9 +950,9 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div id="rsm-hdr">
       <h2 id="rsm-title" data-i18n="select_project">Selecione um projeto</h2>
       <a class="se-jira" id="rsm-jira-lnk" href="#" target="_blank" style="display:none"><i class="ti ti-brand-jira"></i><span id="rsm-jira-key"></span></a>
-      <span class="upd-golive-chip" id="rsm-golive" style="display:none"><i class="ti ti-calendar-check" style="font-size:10px"></i> Go Live: <b id="rsm-golive-val"></b></span>
       <span class="upd-golive-chip" id="rsm-dataalvo" style="display:none"><i class="ti ti-calendar-event" style="font-size:10px"></i> <span data-i18n="rsm_data_alvo_label">Data Alvo:</span> <b id="rsm-dataalvo-val"></b></span>
-      <span id="rsm-health-slot"></span>
+      <span class="upd-golive-chip" id="rsm-golive" style="display:none"><i class="ti ti-calendar-check" style="font-size:10px"></i> Go Live: <b id="rsm-golive-val"></b></span>
+      <span id="rsm-health-slot"></span><button class="btn-c" id="rsm-health-config-btn" style="display:none;font-size:8px;padding:2px 5px;margin-left:-2px;border:none" onclick="editHealthThreshold(curKey)" title="Configurar limite de tarefas críticas atrasadas para 'Em risco'/'Fora dos trilhos'"><i class="ti ti-settings" style="font-size:10px"></i></button>
       <span id="rsm-slack-row" style="display:flex;align-items:center;gap:5px"></span>
       <button class="btn-c" id="rsm-follow-btn" style="display:none;font-size:9.5px;padding:4px 9px;margin-left:auto;gap:4px;align-items:center" onclick="onFollowBtnClick(curKey)" data-i18n-title="rsm_follow_tooltip" title="Seguir este projeto pra receber avisos automáticos"></button>
       <button class="btn-s" id="rsm-goto-cronograma-btn" style="display:none;font-size:10px;padding:6px 12px;gap:4px;align-items:center" onclick="goToCronograma()"><i class="ti ti-calendar-stats" style="font-size:11px"></i> <span data-i18n="rsm_ver_cronograma_completo">Ver Cronograma Completo</span></button>
@@ -1049,6 +1060,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
       <div id="se-proj-dropdown"></div>
     </div>
     <button class="seb" id="copy-link-btn" onclick="copyScheduleLink()" style="display:none" title="Copiar link direto para este cronograma" data-i18n-title="sch_copy_link_title"><i class="ti ti-link" style="font-size:10px"></i> <span data-i18n="sch_copy_link">Copiar link</span></button>
+    <button class="seb" id="share-email-btn" onclick="shareScheduleByEmail()" style="display:none;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;font-weight:700" title="Enviar este cronograma por email" data-i18n-title="sch_compartilhar_email_title"><i class="ti ti-mail" style="font-size:10px"></i> <span data-i18n="sch_compartilhar_email">Compartilhar por email</span></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'exibicao')"><i class="ti ti-adjustments" style="font-size:10px"></i> <span data-i18n="sch_exibicao">Exibição</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <button class="seb hdr-dd-trigger" onclick="toggleHdrMenu(event,'ferramentas')"><i class="ti ti-tools" style="font-size:10px"></i> <span data-i18n="sch_ferramentas">Ferramentas</span> <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
     <button class="seb hdr-dd-trigger" id="sched-more-btn" onclick="toggleHdrMenu(event,'schedmore')"><i class="ti ti-dots" style="font-size:10px"></i> <span data-i18n="sch_mais">Mais detalhes</span></button>
@@ -1253,7 +1265,7 @@ let currentLang = localStorage.getItem('vmo_lang') || 'pt';
 const I18N = {
   pt: {
     nav_visao_geral:'Visão Geral', nav_cronogramas:'Cronogramas', nav_resumo:'Resumo dos Projetos',
-    nav_atualizacoes:'Atualizações', nav_prioridades:'Prioridades', nav_scoring:'Scoring', nav_docs:'Documentos Úteis',
+    nav_atualizacoes:'Atualizações', nav_prioridades:'Prioridades', nav_scoring:'Scoring (WIP)', nav_docs:'Documentos Úteis',
     sync_jira:'Sync Jira', search_project:'Buscar projeto...',
     btn_voltar:'Voltar', btn_hoje:'Hoje', btn_nova_etapa:'Nova etapa',
     zoom_dias:'Dias', zoom_semanas:'Semanas', zoom_meses:'Meses', zoom_ano:'Ano',
@@ -1261,9 +1273,12 @@ const I18N = {
     sec_impacto_time:'Impacto por Time',
     sec_carga:'Carga de Trabalho — VMO & Transformação', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
     // ── Cronograma ──
-    select_project:'Selecione um projeto', sch_sidebar_title:'Projetos ativos', sch_toggle_projetos:'Projetos', sch_escolha_projeto:'Escolha um projeto para verificar o cronograma', sch_sidebar_info:'Só aparecem aqui projetos que já têm um cronograma cadastrado.',
+    select_project:'Selecione um projeto', sch_sidebar_title:'Projetos com cronograma', sch_toggle_projetos:'Projetos', sch_escolha_projeto:'Escolha um projeto para verificar o cronograma', sch_sidebar_info:'Só aparecem aqui projetos que já têm um cronograma cadastrado.',
     sch_toggle_show_title:'Mostrar lista de projetos', sch_toggle_hide_title:'Ocultar lista de projetos',
     sch_copy_link:'Copiar link', sch_copy_link_title:'Copiar link direto para este cronograma',
+    sch_compartilhar_email:'Compartilhar por email', sch_compartilhar_email_title:'Enviar este cronograma por email',
+    sch_email_subject_prefix:'Cronograma —', sch_email_body_intro:'Segue o cronograma atualizado de',
+    sch_email_sem_stakeholders:'Nenhum stakeholder cadastrado para este projeto ainda. Cadastre pelo menos um em "Stakeholders" antes de compartilhar por email.', sch_email_enviado_btn:'Enviado!', sch_email_enviado_tpl:'Cronograma enviado para {n} destinatário(s): {emails}',
     sch_exibicao:'Exibição', sch_ferramentas:'Ferramentas',
     sch_seq:'Seq.', sch_seq_title:'Numerar unidades sequencialmente (D1/D2 ou S1/S2 ou M1/M2)',
     sch_caminho_critico:'Caminho Crítico', sch_caminho_critico_title:"Caminho crítico: destaca com contorno tracejado as tarefas marcadas manualmente como 'críticas' — atrasá-las pode impactar a data final do projeto.",
@@ -1275,8 +1290,8 @@ const I18N = {
     sch_empty_title:'Nenhuma etapa ainda.', sch_empty_sub:'Clique em', sch_empty_sub2:'para começar ou use um', sch_modelo:'Modelo',
     col_num:'#', col_nome:'Nome', col_inicio:'Início', col_conclusao:'Conclusão', tt_num_hier_title:'Numeração ligada à Tarefa-mãe — muda automaticamente se a subtarefa for movida para outra tarefa ou trocar de posição',
     col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferença entre a data original da tarefa e o prazo atual',
-    col_est:'Est.', col_real:'Real', col_prog:'Progresso', col_resp:'Responsáveis', col_dep:'Dep.',
-    col_status:'Status', col_tempo:'Tempo', col_link:'Link', col_prazo:'Prazo',
+    col_est:'Duração', col_real:'Real', col_prog:'Progresso', col_resp:'Responsáveis', col_dep:'Dep.',
+    col_status:'Status', col_link:'Link', col_prazo:'Prazo',
     sch_add_tarefa:'Adicionar tarefa', sch_add_etapa:'Adicionar etapa', sch_add_subtarefa:'Adicionar subtarefa', sch_add_subsubtarefa:'Adicionar item',
     tt_click_edit:'Clique para editar', tt_click_edit_er:'Clique para editar a data (ou use o ✓ ao lado do nome pra concluir hoje)',
     tt_drag:'Arrastar para reordenar', tt_del_etapa:'Excluir etapa', tt_del_tarefa:'Excluir tarefa', tt_del_subtarefa:'Excluir subtarefa',
@@ -1286,12 +1301,13 @@ const I18N = {
     tt_atraso_row_title_short:'Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida)',
     tt_dep_none:'Subtarefas não participam do sistema de dependências', badge_interno:'Interno', badge_externo:'Externo',
     tt_abrir:'Abrir', add_date_btn:'+ data',
-    tb_no_prazo:'No prazo', tb_atraso_suffix:'d atraso', tb_atras_suffix:'d atras.',
+    
     alert_no_perm_edit:'Você não tem permissão para editar este cronograma.',
     alert_no_perm_create_ms:'Você não tem permissão para criar etapas neste cronograma.',
     alert_no_perm_create_task:'Você não tem permissão para criar tarefas neste cronograma.',
     alert_no_perm_create_sub:'Você não tem permissão para criar subtarefas nesta tarefa.',
     alert_informe_nome:'Informe o nome',
+    alert_informe_prazo:'Informe o Prazo antes de salvar — ele só pode ser definido agora, na criação, e não poderá ser alterado depois.',
     confirm_excluir_etapa:'Excluir etapa?', confirm_excluir_tarefa:'Excluir tarefa?', confirm_excluir_subtarefa:'Excluir subtarefa?',
     fld_nome:'Nome *', fld_inicio:'Início', fld_prazo:'Prazo', fld_data_conclusao:'Data de conclusão',
     lbl_responsaveis:'Responsáveis', fld_status:'Status', fld_progresso:'Progresso (%)', fld_cor:'Cor',
@@ -1311,6 +1327,7 @@ const I18N = {
     ps_previsto:'previsto:', ps_caminho_critico_label:'Caminho Crítico', ps_gargalo:'gargalo:', ps_atrasada:'atrasada',
     ps_nunca_atualizacao:'Nunca teve uma atualização publicada', ps_sem_atualizacao_ha:'Sem atualização publicada há',
     ps_em_risco:'Em Risco', ps_em_risco_title:'Fim estimado do cronograma diverge do Go Live no Jira',
+    ps_atencao_tem:'Atenção, tem', ps_atrasadas_title:'Clique para destacar as tarefas atrasadas no cronograma',
     ps_cronograma_label:'cronograma:', ps_jira_label:'Jira:', ps_editar_scoring:'Editar scoring',
     ps_score_label:'Score:', ps_preencher_scoring:'Preencher scoring', ps_go_live_jira:'Go Live Jira:',
     ps_tarefas_label:'Tarefas:', ps_concluido_suffix:'concluído', ps_gp_label:'GP:', ps_atualizado_por:'Atualizado por:',
@@ -1701,7 +1718,7 @@ const I18N = {
     prio_info_golive:'Este campo vem do Jira (Data limite) — salvar aqui grava a nova data de volta no Jira.',
     prio_lg_golive_manual:'Go Live atualizado manualmente',
     shared_alert_only_editor_field:'Apenas editores e administradores podem alterar este campo.',
-    shared_editar_prefix:'Editar',
+    shared_editar_prefix:'Editar', tt_mais_opcoes:'Mais opções (editar, adicionar...)',
     shared_info_field_jira_synced:'Este campo também existe no Jira: o sync traz o valor de lá, e salvar aqui grava de volta no Jira — igual à Prioridade.',
     shared_info_field_manual_only:'Campo preenchido manualmente no HUB — não vem do Jira e não é sobrescrito por nenhum sync.',
     shared_lg_field_updated_manually_tpl:'{label} atualizado manualmente',
@@ -1777,7 +1794,7 @@ const I18N = {
     rsm_comp_inicial_label_full:'Nota de complexidade inicial (avaliação do time de VMO)',
     rsm_alert_only_gp_julia_comp_tecnica:'Só o GP deste projeto ou a Julia Machareth podem alterar a nota de complexidade técnica/gestão.',
     rsm_alert_only_gp_data_alvo:'Só o GP deste projeto ou a Amanda podem alterar a Data Alvo.',
-    rsm_modal_title_editar_dataalvo:'Editar Data Alvo',
+    rsm_modal_title_editar_dataalvo:'Editar Data Alvo', rsm_health_threshold_modal_title:'Configurar limite de saúde do projeto', rsm_health_threshold_info:'Define a partir de quantas tarefas críticas atrasadas o projeto passa de "Nos trilhos" para "Em risco", e de "Em risco" para "Fora dos trilhos" (mais de N). Padrão: 4.', rsm_health_threshold_label:'Limite de tarefas críticas atrasadas para "Em risco"', rsm_health_threshold_invalid:'Informe um número válido, maior que zero.', rsm_lg_health_threshold_tpl:'Limite de saúde do projeto alterado para {n} tarefa(s) crítica(s) atrasada(s).',
     rsm_info_dataalvo:'O campo "Data Alvo" representa a estimativa de término do projeto, definida pelo GP a partir do levantamento de escopo.',
     rsm_lg_dataalvo_manual:'Data Alvo atualizada manualmente',
     rsm_data_alvo_edit_title:'Clique para alterar a Data Alvo',
@@ -1865,7 +1882,7 @@ const I18N = {
   },
   es: {
     nav_visao_geral:'Visión General', nav_cronogramas:'Cronogramas', nav_resumo:'Resumen de Proyectos',
-    nav_atualizacoes:'Actualizaciones', nav_prioridades:'Prioridades', nav_scoring:'Puntuación', nav_docs:'Documentos Útiles',
+    nav_atualizacoes:'Actualizaciones', nav_prioridades:'Prioridades', nav_scoring:'Puntuación (WIP)', nav_docs:'Documentos Útiles',
     sync_jira:'Sincronizar Jira', search_project:'Buscar proyecto...',
     btn_voltar:'Volver', btn_hoje:'Hoy', btn_nova_etapa:'Nueva etapa',
     zoom_dias:'Días', zoom_semanas:'Semanas', zoom_meses:'Meses', zoom_ano:'Año',
@@ -1873,9 +1890,12 @@ const I18N = {
     sec_impacto_time:'Impacto por Equipo',
     sec_carga:'Carga de Trabajo — VMO y Transformación', sec_proximas_entregas:'Próximas Entregas', sec_historico:'Histórico',
     // ── Cronograma ──
-    select_project:'Seleccione un proyecto', sch_sidebar_title:'Proyectos activos', sch_toggle_projetos:'Proyectos', sch_escolha_projeto:'Elija un proyecto para ver el cronograma', sch_sidebar_info:'Aquí solo aparecen proyectos que ya tienen un cronograma registrado.',
+    select_project:'Seleccione un proyecto', sch_sidebar_title:'Proyectos con cronograma', sch_toggle_projetos:'Proyectos', sch_escolha_projeto:'Elija un proyecto para ver el cronograma', sch_sidebar_info:'Aquí solo aparecen proyectos que ya tienen un cronograma registrado.',
     sch_toggle_show_title:'Mostrar lista de proyectos', sch_toggle_hide_title:'Ocultar lista de proyectos',
     sch_copy_link:'Copiar enlace', sch_copy_link_title:'Copiar enlace directo a este cronograma',
+    sch_compartilhar_email:'Compartir por email', sch_compartilhar_email_title:'Enviar este cronograma por email',
+    sch_email_subject_prefix:'Cronograma —', sch_email_body_intro:'Adjunto el cronograma actualizado de',
+    sch_email_sem_stakeholders:'Todavía no hay stakeholders registrados para este proyecto. Registra al menos uno en "Stakeholders" antes de compartir por email.', sch_email_enviado_btn:'¡Enviado!', sch_email_enviado_tpl:'Cronograma enviado a {n} destinatario(s): {emails}',
     sch_exibicao:'Visualización', sch_ferramentas:'Herramientas',
     sch_seq:'Sec.', sch_seq_title:'Numerar unidades secuencialmente (D1/D2 o S1/S2 o M1/M2)',
     sch_caminho_critico:'Ruta Crítica', sch_caminho_critico_title:"Ruta crítica: resalta con contorno punteado las tareas marcadas manualmente como 'críticas' — atrasarlas puede impactar la fecha final del proyecto.",
@@ -1887,8 +1907,8 @@ const I18N = {
     sch_empty_title:'Todavía no hay etapas.', sch_empty_sub:'Haga clic en', sch_empty_sub2:'para empezar o use una', sch_modelo:'Plantilla',
     col_num:'#', col_nome:'Nombre', col_inicio:'Inicio', col_conclusao:'Conclusión', tt_num_hier_title:'Numeración ligada a la Tarea principal — cambia automáticamente si la subtarea se mueve a otra tarea o cambia de posición',
     col_atraso:'Atraso Acum.', col_atraso_title:'Atraso acumulado: diferencia entre la fecha original de la tarea y el plazo actual',
-    col_est:'Est.', col_real:'Real', col_prog:'Progreso', col_resp:'Responsables', col_dep:'Dep.',
-    col_status:'Estado', col_tempo:'Tiempo', col_link:'Enlace', col_prazo:'Plazo',
+    col_est:'Duración', col_real:'Real', col_prog:'Progreso', col_resp:'Responsables', col_dep:'Dep.',
+    col_status:'Estado', col_link:'Enlace', col_prazo:'Plazo',
     sch_add_tarefa:'Agregar tarea', sch_add_etapa:'Agregar etapa', sch_add_subtarefa:'Agregar subtarea', sch_add_subsubtarefa:'Agregar ítem',
     tt_click_edit:'Haga clic para editar', tt_click_edit_er:'Haga clic para editar la fecha (o use el ✓ junto al nombre para concluir hoy)',
     tt_drag:'Arrastrar para reordenar', tt_del_etapa:'Eliminar etapa', tt_del_tarefa:'Eliminar tarea', tt_del_subtarefa:'Eliminar subtarea',
@@ -1898,12 +1918,13 @@ const I18N = {
     tt_atraso_row_title_short:'Diferencia entre el Plazo y la Fecha de Conclusión real (u hoy, si está abierta y vencida)',
     tt_dep_none:'Las subtareas no participan del sistema de dependencias', badge_interno:'Interno', badge_externo:'Externo',
     tt_abrir:'Abrir', add_date_btn:'+ fecha',
-    tb_no_prazo:'En plazo', tb_atraso_suffix:'d de atraso', tb_atras_suffix:'d atr.',
+    
     alert_no_perm_edit:'No tiene permiso para editar este cronograma.',
     alert_no_perm_create_ms:'No tiene permiso para crear etapas en este cronograma.',
     alert_no_perm_create_task:'No tiene permiso para crear tareas en este cronograma.',
     alert_no_perm_create_sub:'No tiene permiso para crear subtareas en esta tarea.',
     alert_informe_nome:'Ingrese el nombre',
+    alert_informe_prazo:'Indique el Plazo antes de guardar — solo puede definirse ahora, al crear, y no podrá cambiarse después.',
     confirm_excluir_etapa:'¿Eliminar etapa?', confirm_excluir_tarefa:'¿Eliminar tarea?', confirm_excluir_subtarefa:'¿Eliminar subtarea?',
     fld_nome:'Nombre *', fld_inicio:'Inicio', fld_prazo:'Plazo', fld_data_conclusao:'Fecha de conclusión',
     lbl_responsaveis:'Responsables', fld_status:'Estado', fld_progresso:'Progreso (%)', fld_cor:'Color',
@@ -1923,6 +1944,7 @@ const I18N = {
     ps_previsto:'previsto:', ps_caminho_critico_label:'Ruta Crítica', ps_gargalo:'cuello de botella:', ps_atrasada:'atrasada',
     ps_nunca_atualizacao:'Nunca tuvo una actualización publicada', ps_sem_atualizacao_ha:'Sin actualización publicada hace',
     ps_em_risco:'En Riesgo', ps_em_risco_title:'El fin estimado del cronograma difiere del Go Live en Jira',
+    ps_atencao_tem:'Atención, tiene', ps_atrasadas_title:'Haz clic para resaltar las tareas atrasadas en el cronograma',
     ps_cronograma_label:'cronograma:', ps_jira_label:'Jira:', ps_editar_scoring:'Editar puntuación',
     ps_score_label:'Puntuación:', ps_preencher_scoring:'Completar puntuación', ps_go_live_jira:'Go Live Jira:',
     ps_tarefas_label:'Tareas:', ps_concluido_suffix:'concluido', ps_gp_label:'GP:', ps_atualizado_por:'Actualizado por:',
@@ -2313,7 +2335,7 @@ const I18N = {
     prio_info_golive:'Este campo viene de Jira (Fecha límite) — guardar aquí escribe la nueva fecha de vuelta en Jira.',
     prio_lg_golive_manual:'Go Live actualizado manualmente',
     shared_alert_only_editor_field:'Solo editores y administradores pueden modificar este campo.',
-    shared_editar_prefix:'Editar',
+    shared_editar_prefix:'Editar', tt_mais_opcoes:'Más opciones (editar, agregar...)',
     shared_info_field_jira_synced:'Este campo también existe en Jira: el sync trae el valor de allí, y guardar aquí escribe de vuelta en Jira — igual que la Prioridad.',
     shared_info_field_manual_only:'Campo completado manualmente en el HUB — no viene de Jira y no es sobrescrito por ningún sync.',
     shared_lg_field_updated_manually_tpl:'{label} actualizado manualmente',
@@ -2389,7 +2411,7 @@ const I18N = {
     rsm_comp_inicial_label_full:'Nota de complejidad inicial (evaluación del equipo de VMO)',
     rsm_alert_only_gp_julia_comp_tecnica:'Solo el GP de este proyecto o Julia Machareth pueden modificar la nota de complejidad técnica/gestión.',
     rsm_alert_only_gp_data_alvo:'Solo el GP de este proyecto o Amanda pueden modificar la Fecha Objetivo.',
-    rsm_modal_title_editar_dataalvo:'Editar Fecha Objetivo',
+    rsm_modal_title_editar_dataalvo:'Editar Fecha Objetivo', rsm_health_threshold_modal_title:'Configurar límite de salud del proyecto', rsm_health_threshold_info:'Define a partir de cuántas tareas críticas atrasadas el proyecto pasa de "En trilhos" a "En riesgo", y de "En riesgo" a "Fuera de trilhos" (más de N). Predeterminado: 4.', rsm_health_threshold_label:'Límite de tareas críticas atrasadas para "En riesgo"', rsm_health_threshold_invalid:'Ingrese un número válido, mayor que cero.', rsm_lg_health_threshold_tpl:'Límite de salud del proyecto cambiado a {n} tarea(s) crítica(s) atrasada(s).',
     rsm_info_dataalvo:'El campo "Fecha Objetivo" representa la estimación de finalización del proyecto, definida por el GP a partir del levantamiento de alcance.',
     rsm_lg_dataalvo_manual:'Fecha Objetivo actualizada manualmente',
     rsm_data_alvo_edit_title:'Haz clic para modificar la Fecha Objetivo',
@@ -2477,7 +2499,7 @@ const I18N = {
   },
   en: {
     nav_visao_geral:'Overview', nav_cronogramas:'Schedules', nav_resumo:'Project Summary',
-    nav_atualizacoes:'Updates', nav_prioridades:'Priorities', nav_scoring:'Scoring', nav_docs:'Useful Documents',
+    nav_atualizacoes:'Updates', nav_prioridades:'Priorities', nav_scoring:'Scoring (WIP)', nav_docs:'Useful Documents',
     sync_jira:'Sync Jira', search_project:'Search project...',
     btn_voltar:'Back', btn_hoje:'Today', btn_nova_etapa:'New milestone',
     zoom_dias:'Days', zoom_semanas:'Weeks', zoom_meses:'Months', zoom_ano:'Year',
@@ -2485,9 +2507,12 @@ const I18N = {
     sec_impacto_time:'Impact by Team',
     sec_carga:'Workload — VMO & Transformation', sec_proximas_entregas:'Upcoming Deliveries', sec_historico:'History',
     // ── Schedule ──
-    select_project:'Select a project', sch_sidebar_title:'Active projects', sch_toggle_projetos:'Projects', sch_escolha_projeto:'Choose a project to view the schedule', sch_sidebar_info:'Only projects that already have a schedule registered appear here.',
+    select_project:'Select a project', sch_sidebar_title:'Projects with a schedule', sch_toggle_projetos:'Projects', sch_escolha_projeto:'Choose a project to view the schedule', sch_sidebar_info:'Only projects that already have a schedule registered appear here.',
     sch_toggle_show_title:'Show project list', sch_toggle_hide_title:'Hide project list',
     sch_copy_link:'Copy link', sch_copy_link_title:'Copy a direct link to this schedule',
+    sch_compartilhar_email:'Share by email', sch_compartilhar_email_title:'Send this schedule by email',
+    sch_email_subject_prefix:'Schedule —', sch_email_body_intro:'Here is the updated schedule for',
+    sch_email_sem_stakeholders:'No stakeholders registered for this project yet. Add at least one under "Stakeholders" before sharing by email.', sch_email_enviado_btn:'Sent!', sch_email_enviado_tpl:'Schedule sent to {n} recipient(s): {emails}',
     sch_exibicao:'Display', sch_ferramentas:'Tools',
     sch_seq:'Seq.', sch_seq_title:'Number units sequentially (D1/D2 or W1/W2 or M1/M2)',
     sch_caminho_critico:'Critical Path', sch_caminho_critico_title:"Critical path: highlights with a dashed outline the tasks manually marked as 'critical' — delaying them may impact the project's final date.",
@@ -2499,8 +2524,8 @@ const I18N = {
     sch_empty_title:'No milestones yet.', sch_empty_sub:'Click', sch_empty_sub2:'to get started or use a', sch_modelo:'Template',
     col_num:'#', col_nome:'Name', col_inicio:'Start', col_conclusao:'Completion', tt_num_hier_title:'Numbering linked to the parent Task — updates automatically if the subtask moves to another task or changes position',
     col_atraso:'Accum. Delay', col_atraso_title:'Accumulated delay: difference between the task\'s original date and the current deadline',
-    col_est:'Est.', col_real:'Actual', col_prog:'Progress', col_resp:'Assignees', col_dep:'Dep.',
-    col_status:'Status', col_tempo:'Time', col_link:'Link', col_prazo:'Deadline',
+    col_est:'Duration', col_real:'Actual', col_prog:'Progress', col_resp:'Assignees', col_dep:'Dep.',
+    col_status:'Status', col_link:'Link', col_prazo:'Deadline',
     sch_add_tarefa:'Add task', sch_add_etapa:'Add milestone', sch_add_subtarefa:'Add subtask', sch_add_subsubtarefa:'Add item',
     tt_click_edit:'Click to edit', tt_click_edit_er:'Click to edit the date (or use the ✓ next to the name to complete today)',
     tt_drag:'Drag to reorder', tt_del_etapa:'Delete milestone', tt_del_tarefa:'Delete task', tt_del_subtarefa:'Delete subtask',
@@ -2510,12 +2535,13 @@ const I18N = {
     tt_atraso_row_title_short:'Difference between the deadline and the actual completion date (or today, if still open and overdue)',
     tt_dep_none:'Subtasks do not participate in the dependency system', badge_interno:'Internal', badge_externo:'External',
     tt_abrir:'Open', add_date_btn:'+ date',
-    tb_no_prazo:'On time', tb_atraso_suffix:'d late', tb_atras_suffix:'d late',
+    
     alert_no_perm_edit:'You do not have permission to edit this schedule.',
     alert_no_perm_create_ms:'You do not have permission to create milestones in this schedule.',
     alert_no_perm_create_task:'You do not have permission to create tasks in this schedule.',
     alert_no_perm_create_sub:'You do not have permission to create subtasks in this task.',
     alert_informe_nome:'Enter a name',
+    alert_informe_prazo:'Enter the Deadline before saving — it can only be set now, at creation, and cannot be changed afterward.',
     confirm_excluir_etapa:'Delete milestone?', confirm_excluir_tarefa:'Delete task?', confirm_excluir_subtarefa:'Delete subtask?',
     fld_nome:'Name *', fld_inicio:'Start', fld_prazo:'Deadline', fld_data_conclusao:'Completion date',
     lbl_responsaveis:'Assignees', fld_status:'Status', fld_progresso:'Progress (%)', fld_cor:'Color',
@@ -2535,6 +2561,7 @@ const I18N = {
     ps_previsto:'planned:', ps_caminho_critico_label:'Critical Path', ps_gargalo:'bottleneck:', ps_atrasada:'delayed',
     ps_nunca_atualizacao:'Never had a published update', ps_sem_atualizacao_ha:'No published update for',
     ps_em_risco:'At Risk', ps_em_risco_title:"The schedule's estimated end differs from the Go Live date in Jira",
+    ps_atencao_tem:'Attention, there are', ps_atrasadas_title:'Click to highlight the overdue tasks in the schedule',
     ps_cronograma_label:'schedule:', ps_jira_label:'Jira:', ps_editar_scoring:'Edit scoring',
     ps_score_label:'Score:', ps_preencher_scoring:'Fill in scoring', ps_go_live_jira:'Go Live Jira:',
     ps_tarefas_label:'Tasks:', ps_concluido_suffix:'complete', ps_gp_label:'PM:', ps_atualizado_por:'Updated by:',
@@ -2925,7 +2952,7 @@ const I18N = {
     prio_info_golive:'This field comes from Jira (Due date) — saving here writes the new date back to Jira.',
     prio_lg_golive_manual:'Go Live manually updated',
     shared_alert_only_editor_field:'Only editors and admins can change this field.',
-    shared_editar_prefix:'Edit',
+    shared_editar_prefix:'Edit', tt_mais_opcoes:'More options (edit, add...)',
     shared_info_field_jira_synced:'This field also exists in Jira: the sync pulls the value from there, and saving here writes it back to Jira — same as Priority.',
     shared_info_field_manual_only:'Field filled in manually in the HUB — does not come from Jira and is not overwritten by any sync.',
     shared_lg_field_updated_manually_tpl:'{label} manually updated',
@@ -3001,7 +3028,7 @@ const I18N = {
     rsm_comp_inicial_label_full:'Initial complexity score (VMO team assessment)',
     rsm_alert_only_gp_julia_comp_tecnica:'Only this project\'s PM or Julia Machareth can change the technical/management complexity score.',
     rsm_alert_only_gp_data_alvo:'Only this project\'s PM or Amanda can change the Target Date.',
-    rsm_modal_title_editar_dataalvo:'Edit Target Date',
+    rsm_modal_title_editar_dataalvo:'Edit Target Date', rsm_health_threshold_modal_title:'Configure project health threshold', rsm_health_threshold_info:'Sets how many overdue critical tasks move the project from "On track" to "At risk", and from "At risk" to "Off track" (more than N). Default: 4.', rsm_health_threshold_label:'Overdue critical tasks threshold for "At risk"', rsm_health_threshold_invalid:'Enter a valid number greater than zero.', rsm_lg_health_threshold_tpl:'Project health threshold changed to {n} overdue critical task(s).',
     rsm_info_dataalvo:'The "Target Date" field represents the project\'s estimated completion, defined by the PM based on the scope assessment.',
     rsm_lg_dataalvo_manual:'Target Date manually updated',
     rsm_data_alvo_edit_title:'Click to change the Target Date',
@@ -3239,12 +3266,12 @@ function canEditComplexidadeTecnica(projectKey) {
   const uHandle = normPersonKey_((currentUser.email || '').split('@')[0]);
   return uName === 'julia machareth' || uHandle === 'julia machareth';
 }
-// Data Alvo (Expectativa de Entrega/duedate) — pedido explícito da Amanda: só o GP daquele
-// projeto específico ou ela mesma podem alterar, igual já vale pra Nota de Complexidade
-// Técnica (ver canEditComplexidadeTecnica) — sem bypass de admin/editor genérico aqui.
+// Data Alvo (Expectativa de Entrega/duedate) — pedido revisado da Amanda: qualquer admin OU
+// o GP daquele projeto específico podem alterar (antes só ela mesma ou o GP conseguiam, sem
+// bypass pra outros admins — ajustado a pedido dela pra incluir todo mundo com papel admin).
 function canEditDataAlvo(projectKey) {
   if (!currentUser) return false;
-  if ((currentUser.email || '').toLowerCase() === 'amanda.valentim@bemobi.com') return true;
+  if (currentUser.role === 'admin') return true;
   const p = PROJECTS.find(x => x.key === projectKey);
   if (!p) return false;
   return isGPOfProject(currentUser, p);
@@ -3280,6 +3307,11 @@ function canViewProject(projectKey) {
 function canViewTab(tab) {
   if (!currentUser) return false;
   const r = currentUser.role;
+  // Scoring (WIP) — só admin, mesma regra usada em applyRoleUI() pra esconder a aba no menu.
+  // Sem isso aqui, o tour de boas-vindas e o guard de showView() continuavam tratando Scoring
+  // como visível pra editor/viewer, fora de sincronia com o que a barra lateral já escondia —
+  // bug reportado pela Amanda ("o tour não está personalizado por acesso").
+  if (tab === 'scoring' && r !== 'admin') return false;
   if (r !== 'external' && r !== 'stakeholder' && r !== 'consulta') return true;
   return tab === 'schedule' || tab === 'resumo';
 }
@@ -3410,6 +3442,11 @@ function showLoginErr(msg) {
 function applyRoleUI() {
   const r   = currentUser?.role;
   const sb  = document.getElementById('jira-sync-btn');
+  // Scoring ainda em construção (WIP) — só admin vê a aba por enquanto, pedido explícito da
+  // Amanda. Os perfis external/stakeholder/consulta já escondem a aba de qualquer forma pelas
+  // regras abaixo (só sobram schedule/resumo pra eles); isso aqui cobre editor/viewer/admin.
+  const scoringTab = document.getElementById('nav-scoring');
+  if (scoringTab) scoringTab.style.display = isAdmin() ? '' : 'none';
   if (r === 'external' || r === 'stakeholder') {
     document.querySelectorAll('.nav-tab').forEach(t => {
       const view = t.dataset.view;
@@ -4033,6 +4070,7 @@ function resetScheduleHeaderToEmpty(){
   const title_=document.getElementById('se-title');if(title_)title_.textContent=t('select_project');
   const jl_=document.getElementById('se-jira-lnk');if(jl_)jl_.style.display='none';
   const clb_=document.getElementById('copy-link-btn');if(clb_)clb_.style.display='none';
+  const seb_=document.getElementById('share-email-btn');if(seb_)seb_.style.display='none';
   const banner_=document.getElementById('delivered-banner');if(banner_)banner_.style.display='none';
   const projSum_=document.getElementById('proj-sum');if(projSum_)projSum_.innerHTML='';
   const bulkBar_=document.getElementById('ms-bulk-bar');if(bulkBar_)bulkBar_.style.display='none';
@@ -4234,9 +4272,14 @@ function updateDD(ddId,lblId,filterKey,placeholder){
 // ── STATS ──
 // Duas visões de saúde do cronograma, cada uma com seu propósito, pra não perder nenhuma delas:
 //
-// 1) `health` (tarefas atrasadas dentro do próprio cronograma) — é o selo usado no dia a dia
-//    (Resumo do projeto, coluna Saúde da aba Prioridades, lateral do Cronograma): 0 tarefas
-//    atrasadas = nos trilhos; 1 a 3 = em risco; 4 ou mais = fora dos trilhos.
+// 1) `health` — é o selo usado no dia a dia (Resumo do projeto, coluna Saúde da aba
+//    Prioridades, lateral do Cronograma). Métrica revista com a Amanda: baseada em TAREFAS
+//    CRÍTICAS atrasadas (marcadas com o raio 🔴 "crítica" na Tarefa/Subtarefa), não em qualquer
+//    tarefa atrasada — 0 = nos trilhos; 1 até o limite configurado (padrão 4) = em risco; acima
+//    do limite = fora dos trilhos. O limite é configurável por projeto (GP daquele projeto ou
+//    admin, mesma regra de canEdit) em "Resumo do Projeto" — ver getHealthThreshold/
+//    editHealthThreshold. `lateTasks` continua contando TODAS as tarefas atrasadas (não só as
+//    críticas) — é usado à parte no alerta "Atenção, tem X tarefas atrasadas" do Cronograma.
 //
 // 2) `glHealth` (fim estimado do cronograma x Go Live do Jira) — usado só nos cards agregados
 //    "Alertas & Cronogramas" da Visão Geral, pra enxergar o portfólio inteiro sob a ótica de
@@ -4246,15 +4289,26 @@ function updateDD(ddId,lblId,filterKey,placeholder){
 //    comparar, então tratamos como neutro ('on-track') em vez de inventar um 4º estado — mesmo
 //    padrão já usado em getAtRiscoAlert (que mostra essa mesma comparação por projeto, à parte).
 const HEALTH_AT_RISK_BUFFER_DAYS=5;
+const DEFAULT_HEALTH_THRESHOLD=4;
+// Limite de tarefas críticas atrasadas até "Em risco" — acima disso vira "Fora dos trilhos".
+// Configurável por projeto (schedules[key].healthThreshold); sem valor definido, usa o padrão.
+function getHealthThreshold(key){
+  const s=schedules[key];
+  const v=s&&s.healthThreshold;
+  return (typeof v==='number'&&v>0)?v:DEFAULT_HEALTH_THRESHOLD;
+}
 function getStats(key){
   const s=schedules[key];
-  if(!s||!s.milestones||!s.milestones.length)return{has:false,ms:0,tasks:0,prog:0,lateTasks:0,health:'none',glHealth:'none',goLiveLocal:null};
+  if(!s||!s.milestones||!s.milestones.length)return{has:false,ms:0,tasks:0,prog:0,lateTasks:0,criticalLateTasks:0,health:'none',glHealth:'none',goLiveLocal:null};
   const tasks=s.tasks||[];
   const now=new Date();now.setHours(0,0,0,0);
   const done=tasks.filter(t=>t.status==='done').length;
   const prog=tasks.length?Math.round(done/tasks.length*100):0;
-  const lateTasks=tasks.filter(t=>t.status!=='done'&&t.status!=='cancelled'&&t.deadline&&pd(t.deadline)<now).length;
-  const health=lateTasks===0?'on-track':lateTasks<=3?'alert':'off-track';
+  const isLate=x=>x.status!=='done'&&x.status!=='cancelled'&&x.deadline&&pd(x.deadline)<now;
+  const lateTasks=tasks.filter(isLate).length;
+  const criticalLateTasks=tasks.filter(t=>t.critical&&isLate(t)).length+(s.subtasks||[]).filter(sub=>sub.critical&&isLate(sub)).length;
+  const healthThreshold=getHealthThreshold(key);
+  const health=criticalLateTasks===0?'on-track':criticalLateTasks<=healthThreshold?'alert':'off-track';
   const msDates=(s.milestones).map(m=>m.deadline).filter(Boolean).sort();
   const goLiveLocal=msDates[msDates.length-1]||null;
   const p=PROJECTS.find(x=>x.key===key);
@@ -4266,7 +4320,7 @@ function getStats(key){
     const diff=diffD(pd(p2.golive),pd(goLiveLocal)); // goLiveLocal - golive, em dias
     return diff>0?'off-track':diff>=-HEALTH_AT_RISK_BUFFER_DAYS?'alert':'on-track';
   })();
-  return{has:true,ms:s.milestones.length,tasks:tasks.length,prog,lateTasks,health,glHealth,goLiveLocal};
+  return{has:true,ms:s.milestones.length,tasks:tasks.length,prog,lateTasks,criticalLateTasks,healthThreshold,health,glHealth,goLiveLocal};
 }
 // lateTasks (opcional): quando informado e > 0, acrescenta um aviso pequeno e discreto logo
 // abaixo do selo principal — "⚠ N tarefa(s) atrasada(s)" — pra manter as DUAS visibilidades
@@ -4453,16 +4507,6 @@ function autoUpdateMsStatus(key){
     else if(anyIP)ms.status='in_progress';
     else ms.status='not_started';
   });
-}
-function timingBadge(item,isMilestone){
-  const now=new Date();now.setHours(0,0,0,0);
-  const er=isMilestone?(computeMsEndReal(item.id,curKey)||item.endReal):item.endReal;
-  if(item.status==='done'){if(er&&item.deadline){const d=diffD(pd(er),pd(item.deadline));if(d>0)return`<span class="tbadge2 tb-early">+${d}d</span>`;if(d<0)return`<span class="tbadge2 tb-late">${Math.abs(d)}${t('tb_atraso_suffix')}</span>`;return`<span class="tbadge2 tb-on">${t('tb_no_prazo')}</span>`;} return`<span class="tbadge2 tb-on">${SL.done}</span>`;}
-  if(item.status==='blocked')return`<span class="tbadge2 tb-bl">${SL.blocked}</span>`;
-  if(item.status==='cancelled')return`<span class="tbadge2 tb-ns">${SL.cancelled}</span>`;
-  if(item.deadline&&pd(item.deadline)<now){const d=diffD(pd(item.deadline),now);return`<span class="tbadge2 tb-late">${d}${t('tb_atras_suffix')}</span>`;}
-  if(item.status==='in_progress')return`<span class="tbadge2 tb-ip">${SL.in_progress}</span>`;
-  return`<span class="tbadge2 tb-ns">${SL.not_started}</span>`;
 }
 function logChange(key,desc,color){const s=schedules[key];if(!s)return;if(!s.auditLog)s.auditLog=[];s.auditLog.unshift({id:uid(),who:currentUser?.name||'Sistema',when:nowStr(),ts:Date.now(),desc,color:color||'#6924E1'});}
 // ── ALERTAS AUTOMÁTICOS: Caminho Crítico de atraso e Projeto sem atualização ──
@@ -4716,6 +4760,32 @@ async function pushGoLiveToJira(key,golive){
 // Mesmo campo por baixo do Go Live (Jira: Data limite/duedate) — reaproveita o mesmo push
 // (pushGoLiveToJira/updateGoLive) em vez de criar uma action nova no Apps Script. Só quem
 // passa por canEditDataAlvo() (GP daquele projeto ou Amanda) vê a opção de editar.
+// Configura o limite de tarefas críticas atrasadas usado pra classificar a saúde do projeto
+// (Nos trilhos/Em risco/Fora dos trilhos) — pedido da Amanda pra virar configurável por
+// projeto, já que times diferentes toleram volumes diferentes de atraso em tarefa crítica.
+// Mesma permissão de edição do cronograma (GP daquele projeto ou admin — ver canEdit()).
+function editHealthThreshold(key){
+  if(!canEdit(key)){alert(t('alert_no_perm_edit'));return;}
+  const cur=getHealthThreshold(key);
+  getOrBuildModal('edit-health-threshold-modal',t('rsm_health_threshold_modal_title'),`
+    <div class="info-box" style="margin-bottom:8px">${t('rsm_health_threshold_info')}</div>
+    <div class="fg"><label>${t('rsm_health_threshold_label')}</label><input id="edit-health-threshold-input" type="number" min="1" step="1" value="${cur}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px"></div>
+  `,`<button class="btn-c" onclick="closeM('edit-health-threshold-modal')">${t('btn_cancelar')}</button><button class="btn-s" onclick="saveHealthThreshold('${key}')">${t('btn_salvar')}</button>`);
+  openM('edit-health-threshold-modal');
+}
+function saveHealthThreshold(key){
+  if(!canEdit(key))return;
+  const raw=document.getElementById('edit-health-threshold-input').value;
+  const n=parseInt(raw);
+  if(isNaN(n)||n<1){alert(t('rsm_health_threshold_invalid'));return;}
+  const sched=schedules[key];if(!sched)return;
+  sched.healthThreshold=n;
+  logChange(key,fmtLog('rsm_lg_health_threshold_tpl',{n}),'#0369a1');
+  persistSchedule(key);
+  closeM('edit-health-threshold-modal');
+  if(key===curKey){renderResumoDashboard();renderProjSum();}
+  renderPortfolio();
+}
 function editDataAlvo(key){
   if(!canEditDataAlvo(key)){alert(t('rsm_alert_only_gp_data_alvo'));return;}
   const p=PROJECTS.find(x=>x.key===key);if(!p)return;
@@ -5178,7 +5248,7 @@ const CRONOGRAMA_EXCLUDED_STATUS=new Set(['PRESALES','BACKLOG','PAUSADO','CANCEL
 // Status que recebem destaque cinza na tabela de Prioridades (igual planilha de referência da reunião de priorização).
 const GRAY_HL_STATUSES=new Set(['PROCESSO DE ROLLOUT','Aguardando Produção','Homologação']);
 // Ordem fixa do funil, usada na seção "Por Etapa"
-const ETAPA_ORDER=['PRESALES','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','Aguardando Produção','PROCESSO DE ROLLOUT','Pós produção','CANCELADO'];
+const ETAPA_ORDER=['PRESALES','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','PROCESSO DE ROLLOUT','Aguardando Produção','Pós produção','CANCELADO'];
 // Casa o nome do status com ETAPA_ORDER ignorando maiúscula/minúscula, acento e espaço extra —
 // evita que uma variação de grafia (ex.: "PRÉ-COMITÊ" vindo do Jira vs "Pré-Comitê" no código)
 // jogue a coluna pro fim da fila por não dar indexOf() exato.
@@ -5339,17 +5409,17 @@ function renderKPI(){
       <div class="kpi-group">
       <div class="kpi-group-label">${t('kpi_group_saude_cronograma')}</div>
       <div class="kpi-group-cards">
-      <div class="kc2${msFilters.health.has('on-track')?' alert-kc-on':''}" style="background:#dcfce7;border-color:#86efac;cursor:pointer" title="Filtrar: nos trilhos — sem tarefas atrasadas no cronograma" onclick="filterByHealth('on-track')">
+      <div class="kc2${msFilters.health.has('on-track')?' alert-kc-on':''}" style="background:#dcfce7;border-color:#86efac;cursor:pointer" title="Filtrar: nos trilhos — sem tarefas críticas atrasadas no cronograma" onclick="filterByHealth('on-track')">
         <div style="font-size:20px;font-weight:700;color:#166534;line-height:1">${onTrackActive}</div>
         <div style="font-size:8.5px;color:#166534;opacity:.75;font-weight:600">${withSchedActive?Math.round(onTrackActive/withSchedActive*100):0}%</div>
         <div style="font-size:9px;color:#166534;margin-top:2px;font-weight:500">${t('hb_on_track')}</div>
       </div>
-      <div class="kc2${msFilters.health.has('alert')?' alert-kc-on':''}" style="background:#fef9c3;border-color:#fde047;cursor:pointer" title="Filtrar: em risco — até 3 tarefas atrasadas no cronograma" onclick="filterByHealth('alert')">
+      <div class="kc2${msFilters.health.has('alert')?' alert-kc-on':''}" style="background:#fef9c3;border-color:#fde047;cursor:pointer" title="Filtrar: em risco — até o limite configurado de tarefas críticas atrasadas no cronograma (padrão: 4)" onclick="filterByHealth('alert')">
         <div style="font-size:20px;font-weight:700;color:#854d0e;line-height:1">${alertActive}</div>
         <div style="font-size:8.5px;color:#854d0e;opacity:.75;font-weight:600">${withSchedActive?Math.round(alertActive/withSchedActive*100):0}%</div>
         <div style="font-size:9px;color:#854d0e;margin-top:2px;font-weight:500">${t('hb_alert')}</div>
       </div>
-      <div class="kc2${msFilters.health.has('off-track')?' alert-kc-on':''}" style="background:#fee2e2;border-color:#fca5a5;cursor:pointer" title="Filtrar: fora dos trilhos — mais de 3 tarefas atrasadas no cronograma" onclick="filterByHealth('off-track')">
+      <div class="kc2${msFilters.health.has('off-track')?' alert-kc-on':''}" style="background:#fee2e2;border-color:#fca5a5;cursor:pointer" title="Filtrar: fora dos trilhos — acima do limite configurado de tarefas críticas atrasadas no cronograma (padrão: 4)" onclick="filterByHealth('off-track')">
         <div style="font-size:20px;font-weight:700;color:#b91c1c;line-height:1">${offTrackActive}</div>
         <div style="font-size:8.5px;color:#b91c1c;opacity:.75;font-weight:600">${withSchedActive?Math.round(offTrackActive/withSchedActive*100):0}%</div>
         <div style="font-size:9px;color:#b91c1c;margin-top:2px;font-weight:500">${t('hb_off_track')}</div>
@@ -5423,6 +5493,7 @@ function renderKPI(){
         <button class="cmb ${calModeVal==='category'?'on':''}" onclick="setCalMode('category',this)">Verticais</button>
       </div>
       <div style="flex:1"></div>
+      <button class="cmb" id="cal-export-pdf-btn" title="Exportar a visualização atual (Mês/Quinzena/Semana/Verticais) em PDF" onclick="exportProximasEntregasPDF()"><i class="ti ti-file-type-pdf" style="font-size:10px"></i> Exportar PDF</button>
       <button class="cmb${calShowHistorico?' on':''}" id="cal-historico-btn" title="Mostrar também os meses/períodos que já passaram" onclick="toggleCalHistorico(this)"><i class="ti ti-history" style="font-size:10px"></i> Histórico</button>
     </div>
     <div id="cal-grid" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
@@ -5514,8 +5585,6 @@ function filterByAlert(type,el){
 // Quantos projetos ativos (não entregues, não cancelados) cada time está tocando,
 // com lista filtrável + link direto para o Portfólio, e gráfico de carga (menor → maior).
 let teamImpactSelected='';
-let teamChartExpanded=false;
-function toggleTeamChartExpand(){teamChartExpanded=!teamChartExpanded;renderTeamImpact();}
 // ── Sub-abas de "Times Impactados": Resumo (já existia) + Carga por Times + Visão de Gargalos
 // (portadas do Apps Script de mesmo nome que a Amanda já usava — mesmos limiares e regras de
 // pressão por time, mas lendo os dados que o próprio HUB já tem carregados, sem chamar o Jira
@@ -5688,26 +5757,19 @@ function toggleTcTeamsListExpand(){tcTeamsListExpanded=!tcTeamsListExpanded;rend
 let tcCardExpanded=new Set();
 function toggleTcCardExpand(time){if(tcCardExpanded.has(time))tcCardExpanded.delete(time);else tcCardExpanded.add(time);renderTeamImpact();}
 
-function computeTeamCriticalList(ativosComCritico,team){
-  return ativosComCritico.map(p=>{
-    const tp=(p.timesPerfil||[]).find(x=>x.time===team);
-    return tp?Object.assign({},p,{_pressao:tp.pressao,_nivel:tp.nivel}):null;
-  }).filter(Boolean).sort((a,b)=>b._pressao-a._pressao||(a.priority??9999)-(b.priority??9999));
-}
-function critTeamRowHtml(p){
-  const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
-  const label=p._nivel==='critico'?'CRÍTICO':p._nivel==='concorrido'?'CONCORRIDO':'LIVRE';
-  return `<div class="tc-proj-row" onclick="openProject('${p.key}')">
-    <span class="tc-proj-dot" style="background:${STATUS_DOT_COLOR(p.status)}"></span>
-    <span class="tc-proj-name">${p.priority!=null&&p.priority<98?`<span class="tc-proj-pri">#${Math.trunc(p.priority)}</span>`:''}${escHtml(p.summary)}${rev?`<span class="tc-proj-rev">${rev}</span>`:''}</span>
-    <span class="crit-badge ${p._nivel}" style="margin-right:4px">${label}</span>
-    <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
+function gargalosTeamDetailHtml(tp){
+  const label=tp.nivel==='critico'?'CRÍTICO':tp.nivel==='concorrido'?'CONCORRIDO':'LIVRE';
+  const concList=tp.concorrentes.slice(0,5).map(c=>escHtml(c.summary)).join(', ');
+  const restConc=tp.concorrentes.length-5;
+  return `<div class="gargalos-time-row">
+    <span class="crit-badge ${tp.nivel}">${label}</span>
+    <span class="gargalos-time-name">${escHtml(tp.time)}</span>
+    <span class="gargalos-time-count">${tp.pressao} projeto${tp.pressao!==1?'s':''} à frente</span>
+    ${concList?`<div class="gargalos-time-conc">${concList}${restConc>0?' · +'+restConc+' outros':''}</div>`:''}
   </div>`;
 }
-// Times com o card expandido pra ver todos os projetos daquele time (não só o Top 5 mais
-// críticos) — mesmo padrão de estado usado na Visão de Carga.
-let critTeamExpanded=new Set();
-function toggleCritTeamExpand(time){if(critTeamExpanded.has(time))critTeamExpanded.delete(time);else critTeamExpanded.add(time);renderTeamImpact();}
+let gargalosRowExpanded=new Set();
+function toggleGargalosRow(key){if(gargalosRowExpanded.has(key))gargalosRowExpanded.delete(key);else gargalosRowExpanded.add(key);renderTeamImpact();}
 function renderGargalosView(){
   const dados=computeTimesImpactoData();
   const comCritico=dados.ativosComCritico.filter(p=>p.nCriticos>0);
@@ -5729,61 +5791,56 @@ function renderGargalosView(){
     <span class="crit-legend-item" style="color:#92400e"><span class="crit-legend-dot" style="background:#f59e0b"></span><b>Concorrido</b> — 3 a 6 projetos a frente no mesmo time</span>
     <span class="crit-legend-item" style="color:#15803d"><span class="crit-legend-dot" style="background:#22c55e"></span><b>Livre</b> — 0 a 2 projetos a frente no mesmo time</span>
   </div>`;
-  // Times organizados igual Carga por Times, mas ranqueados por criticidade (não por volume):
-  // primeiro quem tem mais projetos em nível "crítico", depois "concorrido" — só os 5 times
-  // mais críticos aparecem como card (pedido explícito da Amanda). Dentro de cada card, o Top 5
-  // dos projetos mais críticos DAQUELE time, com "ver todos" pra revelar a lista completa.
-  const teamsRankedAll=dados.porTime.map(([time])=>{
-    const list=computeTeamCriticalList(dados.ativosComCritico,time);
-    const nCrit=list.filter(p=>p._nivel==='critico').length;
-    const nConc=list.filter(p=>p._nivel==='concorrido').length;
-    return{time,list,nCrit,nConc};
-  }).filter(x=>x.list.length>0)
-    .sort((a,b)=>b.nCrit-a.nCrit||b.nConc-a.nConc||b.list.length-a.list.length||a.time.localeCompare(b.time));
-  const restTeams=teamsRankedAll.length-6;
-  const teamsRanked=critTeamsListExpanded?teamsRankedAll:teamsRankedAll.slice(0,6);
-  const teamsHtml=teamsRanked.map(({time,list,nCrit,nConc})=>{
-    const isExp=critTeamExpanded.has(time);
-    const toShow=isExp?list:list.slice(0,5);
-    const rest=list.length-5;
-    const tierCls=nCrit>0?'alta':nConc>0?'media':'';
-    return `<div class="tc-card ${tierCls}">
-      <div class="tc-card-hdr ${tierCls}">
-        <div class="tc-card-title-row">
-          <span class="tc-card-name">${escHtml(time)}</span>
-          <span class="tc-card-count" style="color:${nCrit>0?'#b91c1c':nConc>0?'#92400e':'var(--navy)'}">${list.length} projeto${list.length!==1?'s':''}</span>
+  const rowsHtml=dados.ativosComCritico.map(p=>{
+    const isExp=gargalosRowExpanded.has(p.key);
+    const worst=p.timesPerfil[0]||null;
+    const worstNivel=worst?worst.nivel:'livre';
+    const barColor=worstNivel==='critico'?'#ef4444':worstNivel==='concorrido'?'#f59e0b':'#22c55e';
+    const worstLabel=worstNivel==='critico'?'CRÍTICO':worstNivel==='concorrido'?'CONCORRIDO':'LIVRE';
+    const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+    const gpFirst=(p.gp||'—').split(',')[0].trim().split(' ')[0];
+    const detailHtml=isExp?`<div class="gargalos-detail">${p.timesPerfil.map(gargalosTeamDetailHtml).join('')}</div>`:'';
+    return `<tr class="pf-row-gargalo" style="border-left:3px solid ${barColor}">
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;cursor:pointer" onclick="openProject('${p.key}')">
+          ${p.priority!=null&&p.priority<98?`<span class="tc-proj-pri">#${Math.trunc(p.priority)}</span>`:''}
+          <b style="color:var(--blue);font-size:10.5px">${escHtml(p.summary)}</b>
+          <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
         </div>
-        <div class="tc-tags-row">
-          ${nCrit?`<span class="tc-tag" style="background:#fee2e2;color:#b91c1c">${nCrit} crítico${nCrit!==1?'s':''}</span>`:''}
-          ${nConc?`<span class="tc-tag" style="background:#fef3c7;color:#92400e">${nConc} concorrido${nConc!==1?'s':''}</span>`:''}
+        <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center">
+          <span class="tc-tag ${tiClassificacao(p)==='Produto/TI'?'prod':'com'}">${tiClassificacao(p)}</span>
+          <span class="crit-badge ${worstNivel}">${worstLabel}${p.timesPerfil.length>1?' · '+p.timesPerfil.length+' times':''}</span>
         </div>
-        ${!isExp?`<div class="tc-top5-lbl">🏆 Top 5 — mais críticos</div>`:''}
-      </div>
-      <div class="tc-card-body">
-        ${toShow.map(critTeamRowHtml).join('')}
-        ${rest>0?`<div style="text-align:center;padding:6px 0 2px"><button class="pf-act" onclick="toggleCritTeamExpand('${escHtml(time).replace(/'/g,"\\'")}')">${isExp?t('rsm_ver_menos_btn'):fmtLog('shared_mais_n_tpl',{n:rest})}</button></div>`:''}
-      </div>
-    </div>`;
+        ${detailHtml}
+      </td>
+      <td style="text-align:center;color:var(--text2);font-size:10px;white-space:nowrap">${escHtml(gpFirst)}</td>
+      <td style="text-align:right;color:#16a34a;font-weight:600;font-size:10px;white-space:nowrap">${rev||'—'}</td>
+      <td style="text-align:center;cursor:pointer;color:var(--text3)" onclick="toggleGargalosRow('${p.key}')"><i class="ti ti-chevron-${isExp?'up':'down'}"></i></td>
+    </tr>`;
   }).join('');
-  const esmaecidosHtml=dados.esmaecidosAll.length?`<div class="crit-esmaecidos-section">
-    <div class="tc-esmaecidos-title">Em rollout / aguardando produção (${dados.esmaecidosAll.length})</div>
-    ${dados.esmaecidosAll.map(p=>{
-      const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
-      const gpFirst=(p.gp||'—').split(',')[0].trim().split(' ')[0];
-      return `<div class="tc-esmaecido-row" onclick="openProject('${p.key}')">
-        <span class="tc-proj-dot" style="background:#9ca3af"></span>
-        <span class="tc-esmaecido-name">${escHtml(p.summary)}</span>
-        <span style="font-size:10px;color:var(--text3);margin-right:8px">${escHtml(gpFirst)}</span>
-        ${rev?`<span style="font-size:10px;color:#9ca3af;margin-right:8px">${rev}</span>`:''}
-        <span class="spill ${JIRA_SC[p.status]||'s-bkl'}" style="opacity:.7">${p.status}</span>
-      </div>`;
-    }).join('')}
-  </div>`:'';
-  const verMaisTeamsHtml=restTeams>0?`<div style="text-align:center;padding:8px 0 2px"><button class="pf-act" onclick="toggleCritTeamsListExpand()">${critTeamsListExpanded?t('rsm_ver_menos_btn'):fmtLog('shared_mais_n_tpl',{n:restTeams})}</button></div>`:'';
-  return statsHtml+alertaHtml+legendaHtml+`<div class="tc-grid">${teamsHtml||'<div class="ti-empty">Nenhum projeto ativo no momento.</div>'}</div>`+verMaisTeamsHtml+esmaecidosHtml;
+  const esmaecidosRowsHtml=dados.esmaecidosAll.map(p=>{
+    const rev=formatRevenueMM(parseRevenueMM(p.receitaLiquidaPrevista));
+    const gpFirst=(p.gp||'—').split(',')[0].trim().split(' ')[0];
+    return `<tr class="pf-row-gargalo pf-row-gray" style="border-left:3px solid #9ca3af;opacity:.75;cursor:pointer" onclick="openProject('${p.key}')">
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <b style="color:var(--text2);font-size:10.5px">${escHtml(p.summary)}</b>
+          <span class="spill ${JIRA_SC[p.status]||'s-bkl'}">${p.status}</span>
+        </div>
+      </td>
+      <td style="text-align:center;color:var(--text3);font-size:10px;white-space:nowrap">${escHtml(gpFirst)}</td>
+      <td style="text-align:right;color:#9ca3af;font-weight:600;font-size:10px;white-space:nowrap">${rev||'—'}</td>
+      <td></td>
+    </tr>`;
+  }).join('');
+  const tableHtml=`<div style="margin:0 12px 12px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+    <table class="pft" style="width:100%">
+      <thead><tr><th>Projeto</th><th style="width:110px;text-align:center">GP</th><th style="width:120px;text-align:right">Receita</th><th style="width:34px"></th></tr></thead>
+      <tbody>${(rowsHtml+esmaecidosRowsHtml)||'<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3)">Nenhum projeto ativo no momento.</td></tr>'}</tbody>
+    </table>
+  </div>`;
+  return statsHtml+alertaHtml+legendaHtml+tableHtml;
 }
-let critTeamsListExpanded=false;
-function toggleCritTeamsListExpand(){critTeamsListExpanded=!critTeamsListExpanded;renderTeamImpact();}
 let statusChartExpanded=false;
 function toggleStatusChartExpand(){statusChartExpanded=!statusChartExpanded;renderKPI();}
 let etapaExpanded=new Set();
@@ -5791,7 +5848,10 @@ function toggleEtapaCol(stage){if(etapaExpanded.has(stage))etapaExpanded.delete(
 function computeTeamImpactData(){
   // Respeita o filtro de time da Visão Geral (vgTeamFilter) — a fila de cada time abaixo
   // (openTeamQueueModal) é da aba Prioridades e continua sem esse recorte, de propósito.
-  const relevant=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG'].includes(p.status)&&projectMatchesTeamFilter(p));
+  // PRESALES entra na lista aqui embaixo (bug reportado pela Amanda: 'Impacto por Time' >
+  // Resumo estava contando Presales como projeto ativo, mesmo ele não contando como ativo em
+  // nenhum outro lugar do app — mesma exclusão já usada em activeProjects/PRIORITY_LIST_EXCLUDED_STATUS).
+  const relevant=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG','PRESALES'].includes(p.status)&&projectMatchesTeamFilter(p));
   return getAllTeams().map(t=>({name:t,count:relevant.filter(p=>(p.times||[]).includes(t)).length}));
 }
 // ── Fila de prioridade POR TIME (quem concorre pela capacidade de um time específico) ──
@@ -5867,9 +5927,8 @@ function renderTeamImpact(){
   const data=computeTeamImpactData();
   if(!data.length){wrap.innerHTML=tabsHtml+'<div class="ti-empty">Nenhum time cadastrado ainda.</div>';return;}
   const cardsSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
-  const chartSorted=data.slice().sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
-  const maxCount=Math.max(1,...data.map(d=>d.count));
-  const totalActive=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG'].includes(p.status)).length||1;
+  // Mesmo ajuste do computeTeamImpactData() acima: Presales não conta como ativo pro %.
+  const totalActive=PROJECTS.filter(p=>p.status!==DELIVERED_STATUS&&!['CANCELADO','PAUSADO','BACKLOG','PRESALES'].includes(p.status)).length||1;
   const esc=s=>String(s).replace(/'/g,"\\'");
   const cardsHtml=cardsSorted.map(d=>{
     const high=d.count>5;
@@ -5881,37 +5940,14 @@ function renderTeamImpact(){
       <div style="font-size:9px;color:${fg};margin-top:2px;line-height:1.3;font-weight:500;text-transform:uppercase;overflow-wrap:break-word;word-break:break-word">${d.name}</div>
     </div>`;
   }).join('');
-  const TEAM_CHART_PAGE_SIZE=5;
-  const chartToShow=teamChartExpanded?chartSorted:chartSorted.slice(0,TEAM_CHART_PAGE_SIZE);
-  const chartRest=chartSorted.length-TEAM_CHART_PAGE_SIZE;
-  const barsHtml=chartToShow.map(d=>{
-    const wpct=Math.max(4,Math.round(d.count/maxCount*100));
-    const cls=d.count>5?'high':'low';
-    return `<div class="ti-bar-row">
-      <span class="ti-bar-label" title="${d.name}">${d.name}</span>
-      <div class="ti-bar-track"><div class="ti-bar-fill ${cls}" style="width:${wpct}%"><span class="ti-bar-val">${d.count}</span></div></div>
-    </div>`;
-  }).join('');
-  const chartMoreBtn=chartRest>0?`<div style="text-align:center;padding:6px 0 2px">
-      <button class="pf-act" onclick="toggleTeamChartExpand()">${teamChartExpanded?'Ver menos':'Ver mais ('+chartRest+')'}</button>
-    </div>`:'';
+  // O painel de gráfico de barras ("Carga de Projetos por Time") saiu daqui — pedido explícito
+  // da Amanda pra deixar só os cards no Resumo, sem o dashboard ao lado.
   wrap.innerHTML=tabsHtml+`<div class="team-impact-grid">
     <div class="ti-panel">
       <div class="ti-panel-hdr">
         <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-list-check" style="font-size:13px"></i> Times &amp; Projetos Impactados <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i></div>
       </div>
       <div class="team-card-row" style="padding:10px 12px">${cardsHtml}</div>
-    </div>
-    <div class="ti-panel">
-      <div class="ti-panel-hdr">
-        <div class="ti-panel-title" style="display:flex;align-items:center;gap:6px"><i class="ti ti-chart-bar" style="font-size:13px"></i> Carga de Projetos por Time${teamChartExpanded?' (todos)':''} <i class="ti ti-info-circle" style="font-size:13px;color:#94a3b8;cursor:help" title="Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Pós-Produção e Presales são filtrados dessa contagem"></i></div>
-      </div>
-      <div style="padding:8px 2px">${barsHtml}</div>
-      ${chartMoreBtn}
-      <div class="ti-legend">
-        <span><span class="ti-legend-dot" style="background:#93c5fd"></span>≤ 5 projetos (carga normal)</span>
-        <span><span class="ti-legend-dot" style="background:#f87171"></span>&gt; 5 projetos (alta carga · alerta)</span>
-      </div>
     </div>
   </div>`;
 }
@@ -6550,7 +6586,9 @@ function renderCalendarByCategory(grid){
       // Na coluna LATAM, mostra a vertical original do projeto como uma tag — como ele saiu da
       // coluna dela pra entrar aqui, senão essa informação se perderia.
       const segTag=s==='LATAM'?' <span style="font-size:7.5px;font-weight:700;padding:0 4px;border-radius:3px;background:#ede9fe;color:#6d28d9;white-space:nowrap">'+escHtml(x.p.segment||'Produtos')+'</span>':'';
-      el.innerHTML='<b>'+x.p.key+'</b> · '+x.p.summary+segTag+'<br><span style="font-size:8px;opacity:.75">'+(x.isJira?'Go Live: ':'Fim cron.: ')+fmtBR(x.dLbl)+'</span>';
+      const glLineCat=(x.isJira?'Go Live: ':'Fim cron.: ')+'<b>'+fmtBR(x.dLbl)+'</b>';
+      const daLineCat=x.p.duedate?'Data Alvo: '+fmtBR(x.p.duedate):'';
+      el.innerHTML='<b>'+x.p.key+'</b> · '+x.p.summary+segTag+'<br><span style="font-size:8px;opacity:.75">'+glLineCat+(daLineCat?'<br>'+daLineCat:'')+'</span>';
       el.onclick=()=>openProject(x.p.key);
       items.appendChild(el);
     });
@@ -6651,14 +6689,19 @@ function renderCalendar(){
       const glDate=p.golive;
       if(glDate){const d=pd(glDate);if(d>=b.s&&d<=b.e){
         const st=getStats(p.key);const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
-        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">Go Live: '+fmtBR(glDate)+(p.gp&&p.gp!=='—'?' · GP: '+p.gp.split(' ')[0]:'')+'</span>',cls});
+        const glLine='Go Live: <b>'+fmtBR(glDate)+'</b>';
+        let daLine=p.duedate?'Data Alvo: '+fmtBR(p.duedate):'';
+        if(p.gp&&p.gp!=='—')daLine+=(daLine?' · ':'')+'GP: '+p.gp.split(' ')[0];
+        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+glLine+(daLine?'<br>'+daLine:'')+'</span>',cls});
       }}
     });
     calEligibleProjects().forEach(p=>{
       if(p.golive)return;const st=getStats(p.key);if(!st.has||!st.goLiveLocal)return;const d=pd(st.goLiveLocal);
       if(d>=b.s&&d<=b.e){
         const cls=p.status===DELIVERED_STATUS?'delivered':(st.health==='on-track'?'on-track':st.health==='alert'?'alert':st.health==='off-track'?'off-track':'no-sched');
-        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">Fim cron.: '+fmtBR(ds(d))+'</span>',cls});
+        const fcLine='Fim cron.: '+fmtBR(ds(d));
+        const daLineFc=p.duedate?'Data Alvo: '+fmtBR(p.duedate):'';
+        bucketItems.push({date:d,key:p.key,html:'<b>'+p.key+'</b> · '+p.summary+'<br><span style="font-size:8px;opacity:.75">'+fcLine+(daLineFc?'<br>'+daLineFc:'')+'</span>',cls});
       }
     });
     if(!bucketItems.length&&calModeVal!=='month')return;
@@ -7347,8 +7390,10 @@ function buildEmailBody(){
   body+=`VMO · Bemobi · ${window.location.href.split('?')[0]}`;
   return body;
 }
-function buildEmailHtml(){
-  const checked=Array.from(document.querySelectorAll('#email-proj-list input:checked')).map(x=>x.value);
+// Extraído do buildEmailHtml() original — o "cartão" de UM projeto (mesmo template visual já
+// usado no email semanal de stakeholders), reaproveitado agora também pelo botão "Compartilhar
+// por email" do Cronograma (que manda só o cartão do projeto aberto, sem precisar do modal).
+function buildProjectEmailCardHtml(key){
   const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const healthMeta={
     'on-track':{lbl:'✓ Nos trilhos',bg:'#dcfce7',fg:'#166534'},
@@ -7358,40 +7403,44 @@ function buildEmailHtml(){
   };
   const tagMeta={pending:{lbl:'⚪ Pendente',bg:'#f1f5f9',fg:'#475569'},ok:{lbl:'✅ Nos trilhos',bg:'#dcfce7',fg:'#166534'},warn:{lbl:'⚠️ Em risco',bg:'#fef9c3',fg:'#854d0e'},risk:{lbl:'🔴 Fora dos trilhos',bg:'#fee2e2',fg:'#b91c1c'},done:{lbl:'🎉 Concluído',bg:'#f1f5f9',fg:'#475569'},info:{lbl:'ℹ️ Informativo',bg:'#e0f2fe',fg:'#0369a1'},date:{lbl:'📅 Mudança de data',bg:'#ede9fe',fg:'#5b21b6'}};
   const baseUrl=window.location.href.split('?')[0];
-  const cardsHtml=checked.map(key=>{
-    const p=PROJECTS.find(x=>x.key===key);if(!p)return'';
-    const sc=schedules[key];const st=getStats(key);
-    const glDate=p.golive||st.goLiveLocal;
-    const upds=(sc?.updates||[]).filter(u=>u.includeEmail).slice(-3);
-    const hm=healthMeta[st.health]||healthMeta.none;
-    const scheduleUrl=baseUrl+'?project='+key;
-    const updsHtml=upds.map(u=>{
-      const tm=u.tag?tagMeta[u.tag]:null;
-      return `<div style="border-top:1px solid #f0f1fa;padding-top:10px;margin-top:10px">
-        <div style="font-size:11px;color:#9aa0c3;margin-bottom:3px">${esc(u.when)} · ${esc(u.author)}${tm?` · <span style="background:${tm.bg};color:${tm.fg};padding:2px 8px;border-radius:10px;font-weight:600">${tm.lbl}</span>`:''}</div>
-        <div style="font-size:13px;color:#4a5180;line-height:1.55">${String(u.body||'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/\n/g,'<br>')}</div>
-      </div>`;
-    }).join('');
-    return `<div style="background:#ffffff;border-radius:16px;padding:22px 24px;margin:16px 0;box-shadow:0 2px 8px rgba(11,27,115,.06)">
-      <div style="font-size:17px;font-weight:700;color:#0b1b73;margin-bottom:2px">${esc(p.summary)}</div>
-      <div style="font-size:12px;color:#6924e1;font-weight:600;margin-bottom:12px">${esc(key)} · GP: ${esc(p.gp||'—')}</div>
-      <div style="margin-bottom:12px">
-        <span style="display:inline-block;background:#f0f1fa;color:#0b1b73;font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${esc(p.status)}</span>
-        <span style="display:inline-block;background:${hm.bg};color:${hm.fg};font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${hm.lbl}</span>
-      </div>
-      ${glDate?`<div style="font-size:13px;color:#4a5180;margin-bottom:6px"><b style="color:#0b1b73">Go Live:</b> ${esc(fmtBRFull(glDate))}</div>`:''}
-      ${sc&&sc.scopeLink?`<div style="margin-bottom:6px"><a href="${esc(sc.scopeLink)}" style="font-size:12px;color:#027bff;text-decoration:none;font-weight:600">📄 Escopo detalhado →</a></div>`:''}
-      <div style="margin-top:14px">
-        <a href="${scheduleUrl}" style="display:inline-block;background:linear-gradient(135deg,#6924e1,#027bff);color:#ffffff;padding:9px 18px;border-radius:9px;text-decoration:none;font-weight:700;font-size:12.5px">Ver cronograma completo</a>
-      </div>
-      ${updsHtml}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return'';
+  const sc=schedules[key];const st=getStats(key);
+  const glDate=p.golive||st.goLiveLocal;
+  const upds=(sc?.updates||[]).filter(u=>u.includeEmail).slice(-3);
+  const hm=healthMeta[st.health]||healthMeta.none;
+  const scheduleUrl=baseUrl+'?project='+key;
+  const updsHtml=upds.map(u=>{
+    const tm=u.tag?tagMeta[u.tag]:null;
+    return `<div style="border-top:1px solid #f0f1fa;padding-top:10px;margin-top:10px">
+      <div style="font-size:11px;color:#9aa0c3;margin-bottom:3px">${esc(u.when)} · ${esc(u.author)}${tm?` · <span style="background:${tm.bg};color:${tm.fg};padding:2px 8px;border-radius:10px;font-weight:600">${tm.lbl}</span>`:''}</div>
+      <div style="font-size:13px;color:#4a5180;line-height:1.55">${String(u.body||'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/\n/g,'<br>')}</div>
     </div>`;
   }).join('');
+  return `<div style="background:#ffffff;border-radius:16px;padding:22px 24px;margin:16px 0;box-shadow:0 2px 8px rgba(11,27,115,.06)">
+    <div style="font-size:17px;font-weight:700;color:#0b1b73;margin-bottom:2px">${esc(p.summary)}</div>
+    <div style="font-size:12px;color:#6924e1;font-weight:600;margin-bottom:12px">${esc(key)} · GP: ${esc(p.gp||'—')}</div>
+    <div style="margin-bottom:12px">
+      <span style="display:inline-block;background:#f0f1fa;color:#0b1b73;font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${esc(p.status)}</span>
+      <span style="display:inline-block;background:${hm.bg};color:${hm.fg};font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${hm.lbl}</span>
+    </div>
+    ${glDate?`<div style="font-size:13px;color:#4a5180;margin-bottom:6px"><b style="color:#0b1b73">Go Live:</b> ${esc(fmtBRFull(glDate))}</div>`:''}
+    ${sc&&sc.scopeLink?`<div style="margin-bottom:6px"><a href="${esc(sc.scopeLink)}" style="font-size:12px;color:#027bff;text-decoration:none;font-weight:600">📄 Escopo detalhado →</a></div>`:''}
+    <div style="margin-top:14px">
+      <a href="${scheduleUrl}" style="display:inline-block;background:linear-gradient(135deg,#6924e1,#027bff);color:#ffffff;padding:9px 18px;border-radius:9px;text-decoration:none;font-weight:700;font-size:12.5px">Ver cronograma completo</a>
+    </div>
+    ${updsHtml}
+  </div>`;
+}
+// Envelope (cabeçalho roxo-azul + rodapé) do email — recebe o(s) cartão(ões) de projeto já
+// prontos. Usado tanto pelo email semanal (vários projetos) quanto pelo compartilhar de um só.
+function wrapEmailHtml(cardsHtml,titleLine){
+  const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const baseUrl=window.location.href.split('?')[0];
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f0f1fa;font-family:'Segoe UI',Arial,Helvetica,sans-serif">
 <div style="max-width:640px;margin:0 auto;padding:24px 12px">
   <div style="background:linear-gradient(135deg,#6924e1 0%,#027bff 100%);border-radius:16px;padding:32px 28px;text-align:center">
-    <div style="color:rgba(255,255,255,.85);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Atualização Semanal · HUB VMO</div>
+    <div style="color:rgba(255,255,255,.85);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">${esc(titleLine)} · HUB VMO</div>
     <div style="color:#ffffff;font-size:24px;font-weight:800;line-height:1.3">Portfólio VMO</div>
     <div style="color:rgba(255,255,255,.9);font-size:13px;font-weight:600;margin-top:6px">${TODAY.getDate()} de ${MONTHS_FULL[TODAY.getMonth()]} de ${TODAY.getFullYear()} · Gerado por ${esc(currentUser?.name||'VMO Tool')}</div>
   </div>
@@ -7399,6 +7448,16 @@ function buildEmailHtml(){
   <div style="text-align:center;color:#9aa0c3;font-size:11px;padding:20px 8px 0;line-height:1.5">VMO · Bemobi · <a href="${baseUrl}" style="color:#9aa0c3">${baseUrl}</a></div>
 </div>
 </body></html>`;
+}
+function buildEmailHtml(){
+  const checked=Array.from(document.querySelectorAll('#email-proj-list input:checked')).map(x=>x.value);
+  const cardsHtml=checked.map(key=>buildProjectEmailCardHtml(key)).join('');
+  return wrapEmailHtml(cardsHtml,'Atualização Semanal');
+}
+// Usado pelo botão "Compartilhar por email" do Cronograma — mesmo template visual do email
+// semanal, mas com o cartão de UM SÓ projeto (o que está aberto no momento).
+function buildSingleProjectEmailHtml(key){
+  return wrapEmailHtml(buildProjectEmailCardHtml(key),'Cronograma compartilhado');
 }
 
 function previewEmail(){
@@ -7559,6 +7618,7 @@ function prepareProjectContext(key){
   const jl=document.getElementById('se-jira-lnk');jl.style.display='';
   document.getElementById('se-jira-key').textContent=key;jl.href=`https://one-bemobi.atlassian.net/browse/${key}`;
   document.getElementById('template-btn').style.display='';
+  const seb_=document.getElementById('share-email-btn');if(seb_)seb_.style.display='';
   return true;
 }
 // Abre o Dashboard de Visão Geral (Resumo) do projeto — usado pela maioria dos pontos de
@@ -7734,6 +7794,8 @@ function renderResumoDashboard(){
     daChip.onclick=canEdDA?(()=>editDataAlvo(curKey)):null;
   }
   document.getElementById('rsm-health-slot').innerHTML=st.has?healthBadge(st.health,st.lateTasks):'';
+  const healthCfgBtn=document.getElementById('rsm-health-config-btn');
+  if(healthCfgBtn)healthCfgBtn.style.display=(st.has&&canEdit(curKey))?'':'none';
   document.getElementById('rsm-goto-cronograma-btn').style.display=''; // visível pra todo projeto, com ou sem cronograma cadastrado
   renderFollowButton();
 
@@ -9420,7 +9482,7 @@ function getSeqLabel(u,idx){
   return pfx+(idx+1);
 }
 
-const C={num:26,name:195,start:72,dl:72,atraso:74,er:72,de:46,dr:46,prog:70,resp:105,dep:74,st:90,timing:82,jiralink:76,act:28};
+const C={menu:24,num:40,name:195,start:72,dl:72,atraso:74,er:72,de:46,dr:46,prog:70,resp:105,dep:74,st:90,jiralink:76};
 let LW=Object.values(C).reduce((a,b)=>a+b,0);
 // ── Colunas do cronograma ajustáveis (persistidas por navegador, igual à tabela de Prioridades) ──
 const CRON_COLW_KEY='vmo_cron_colw';
@@ -9468,6 +9530,10 @@ function renderSchedule(){
 function renderMiniTimeline(wrapId,trackId){
   const wrap=document.getElementById(wrapId||'gantt-timeline');const track=document.getElementById(trackId||'timeline-track');
   if(!wrap||!track||!curKey)return;
+  // Pedido da Amanda: a "Linha do Tempo" é uma visão auxiliar do Gantt, então segue a MESMA
+  // condição de visibilidade dele (ganttVisible) — só aparece quando a pessoa abre o Gantt,
+  // em vez de ocupar espaço sempre que o cronograma tem etapas.
+  if(!ganttVisible){wrap.style.display='none';return;}
   const sched=schedules[curKey];
   if(!sched||!sched.milestones||!sched.milestones.length){wrap.style.display='none';return;}
   const dr=getDataRange();
@@ -9520,75 +9586,66 @@ function renderProjSum(){
   const inicioDate=msStarts[0]||taskStartsAll[0]||null;
   const fimEstimadoDate=msDates[msDates.length-1]||taskDeadlinesAll[taskDeadlinesAll.length-1]||null;
   const glDate=p.golive||st.goLiveLocal;
-  const baselineFinish=(()=>{
-    if(!s.baseline)return null;
-    const bmDates=(s.baseline.milestones||[]).map(m=>m.deadline).filter(Boolean);
-    const btDates=(s.baseline.tasks||[]).map(t=>t.deadline).filter(Boolean);
-    const all=[...bmDates,...btDates].sort();
-    return all.length?all[all.length-1]:null;
-  })();
-  // Em vez de só "+Nd", mostra a DATA final projetada considerando os atrasos que já apareceram
-  // de verdade no cronograma (Data de Conclusão real das etapas concluídas) — não só o prazo
-  // planejado bruto, que fica parado até alguém reprogramar a etapa na mão.
-  const realFinish=projectRealFinish(curKey);
-  const slipDays=(baselineFinish&&realFinish)?diffD(pd(baselineFinish),pd(realFinish)):null;
-  const slipHtml=(slipDays!==null&&slipDays!==0&&baselineFinish!==realFinish)
-    ?`<div class="ps-item" style="cursor:pointer" onclick="toggleBaseline()" title="${t('ps_vs_planejamento_title')}">
-        <span class="ps-lbl">${t('ps_vs_planejamento')}</span>
-        <b style="color:${slipDays>0?'var(--red)':'var(--green)'}">${fmtBR(realFinish)} ${slipDays>0?'🔴':'🟢'}</b>
-        <span style="font-size:9px;color:var(--text3);margin-left:3px">(${t('ps_previsto')} ${fmtBR(baselineFinish)} · ${slipDays>0?'+':''}${slipDays}d)</span>
-      </div>`
-    :'';
+  // Tag "Vs. planejamento original" removida daqui de cima (pedido da Amanda) — a comparação
+  // com a baseline continua disponível pelo botão "Baseline"/"Comparar" no menu Ferramentas,
+  // só não aparece mais sozinha na faixa cinza do Cronograma.
   const critAlert=getCriticalPathAlert(curKey);
   const critHtml=critAlert?`<div class="ps-item" style="cursor:pointer;background:#fef2f2;border-radius:4px;padding:3px 6px" onclick="openBaselineCompareModal()" title="${t('sch_comparar_title')}">
       <span style="font-size:9.5px;font-weight:700;color:#b91c1c">🔴 ${t('ps_caminho_critico_label')}</span>
       <span style="font-size:9px;color:#b91c1c;margin-left:3px">+${critAlert.slip}d — ${t('ps_gargalo')} "${critAlert.bottleneckName}" (${critAlert.bottleneckDays}d ${t('ps_atrasada')})</span>
     </div>`:'';
-  const staleAlert=getStaleAlert(curKey);
-  // O alerta de "nunca atualizado" saiu de cima do cronograma (pedido explícito da Amanda,
-  // pra tudo caber numa linha só) — continua contando normalmente nos KPIs da Visão Geral,
-  // só não aparece mais aqui em cima. O de "sem atualização há Xd" continua aparecendo.
-  const staleHtml=(staleAlert&&!staleAlert.never)?`<div class="ps-item" style="background:#fff7ed;border-radius:4px;padding:3px 6px">
-      <span style="font-size:9.5px;font-weight:700;color:#c2410c">🟠 ${t('ps_sem_atualizacao_ha')+' '+staleAlert.days+'d'}</span>
+  // Tag "Sem atualização publicada há Xd" removida daqui de cima também (pedido da Amanda) —
+  // continua contando normalmente nos KPIs/alertas da Visão Geral, só não aparece mais na faixa
+  // cinza do Cronograma.
+  // Tag antiga de "Em Risco" (comparava Fim estimado do cronograma x Go Live do Jira) foi
+  // substituída por um alerta de tarefas atrasadas de verdade dentro do próprio cronograma —
+  // pedido da Amanda pra ficar ao lado do "Atualizado por" e ser clicável (destaca as tarefas
+  // atrasadas na tabela abaixo). Isso é DIFERENTE do status "Em Risco" que o GP define manualmente
+  // no projeto (esse continua existindo normalmente em outros lugares, não foi tocado aqui).
+  const atrasadasN=st.lateTasks||0;
+  const atrasadasHtml=atrasadasN>0?`<div class="ps-item" style="cursor:pointer;background:#fef3c7;border-radius:4px;padding:3px 6px" onclick="highlightLateTasks('${curKey}')" title="${t('ps_atrasadas_title')}">
+      <span style="font-size:9.5px;font-weight:700;color:#92400e">⚠ ${t('ps_atencao_tem')} ${atrasadasN} ${t('hb_tarefa')}${atrasadasN>1?'s':''} ${t('hb_atrasada')}${atrasadasN>1?'s':''}</span>
     </div>`:'';
-  const atRiscoAlert=getAtRiscoAlert(curKey);
-  const atRiscoHtml=atRiscoAlert?`<div class="ps-item" style="cursor:pointer;background:#fef3c7;border-radius:4px;padding:3px 6px" onclick="showView('updates');openUpdatesProject(curKey)" title="${t('ps_em_risco_title')}">
-      <span style="font-size:9.5px;font-weight:700;color:#92400e">⚠ ${t('ps_em_risco')}</span>
-      <span style="font-size:9px;color:#92400e;margin-left:3px">${t('ps_cronograma_label')} ${fmtBR(atRiscoAlert.goLiveLocal)} · ${t('ps_jira_label')} ${fmtBR(atRiscoAlert.goLiveJira)}</span>
-    </div>`:'';
-  const canEdSc=canEdit(curKey)&&p.status!==DELIVERED_STATUS;
-  const scRes=SCORING_TYPES[p.type]?computeProjectScoring(p):null;
-  const scoreHtml = !SCORING_TYPES[p.type]
-    ? ''
-    : (scRes
-        ? `<div class="ps-item"${canEdSc?` style="cursor:pointer" onclick="openScoringModal()" title="${t('ps_editar_scoring')}"`:''}>
-             <span class="ps-lbl">${t('ps_score_label')}</span>
-             <b style="color:${scRes.cls.color}">${scRes.score.toFixed(2)} ${scRes.cls.emoji} ${scRes.cls.label}</b>
-             ${scRes.alert?`<span style="font-size:9px;color:var(--red);margin-left:3px">${scRes.alert}</span>`:''}
-             ${canEdSc?`<i class="ti ti-pencil" style="font-size:9px;color:var(--text3);margin-left:3px"></i>`:''}
-           </div>`
-        : canEdSc
-          ? `<div class="ps-item" style="cursor:pointer;color:var(--purple)" onclick="openScoringModal()" title="${t('ps_preencher_scoring')}"><i class="ti ti-star" style="font-size:10px"></i><span style="font-size:10px">${t('ps_preencher_scoring')}</span></div>`
-          : `<div class="ps-item"><span class="ps-lbl">${t('ps_score_label')}</span><span style="color:var(--text3)">—</span></div>`);
   document.getElementById('proj-sum').innerHTML=`
     <div class="ps-item"><span class="ps-lbl">${t('ps_inicio')}</span><b>${fmtBR(inicioDate)}</b></div>
     <div class="ps-item"><span class="ps-lbl">${t('ps_fim_estimado')}</span><b>${fmtBR(fimEstimadoDate)}</b></div>
-    ${slipHtml}
     ${critHtml}
-    ${staleHtml}
-    ${atRiscoHtml}
-    ${glDate?`<div class="ps-item"><span class="ps-lbl">${t('ps_go_live_jira')}</span><b style="color:var(--green)">${fmtBRFull(p.golive||null)||'—'}</b></div>`:''}
     <div class="ps-item"><span class="ps-lbl">${t('ps_tarefas_label')}</span><b>${st.tasks} · ${st.prog}% ${t('ps_concluido_suffix')}</b></div>
-    <div class="ps-item">${healthBadge(st.health,st.lateTasks)}</div>
-    ${scoreHtml}
     <div class="ps-item"><span class="ps-lbl">${t('ps_gp_label')}</span><b>${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:'—'}</b></div>
+    ${atrasadasHtml}
     <div class="ps-item"><span class="ps-lbl">${t('ps_atualizado_por')}</span><b style="font-size:9.5px">${(s.auditLog||[])[0]?.who||'—'}${(s.auditLog||[])[0]?.when?' · '+(s.auditLog||[])[0].when:''}</b></div>`;
+}
+// Destaca na tabela do cronograma as Tarefas em atraso (mesmo critério usado em getStats/
+// healthBadge): garante que a Etapa-mãe não esteja colapsada, re-renderiza e aplica um flash
+// visual nas linhas, com scroll até a primeira. Chamado pelo alerta clicável no proj-sum.
+function highlightLateTasks(key){
+  const s=schedules[key];if(!s)return;
+  const now=new Date();now.setHours(0,0,0,0);
+  const lateIds=(s.tasks||[]).filter(t=>t.status!=='done'&&t.status!=='cancelled'&&t.deadline&&pd(t.deadline)<now).map(t=>t.id);
+  if(!lateIds.length)return;
+  lateIds.forEach(tid=>{
+    const tk=s.tasks.find(x=>x.id===tid);
+    if(tk&&collapsed.has(tk.msId))collapsed.delete(tk.msId);
+  });
+  renderSchedule();
+  requestAnimationFrame(()=>{
+    let first=null;
+    lateIds.forEach(tid=>{
+      const row=document.querySelector(`.trow.task-row[data-tid="${tid}"]`);
+      if(row){
+        row.classList.add('row-late-flash');
+        if(!first)first=row;
+        setTimeout(()=>row.classList.remove('row-late-flash'),2700);
+      }
+    });
+    if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+  });
 }
 function renderTblHdr(){
   LW=Object.values(C).reduce((a,b)=>a+b,0);
   const h=document.getElementById('tbl-hdr');h.style.width=LW+'px';
   const rh=(col)=>`<div class="th-resize" onmousedown="startColResize(event,'${col}')"></div>`;
-  h.innerHTML=`<div class="th" data-col="num" style="width:${C.num}px">${t('col_num')}${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">${t('col_nome')}${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">${t('col_inicio')}${rh('start')}</div><div class="th" data-col="er" style="width:${C.er}px">${t('col_conclusao')}${rh('er')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="${t('col_atraso_title')}">${t('col_atraso')}${rh('atraso')}</div><div class="th" data-col="de" style="width:${C.de}px">${t('col_est')}${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">${t('col_real')}${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">${t('col_prog')}${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">${t('col_resp')}${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">${t('col_dep')}${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">${t('col_status')}${rh('st')}</div><div class="th" data-col="timing" style="width:${C.timing}px">${t('col_tempo')}${rh('timing')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">${t('col_link')}${rh('jiralink')}</div><div class="th" data-col="dl" style="width:${C.dl}px">${t('col_prazo')}${rh('dl')}</div><div class="th" data-col="act" style="width:${C.act}px"></div>`;
+  h.innerHTML=`<div class="th" data-col="menu" style="width:${C.menu}px"></div><div class="th" data-col="num" style="width:${C.num}px">${t('col_num')}${rh('num')}</div><div class="th" data-col="name" style="width:${C.name}px">${t('col_nome')}${rh('name')}</div><div class="th" data-col="start" style="width:${C.start}px">${t('col_inicio')}${rh('start')}</div><div class="th" data-col="er" style="width:${C.er}px">${t('col_conclusao')}${rh('er')}</div><div class="th" data-col="de" style="width:${C.de}px">${t('col_est')}${rh('de')}</div><div class="th" data-col="dr" style="width:${C.dr}px">${t('col_real')}${rh('dr')}</div><div class="th" data-col="prog" style="width:${C.prog}px">${t('col_prog')}${rh('prog')}</div><div class="th" data-col="resp" style="width:${C.resp}px">${t('col_resp')}${rh('resp')}</div><div class="th" data-col="dep" style="width:${C.dep}px">${t('col_dep')}${rh('dep')}</div><div class="th" data-col="st" style="width:${C.st}px">${t('col_status')}${rh('st')}</div><div class="th" data-col="jiralink" style="width:${C.jiralink}px">${t('col_link')}${rh('jiralink')}</div><div class="th" data-col="atraso" style="width:${C.atraso}px" title="${t('col_atraso_title')}">${t('col_atraso')}${rh('atraso')}</div><div class="th" data-col="dl" style="width:${C.dl}px">${t('col_prazo')}${rh('dl')}</div>`;
 }
 // Progresso de uma Tarefa que tem Subtarefas = média do progresso das Subtarefas (mesma regra
 // já usada entre Etapa e Tarefa, um nível abaixo). Sem Subtarefas, comportamento idêntico a
@@ -9641,7 +9698,8 @@ function renderRows(){
     const stCls=strikeMs&&ms.status==='done'?' st-ms':'';
     const row=document.createElement('div');row.className='trow ms-row'+(selectedMs.has(ms.id)?' ms-selected':'');row.dataset.msid=ms.id;row.style.width=LW+'px';
     row.innerHTML=`
-      <div class="td" data-col="num" style="width:${C.num}px">${canEd?`<input type="checkbox" class="ms-chk" ${selectedMs.has(ms.id)?'checked':''} onchange="toggleMsSelect('${ms.id}',this.checked)">`:`<span class="rnum">${idToNum[ms.id]}</span>`}</div>
+      <div class="td" data-col="menu" style="width:${C.menu}px">${canEd?`<button class="row-act-trigger" title="${t('tt_mais_opcoes')}" onclick="toggleRowMenu(event,'ms','${ms.id}',null)"><i class="ti ti-dots-vertical"></i></button>`:''}</div>
+      <div class="td" data-col="num" style="width:${C.num}px;gap:3px">${canEd?`<input type="checkbox" class="ms-chk" ${selectedMs.has(ms.id)?'checked':''} onchange="toggleMsSelect('${ms.id}',this.checked)"><span class="rnum" style="font-size:8px">${idToNum[ms.id]}</span>`:`<span class="rnum">${idToNum[ms.id]}</span>`}</div>
       <div class="td" data-col="name" style="width:${C.name}px;gap:4px">
         ${canEd?`<span class="drag-handle" title="${t('tt_drag')}" onmousedown="this.closest('.ms-row').setAttribute('draggable','true')" onmouseup="this.closest('.ms-row').setAttribute('draggable','false')"><i class="ti ti-grip-vertical" style="font-size:11px"></i></span>`:''}
         <span class="expbtn ${isCl?'cl':''}" onclick="toggleMs('${ms.id}')">▾</span>
@@ -9654,17 +9712,16 @@ function renderRows(){
       </div>
       <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
       <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'endreal','ms','${ms.id}',null,event)"`:''}>${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
-      <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
       <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de}</span></div>
       <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr!=='—'&&de!=='—'&&parseInt(dr)>parseInt(de)?'var(--red)':'var(--green)'}">${dr}</span></div>
       <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog}%</span></div></div>
       <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','ms','${ms.id}',null,event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
       <div class="td" data-col="dep" style="width:${C.dep}px">—</div>
       <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','ms','${ms.id}',null,event)"`:''}><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
-      <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge({...ms,endReal:er},true)}</div>
       <div class="td" data-col="jiralink" style="width:${C.jiralink}px">—</div>
-      <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
-      <div class="td" data-col="act" style="width:${C.act}px"></div>`;
+      <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
+      <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da etapa."><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
+      `;
     if(canEd){
       row.addEventListener('dragstart',e=>onMsDragStart(e,ms.id));
       row.addEventListener('dragover',e=>onMsDragOver(e,ms.id));
@@ -9706,6 +9763,7 @@ function renderRows(){
       const tr2=document.createElement('div');const hasExt=(t.assignees||[]).some(a=>a.type==='external');
       tr2.className='trow task-row'+(isCl?' hidden':'')+(hasExt?' has-external':'');tr2.dataset.msid=ms.id;tr2.dataset.tid=t.id;tr2.style.width=LW+'px';
       tr2.innerHTML=`
+        <div class="td" data-col="menu" style="width:${C.menu}px">${canEd?`<button class="row-act-trigger" title="${window.t('tt_mais_opcoes')}" onclick="toggleRowMenu(event,'task','${t.id}','${ms.id}')"><i class="ti ti-dots-vertical"></i></button>`:''}</div>
         <div class="td" data-col="num" style="width:${C.num}px"><span class="rnum">${idToNum[t.id]}</span></div>
         <div class="td" data-col="name" style="width:${C.name}px;padding-left:18px;padding-top:2px;padding-bottom:2px;gap:0;flex-direction:column;align-items:flex-start;justify-content:center">
           <div style="display:flex;align-items:center;gap:3px;width:100%">
@@ -9727,17 +9785,16 @@ function renderRows(){
         </div>
         <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
         <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','task','${t.id}','${ms.id}',event)"`:''}>${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','task','${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
-        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title')}">${atrasoCellHtml(atrasoAcc2)}</div>
         <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
         <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
         <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
         <div class="td" data-col="dep" style="width:${C.dep}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'dep','task','${t.id}','${ms.id}',event)"`:''}>${depLbl}</div>
         <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','task','${t.id}','${ms.id}',event)"`:''}><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
-        <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge(t,false)}</div>
         <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','task','${t.id}','${ms.id}',event)"`:''}>${jiraLinkHtml}</div>
-        <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
-        <div class="td" data-col="act" style="width:${C.act}px"><button style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:11px" onclick="openTaskModal('${ms.id}','${t.id}')"><i class="ti ti-dots-vertical"></i></button></div>`;
+        <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title')}">${atrasoCellHtml(atrasoAcc2)}</div>
+        <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da tarefa."><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
+        `;
       if(canEd){
         tr2.addEventListener('dragstart',e=>onRowDragStart(e,'task',t.id));
         tr2.addEventListener('dragover',e=>onRowDragOver(e,'task',t.id));
@@ -9753,27 +9810,51 @@ function renderRows(){
         const isClS=buildSubRowEl(s,3,t,ms,canEd,cont,LW,subHidden,prevL3,children4.length>0,idToLabel[s.id]);
         const subSubHidden=subHidden||isClS;
         children4.forEach(cs=>{buildSubRowEl(cs,4,t,ms,canEd,cont,LW,subSubHidden,null,false,idToLabel[cs.id]);});
-        // Caminho direto pra criar o 4º nível — sem isso, só dava pra chegar lá indentando/
-        // arrastando uma 2ª subtarefa já existente, o que a Amanda não conseguiu descobrir.
-        if(canEd){
-          const asstr=document.createElement('div');asstr.className='add-row'+(subSubHidden?' hidden':'');asstr.dataset.msid=ms.id;asstr.dataset.tid=t.id;asstr.dataset.subid=s.id;asstr.style.paddingLeft='82px';
-          asstr.onclick=()=>openSubtaskModal(t.id,null,s.id);asstr.innerHTML=`<i class="ti ti-plus" style="font-size:8px"></i> ${window.t('sch_add_subsubtarefa')}`;
-          cont.appendChild(asstr);
-        }
       });
-      if(canEd){
-        const astr=document.createElement('div');astr.className='add-row'+(subHidden?' hidden':'');astr.dataset.msid=ms.id;astr.dataset.tid=t.id;astr.style.paddingLeft='64px';
-        astr.onclick=()=>openSubtaskModal(t.id,null);astr.innerHTML=`<i class="ti ti-plus" style="font-size:9px"></i> ${window.t('sch_add_subtarefa')}`;
-        cont.appendChild(astr);
-      }
+      // "Adicionar subtarefa"/"Adicionar item" saíram da barra fixa embaixo de cada Tarefa
+      // (poluía demais com muitas Tarefas — pedido da Amanda) e viraram opção no menu lateral
+      // (⋮) da própria linha, junto com "Editar" — ver toggleRowMenu().
     });
-    const atr=document.createElement('div');atr.className='add-row'+(isCl?' hidden':'');atr.dataset.msid=ms.id;atr.style.paddingLeft='40px';
-    atr.onclick=()=>openTaskModal(ms.id,null);atr.innerHTML=`<i class="ti ti-plus" style="font-size:9.5px"></i> ${t('sch_add_tarefa')}`;
-    cont.appendChild(atr);
+    // "Adicionar tarefa" também saiu da barra fixa embaixo de cada Etapa e virou opção no menu
+    // lateral (⋮) da própria linha da Etapa — mesmo padrão já aplicado à Tarefa/Subtarefa acima
+    // (pedido da Amanda: TODA criação de item passa a ficar só no menu lateral).
   });
-  const adr=document.createElement('div');adr.className='add-row';adr.style.paddingLeft='12px';
-  adr.onclick=()=>openMsModal(null);adr.innerHTML=`<i class="ti ti-flag-plus" style="font-size:9.5px"></i> ${t('sch_add_etapa')}`;
-  cont.appendChild(adr);
+  // Barra fixa "+ Adicionar etapa" removida do fim da tabela (pedido da Amanda) — a criação de
+  // Etapa já tem o botão "Nova etapa" no cabeçalho do Cronograma (new-ms-btn), então essa barra
+  // era redundante.
+}
+// Menu lateral (⋮) das linhas de Tarefa/Subtarefa — reúne "Editar" e "Adicionar subtarefa/item"
+// num único botão, no lugar da barra "Adicionar subtarefa" que ficava sempre visível embaixo
+// de CADA Tarefa (pedido da Amanda: estava poluindo demais a tela com muitas Tarefas).
+function closeRowMenu(){document.getElementById('row-act-menu')?.remove();}
+function toggleRowMenu(ev,type,id,parentId){
+  ev.stopPropagation();
+  const already=document.getElementById('row-act-menu');
+  closeRowMenu();
+  if(already)return; // clicou de novo no mesmo botão só fecha
+  const btn=ev.currentTarget;
+  const rect=btn.getBoundingClientRect();
+  const items=[];
+  if(type==='ms'){
+    items.push({label:t('shared_editar_prefix'),icon:'pencil',fn:()=>openMsModal(id)});
+    items.push({label:t('sch_add_tarefa'),icon:'plus',fn:()=>openTaskModal(id,null)});
+  }else if(type==='task'){
+    items.push({label:t('shared_editar_prefix'),icon:'pencil',fn:()=>openTaskModal(parentId,id)});
+    items.push({label:t('sch_add_subtarefa'),icon:'plus',fn:()=>openSubtaskModal(id,null)});
+  }else if(type==='sub3'){
+    items.push({label:t('shared_editar_prefix'),icon:'pencil',fn:()=>openSubtaskModal(parentId,id)});
+    items.push({label:t('sch_add_subsubtarefa'),icon:'plus',fn:()=>openSubtaskModal(parentId,null,id)});
+  }else{
+    items.push({label:t('shared_editar_prefix'),icon:'pencil',fn:()=>openSubtaskModal(parentId,id)});
+  }
+  const menu=document.createElement('div');menu.className='row-act-menu';menu.id='row-act-menu';
+  menu.innerHTML=items.map((it,i)=>`<button type="button" class="row-act-item" data-i="${i}"><i class="ti ti-${it.icon}" style="font-size:11px"></i> ${it.label}</button>`).join('');
+  document.body.appendChild(menu);
+  const mw=menu.offsetWidth||150;
+  menu.style.top=(rect.bottom+4)+'px';
+  menu.style.left=Math.max(6,Math.min(rect.right-mw,window.innerWidth-mw-6))+'px';
+  menu.querySelectorAll('.row-act-item').forEach((el,i)=>{el.onclick=(e)=>{e.stopPropagation();closeRowMenu();items[i].fn();};});
+  document.addEventListener('click',closeRowMenu,{once:true});
 }
 function toggleMs(id){if(collapsed.has(id))collapsed.delete(id);else collapsed.add(id);renderSchedule();}
 // Igual ao toggleMs, mas pro 3º nível (Subtarefas dentro de uma Tarefa) — reaproveita o mesmo Set 'collapsed'.
@@ -9832,6 +9913,7 @@ function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren
   const tr=document.createElement('div');const hasExt3=(s.assignees||[]).some(a=>a.type==='external');
   tr.className='trow sub-row'+(hidden?' hidden':'')+(hasExt3?' has-external':'');tr.dataset.msid=ms.id;tr.dataset.tid=t.id;tr.dataset.subid=s.id;tr.dataset.depth=depth;tr.style.width=LW+'px';
   tr.innerHTML=`
+    <div class="td" data-col="menu" style="width:${C.menu}px">${canEd?`<button class="row-act-trigger" title="${window.t('tt_mais_opcoes')}" onclick="toggleRowMenu(event,'${depth===3?'sub3':'sub4'}','${s.id}','${t.id}')"><i class="ti ti-dots-vertical"></i></button>`:''}</div>
     <div class="td" data-col="num" style="width:${C.num}px"><span class="rnum" style="opacity:.65;font-size:8.5px" title="${window.t('tt_num_hier_title')}">${label||'–'}</span></div>
     <div class="td" data-col="name" style="width:${C.name}px;padding-left:${nameCellPad}px;padding-top:2px;padding-bottom:2px;gap:0;flex-direction:column;align-items:flex-start;justify-content:center">
       <div style="display:flex;align-items:center;gap:3px;width:100%">
@@ -9853,17 +9935,16 @@ function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren
     </div>
     <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.start)}</span></div>
     <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','subtask','${s.id}','${t.id}',event)"`:''}>${s.endReal?`<span style="font-size:9.5px">${fmtBR(s.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','subtask','${s.id}','${t.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
-    <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title_short')}">${atrasoCellHtml(atraso3)}</div>
     <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de3}</span></div>
     <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr3!=='—'&&de3!=='—'&&parseInt(dr3)>parseInt(de3)?'var(--red)':'var(--green)'}">${dr3}</span></div>
     <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog3}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog3}%</span></div></div>
     <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml3||'—'}</div></div>
     <div class="td" data-col="dep" style="width:${C.dep}px" title="${window.t('tt_dep_none')}">—</div>
     <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','subtask','${s.id}','${t.id}',event)"`:''}><span class="tbadge2 ${SC[s.status]}">${SL[s.status]}</span></div>
-    <div class="td" data-col="timing" style="width:${C.timing}px">${timingBadge(s,false)}</div>
     <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','subtask','${s.id}','${t.id}',event)"`:''}>${jiraLinkHtml3}</div>
-    <div class="td" data-col="dl" style="width:${C.dl}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'deadline','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
-    <div class="td" data-col="act" style="width:${C.act}px"><button style="border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:11px" onclick="openSubtaskModal('${t.id}','${s.id}')"><i class="ti ti-dots-vertical"></i></button></div>`;
+    <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title_short')}">${atrasoCellHtml(atraso3)}</div>
+    <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da subtarefa."><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
+    `;
   if(canEd){
     tr.addEventListener('dragstart',e=>onRowDragStart(e,'sub',s.id));
     tr.addEventListener('dragover',e=>onRowDragOver(e,'sub',s.id));
@@ -9904,6 +9985,19 @@ function promoteSubToTask(sched,s,msId){
   sched.subtasks=(sched.subtasks||[]).filter(x=>x.id!==s.id);
   return subToTaskShape(s,msId);
 }
+// Sentido inverso do promoteSubToTask acima: quando uma TAREFA que já tem subtarefas próprias
+// é "rebaixada" a Subtarefa (nível 3) — aninhando ela pra dentro de outra Tarefa via arrastar ou
+// via "Indentar" — as subtarefas que já existiam embaixo dela continuavam com taskId apontando
+// pro id antigo (que deixou de existir em sched.tasks) e por isso desapareciam da tela, mesmo
+// os dados continuando salvos por baixo. Esse é o "bug dos níveis" reportado pela Amanda: some
+// tudo ao arrastar de nível. Aqui reencaixamos elas como nível 4 (parentSubId = id antigo da
+// Tarefa, que não muda quando ela se torna Subtarefa) dentro da nova Tarefa-mãe de verdade.
+// hasGrandchildSubtasks() já bloqueia esse caminho quando isso ultrapassaria o 4º nível.
+function reparentOrphanChildrenOnDemote(sched,oldTaskId,newAncestorTaskId){
+  (sched.subtasks||[]).forEach(x=>{
+    if(x.taskId===oldTaskId&&!x.parentSubId){x.taskId=newAncestorTaskId;x.parentSubId=oldTaskId;}
+  });
+}
 function indentTask(taskId,ev){
   if(ev)ev.stopPropagation();
   if(!canEdit(curKey)){alert(window.t('alert_no_perm_edit'));return;}
@@ -9918,6 +10012,7 @@ function indentTask(taskId,ev){
   cleanupTaskDepRefs(curKey,taskId);
   if(!sched.subtasks)sched.subtasks=[];
   sched.subtasks.push(taskToSubShape(t,prev.id,null));
+  reparentOrphanChildrenOnDemote(sched,taskId,prev.id);
   logChange(curKey,fmtLog('lg_indent_tpl',{name:t.name}),'#6924E1');
   autoUpdateTaskStatus(curKey);autoUpdateMsStatus(curKey);
   renderSchedule();persistSchedule(curKey);
@@ -10006,6 +10101,7 @@ function onTaskDrop(e,targetTaskId,targetMsId){
       cleanupTaskDepRefs(curKey,dragRowId);
       if(!sched.subtasks)sched.subtasks=[];
       sched.subtasks.push(taskToSubShape(moved,targetTaskId,null));
+      reparentOrphanChildrenOnDemote(sched,dragRowId,targetTaskId);
       logChange(curKey,fmtLog('lg_movida_dentro_tpl',{name:moved.name}),'#6924E1');
     } else {
       const fromIdx=sched.tasks.findIndex(x=>x.id===dragRowId);
@@ -10067,6 +10163,7 @@ function onSubDrop(e,targetSubId,targetTaskId,targetMsId){
     } else {
       sched.subtasks.push(taskToSubShape(movedTask,targetSub.taskId,targetSub.parentSubId||null));
     }
+    reparentOrphanChildrenOnDemote(sched,dragRowId,targetSub.taskId);
     logChange(curKey,fmtLog('lg_movida_dentro_tpl',{name:movedTask.name}),'#6924E1');
   }
   dragRowKind=null;dragRowId=null;
@@ -10238,7 +10335,7 @@ function drawDependencyLines(sched,cont,totalW){
 function syncScroll(){const l=document.getElementById('se-left'),r=document.getElementById('se-right');l.onscroll=()=>{r.scrollTop=l.scrollTop;};r.onscroll=()=>{l.scrollTop=r.scrollTop;};}
 
 // ── Redimensionar QUALQUER coluna do cronograma (arrastar borda do header) ──
-const CRON_MIN_W={num:26,name:120,start:56,dl:56,atraso:48,er:56,de:36,dr:36,prog:50,resp:60,dep:50,st:60,timing:60,jiralink:50,act:28};
+const CRON_MIN_W={menu:24,num:34,name:120,start:56,dl:56,atraso:48,er:56,de:36,dr:36,prog:50,resp:60,dep:50,st:60,jiralink:50};
 function startColResize(e,col){
   e.stopPropagation();e.preventDefault();
   const startX=e.clientX;const startW=C[col];
@@ -10281,6 +10378,7 @@ function toggleGantt(){
   ganttVisible=!ganttVisible;
   applyGanttVisibility();
   if(ganttVisible){renderSchedule();}
+  else{const gt=document.getElementById('gantt-timeline');if(gt)gt.style.display='none';}
 }
 
 // ── TOOLTIP ──
@@ -10407,7 +10505,11 @@ function commitInlineField(field,kind,id,msId,raw){
   if(field==='status'){
     if(obj.status!==raw){
       if(kind==='ms'&&obj.status!=='done'&&raw==='done')justCompletedMs=true;
-      obj.status=raw;logChange(curKey,fmtLog('lg_status_tpl',{label,name:obj.name,status:SL[raw]||raw}),'#0369a1');
+      obj.status=raw;
+      // Mesmo bug do Atraso Acumulado corrigido em saveMs/saveTask/saveSubtask (ver comentário
+      // em saveMs) — cobre também a troca de status feita direto na tabela (sem abrir o modal).
+      if(raw==='done'&&!obj.endReal)obj.endReal=ds(TODAY);
+      logChange(curKey,fmtLog('lg_status_tpl',{label,name:obj.name,status:SL[raw]||raw}),'#0369a1');
     }
   }else if(field==='resp'){
     const existingByName={};(obj.assignees||[]).forEach(a=>{existingByName[a.name]=a.type;});
@@ -10420,6 +10522,15 @@ function commitInlineField(field,kind,id,msId,raw){
     const {numToId}=buildRowNumMap(sched);
     const depIds=raw.split(',').map(s=>s.trim()).filter(Boolean).map(v=>numToId[parseInt(v)]).filter(Boolean).filter(depId2=>depId2!==id);
     obj.depIds=depIds;obj.depId=depIds[0]||'';
+    // Bug reportado pela Amanda: editar a dependência aqui na tabela (sem abrir o modal) deixava
+    // depType/depMode em branco — só o modal preenchia esses dois campos. Sem depMode==='blocked'
+    // o cascadeReschedule() ignora a dependência de propósito (trata como "Paralelo"), então na
+    // prática a dependência criada direto na tabela nunca tinha efeito nenhum no recálculo de
+    // datas, mesmo aparecendo certinho na coluna. Preenche com o mesmo padrão do modal (Término→
+    // Início, Bloqueia) só quando ainda não havia nenhum tipo definido — se já existia um tipo/
+    // modo configurado antes (editado pelo modal), mantém como estava.
+    if(depIds.length&&!obj.depType){obj.depType='TI';obj.depMode='blocked';}
+    if(!depIds.length){obj.depType='';obj.depMode='';}
     logChange(curKey,fmtLog('lg_dep_tpl',{label,name:obj.name}),'#0369a1');
   }else if(field==='jira'&&(kind==='task'||kind==='subtask')){
     if(Array.isArray(obj.links)&&obj.links.length){
@@ -10577,8 +10688,12 @@ function getOrBuildModal(id,title,body,footer){
 function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create_ms'));return;}editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;const editable=canEdit(curKey);
   const modal=getOrBuildModal('ms-modal',t('ms_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="ms-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">${t('lbl_responsaveis')}</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="${t('tt_apply_all_tasks')}"><i class="ti ti-copy" style="font-size:10px"></i> ${t('btn_apply_all_tasks')}</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>${t('fld_status')}</label><select id="ms-status"><option value="not_started">${t('opt_ns_ms')}</option><option value="in_progress">${t('opt_ip_ms')}</option><option value="done">${t('opt_done_ms')}</option><option value="blocked">${t('opt_bl_ms')}</option><option value="cancelled">${t('opt_can_ms')}</option></select></div><div class="fg"><label>${t('fld_cor2')}</label><select id="ms-color"><option value="#6366f1">${t('color_indigo')}</option><option value="#8b5cf6">${t('color_violet')}</option><option value="#06b6d4">${t('color_cyan')}</option><option value="#10b981">${t('color_green')}</option><option value="#f59e0b">${t('color_amber')}</option><option value="#ef4444">${t('color_red')}</option><option value="#3b82f6">${t('color_blue')}</option><option value="#ec4899">${t('color_pink')}</option></select></div></div>`,
   `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">${t('btn_salvar')}</button>`);
-  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:ds(addD(TODAY,30));document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`${t('ms_er_auto')} (${fmtBR(autoEr)}).`:t('ms_er_manual');document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
+  document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:'';document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`${t('ms_er_auto')} (${fmtBR(autoEr)}).`:t('ms_er_manual');document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
   ['ms-name','ms-start','ms-deadline','ms-status','ms-color'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  // Prazo só é definido na criação da etapa — depois de criada, o campo fica travado mesmo pra
+  // quem tem permissão de editar (pedido explícito da Amanda pra virar um "Prazo Inicial" fixo).
+  const msDlInput=document.getElementById('ms-deadline');
+  if(msDlInput){msDlInput.disabled=!editable||!!ms;msDlInput.title=ms?'O Prazo só pode ser definido na criação da etapa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
   const msAddResp=document.getElementById('ms-add-resp-btn');if(msAddResp)msAddResp.style.display=editable?'':'none';
   document.getElementById('ms-save-btn').style.display=editable?'':'none';
   document.getElementById('ms-cancel-btn').textContent=editable?t('btn_cancelar'):t('btn_fechar');
@@ -10586,11 +10701,20 @@ function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create
 function saveMs(){
   if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const name=document.getElementById('ms-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}
+  // Prazo só pode ser definido na criação — não dá pra deixar o sistema "inventar" uma data
+  // fictícia (+30d) só pra preencher o campo (pedido explícito da Amanda). Sem Prazo, não salva.
+  if(!editMsId&&!document.getElementById('ms-deadline').value){alert(t('alert_informe_prazo'));return;}
   const sched=schedules[curKey];
   // Snapshot da data final do projeto ANTES de salvar — usado pro gatilho de Follow #2 (data
   // final do projeto mudou). Compara de novo depois de tudo recalculado (inclusive cascata).
   const oldGoLiveLocal=getStats(curKey).goLiveLocal;
   const data={name,start:document.getElementById('ms-start').value,deadline:document.getElementById('ms-deadline').value,endReal:document.getElementById('ms-endreal').value,status:document.getElementById('ms-status').value,color:document.getElementById('ms-color').value,assignees:getAs('ms-a-list')};
+  // Bug do "Atraso Acumulado" reportado pela Amanda: se a pessoa marca a Etapa como Concluída
+  // aqui no modal mas esquece de preencher a "Data de Conclusão Real", msAtraso() não tinha
+  // nenhuma data pra comparar com o Prazo e mostrava "0d" mesmo quando a etapa terminou atrasada
+  // de verdade. Mesma regra que o botão de check-rápido (inlineDone) já usa: sem data informada,
+  // assume hoje — nunca deixa "Concluído" sem Data de Conclusão Real.
+  if(data.status==='done'&&!data.endReal)data.endReal=ds(TODAY);
   let justCompleted=false;
   if(editMsId){
     const ms=sched.milestones.find(m=>m.id===editMsId);const old=JSON.parse(JSON.stringify(ms));
@@ -11008,7 +11132,7 @@ function renderScoringView(){
 function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t('alert_no_perm_create_task'));return;}editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;const editable=canEdit(curKey);
   const modal=getOrBuildModal('task-modal',window.t('task_title'),`<div class="fg"><label>${window.t('fld_nome')}</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_inicio')}</label><input type="date" id="t-start"></div><div class="fg"><label>${window.t('fld_prazo')}</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>${window.t('fld_data_conclusao')}</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">${window.t('lbl_responsaveis')}</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_adicionar')}</button><div class="fg"><label>${window.t('fld_area')}</label><input type="text" id="t-area" list="area-suggestions" placeholder="${window.t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_status')}</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${window.t('fld_progresso')}</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${window.t('chk_critica_tarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="t-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${window.t('chk_marco')}</label></div><div class="fg"><label>${window.t('fld_depende_de')}</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>${window.t('fld_tipo_dep')}</label><select id="t-deptype"><option value="TI">${window.t('dep_ti_full')}</option><option value="II">${window.t('dep_ii_full')}</option><option value="TT">${window.t('dep_tt_full')}</option><option value="IT">${window.t('dep_it_full')}</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>${window.t('lbl_como_relaciona')}</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">${window.t('btn_bloqueia')}</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">${window.t('btn_paralelo')}</button></div></div></div><div class="fg"><label>${window.t('fld_links')}</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_add_link')}</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>${window.t('fld_observacoes')}</label><textarea id="t-notes" rows="2"></textarea></div>`,
   `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">${window.t('btn_excluir')}</button><button class="btn-c" id="t-cancel-btn" onclick="closeM('task-modal')">${window.t('btn_cancelar')}</button><button class="btn-s" id="t-save-btn" onclick="saveTask()">${window.t('btn_salvar')}</button>`);
-  document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:ds(addD(TODAY,14));document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-marco').checked=t?!!t.isMarco:false;document.getElementById('t-area').value=t?(t.area||''):'';document.getElementById('t-del-btn').style.display=(t&&editable)?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);populateAreaDatalist();
+  document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:'';document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-marco').checked=t?!!t.isMarco:false;document.getElementById('t-area').value=t?(t.area||''):'';document.getElementById('t-del-btn').style.display=(t&&editable)?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);populateAreaDatalist();
   document.getElementById('t-progress').value=t?taskProg(t):0;
   // Mapa de números (coluna #) ↔ id, mesmo usado na tabela do cronograma
   const{numToId,idToNum}=buildRowNumMap(sched);
@@ -11031,6 +11155,8 @@ function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t
   depInput.oninput=updateDepPreview;updateDepPreview();
   if(t&&getTaskLinks(t).length&&!t.notes)fetchJiraTaskDescription();
   ['t-name','t-start','t-deadline','t-endreal','t-status','t-progress','t-critical','t-marco','t-area','t-dep','t-deptype','t-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const tDlInput=document.getElementById('t-deadline');
+  if(tDlInput){tDlInput.disabled=!editable||!!t;tDlInput.title=t?'O Prazo só pode ser definido na criação da tarefa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
   const tAddResp=document.getElementById('t-add-resp-btn');if(tAddResp)tAddResp.style.display=editable?'':'none';
   const tAddLink=document.getElementById('t-add-link-btn');if(tAddLink)tAddLink.style.display=editable?'':'none';
   document.getElementById('t-save-btn').style.display=editable?'':'none';
@@ -11090,7 +11216,10 @@ function onProgressInput(){
   const st=v>=100?'done':v<=0?'not_started':'in_progress';
   document.getElementById('t-status').value=st;
 }
-function saveTask(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}const name=document.getElementById('t-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}const sched=schedules[curKey];// Parse line numbers to IDs
+function saveTask(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}const name=document.getElementById('t-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}
+  // Mesma regra do saveMs (ver comentário lá): Prazo obrigatório na criação, sem data fictícia.
+  if(!editTaskId&&!document.getElementById('t-deadline').value){alert(t('alert_informe_prazo'));return;}
+  const sched=schedules[curKey];// Parse line numbers to IDs
   const sched2=schedules[curKey];const{numToId:numToId2}=buildRowNumMap(sched2);
   const depRaw=document.getElementById('t-dep').value;
   const depIds=depRaw.split(',').map(s=>s.trim()).filter(Boolean).map(v=>numToId2[parseInt(v)]).filter(Boolean);
@@ -11098,6 +11227,10 @@ function saveTask(){if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const progRaw=parseInt(document.getElementById('t-progress').value);const progress=progressTouched&&!isNaN(progRaw)?Math.max(0,Math.min(100,progRaw)):null;
   const deadlineVal=document.getElementById('t-deadline').value;
   const data={id:editTaskId||uid(),msId:editTaskMsId,name,start:document.getElementById('t-start').value,deadline:deadlineVal,endReal:document.getElementById('t-endreal').value,assignees:getAs('t-a-list'),area:document.getElementById('t-area').value.trim(),depId,depIds,depType:depId?document.getElementById('t-deptype').value:'',depMode:depId?depModeVal2:'',status:document.getElementById('t-status').value,progress,notes:document.getElementById('t-notes').value,links:getLinks('t-link-list'),critical:document.getElementById('t-critical').checked,isMarco:document.getElementById('t-marco').checked};
+  // Mesmo bug do Atraso Acumulado corrigido em saveMs (ver comentário lá) — sem isso, uma Tarefa
+  // salva como "Concluída" sem Data de Conclusão Real mostrava atraso "0d" mesmo tendo terminado
+  // depois do Prazo.
+  if(data.status==='done'&&!data.endReal)data.endReal=ds(TODAY);
   if(editTaskId){
     const idx=sched.tasks.findIndex(x=>x.id===editTaskId);const old=idx>=0?JSON.parse(JSON.stringify(sched.tasks[idx])):null;
     // O "Atraso Acum." só deve zerar quando o PRAZO em si é replanejado de propósito nessa
@@ -11152,11 +11285,13 @@ function openSubtaskModal(taskId,subId,newParentSubId){
   if(!subId&&!canEdit(curKey)){alert(t('alert_no_perm_create_sub'));return;}
   editSubTaskId=taskId;editSubId=subId;editSubNewParentId=subId?null:(newParentSubId||null);subProgressTouched=false;populateAssigneeDatalist();
   const sched=schedules[curKey];const s=subId?(sched.subtasks||[]).find(x=>x.id===subId):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('subtask-modal',t('sub_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="s-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="s-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="s-endreal"></div><div class="section-lbl">${t('lbl_responsaveis')}</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><div class="fg"><label>${t('fld_area')}</label><input type="text" id="s-area" list="area-suggestions" placeholder="${t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${t('fld_status')}</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${t('fld_progresso')}</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${t('chk_critica_subtarefa')}</label></div><div class="fg"><label>${t('fld_links')}</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_add_link')}</button></div><div class="fg"><label>${t('fld_observacoes')}</label><textarea id="s-notes" rows="2"></textarea></div>`,
+  const modal=getOrBuildModal('subtask-modal',t('sub_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="s-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="s-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="s-endreal"></div><div class="section-lbl">${t('lbl_responsaveis')}</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><div class="fg"><label>${t('fld_area')}</label><input type="text" id="s-area" list="area-suggestions" placeholder="${t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${t('fld_status')}</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${t('fld_progresso')}</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${t('chk_critica_subtarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="s-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${t('chk_marco')}</label></div><div class="fg"><label>${t('fld_links')}</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_add_link')}</button></div><div class="fg"><label>${t('fld_observacoes')}</label><textarea id="s-notes" rows="2"></textarea></div>`,
   `<button class="btn-d" id="s-del-btn" onclick="deleteSubtask()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="s-cancel-btn" onclick="closeM('subtask-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="s-save-btn" onclick="saveSubtask()">${t('btn_salvar')}</button>`);
-  document.getElementById('s-name').value=s?s.name:'';document.getElementById('s-start').value=s?s.start:ds(TODAY);document.getElementById('s-deadline').value=s?s.deadline:ds(addD(TODAY,7));document.getElementById('s-endreal').value=s?s.endReal:'';document.getElementById('s-status').value=s?s.status:'not_started';document.getElementById('s-notes').value=s?s.notes:'';setLinks('s-link-list',s?getTaskLinks(s):[]);document.getElementById('s-critical').checked=s?!!s.critical:false;document.getElementById('s-area').value=s?(s.area||''):'';document.getElementById('s-del-btn').style.display=(s&&editable)?'':'none';setAs('s-a-list',s?s.assignees:[]);populateAreaDatalist();
+  document.getElementById('s-name').value=s?s.name:'';document.getElementById('s-start').value=s?s.start:ds(TODAY);document.getElementById('s-deadline').value=s?s.deadline:'';document.getElementById('s-endreal').value=s?s.endReal:'';document.getElementById('s-status').value=s?s.status:'not_started';document.getElementById('s-notes').value=s?s.notes:'';setLinks('s-link-list',s?getTaskLinks(s):[]);document.getElementById('s-critical').checked=s?!!s.critical:false;document.getElementById('s-marco').checked=s?!!s.isMarco:false;document.getElementById('s-area').value=s?(s.area||''):'';document.getElementById('s-del-btn').style.display=(s&&editable)?'':'none';setAs('s-a-list',s?s.assignees:[]);populateAreaDatalist();
   document.getElementById('s-progress').value=s?taskProg(s):0;
-  ['s-name','s-start','s-deadline','s-endreal','s-status','s-progress','s-critical','s-area','s-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  ['s-name','s-start','s-deadline','s-endreal','s-status','s-progress','s-critical','s-marco','s-area','s-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const sDlInput=document.getElementById('s-deadline');
+  if(sDlInput){sDlInput.disabled=!editable||!!s;sDlInput.title=s?'O Prazo só pode ser definido na criação da subtarefa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
   const sAddResp=document.getElementById('s-add-resp-btn');if(sAddResp)sAddResp.style.display=editable?'':'none';
   const sAddLink=document.getElementById('s-add-link-btn');if(sAddLink)sAddLink.style.display=editable?'':'none';
   document.getElementById('s-save-btn').style.display=editable?'':'none';
@@ -11182,13 +11317,17 @@ function onSubProgressInput(){
 function saveSubtask(){
   if(!canEdit(curKey)){alert(t('alert_no_perm_edit'));return;}
   const name=document.getElementById('s-name').value.trim();if(!name){alert(t('alert_informe_nome'));return;}
+  // Mesma regra do saveMs/saveTask (ver comentário em saveMs): Prazo obrigatório na criação.
+  if(!editSubId&&!document.getElementById('s-deadline').value){alert(t('alert_informe_prazo'));return;}
   const sched=schedules[curKey];if(!sched.subtasks)sched.subtasks=[];
   const progRaw=parseInt(document.getElementById('s-progress').value);const progress=subProgressTouched&&!isNaN(progRaw)?Math.max(0,Math.min(100,progRaw)):null;
   const deadlineVal=document.getElementById('s-deadline').value;
   const oldForShape=editSubId?sched.subtasks.find(x=>x.id===editSubId):null;
   // parentSubId e isMarco não têm campo no modal — preservar do objeto anterior (senão o Save
   // "reseta" silenciosamente uma Sub-subtarefa (nível 4) pra nível 3, ou perde a marca de marco.
-  const data={id:editSubId||uid(),taskId:editSubTaskId,parentSubId:oldForShape?(oldForShape.parentSubId||null):(editSubNewParentId||null),isMarco:oldForShape?!!oldForShape.isMarco:false,name,start:document.getElementById('s-start').value,deadline:deadlineVal,endReal:document.getElementById('s-endreal').value,assignees:getAs('s-a-list'),area:document.getElementById('s-area').value.trim(),status:document.getElementById('s-status').value,progress,notes:document.getElementById('s-notes').value,links:getLinks('s-link-list'),critical:document.getElementById('s-critical').checked};
+  const data={id:editSubId||uid(),taskId:editSubTaskId,parentSubId:oldForShape?(oldForShape.parentSubId||null):(editSubNewParentId||null),isMarco:document.getElementById('s-marco').checked,name,start:document.getElementById('s-start').value,deadline:deadlineVal,endReal:document.getElementById('s-endreal').value,assignees:getAs('s-a-list'),area:document.getElementById('s-area').value.trim(),status:document.getElementById('s-status').value,progress,notes:document.getElementById('s-notes').value,links:getLinks('s-link-list'),critical:document.getElementById('s-critical').checked};
+  // Mesmo bug do Atraso Acumulado corrigido em saveMs/saveTask (ver comentário em saveMs).
+  if(data.status==='done'&&!data.endReal)data.endReal=ds(TODAY);
   if(editSubId){
     const idx=sched.subtasks.findIndex(x=>x.id===editSubId);const old=idx>=0?JSON.parse(JSON.stringify(sched.subtasks[idx])):null;
     if(old&&old.deadline===data.deadline){data.origDeadline=old.origDeadline||old.deadline;}else{data.origDeadline=deadlineVal;}
@@ -11536,6 +11675,29 @@ function exportProjectXml(){
   document.body.appendChild(a);a.click();a.remove();
 }
 async function exportPdf(){try{const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a4'});const canvas=await html2canvas(document.getElementById('se-body'),{scale:1.5,useCORS:true,backgroundColor:'#ffffff'});const imgData=canvas.toDataURL('image/png');const pw=doc.internal.pageSize.getWidth()-40;const ph=canvas.height*(pw/canvas.width);doc.setFontSize(10);doc.text(`VMO · ${PROJECTS.find(x=>x.key===curKey)?.summary||curKey}`,20,16);doc.addImage(imgData,'PNG',20,24,pw,Math.min(ph,doc.internal.pageSize.getHeight()-38));doc.save(`VMO_${curKey}.pdf`);}catch(e){alert('Erro PDF: '+e.message);}}
+// Exportação de "Próximas Entregas" pro material de release — exporta a visualização que
+// estiver selecionada na hora (Mês/Quinzena/Semana/Verticais), sem forçar troca de modo —
+// pedido explícito da Amanda pra dar pra exportar qualquer uma das visões, não só a Quinzena.
+async function exportProximasEntregasPDF(){
+  const btn=document.getElementById('cal-export-pdf-btn');
+  try{
+    if(btn){btn.disabled=true;btn.style.opacity='.6';}
+    const grid=document.getElementById('cal-grid');
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+    const canvas=await html2canvas(grid,{scale:1.5,useCORS:true,backgroundColor:'#ffffff',width:grid.scrollWidth,windowWidth:grid.scrollWidth});
+    const imgData=canvas.toDataURL('image/png');
+    const pw=doc.internal.pageSize.getWidth()-40;
+    const ph=canvas.height*(pw/canvas.width);
+    const modeLabel={month:'Mês',fortnight:'Quinzena',week:'Semana',category:'Verticais'}[calModeVal]||'';
+    doc.setFontSize(13);doc.text('VMO · Próximas Entregas'+(modeLabel?' ('+modeLabel+')':''),20,20);
+    doc.setFontSize(9);doc.setTextColor(120);doc.text('Gerado em '+fmtBR(ds(new Date())),20,34);doc.setTextColor(0);
+    const maxH=doc.internal.pageSize.getHeight()-56;
+    doc.addImage(imgData,'PNG',20,44,pw,Math.min(ph,maxH));
+    doc.save('VMO_Proximas_Entregas_'+ds(new Date())+'.pdf');
+  }catch(e){alert('Erro ao gerar PDF: '+e.message);}
+  finally{if(btn){btn.disabled=false;btn.style.opacity='';}}
+}
 async function exportPng(){try{const canvas=await html2canvas(document.getElementById('se-body'),{scale:2,useCORS:true,backgroundColor:'#ffffff'});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download=`VMO_${curKey}.png`;a.click();}catch(e){alert('Erro PNG: '+e.message);}}
 
 // Audit
@@ -12976,10 +13138,32 @@ function persistProjects(){
 function removeProjectsByKeys(keysSet){
   for(let i=PROJECTS.length-1;i>=0;i--){ if(keysSet.has(PROJECTS[i].key)) PROJECTS.splice(i,1); }
 }
+// Normaliza variações de grafia/espaço/maiúsculas do status vindo do Jira pro valor canônico
+// EXATO usado em todas as comparações do app (ETAPA_ORDER, PRIORITY_LIST_EXCLUDED_STATUS,
+// filtros de "Novos projetos"/"Presales" etc.). Motivo: o app inteiro compara p.status com
+// strings fixas tipo 'Novos projetos' (minúsculo) ou 'PRESALES' (maiúsculo) — se o Jira manda
+// o texto com uma grafia levemente diferente (ex.: "Novos Projetos" com P maiúsculo, ou
+// "Presales" em vez de "PRESALES"), a comparação exata falha silenciosamente: o projeto continua
+// aparecendo corretamente onde o agrupamento usa a própria string crua (ex.: coluna de Status do
+// Portfólio, que só agrupa por p.status sem comparar com nada), mas some ou é contado errado em
+// qualquer lugar que compara com o valor fixo (ex.: card "Novos projetos" do Overview, ou os
+// Sets de status excluído). Dois bugs assim já foram reportados pela Amanda (Presales contando
+// como ativo, e "Novos projetos" zerado no card mesmo tendo itens na coluna) — resolvendo os
+// dois de uma vez com essa normalização geral, comparando sem diferenciar maiúsculas/minúsculas
+// e ignorando espaços nas pontas, e "grudando" na grafia canônica exata que o resto do código
+// espera assim que houver uma correspondência.
+const CANONICAL_STATUSES_=['PRESALES','Novos projetos','BACKLOG','PAUSADO','Pré-Comitê','Comitê','Documentação de escopo','KICK OFF','Refinamento & Cronograma','Desenvolvimento','Homologação','PROCESSO DE ROLLOUT','Aguardando Produção','Pós produção','CANCELADO'];
+function normalizeJiraStatus_(raw){
+  if(raw==null)return raw;
+  const s=String(raw).trim();
+  const canon=CANONICAL_STATUSES_.find(c=>c.toLowerCase()===s.toLowerCase());
+  return canon||s;
+}
 function applyJiraSync(freshProjects,opts={}){
   const interactive=!!opts.interactive;
   const clientNameTouched=[];
   freshProjects.forEach(fp=>{
+    if(fp.status!=null)fp.status=normalizeJiraStatus_(fp.status);
     const idx=PROJECTS.findIndex(p=>p.key===fp.key);
     if(idx>=0){
       // Explicitly update all Jira fields including priority
@@ -13445,7 +13629,7 @@ function parseSyncJson(){
   }catch(e){alert('Erro ao parsear JSON: '+e.message);}
 }
 function getGoLive(key){const s=schedules[key];if(!s)return null;return(s.milestones||[]).map(m=>m.deadline).filter(Boolean).sort().pop()||null;}
-function setSyncTxt(state,msg){const el=document.getElementById('sync-txt');if(!el)return;const icons={idle:'<i class="ti ti-brand-jira" style="font-size:10px"></i>',syncing:'<i class="ti ti-loader spin" style="font-size:10px"></i>',ok:'<i class="ti ti-circle-check" style="font-size:10px;color:#4ade80"></i>',error:'<i class="ti ti-circle-x" style="font-size:10px;color:#f87171"></i>'};el.innerHTML=`${icons[state]||icons.idle} <span class="stlabel">${state==='syncing'?'Sincronizando…':msg||'one-bemobi.atlassian.net'}</span>`;}
+function setSyncTxt(state,msg){const el=document.getElementById('sync-txt');if(!el)return;const icons={idle:'<i class="ti ti-brand-jira" style="font-size:10px"></i>',syncing:'<i class="ti ti-loader spin" style="font-size:10px"></i>',ok:'<i class="ti ti-circle-check" style="font-size:10px;color:#4ade80"></i>',error:'<i class="ti ti-circle-x" style="font-size:10px;color:#f87171"></i>'};el.innerHTML=`${icons[state]||icons.idle} <span class="stlabel">${state==='syncing'?'Sincronizando…':msg||'VMO - Value Management Office'}</span>`;}
 // ── BULK SCHEDULE URL SYNC ───────────────────────────────
 // Sends schedule URLs to Jira customfield_29785 for all projects with schedules
 async function syncAllScheduleUrls() {
@@ -13498,6 +13682,41 @@ function copyScheduleLink(){
   }).catch(()=>{
     prompt('Copie o link abaixo:',url);
   });
+}
+// Botão "Compartilhar por email" do Cronograma — pedido revisado da Amanda: em vez de abrir o
+// cliente de email local com um mailto: genérico, um clique já ENVIA de verdade (mesmo caminho
+// de envio direto via GAS/MailApp usado no email executivo semanal), com o mesmo template HTML
+// bonito de sempre (buildSingleProjectEmailHtml), pros stakeholders já cadastrados neste projeto
+// (botão "Stakeholders" do Cronograma — schedules[key].stakeholders, mesmo cadastro do modal de
+// Email Executivo). Sem stakeholder cadastrado, avisa em vez de mandar sem destinatário.
+async function shareScheduleByEmail(){
+  if(!curKey)return;
+  const p=PROJECTS.find(x=>x.key===curKey);if(!p)return;
+  const recipients=[...new Set(((schedules[curKey]&&schedules[curKey].stakeholders)||[]).map(s=>s.email).filter(Boolean))];
+  if(!recipients.length){alert(t('sch_email_sem_stakeholders'));return;}
+  if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){alert(t('shared_envio_direto_nao_config'));return;}
+  const btn=document.getElementById('share-email-btn');
+  const origHtml=btn?btn.innerHTML:'';
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2 spin" style="font-size:10px"></i> '+t('rsm_enviando');}
+  const htmlBody=buildSingleProjectEmailHtml(curKey);
+  const url=window.location.href.split('?')[0]+'?project='+curKey;
+  const subject=t('sch_email_subject_prefix')+' '+(p.summary||curKey);
+  const plainBody=t('sch_email_body_intro')+' '+(p.summary||curKey)+':\n'+url;
+  try{
+    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendExecutiveEmail',subject,body:plainBody,htmlBody,recipients})});
+    const d=await r.json();
+    if(d.ok){
+      if(btn){btn.innerHTML='<i class="ti ti-check" style="font-size:10px"></i> '+t('sch_email_enviado_btn');}
+      alert(fmtLog('sch_email_enviado_tpl',{n:recipients.length,emails:recipients.join(', ')}));
+    }else{
+      if(btn)btn.innerHTML=origHtml;
+      alert(t('rsm_erro_prefix')+(d.error||t('rsm_nao_foi_possivel_enviar')));
+    }
+  }catch(e){
+    if(btn)btn.innerHTML=origHtml;
+    alert(t('rsm_erro_conectar_email'));
+  }
+  setTimeout(()=>{if(btn){btn.disabled=false;btn.innerHTML=origHtml;}},3000);
 }
 
 async function syncToJira(key){
