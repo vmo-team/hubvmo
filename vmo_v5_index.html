@@ -861,21 +861,22 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div class="sb2"><i class="ti ti-search"></i><input id="pf-search" type="text" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" oninput="renderPortfolio()"></div>
     <div class="filter-sep"></div>
     <button class="fbtn on" onclick="setF('all',this)" id="fbtn-all" data-i18n="prio_todos">Todos</button>
-    <button class="fbtn" id="fbtn-sched" onclick="setF('sched',this)" data-i18n="prio_com_cronograma">Com cronograma</button>
-    <button class="fbtn" id="fbtn-nosched" onclick="setF('nosched',this)" data-i18n="prio_sem_cronograma">Sem cronograma</button>
+    <div class="filter-sep"></div>
+    <button class="fbtn on" id="prio-view-unificada" onclick="setPrioViewUnificada()" data-i18n="prio_view_unificada">Lista Unificada</button>
+    <button class="fbtn" id="prio-view-segmento" onclick="setPrioViewSegmento()" data-i18n="prio_view_segmento">Por Segmento</button>
     <div class="filter-sep"></div>
     <div class="ms-dd" id="dd-tipo"><button class="ms-dd-btn" onclick="toggleDD('dd-tipo')"><span id="dd-tipo-lbl">Tipo</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-tipo-menu"></div></div>
     <div class="ms-dd" id="dd-segment"><button class="ms-dd-btn" onclick="toggleDD('dd-segment')"><span id="dd-segment-lbl">Segmento</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-segment-menu"></div></div>
     <div class="ms-dd" id="dd-region"><button class="ms-dd-btn" onclick="toggleDD('dd-region')"><span id="dd-region-lbl">Região</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-region-menu"></div></div>
     <div class="ms-dd" id="dd-status"><button class="ms-dd-btn" onclick="toggleDD('dd-status')"><span id="dd-status-lbl">Todos os status</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-status-menu"></div></div>
     <div class="ms-dd" id="dd-gp"><button class="ms-dd-btn" onclick="toggleDD('dd-gp')"><span id="dd-gp-lbl">Todos os GPs</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-gp-menu"></div></div>
-    <div class="ms-dd" id="dd-health"><button class="ms-dd-btn" onclick="toggleDD('dd-health')"><span id="dd-health-lbl">Saúde do cronograma</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-health-menu"></div></div>
     <div class="ms-dd" id="dd-times"><button class="ms-dd-btn" onclick="toggleDD('dd-times')"><span id="dd-times-lbl">Todos os times</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-times-menu"></div></div>
     <div class="filter-sep"></div>
     <div class="ms-dd" id="dd-cols" data-i18n-title="prio_colunas_title" title="Escolher quais colunas aparecem na tabela"><button class="ms-dd-btn" onclick="toggleDD('dd-cols')"><i class="ti ti-columns-3" style="font-size:11px"></i><span id="dd-cols-lbl">Colunas</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-cols-menu" style="min-width:210px"></div></div>
     <div style="flex:1"></div>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="savePriorityHistorySnapshot()" data-i18n-title="prio_salvar_historico_title" title="Salva um retrato completo da ordem de prioridade de hoje, disponível depois em Documentos Úteis"><i class="ti ti-device-floppy" style="font-size:11px"></i> <span data-i18n="prio_salvar_historico">Salvar Histórico</span></button>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px" onclick="exportPrioridadesXlsx()" data-i18n-title="prio_exportar_excel_title" title="Exporta a lista de prioridades exatamente como está na tela (respeitando busca e filtros ativos)"><i class="ti ti-file-spreadsheet" style="font-size:11px"></i> <span data-i18n="prio_exportar_excel">Exportar Excel</span></button>
+    <div class="ms-dd" id="dd-exphist" data-i18n-title="prio_exportar_historico_title" title="Baixa em Excel um histórico de priorização já salvo anteriormente"><button class="ms-dd-btn" onclick="toggleDD('dd-exphist');buildExportHistMenu()"><i class="ti ti-history" style="font-size:11px"></i><span data-i18n="prio_exportar_historico">Exportar Histórico</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-exphist-menu" style="min-width:240px"></div></div>
     <button class="fbtn" style="display:flex;align-items:center;gap:4px;background:var(--purple);color:#fff;border:none" onclick="openSuggestPriorityModal()" data-i18n-title="prio_sugerir_priorizacao_title" title="Sugere uma nova ordem de prioridade combinando score, datas de entrega e segmento estratégico"><i class="ti ti-sparkles" style="font-size:11px"></i> <span data-i18n="prio_sugerir_priorizacao">Sugerir Priorização</span></button>
     <button class="fbtn" id="fix-fictitious-prio-btn" style="display:none;align-items:center;gap:4px;background:#fff7ed;color:#c2410c;border:1px solid #fdba74" onclick="openPriorityRepairModal()" data-i18n-title="prio_corrigir_ficticias_title" title="Corrige projetos em Backlog/Pausado/Cancelado/Pós produção/Presales que hoje têm uma prioridade individual fictícia (herdada de um bug antigo) em vez do balde correto"><i class="ti ti-tool" style="font-size:11px"></i> <span data-i18n="prio_corrigir_ficticias">Corrigir prioridades fictícias</span></button>
   </div>
@@ -1650,6 +1651,8 @@ const I18N = {
     prio_salvar_historico:'Salvar Histórico',
     prio_salvar_historico_title:'Salva um retrato completo da ordem de prioridade de hoje, disponível depois em Documentos Úteis',
     prio_exportar_excel:'Exportar Excel',
+    prio_view_unificada:'Lista Unificada', prio_view_segmento:'Por Segmento',
+    prio_exportar_historico:'Exportar Histórico', prio_exportar_historico_title:'Baixa em Excel um histórico de priorização já salvo anteriormente', prio_exportar_historico_vazio:'Nenhum histórico salvo ainda.',
     prio_exportar_excel_title:'Exporta a lista de prioridades exatamente como está na tela (respeitando busca e filtros ativos)',
     prio_sugerir_priorizacao:'Sugerir Priorização',
     prio_sugerir_priorizacao_title:'Sugere uma nova ordem de prioridade combinando score, datas de entrega e segmento estratégico',
@@ -1677,7 +1680,7 @@ const I18N = {
     prio_col_status_jira:'Status Jira',
     prio_col_gp_alocado:'GP Alocado',
     prio_col_times:'Times',
-    prio_col_exp_entrega:'Expect. Entrega',
+    prio_col_exp_entrega:'Data Alvo',
     prio_col_golive:'Go Live',
     prio_col_saude_cron:'Saúde Cron.',
     prio_col_progresso:'Progresso',
@@ -1784,7 +1787,7 @@ const I18N = {
     prio_xls_col_projeto:'Projeto',
     prio_xls_col_gp:'GP Alocado',
     prio_xls_col_status:'Status',
-    prio_xls_col_exp_entrega:'Expectativa de Entrega',
+    prio_xls_col_exp_entrega:'Data Alvo',
     prio_xls_col_golive:'Data de Go Live',
     prio_xls_col_estimada:'Data Estimada (Cronograma)',
     prio_alert_only_editor_historico:'Apenas editores e administradores podem salvar o histórico de prioridades.',
@@ -2273,6 +2276,8 @@ const I18N = {
     prio_salvar_historico:'Guardar Historial',
     prio_salvar_historico_title:'Guarda una foto completa del orden de prioridad de hoy, disponible después en Documentos Útiles',
     prio_exportar_excel:'Exportar Excel',
+    prio_view_unificada:'Lista Unificada', prio_view_segmento:'Por Segmento',
+    prio_exportar_historico:'Exportar Historial', prio_exportar_historico_title:'Descarga en Excel un historial de priorización ya guardado anteriormente', prio_exportar_historico_vazio:'Todavía no hay historial guardado.',
     prio_exportar_excel_title:'Exporta la lista de prioridades exactamente como está en pantalla (respetando búsqueda y filtros activos)',
     prio_sugerir_priorizacao:'Sugerir Priorización',
     prio_sugerir_priorizacao_title:'Sugiere un nuevo orden de prioridad combinando puntuación, fechas de entrega y segmento estratégico',
@@ -2300,7 +2305,7 @@ const I18N = {
     prio_col_status_jira:'Estado Jira',
     prio_col_gp_alocado:'GP Asignado',
     prio_col_times:'Equipos',
-    prio_col_exp_entrega:'Exp. Entrega',
+    prio_col_exp_entrega:'Fecha Objetivo',
     prio_col_golive:'Go Live',
     prio_col_saude_cron:'Salud Cron.',
     prio_col_progresso:'Progreso',
@@ -2407,7 +2412,7 @@ const I18N = {
     prio_xls_col_projeto:'Proyecto',
     prio_xls_col_gp:'GP Asignado',
     prio_xls_col_status:'Estado',
-    prio_xls_col_exp_entrega:'Expectativa de Entrega',
+    prio_xls_col_exp_entrega:'Fecha Objetivo',
     prio_xls_col_golive:'Fecha de Go Live',
     prio_xls_col_estimada:'Fecha Estimada (Cronograma)',
     prio_alert_only_editor_historico:'Solo editores y administradores pueden guardar el historial de prioridades.',
@@ -2896,6 +2901,8 @@ const I18N = {
     prio_salvar_historico:'Save History',
     prio_salvar_historico_title:'Saves a full snapshot of today\'s priority order, available later in Useful Documents',
     prio_exportar_excel:'Export Excel',
+    prio_view_unificada:'Unified List', prio_view_segmento:'By Segment',
+    prio_exportar_historico:'Export History', prio_exportar_historico_title:'Downloads an Excel of a previously saved prioritization history', prio_exportar_historico_vazio:'No history saved yet.',
     prio_exportar_excel_title:'Exports the priority list exactly as shown on screen (respecting active search and filters)',
     prio_sugerir_priorizacao:'Suggest Prioritization',
     prio_sugerir_priorizacao_title:'Suggests a new priority order combining score, delivery dates, and strategic segment',
@@ -2923,7 +2930,7 @@ const I18N = {
     prio_col_status_jira:'Jira Status',
     prio_col_gp_alocado:'Assigned PM',
     prio_col_times:'Teams',
-    prio_col_exp_entrega:'Exp. Delivery',
+    prio_col_exp_entrega:'Target Date',
     prio_col_golive:'Go Live',
     prio_col_saude_cron:'Schedule Health',
     prio_col_progresso:'Progress',
@@ -3030,7 +3037,7 @@ const I18N = {
     prio_xls_col_projeto:'Project',
     prio_xls_col_gp:'Assigned PM',
     prio_xls_col_status:'Status',
-    prio_xls_col_exp_entrega:'Expected Delivery',
+    prio_xls_col_exp_entrega:'Target Date',
     prio_xls_col_golive:'Go Live Date',
     prio_xls_col_estimada:'Estimated Date (Schedule)',
     prio_alert_only_editor_historico:'Only editors and admins can save the priority history.',
@@ -3288,6 +3295,17 @@ function canEditComplexidadeTecnica(projectKey) {
 // o GP daquele projeto específico podem alterar (antes só ela mesma ou o GP conseguiam, sem
 // bypass pra outros admins — ajustado a pedido dela pra incluir todo mundo com papel admin).
 function canEditDataAlvo(projectKey) {
+  if (!currentUser) return false;
+  if (currentUser.role === 'admin') return true;
+  const p = PROJECTS.find(x => x.key === projectKey);
+  if (!p) return false;
+  return isGPOfProject(currentUser, p);
+}
+// Prazo (Etapa/Tarefa/Subtarefa) depois de já criado — pedido revisado da Amanda: voltar a
+// ser editável, mas só por admin ou pelo GP do projeto (não qualquer editor com acesso), tanto
+// na criação quanto depois. Antes disso ficava travado pra sempre após a criação, mesmo pra
+// quem tinha permissão de editar.
+function canEditPrazoField(projectKey) {
   if (!currentUser) return false;
   if (currentUser.role === 'admin') return true;
   const p = PROJECTS.find(x => x.key === projectKey);
@@ -4113,6 +4131,25 @@ function resetScheduleHeaderToEmpty(){
   const es_=document.getElementById('sch-empty-state');if(es_)es_.style.display='flex';
   updateScheduleUndoUI();
 }
+// Bug reportado pela Amanda: ao trocar de aba e voltar pra "Resumo dos Projetos" sem projeto
+// selecionado, o corpo (#rsm-body) corretamente escondia e mostrava o estado vazio — mas o
+// CABEÇALHO (#rsm-hdr: nome do projeto, chave do Jira, chips de Data Alvo/Go Live/saúde,
+// Slack, Seguir, Ver Cronograma) é um elemento separado que nunca era limpo, então ficava
+// mostrando o nome do último projeto aberto por cima do estado vazio. Mesmo padrão já usado em
+// resetScheduleHeaderToEmpty() pro Cronograma.
+function resetResumoHeaderToEmpty(){
+  const title_=document.getElementById('rsm-title');if(title_)title_.textContent=t('select_project');
+  const jl_=document.getElementById('rsm-jira-lnk');if(jl_)jl_.style.display='none';
+  const da_=document.getElementById('rsm-dataalvo');if(da_)da_.style.display='none';
+  const gl_=document.getElementById('rsm-golive');if(gl_)gl_.style.display='none';
+  const hs_=document.getElementById('rsm-health-slot');if(hs_)hs_.innerHTML='';
+  const hcb_=document.getElementById('rsm-health-config-btn');if(hcb_)hcb_.style.display='none';
+  const sr_=document.getElementById('rsm-slack-row');if(sr_)sr_.innerHTML='';
+  const fb_=document.getElementById('rsm-follow-btn');if(fb_)fb_.style.display='none';
+  const gcb_=document.getElementById('rsm-goto-cronograma-btn');if(gcb_)gcb_.style.display='none';
+  const re_=document.getElementById('rsm-empty');if(re_)re_.style.display='flex';
+  const rb_=document.getElementById('rsm-body');if(rb_)rb_.style.display='none';
+}
 function showView(v,resetSelection){
   // Block tab access based on role
   if(!canViewTab(v)){return;}
@@ -4150,7 +4187,7 @@ function showView(v,resetSelection){
   if(v==='updates')renderUpdatesProjectList();
   if(v==='scoring')renderScoringView();
   if(v==='prioridades')renderPortfolio();
-  if(v==='resumo'){renderResumoProjectList();if(curKey){renderResumoDashboard();}else{const re_=document.getElementById('rsm-empty');const rb_=document.getElementById('rsm-body');if(re_)re_.style.display='flex';if(rb_)rb_.style.display='none';}}
+  if(v==='resumo'){renderResumoProjectList();if(curKey){renderResumoDashboard();}else{resetResumoHeaderToEmpty();}}
   if(v==='schedule'){
     renderScheduleProjectList();
     // Sem projeto selecionado (tela de lista): resincroniza com a preferência salva da lista
@@ -4180,7 +4217,6 @@ const PRIO_HIDEABLE_COLS=[
   {key:'times',labelKey:'prio_col_times'},
   {key:'exp',labelKey:'prio_col_exp_entrega'},
   {key:'golive',labelKey:'prio_col_golive'},
-  {key:'saude',labelKey:'prio_col_saude_cron'},
   {key:'prog',labelKey:'prio_col_progresso'},
   {key:'score',labelKey:'prio_col_score'},
   {key:'tpv',labelKey:'rsm_tpv_previsto'},
@@ -4189,9 +4225,18 @@ const PRIO_HIDEABLE_COLS=[
   {key:'driverdata',labelKey:'prio_col_driver_data'},
   {key:'acao',labelKey:'prio_col_acao'},
 ];
-const PRIO_HIDDEN_COLS_KEY='vmo_prio_hidden_cols';
+const PRIO_HIDDEN_COLS_KEY='vmo_prio_hidden_cols_v2';
 let prioHiddenCols=new Set();
-try{prioHiddenCols=new Set(JSON.parse(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)||'[]'));}catch(e){}
+// Visão padrão pedida pela Amanda: mais compacta, escondendo colunas secundárias na primeira
+// vez que a pessoa abre a ferramenta (sem localStorage salvo ainda) — quem já personalizou as
+// colunas continua exatamente como deixou, isso só define o ponto de partida de quem nunca tocou.
+const PRIO_DEFAULT_HIDDEN_COLS=['times','prog','score','driverdata','acao'];
+if(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)==null){
+  prioHiddenCols=new Set(PRIO_DEFAULT_HIDDEN_COLS);
+  try{localStorage.setItem(PRIO_HIDDEN_COLS_KEY,JSON.stringify([...prioHiddenCols]));}catch(e){}
+}else{
+  try{prioHiddenCols=new Set(JSON.parse(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)||'[]'));}catch(e){}
+}
 function savePrioHiddenCols(){try{localStorage.setItem(PRIO_HIDDEN_COLS_KEY,JSON.stringify([...prioHiddenCols]));}catch(e){}}
 function applyPrioColVisibility(){
   let styleEl=document.getElementById('prio-col-vis-style');
@@ -4237,8 +4282,6 @@ function initFilters(){
   const gps=[...new Set(PROJECTS.map(p=>p.gp).filter(g=>!isNoGP(g)))].sort();
   if(PROJECTS.some(p=>isNoGP(p.gp)))gps.push('TBD');
   buildDD('dd-gp','dd-gp-menu','dd-gp-lbl','gp',gps,t('prio_ph_gp'));
-  const healthOpts=[{v:'on-track',l:t('prio_health_on_track')},{v:'alert',l:t('prio_health_alert')},{v:'off-track',l:t('prio_health_off_track')},{v:'none',l:t('prio_health_none')}];
-  buildDD('dd-health','dd-health-menu','dd-health-lbl','health',healthOpts.map(h=>h.v),t('prio_ph_health'),healthOpts);
   const allTimes=[...new Set(PROJECTS.flatMap(p=>p.times||[]))].sort();
   buildDD('dd-times','dd-times-menu','dd-times-lbl','times',allTimes,t('prio_ph_times'));
   const tipos=[...new Set(PROJECTS.map(p=>p.type).filter(Boolean))].sort();
@@ -4247,8 +4290,8 @@ function initFilters(){
   buildDD('dd-segment','dd-segment-menu','dd-segment-lbl','segment',SEGMENT_FILTER_OPTIONS,t('prio_ph_segment'));
   const REGION_FILTER_OPTIONS=['Brasil','LATAM','International','Todas'];
   buildDD('dd-region','dd-region-menu','dd-region-lbl','region',REGION_FILTER_OPTIONS,t('prio_ph_region'));
-  buildPrioColsMenu();applyPrioColVisibility();updatePrioColsLbl();
-  ['dd-status','dd-gp','dd-health','dd-times','dd-tipo','dd-segment','dd-region'].forEach(id=>{
+  buildPrioColsMenu();applyPrioColVisibility();updatePrioColsLbl();buildExportHistMenu();
+  ['dd-status','dd-gp','dd-times','dd-tipo','dd-segment','dd-region'].forEach(id=>{
     const fk=id.replace('dd-','');const lblId=id+'-lbl';
     const phKey={status:'prio_ph_status',gp:'prio_ph_gp',health:'prio_ph_health',times:'prio_ph_times',tipo:'prio_ph_tipo',segment:'prio_ph_segment',region:'prio_ph_region'}[fk];
     updateDD(id,lblId,fk,phKey);
@@ -4288,6 +4331,7 @@ function updateDD(ddId,lblId,filterKey,placeholder){
   const sel=msFilters[filterKey];
   const btn=document.querySelector(`#${ddId} .ms-dd-btn`);
   const lbl=document.getElementById(lblId);
+  if(!btn||!lbl)return; // dropdown pode nao existir mais na tela atual (ex.: Saude do Cronograma saiu da aba Prioridades)
   // sync checkboxes
   document.querySelectorAll(`#${ddId.replace('dd-','')} input[type=checkbox]`).forEach(()=>{});
   const menu=document.getElementById(ddId.replace('dd-','')+'_menu')||document.getElementById(ddId+'-menu');
@@ -4696,13 +4740,59 @@ function setF(f,el){
   // clique nos cards não aplicava o filtro em Prioridades).
   showView('prioridades');
   clearOtherFilterCategories('pf');
-  if(f==='all'){pfFilter=new Set(['all']);document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+  // el pode ser null: os cards de "Com/Sem cronograma" da Visão Geral continuam chamando setF()
+  // programaticamente mesmo depois dos botões equivalentes terem saído da barra de filtros da
+  // aba Prioridades (pedido da Amanda) — sem esse '?.' a chamada quebrava com TypeError.
+  if(f==='all'){pfFilter=new Set(['all']);document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));el?.classList.add('on');}
   else{pfFilter.delete('all');document.getElementById('fbtn-all').classList.remove('on');
-    if(pfFilter.has(f)){pfFilter.delete(f);el.classList.remove('on');}
-    else{pfFilter.add(f);el.classList.add('on');}
+    if(pfFilter.has(f)){pfFilter.delete(f);el?.classList.remove('on');}
+    else{pfFilter.add(f);el?.classList.add('on');}
     if(!pfFilter.size){pfFilter=new Set(['all']);document.getElementById('fbtn-all').classList.add('on');}
   }
   renderPortfolio();
+}
+// ── Toggle "Lista Unificada" / "Por Segmento" (aba Prioridades) ──
+// Não é um estado próprio: só reaproveita o filtro de Segmento que já existe (dd-segment),
+// então nunca desincroniza — o botão "Por Segmento" fica marcado sempre que exatamente esse
+// filtro está preenchendo a lista, sem duplicar lógica. "Unificada" limpa Segmento E Região
+// (os dois campos que hoje disparam o reorder "por segmento/região" — ver soloSeg/soloReg em
+// renderPortfolio) pra garantir que a lista volte a misturar tudo.
+function setPrioViewUnificada(){
+  msFilters.segment.clear();
+  document.querySelectorAll('#dd-segment-menu .ms-dd-item').forEach(item=>{item.classList.remove('checked');const cb=item.querySelector('input');if(cb)cb.checked=false;});
+  updateDD('dd-segment','dd-segment-lbl','segment','prio_ph_segment');
+  msFilters.region.clear();
+  document.querySelectorAll('#dd-region-menu .ms-dd-item').forEach(item=>{item.classList.remove('checked');const cb=item.querySelector('input');if(cb)cb.checked=false;});
+  updateDD('dd-region','dd-region-lbl','region','prio_ph_region');
+  renderPortfolio();
+}
+function setPrioViewSegmento(){
+  toggleDD('dd-segment');
+}
+function updatePrioViewModeBtns(){
+  const segAtivo=msFilters.segment.size>0;
+  const uniBtn=document.getElementById('prio-view-unificada');const segBtn=document.getElementById('prio-view-segmento');
+  if(uniBtn)uniBtn.classList.toggle('on',!segAtivo);
+  if(segBtn)segBtn.classList.toggle('on',segAtivo);
+}
+// ── Exportar um histórico de priorização já salvo, direto da aba Prioridades ──
+// (antes só dava pra baixar um histórico salvo entrando em Documentos Úteis e achando a
+// entrada certa — pedido da Amanda pra atalho mais rápido sem sair da aba).
+function buildExportHistMenu(){
+  const menu=document.getElementById('dd-exphist-menu');if(!menu)return;
+  menu.innerHTML='';
+  if(!PRIORITY_HISTORY.length){
+    menu.innerHTML=`<div style="padding:8px 10px;font-size:9.5px;color:var(--text3)">${t('prio_exportar_historico_vazio')}</div>`;
+    return;
+  }
+  PRIORITY_HISTORY.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(h=>{
+    const isScoped=h.scopeLabel&&h.scopeLabel!=='Geral';
+    const label=fmtBRFull(h.date)+' — '+(isScoped?h.scopeLabel:t('docs_subfolder_unificada'));
+    const item=document.createElement('div');item.className='ms-dd-item';item.style.cursor='pointer';
+    item.innerHTML=`<i class="ti ti-file-spreadsheet" style="font-size:10px;color:var(--text3)"></i><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${label}">${label}</span>`;
+    item.onclick=(e)=>{e.stopPropagation();exportPriorityHistoryXlsx(h.id);document.getElementById('dd-exphist')?.classList.remove('open');};
+    menu.appendChild(item);
+  });
 }
 // ── Campos manuais do Portfólio (não vêm do Jira, editados direto no HUB) ──
 // TPV Previsto, Receita Líquida Prevista, Driver Estratégico/Regulatório e Driver Data.
@@ -4749,8 +4839,7 @@ function saveManualField(key,field,label){
 async function pushManualFieldToJira(key,jiraFieldId,value){
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:')return{ok:false,error:'GAS não configurado'};
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'updateManualField',issueKey:key,fieldId:jiraFieldId,value})});
+    const r=await gasFetch({action:'updateManualField',issueKey:key,fieldId:jiraFieldId,value});
     const d=await r.json();
     if(!d.ok)console.warn('pushManualFieldToJira:',key,jiraFieldId,d.error);
     return d;
@@ -4777,13 +4866,13 @@ function saveGoLive(key){
   persistProjects();
   closeM('edit-golive-modal');
   renderPortfolio();
+  if(key===curKey)renderResumoDashboard(); // agora editável a partir do Resumo — atualiza o cabeçalho sem precisar reabrir o projeto
   pushGoLiveToJira(key,p.golive);
 }
 async function pushGoLiveToJira(key,golive){
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:')return{ok:false,error:'GAS não configurado'};
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'updateGoLive',issueKey:key,golive})});
+    const r=await gasFetch({action:'updateGoLive',issueKey:key,golive});
     const d=await r.json();
     if(!d.ok)console.warn('pushGoLiveToJira:',key,d.error);
     return d;
@@ -4941,7 +5030,7 @@ async function loadJiraTransitions(key){
   if(!loading||!dd||!list||!btn)return;
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')){loading.textContent=window.t('prio_cs_integracao_nao_config');return;}
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getJiraTransitions',issueKey:key})});
+    const r=await gasFetch({action:'getJiraTransitions',issueKey:key});
     const d=await r.json();
     if(!document.getElementById('cs-loading'))return; // modal foi fechado enquanto buscava
     if(!d.ok){loading.textContent=window.t('prio_cs_erro_buscar_prefix')+(d.error||'—');return;}
@@ -4965,7 +5054,7 @@ async function applyStatusChange(key){
   const transitionId=csSelectedTransitionId;if(!transitionId)return;
   const btn=document.getElementById('cs-save-btn');btn.disabled=true;btn.textContent=t('prio_cs_aplicando');
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'transitionJiraIssue',issueKey:key,transitionId})});
+    const r=await gasFetch({action:'transitionJiraIssue',issueKey:key,transitionId});
     const d=await r.json();
     if(!d.ok){alert(t('prio_cs_falha_mudar_status_prefix')+(d.error||'—'));btn.disabled=false;btn.textContent=t('prio_cs_aplicar_btn');return;}
     const p=PROJECTS.find(x=>x.key===key);
@@ -5075,7 +5164,7 @@ function renderPortfolio(){
       <td data-col="ultprio" style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
       <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)" title="${bucketedPrio?fmtLog('prio_status_nao_participa_tpl',{status:p.status}):''}">${bucketedPrio?(p.priority!=null?Math.trunc(p.priority):'—'):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)))}</td>
       <td data-col="variacao" style="text-align:center;font-size:9px;font-weight:600;white-space:nowrap;color:${(!filtersActive)&&/⬆/.test(p.priorityVariation||'')?'var(--green)':(!filtersActive)&&/⬇/.test(p.priorityVariation||'')?'var(--red)':'var(--text3)'}" title="Variação de prioridade (Jira)">${(!filtersActive)&&p.priorityVariation?p.priorityVariation:'—'}</td>
-      <td data-col="proj"><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProjectSchedule('${p.key}')">
+      <td data-col="proj"><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProject('${p.key}')">
         <span style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;flex-shrink:0">${p.key}</span>
         <span style="font-weight:500;font-size:clamp(8px,1vw,9.5px);overflow:hidden;flex:1;min-width:0;word-break:break-word;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical" title="${p.summary}">${p.summary}</span>
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
@@ -5083,10 +5172,9 @@ function renderPortfolio(){
       <td data-col="tipo"><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
       <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?t('prio_status_change_title_editable'):p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
       <td data-col="gp"><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
-      <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:8px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle;cursor:pointer" title="'+window.fmtLog('prio_ver_fila_time_title_tpl',{team:t.replace(/'/g,"\\'")})+'" onclick="event.stopPropagation();openTeamQueueModal(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:8px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
-      <td data-col="exp"><span style="font-size:10px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
-      <td data-col="golive"><span style="font-size:10px;font-weight:${glDate?'600':'400'};color:${glOverdue?'var(--red)':glDate?'var(--green)':'var(--text3)'}${isEditorOrAbove()?';cursor:pointer':''}" title="${isEditorOrAbove()?t('prio_golive_edit_title'):''}" ${isEditorOrAbove()?`onclick="event.stopPropagation();editGoLive('${p.key}')"`:''}>${glDate?fmtBR(glDate):'—'}</span></td>
-      <td data-col="saude">${healthBadge(st.health,st.lateTasks)}</td>
+      <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:9px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle;cursor:pointer" title="'+window.fmtLog('prio_ver_fila_time_title_tpl',{team:t.replace(/'/g,"\\'")})+'" onclick="event.stopPropagation();openTeamQueueModal(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:9px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
+      <td data-col="exp"><span style="font-size:9.5px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
+      <td data-col="golive"><span style="font-size:9.5px;font-weight:${glDate?'600':'400'};color:${glOverdue?'var(--red)':glDate?'var(--green)':'var(--text3)'}">${glDate?fmtBR(glDate):'—'}</span></td>
       <td data-col="prog">${st.has&&st.tasks>0?`<div style="display:flex;align-items:center;gap:4px"><div class="prog-track" style="width:55px"><div class="prog-fill" style="width:${st.prog}%;background:#6924E1"></div></div><span style="font-size:9.5px;color:var(--text3)">${st.prog}%</span></div>`:'—'}</td>
       <td data-col="score">${(()=>{
         const sr=computeProjectScoring(p);
@@ -5096,11 +5184,11 @@ function renderPortfolio(){
         const scoreOnclick=canEditScorePf?` onclick="event.stopPropagation();if(prepareProjectContext('${p.key}'))openScoringModal();"`:'';
         const scoreTitle=canEditScorePf?` title="${sr?t('prio_score_editar_title'):t('prio_score_preencher_title')}"`:'';
         const scoreCursor=canEditScorePf?';cursor:pointer':'';
-        if(sr)return `<b style="color:${sr.cls.color};font-size:10px${scoreCursor}"${scoreOnclick}${scoreTitle}>${sr.score.toFixed(2)} ${sr.cls.emoji}</b>`;
-        return `<span style="color:var(--text3);font-size:10px${scoreCursor}"${scoreOnclick}${scoreTitle}>—</span>`;
+        if(sr)return `<b style="color:${sr.cls.color};font-size:9.5px${scoreCursor}"${scoreOnclick}${scoreTitle}>${sr.score.toFixed(2)} ${sr.cls.emoji}</b>`;
+        return `<span style="color:var(--text3);font-size:9.5px${scoreCursor}"${scoreOnclick}${scoreTitle}>—</span>`;
       })()}</td>
-      <td data-col="tpv">${manualFieldCellHtml(p,'tpvPrevisto',t('rsm_tpv_previsto'))}</td>
-      <td data-col="receita">${manualFieldCellHtml(p,'receitaLiquidaPrevista',t('rsm_receita_liquida'))}</td>
+      <td data-col="tpv">${p.type==='Comercial'?manualFieldCellHtml(p,'tpvPrevisto',t('rsm_tpv_previsto')):'<span style="font-size:9.5px;color:var(--text3)">—</span>'}</td>
+      <td data-col="receita">${p.type==='Comercial'?manualFieldCellHtml(p,'receitaLiquidaPrevista',t('rsm_receita_liquida')):'<span style="font-size:9.5px;color:var(--text3)">—</span>'}</td>
       <td data-col="driveresg">${manualFieldCellHtml(p,'driverEstReg',t('prio_driver_estreg_full'))}</td>
       <td data-col="driverdata">${manualFieldCellHtml(p,'driverData',t('prio_driver_data_full'))}</td>
       <td data-col="acao"><button class="pf-act ${st.has?'':'pri'}" onclick="openProjectSchedule('${p.key}')">${st.has?t('prio_ver_cronograma_btn'):t('prio_criar_cronograma_btn')}</button></td>`;
@@ -5114,6 +5202,7 @@ function renderPortfolio(){
     }
     tbody.appendChild(tr);shown++;
   });
+  updatePrioViewModeBtns();
   document.getElementById('badge-pf').textContent=carteiraTotal(); // badge da aba sempre bate com o total do card "Dados Gerais", nao com o filtro local da tabela de Prioridades
   const sub=document.getElementById('portfolio-subtitle');
   if(sub)sub.textContent=fmtLog('prio_ordenado_por_prioridade_shown_tpl',{n:shown,projetos:shown!==1?t('prio_projeto_plural'):t('prio_projeto_singular')});
@@ -5262,6 +5351,7 @@ function savePriorityHistorySnapshot(){
   if(existingIdx>=0)PRIORITY_HISTORY[existingIdx]=snap;else PRIORITY_HISTORY.push(snap);
   persistPriorityHistory();
   renderDocsLibrary();
+  buildExportHistMenu();
   alert(fmtLog('prio_alert_historico_salvo_tpl',{scope:scopeLabel,date:fmtBRFull(dateStr)}));
 }
 function secHdr(sec, iconBg, iconColor, iconClass, title, subtitle, extraRight=''){
@@ -6379,7 +6469,6 @@ function renderPrioridadesShell(activeCount){
       <th style="width:115px" data-col="times">${t('prio_col_times')}</th>
       <th style="width:80px" data-col="exp">${t('prio_col_exp_entrega')}</th>
       <th style="width:75px" data-col="golive">${t('prio_col_golive')}</th>
-      <th style="width:90px" data-col="saude">${t('prio_col_saude_cron')}</th>
       <th style="width:85px" data-col="prog">${t('prio_col_progresso')}</th>
       <th style="width:75px" data-col="score">${t('prio_col_score')} <i class="ti ti-info-circle" style="font-size:11px;cursor:pointer;color:var(--text3)" title="${t('prio_col_score_title')}" onclick="event.stopPropagation();openScoringInfoModal()"></i></th>
       <th style="width:100px" data-col="tpv" title="${t('prio_col_tpv_title')}">${t('rsm_tpv_previsto')}</th>
@@ -7097,8 +7186,7 @@ async function syncUpdateToJira(key,update){
   const comment=`[HUB VMO] ${update.author} · ${update.when}: ${cleanBody}`;
   console.log('[syncUpdateToJira] enviando comentário para',key,'→',comment);
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'addJiraComment',issueKey:key,comment})});
+    const r=await gasFetch({action:'addJiraComment',issueKey:key,comment});
     const d=await r.json();
     if(d.ok)console.log('[syncUpdateToJira] OK — comentário adicionado em',key);
     else console.warn('[syncUpdateToJira] FALHOU:',key,d.error||d);
@@ -7534,9 +7622,7 @@ async function sendEmail(){
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('rsm_enviando');statusEl.style.color='var(--text3)';}
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
-      action:'sendExecutiveEmail',subject,body:plainBody,htmlBody,recipients:uniqueRecipients,
-    })});
+    const r=await gasFetch({action:'sendExecutiveEmail',subject,body:plainBody,htmlBody,recipients:uniqueRecipients});
     const d=await r.json();
     if(d.ok){
       if(statusEl){statusEl.textContent=fmtLog('shared_status_enviado_dest_tpl',{n:uniqueRecipients.length,s:uniqueRecipients.length!==1?'s':''});statusEl.style.color='var(--green)';}
@@ -7581,12 +7667,12 @@ async function sendExecutiveSlack(){
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('shared_enviando_slack');statusEl.style.color='var(--text3)';}
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
+    const r=await gasFetch({
       action:'sendSlackExecutive',
       dateLabel:`${TODAY.getDate()} de ${MONTHS_FULL[TODAY.getMonth()]} de ${TODAY.getFullYear()}`,
       author:currentUser?.name||'VMO Tool',
       projects,
-    })});
+    });
     const d=await r.json();
     if(d.ok){if(statusEl){statusEl.textContent=t('shared_enviado_slack');statusEl.style.color='var(--green)';}}
     else{if(statusEl){statusEl.textContent=t('rsm_erro_prefix')+(d.error||t('shared_erro_enviar_slack_suffix'));statusEl.style.color='var(--red)';}}
@@ -7622,7 +7708,7 @@ async function sendStakeholderSlack(){
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('shared_enviando_slack');statusEl.style.color='var(--text3)';}
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    const r=await gasFetch(payload);
     const d=await r.json();
     if(d.ok){if(statusEl){statusEl.textContent=t('shared_enviado_slack');statusEl.style.color='var(--green)';}}
     else{if(statusEl){statusEl.textContent=t('rsm_erro_prefix')+(d.error||t('shared_erro_enviar_slack_suffix'));statusEl.style.color='var(--red)';}}
@@ -7825,8 +7911,16 @@ function renderResumoDashboard(){
   document.getElementById('rsm-jira-key').textContent=curKey;jl.href=`https://one-bemobi.atlassian.net/browse/${curKey}`;
   const st=getStats(curKey);const glDate=p.golive||st.goLiveLocal;
   const glChip=document.getElementById('rsm-golive');const glVal=document.getElementById('rsm-golive-val');
-  if(glDate){glChip.style.display='';glVal.textContent=fmtBRFull(glDate)+(p.golive?' (Jira)':' (local)');}
+  const canEdGL=isEditorOrAbove();
+  // Data de Go Live passou a ser editável só aqui no Resumo (saiu da aba Prioridades, pedido da
+  // Amanda) — então o selo precisa aparecer mesmo SEM data ainda definida, senão quem tem
+  // permissão não teria mais nenhum jeito de cadastrar a primeira data de Go Live de um projeto
+  // (mesmo ajuste que a "Data Alvo" já faz abaixo, pra manter os dois consistentes).
+  if(glDate||canEdGL){glChip.style.display='';glVal.textContent=glDate?(fmtBRFull(glDate)+(p.golive?' (Jira)':' (local)')):'—';}
   else glChip.style.display='none';
+  glChip.style.cursor=canEdGL?'pointer':'';
+  glChip.title=canEdGL?t('prio_golive_edit_title'):'';
+  glChip.onclick=canEdGL?(()=>editGoLive(curKey)):null;
   // "Data Alvo" = Expectativa de Entrega do Jira (p.duedate) — mesmo campo já usado nas
   // colunas de Prioridades/exportação, só exibido aqui também no cabeçalho do Resumo.
   const daChip=document.getElementById('rsm-dataalvo');const daVal=document.getElementById('rsm-dataalvo-val');
@@ -8290,14 +8384,12 @@ async function notifyFollowers(key,eventLabel,detailText,eventType){
   const emailRecipients=interested.filter(f=>f.channels?.email).map(f=>f.email);
   const slackRecipients=interested.filter(f=>f.channels?.slack).map(f=>f.email);
   if(emailRecipients.length){
-    fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
-      action:'sendExecutiveEmail',subject,body:bodyText,htmlBody,recipients:emailRecipients,
-    })}).catch(e=>console.warn('notifyFollowers (email) falhou:',e));
+    gasFetch({action:'sendExecutiveEmail',subject,body:bodyText,htmlBody,recipients:emailRecipients})
+      .catch(e=>console.warn('notifyFollowers (email) falhou:',e));
   }
   if(slackRecipients.length){
-    fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
-      action:'sendSlackFollowerDM',recipients:slackRecipients,message:bodyText,issueKey:key,
-    })}).catch(e=>console.warn('notifyFollowers (slack) falhou — backend ainda não implementa a action sendSlackFollowerDM:',e));
+    gasFetch({action:'sendSlackFollowerDM',recipients:slackRecipients,message:bodyText,issueKey:key})
+      .catch(e=>console.warn('notifyFollowers (slack) falhou:',e));
   }
 }
 function editFormLinkFromResumo(){
@@ -8430,7 +8522,7 @@ async function fetchConfluenceAtasList(key,force){
   try{
     const ctrl=new AbortController();
     const timer=setTimeout(()=>ctrl.abort(),20000);
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action,pageId:ref.id})});
+    const r=await gasFetch({action,pageId:ref.id},{signal:ctrl.signal});
     clearTimeout(timer);
     const rawText=await r.text();
     let d;
@@ -8465,7 +8557,7 @@ async function fetchScopeFromConfluence(){
   try{
     const ctrl=new AbortController();
     const timer=setTimeout(()=>ctrl.abort(),20000);
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action:'getConfluenceScope',pageId})});
+    const r=await gasFetch({action:'getConfluenceScope',pageId},{signal:ctrl.signal});
     clearTimeout(timer);
     const rawText=await r.text();
     let d;
@@ -8987,7 +9079,7 @@ async function fetchDebriefingConfluenceList(force){
   try{
     const ctrl=new AbortController();
     const timer=setTimeout(()=>ctrl.abort(),20000);
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},signal:ctrl.signal,body:JSON.stringify({action,pageId:ref.id})});
+    const r=await gasFetch({action,pageId:ref.id},{signal:ctrl.signal});
     clearTimeout(timer);
     const rawText=await r.text();
     let d;
@@ -9288,6 +9380,7 @@ function removePriorityHistorySnapshot(id){
   PRIORITY_HISTORY=PRIORITY_HISTORY.filter(x=>x.id!==id);
   renderDocsLibrary();
   persistPriorityHistory();
+  buildExportHistMenu();
 }
 
 // ── ZOOM / SEQ NUMS ──
@@ -10788,10 +10881,12 @@ function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create
   `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">${t('btn_salvar')}</button>`);
   document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:'';document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`${t('ms_er_auto')} (${fmtBR(autoEr)}).`:t('ms_er_manual');document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
   ['ms-name','ms-start','ms-deadline','ms-status','ms-color'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
-  // Prazo só é definido na criação da etapa — depois de criada, o campo fica travado mesmo pra
-  // quem tem permissão de editar (pedido explícito da Amanda pra virar um "Prazo Inicial" fixo).
+  // Prazo volta a ser editável depois de criado (pedido revisado da Amanda) — só que agora
+  // restrito a admin ou ao GP do projeto, mesmo que outro editor com acesso já pudesse editar
+  // o resto da etapa.
+  const msCanEditPrazo=canEditPrazoField(curKey);
   const msDlInput=document.getElementById('ms-deadline');
-  if(msDlInput){msDlInput.disabled=!editable||!!ms;msDlInput.title=ms?'O Prazo só pode ser definido na criação da etapa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
+  if(msDlInput){msDlInput.disabled=ms?!msCanEditPrazo:!editable;msDlInput.title=ms&&!msCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
   const msAddResp=document.getElementById('ms-add-resp-btn');if(msAddResp)msAddResp.style.display=editable?'':'none';
   document.getElementById('ms-save-btn').style.display=editable?'':'none';
   document.getElementById('ms-cancel-btn').textContent=editable?t('btn_cancelar'):t('btn_fechar');
@@ -11256,8 +11351,9 @@ function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t
   depInput.oninput=updateDepPreview;updateDepPreview();
   if(t&&getTaskLinks(t).length&&!t.notes)fetchJiraTaskDescription();
   ['t-name','t-start','t-deadline','t-endreal','t-status','t-progress','t-critical','t-marco','t-area','t-dep','t-deptype','t-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const tCanEditPrazo=canEditPrazoField(curKey);
   const tDlInput=document.getElementById('t-deadline');
-  if(tDlInput){tDlInput.disabled=!editable||!!t;tDlInput.title=t?'O Prazo só pode ser definido na criação da tarefa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
+  if(tDlInput){tDlInput.disabled=t?!tCanEditPrazo:!editable;tDlInput.title=t&&!tCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
   const tAddResp=document.getElementById('t-add-resp-btn');if(tAddResp)tAddResp.style.display=editable?'':'none';
   const tAddLink=document.getElementById('t-add-link-btn');if(tAddLink)tAddLink.style.display=editable?'':'none';
   document.getElementById('t-save-btn').style.display=editable?'':'none';
@@ -11284,8 +11380,7 @@ async function fetchJiraTaskDescription(inputEl){
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:'){return;}
   hint.innerHTML='<i class="ti ti-loader spin" style="font-size:9px"></i> Buscando descrição no Jira…';
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'getIssueFields',issueKey})});
+    const r=await gasFetch({action:'getIssueFields',issueKey});
     const d=await r.json();
     if(d.ok&&d.result&&d.result.description){
       if(notesEl&&!notesEl.value.trim()){notesEl.value=d.result.description;}
@@ -11394,8 +11489,9 @@ function openSubtaskModal(taskId,subId,newParentSubId){
   document.getElementById('s-name').value=s?s.name:'';document.getElementById('s-start').value=s?s.start:ds(TODAY);document.getElementById('s-deadline').value=s?s.deadline:'';document.getElementById('s-endreal').value=s?s.endReal:'';document.getElementById('s-status').value=s?s.status:'not_started';document.getElementById('s-notes').value=s?s.notes:'';setLinks('s-link-list',s?getTaskLinks(s):[]);document.getElementById('s-critical').checked=s?!!s.critical:false;document.getElementById('s-marco').checked=s?!!s.isMarco:false;document.getElementById('s-area').value=s?(s.area||''):'';document.getElementById('s-del-btn').style.display=(s&&editable)?'':'none';setAs('s-a-list',s?s.assignees:[]);populateAreaDatalist();
   document.getElementById('s-progress').value=s?taskProg(s):0;
   ['s-name','s-start','s-deadline','s-endreal','s-status','s-progress','s-critical','s-marco','s-area','s-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
+  const sCanEditPrazo=canEditPrazoField(curKey);
   const sDlInput=document.getElementById('s-deadline');
-  if(sDlInput){sDlInput.disabled=!editable||!!s;sDlInput.title=s?'O Prazo só pode ser definido na criação da subtarefa.':'Obrigatório — não poderá ser alterado depois de salvar.';}
+  if(sDlInput){sDlInput.disabled=s?!sCanEditPrazo:!editable;sDlInput.title=s&&!sCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
   const sAddResp=document.getElementById('s-add-resp-btn');if(sAddResp)sAddResp.style.display=editable?'':'none';
   const sAddLink=document.getElementById('s-add-link-btn');if(sAddLink)sAddLink.style.display=editable?'':'none';
   document.getElementById('s-save-btn').style.display=editable?'':'none';
@@ -12086,7 +12182,7 @@ async function sendStakeholderUpdate(){
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('rsm_enviando');statusEl.style.color='var(--text3)';}
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    const r=await gasFetch(payload);
     const d=await r.json();
     if(d.ok){
       if(statusEl){statusEl.textContent=fmtLog('rsm_status_enviado_tpl',{n:recipients.length,pessoas:recipients.length!==1?t('rsm_pessoa_plural'):t('rsm_pessoa_singular')});statusEl.style.color='var(--green)';}
@@ -12847,6 +12943,19 @@ function initFirebase() {
 }
 
 const GAS_URL='https://script.google.com/macros/s/AKfycbyfLKNtWMYbUdhWmkzNgLF25ZgFruphvxiCKHChHWgLnKLhcJpYlAEraz6RRGJSgoJA0A/exec';
+// Chave compartilhada entre este frontend e o Apps Script — não é um segredo "de verdade" (o
+// HTML é público, dá pra ler o código-fonte e achar essa chave), mas levanta a régua contra
+// abuso oportunista: sem ela, o endpoint doPost() aceitava QUALQUER requisição de QUALQUER
+// origem, incluindo enviar e-mail/Jira em massa pra quem descobrisse a URL. Precisa bater com
+// a mesma constante GAS_API_KEY configurada nas Script Properties do Apps Script.
+const GAS_API_KEY='UvJPhUOUOIJeJxnyCAcSoWeltT2VKltwI8nYVXHDU34';
+// Wrapper único pra toda chamada ao Apps Script — injeta a apiKey automaticamente, então nenhum
+// call site precisa lembrar de fazer isso manualmente (e nenhum novo call site futuro esquece).
+function gasFetch(bodyObj,extraOpts){
+  return fetch(GAS_URL,Object.assign({method:'POST',headers:{'Content-Type':'text/plain'}},extraOpts||{},{
+    body:JSON.stringify(Object.assign({apiKey:GAS_API_KEY},bodyObj))
+  }));
+}
 const JIRA_SYNC_FIELDS='summary,status,issuetype,duedate,created,customfield_28494,customfield_28488,customfield_28489,customfield_28594,customfield_29150,customfield_27831,customfield_29719,customfield_29858,customfield_29851,customfield_28200,customfield_28025,customfield_28026';
 // Campos manuais do Resumo que também existem como campo real no Jira e sincronizam nos dois
 // sentidos (igual à Prioridade): puxa do Jira no sync, e ao editar no HUB grava de volta lá.
@@ -12898,6 +13007,34 @@ async function persistSchedule(key) {
   } catch(e) {
     setSyncTxt('error', 'Erro ao salvar');
     console.error('persistSchedule error:', e);
+  }
+}
+// Bug encontrado nesta auditoria: persistSchedule() já chamava persistScheduleGAS(key) como
+// fallback pra quando o Firestore está indisponível, mas a função nunca tinha sido definida —
+// ia estourar "persistScheduleGAS is not defined" toda vez que esse caminho fosse exercitado.
+// Usa a action 'saveSchedule' que já existe no Apps Script (grava numa aba do Google Sheets).
+async function persistScheduleGAS(key) {
+  if (!GAS_URL || GAS_URL.includes('COLE_AQUI') || !schedules[key]) return;
+  try {
+    const r = await gasFetch({ action: 'saveSchedule', projectKey: key, scheduleData: schedules[key], userName: currentUser?.name || '' });
+    const d = await r.json();
+    if (d.ok) { setSyncTxt('ok', '✓ Salvo'); setTimeout(() => setSyncTxt('idle', ''), 2500); }
+    else { setSyncTxt('error', 'Erro ao salvar'); console.error('persistScheduleGAS error:', d.error); }
+  } catch (e) {
+    setSyncTxt('error', 'Erro ao salvar');
+    console.error('persistScheduleGAS error:', e);
+  }
+}
+// Mesmo bug, mesma correção — persistUpdates() chamava persistUpdatesGAS(key) sem que ela
+// existisse. Usa a action 'saveUpdates' já existente no Apps Script.
+async function persistUpdatesGAS(key) {
+  if (!GAS_URL || GAS_URL.includes('COLE_AQUI') || !schedules[key]) return;
+  try {
+    const r = await gasFetch({ action: 'saveUpdates', projectKey: key, updates: schedules[key].updates || [] });
+    const d = await r.json();
+    if (!d.ok) console.error('persistUpdatesGAS error:', d.error);
+  } catch (e) {
+    console.error('persistUpdatesGAS error:', e);
   }
 }
 
@@ -13001,6 +13138,65 @@ async function autoLoadOnLogin() {
       console.error('Firebase load error:', e);
       setSyncTxt('idle', '');
     }
+  } else if (GAS_URL && !GAS_URL.includes('COLE_AQUI')) {
+    // Lacuna encontrada nesta auditoria: sem o Firestore configurado, o app subia com
+    // `schedules` totalmente vazio — não havia NENHUM carregamento alternativo, só o de
+    // salvamento (persistScheduleGAS). Agora, no modo Sheets/Apps Script, carrega os
+    // cronogramas (action 'loadSchedules') e as atualizações (action 'loadUpdates',
+    // aba separada — mesma divisão schedules/updates que o Firestore já tinha) e aplica os
+    // mesmos valores padrão/normalizações do caminho do Firestore, pra nenhuma tela quebrar
+    // por causa de um campo que não existia ainda quando aquele registro foi salvo.
+    try {
+      setSyncTxt('syncing', 'Carregando...');
+      const [rSched, rUpd] = await Promise.all([
+        gasFetch({action:'loadSchedules'}),
+        gasFetch({action:'loadUpdates'}),
+      ]);
+      const dSched = await rSched.json();
+      const dUpd = await rUpd.json();
+      const updatesByKey = (dUpd.ok && dUpd.updates) ? dUpd.updates : {};
+      if (dSched.ok && dSched.schedules) {
+        Object.keys(dSched.schedules).forEach(key => {
+          const raw = dSched.schedules[key] || {};
+          schedules[key] = {
+            milestones: raw.milestones || [],
+            tasks: raw.tasks || [],
+            subtasks: raw.subtasks || [],
+            access: raw.access || [],
+            auditLog: raw.auditLog || [],
+            calendar: raw.calendar || 'BR',
+            holidays: raw.holidays || [],
+            baseline: raw.baseline || null,
+            scoring: raw.scoring || null,
+            scoringProd: raw.scoringProd || null,
+            stakeholders: mergeLegacyFollowersIntoStakeholders(raw.stakeholders, raw.followers),
+            scopeLink: raw.scopeLink || null,
+            formLink: raw.formLink || null,
+            scopeSummary: raw.scopeSummary || '',
+            clientName: raw.clientName || '',
+            clientNameManual: raw.clientNameManual || false,
+            decisions: raw.decisions || [],
+            minutes: raw.minutes || [],
+            minutesConfluenceLink: raw.minutesConfluenceLink || null,
+            hiddenConfluenceMinuteIds: raw.hiddenConfluenceMinuteIds || [],
+            healthOverride: raw.healthOverride || null,
+            updates: updatesByKey[key] || raw.updates || [],
+          };
+        });
+      }
+      // Projetos com updates salvos mas sem cronograma próprio ainda — mesmo tratamento que o
+      // caminho do Firestore dá (ver "else schedules[doc.id] = {...}" logo acima).
+      Object.keys(updatesByKey).forEach(key => {
+        if (!schedules[key]) {
+          schedules[key] = { milestones:[], tasks:[], subtasks:[], access:[], auditLog:[], updates: updatesByKey[key]||[], calendar:'BR', baseline:null, scoring:null, scoringProd:null, stakeholders:[], scopeLink:null, formLink:null, scopeSummary:'', clientName:'', clientNameManual:false, decisions:[], minutes:[], minutesConfluenceLink:null, healthOverride:null };
+        }
+      });
+      setSyncTxt('ok', '✓ Dados carregados');
+      setTimeout(() => setSyncTxt('idle', ''), 2500);
+    } catch(e) {
+      console.error('GAS load error:', e);
+      setSyncTxt('idle', '');
+    }
   }
   checkForcePasswordChange();
   // Step 2: Render immediately with what we have
@@ -13086,11 +13282,7 @@ async function autoSyncProjectsFromJira() {
   try {
     const ctrl2 = new AbortController();
     const timer2 = setTimeout(() => ctrl2.abort(), 30000);
-    const r = await fetch(GAS_URL, {
-      method: 'POST', headers: {'Content-Type':'text/plain'},
-      signal: ctrl2.signal,
-      body: JSON.stringify({action:'syncProjects', jql:JIRA_JQL, fields:JIRA_SYNC_FIELDS})
-    });
+    const r = await gasFetch({action:'syncProjects', jql:JIRA_JQL, fields:JIRA_SYNC_FIELDS}, {signal: ctrl2.signal});
     clearTimeout(timer2);
     const d = await r.json();
     if (d.ok && d.projects && d.projects.length) {
@@ -13183,9 +13375,7 @@ async function syncFromJira(){
     try{
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 30000); // 30s timeout
-      const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-        signal: ctrl.signal,
-        body:JSON.stringify({action:'syncProjects',jql:JIRA_JQL,fields:JIRA_SYNC_FIELDS})});
+      const r=await gasFetch({action:'syncProjects',jql:JIRA_JQL,fields:JIRA_SYNC_FIELDS},{signal:ctrl.signal});
       clearTimeout(timer);
       const d=await r.json();
       if(d.ok&&d.projects&&d.projects.length){
@@ -13387,8 +13577,7 @@ let dragPriorityKey=null;
 async function pushPriorityToJira(key,priority,lastPriority){
   if(!GAS_URL||GAS_URL.includes('COLE_AQUI')||window.location.protocol==='file:')return{ok:false,error:'GAS não configurado'};
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'updatePriority',issueKey:key,priority,lastPriority})});
+    const r=await gasFetch({action:'updatePriority',issueKey:key,priority,lastPriority});
     const d=await r.json();
     if(!d.ok)console.warn('pushPriorityToJira:',key,d.error);
     return d;
@@ -13802,16 +13991,7 @@ async function syncAllScheduleUrls() {
       try {
         const scheduleUrl = baseUrl + '?project=' + key;
         const goLive = getGoLive(key);
-        await fetch(GAS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'syncGoLive',
-            issueKey: key,
-            goLiveDate: goLive,
-            scheduleUrl: scheduleUrl
-          })
-        });
+        await gasFetch({action:'syncGoLive', issueKey:key, goLiveDate:goLive, scheduleUrl:scheduleUrl});
         synced++;
       } catch(e) { console.warn(`syncUrl ${key} error:`, e.message); }
     }));
@@ -13854,7 +14034,7 @@ async function shareScheduleByEmail(){
   const subject=t('sch_email_subject_prefix')+' '+(p.summary||curKey);
   const plainBody=t('sch_email_body_intro')+' '+(p.summary||curKey)+':\n'+url;
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendExecutiveEmail',subject,body:plainBody,htmlBody,recipients})});
+    const r=await gasFetch({action:'sendExecutiveEmail',subject,body:plainBody,htmlBody,recipients});
     const d=await r.json();
     if(d.ok){
       if(btn){btn.innerHTML='<i class="ti ti-check" style="font-size:10px"></i> '+t('sch_email_enviado_btn');}
@@ -13876,8 +14056,7 @@ async function syncToJira(key){
   // Build schedule URL — use current page URL with project param
   const scheduleUrl=window.location.href.split('?')[0]+'?project='+key;
   try{
-    const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'syncGoLive',issueKey:key,goLiveDate:getGoLive(key),scheduleUrl})});
+    const r=await gasFetch({action:'syncGoLive',issueKey:key,goLiveDate:getGoLive(key),scheduleUrl});
     const d=await r.json();
     if(d.ok){setSyncTxt('ok','✓ Jira sync');setTimeout(()=>setSyncTxt('idle',''),4000);}
     else setSyncTxt('error',d.error||'');
