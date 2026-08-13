@@ -9917,6 +9917,10 @@ function renderRows(){
   cont.innerHTML='';cont.style.width=LW+'px';
   const canEd=canEdit(curKey);
   cont.classList.toggle('no-edit',!canEd);
+  // Prazo/Duração no cronograma: restrito a admin ou ao GP do projeto (mais restrito que
+  // canEd, que também libera editor externo com acesso concedido) — mesma regra já aplicada
+  // no modal de Etapa/Tarefa/Subtarefa.
+  const canEdPrazo=canEditPrazoField(curKey);
   const mss=sched.milestones||[];const tasks=sched.tasks||[];const subtasksAll=sched.subtasks||[];
   if(!mss.length){cont.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:9px;color:var(--text3)"><i class="ti ti-calendar-plus" style="font-size:34px;opacity:.3"></i><p style="font-size:12px;text-align:center;max-width:260px;line-height:1.6">${t('sch_empty_title')}<br>${t('sch_empty_sub')} <b>${t('btn_nova_etapa')}</b> ${t('sch_empty_sub2')} <b>${t('sch_modelo')}</b>.</p></div>`;return;}
   const {idToNum,idToLabel}=buildRowNumMap(sched);
@@ -9944,7 +9948,7 @@ function renderRows(){
       </div>
       <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','ms','${ms.id}',null,event)"`:''}><span style="font-size:9.5px">${fmtBR(ms.start)}</span></div>
       <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'endreal','ms','${ms.id}',null,event)"`:''}>${autoEr?`<span style="font-size:9px;color:var(--green)">${fmtBR(autoEr)}<i class="ti ti-refresh" style="font-size:8px;margin-left:1px" title="Auto"></i></span>`:ms.endReal?`<span style="font-size:9.5px">${fmtBR(ms.endReal)}</span>`:'—'}</div>
-      <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de}</span></div>
+      <div class="td" data-col="de" style="width:${C.de}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar (Início/Prazo/Duração)':''}" ${canEdPrazo?`onclick="event.stopPropagation();openMsModal('${ms.id}')"`:''}><span style="font-size:9px;color:var(--text3)">${de}</span></div>
       <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr!=='—'&&de!=='—'&&parseInt(dr)>parseInt(de)?'var(--red)':'var(--green)'}">${dr}</span></div>
       <div class="td" data-col="prog" style="width:${C.prog}px"><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog}%</span></div></div>
       <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','ms','${ms.id}',null,event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml||'—'}</div></div>
@@ -9952,7 +9956,7 @@ function renderRows(){
       <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','ms','${ms.id}',null,event)"`:''}><span class="tbadge2 ${SC[ms.status]||'ts-not_started'}">${SL[ms.status]||ms.status}</span></div>
       <div class="td" data-col="jiralink" style="width:${C.jiralink}px">—</div>
       <div class="td" data-col="atraso" style="width:${C.atraso}px" title="Diferença entre o Prazo e a Data de Conclusão real (ou hoje, se em aberto e vencida) — atualiza sozinho, sem precisar corrigir na mão">${atrasoCellHtml(msAtraso(ms,curKey))}</div>
-      <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da etapa."><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
+      <div class="td" data-col="dl" style="width:${C.dl}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar':'Só o GP deste projeto ou um admin pode alterar o Prazo.'}" ${canEdPrazo?`onclick="event.stopPropagation();openMsModal('${ms.id}')"`:''}><span style="font-size:9.5px">${fmtBR(ms.deadline)}</span></div>
       `;
     if(canEd){
       row.addEventListener('dragstart',e=>onMsDragStart(e,ms.id));
@@ -10017,7 +10021,7 @@ function renderRows(){
         </div>
         <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','task','${t.id}','${ms.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(t.start)}</span></div>
         <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','task','${t.id}','${ms.id}',event)"`:''}>${t.endReal?`<span style="font-size:9.5px">${fmtBR(t.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','task','${t.id}','${ms.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
-        <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
+        <div class="td" data-col="de" style="width:${C.de}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar (Início/Prazo/Duração)':''}" ${canEdPrazo?`onclick="event.stopPropagation();openTaskModal('${ms.id}','${t.id}')"`:''}><span style="font-size:9px;color:var(--text3)">${de2}</span></div>
         <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr2!=='—'&&de2!=='—'&&parseInt(dr2)>parseInt(de2)?'var(--red)':'var(--green)'}">${dr2}</span></div>
         <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog2}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog2}%</span></div></div>
         <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','task','${t.id}','${ms.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml2||'—'}</div></div>
@@ -10025,7 +10029,7 @@ function renderRows(){
         <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','task','${t.id}','${ms.id}',event)"`:''}><span class="tbadge2 ${SC[t.status]}">${SL[t.status]}</span></div>
         <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','task','${t.id}','${ms.id}',event)"`:''}>${jiraLinkHtml}</div>
         <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title')}">${atrasoCellHtml(atrasoAcc2)}</div>
-        <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da tarefa."><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
+        <div class="td" data-col="dl" style="width:${C.dl}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar':'Só o GP deste projeto ou um admin pode alterar o Prazo.'}" ${canEdPrazo?`onclick="event.stopPropagation();openTaskModal('${ms.id}','${t.id}')"`:''}><span style="font-size:9.5px">${fmtBR(t.deadline)}</span></div>
         `;
       if(canEd){
         tr2.addEventListener('dragstart',e=>onRowDragStart(e,'task',t.id));
@@ -10167,7 +10171,7 @@ function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren
     </div>
     <div class="td" data-col="start" style="width:${C.start}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'start','subtask','${s.id}','${t.id}',event)"`:''}><span style="font-size:9.5px">${fmtBR(s.start)}</span></div>
     <div class="td" data-col="er" style="width:${C.er}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit_er'):''}"${canEd?` onclick="inlineEditField(this,'endreal','subtask','${s.id}','${t.id}',event)"`:''}>${s.endReal?`<span style="font-size:9.5px">${fmtBR(s.endReal)}</span>`:(canEd?`<button class="sched-mini-edit-btn" onclick="event.stopPropagation();inlineEditField(this.closest('.td'),'endreal','subtask','${s.id}','${t.id}',event)" style="font-size:8.5px;border:1px solid var(--border2);border-radius:4px;background:var(--bg);color:var(--text3);cursor:pointer;padding:1px 4px">${window.t('add_date_btn')}</button>`:'—')}</div>
-    <div class="td" data-col="de" style="width:${C.de}px"><span style="font-size:9px;color:var(--text3)">${de3}</span></div>
+    <div class="td" data-col="de" style="width:${C.de}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar (Início/Prazo/Duração)':''}" ${canEdPrazo?`onclick="event.stopPropagation();openSubtaskModal('${t.id}','${s.id}')"`:''}><span style="font-size:9px;color:var(--text3)">${de3}</span></div>
     <div class="td" data-col="dr" style="width:${C.dr}px"><span style="font-size:9px;color:${dr3!=='—'&&de3!=='—'&&parseInt(dr3)>parseInt(de3)?'var(--red)':'var(--green)'}">${dr3}</span></div>
     <div class="td" data-col="prog" style="width:${C.prog}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'progress','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;align-items:center;gap:3px"><div class="prog-track" style="width:42px"><div class="prog-fill" style="width:${prog3}%;background:${ms.color}"></div></div><span style="font-size:9px;color:var(--text3)">${prog3}%</span></div></div>
     <div class="td" data-col="resp" style="width:${C.resp}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'resp','subtask','${s.id}','${t.id}',event)"`:''}><div style="display:flex;gap:2px;overflow:hidden">${aHtml3||'—'}</div></div>
@@ -10175,7 +10179,7 @@ function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren
     <div class="td" data-col="st" style="width:${C.st}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'status','subtask','${s.id}','${t.id}',event)"`:''}><span class="tbadge2 ${SC[s.status]}">${SL[s.status]}</span></div>
     <div class="td" data-col="jiralink" style="width:${C.jiralink}px${canEd?';cursor:pointer':''}" title="${canEd?window.t('tt_click_edit'):''}"${canEd?` onclick="inlineEditField(this,'jira','subtask','${s.id}','${t.id}',event)"`:''}>${jiraLinkHtml3}</div>
     <div class="td" data-col="atraso" style="width:${C.atraso}px" title="${window.t('tt_atraso_row_title_short')}">${atrasoCellHtml(atraso3)}</div>
-    <div class="td" data-col="dl" style="width:${C.dl}px" title="O Prazo só pode ser definido na criação da subtarefa."><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
+    <div class="td" data-col="dl" style="width:${C.dl}px${canEdPrazo?';cursor:pointer':''}" title="${canEdPrazo?'Clique para editar':'Só o GP deste projeto ou um admin pode alterar o Prazo.'}" ${canEdPrazo?`onclick="event.stopPropagation();openSubtaskModal('${t.id}','${s.id}')"`:''}><span style="font-size:9.5px">${fmtBR(s.deadline)}</span></div>
     `;
   if(canEd){
     tr.addEventListener('dragstart',e=>onRowDragStart(e,'sub',s.id));
