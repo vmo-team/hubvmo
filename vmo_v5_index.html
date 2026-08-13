@@ -3305,11 +3305,9 @@ function canEditDataAlvo(projectKey) {
 // na criação quanto depois. Antes disso ficava travado pra sempre após a criação, mesmo pra
 // quem tinha permissão de editar.
 function canEditPrazoField(projectKey) {
-  if (!currentUser) return false;
-  if (currentUser.role === 'admin') return true;
-  const p = PROJECTS.find(x => x.key === projectKey);
-  if (!p) return false;
-  return isGPOfProject(currentUser, p);
+  // Revertido a pedido da Amanda: Prazo/Duração depois de criado volta a seguir a MESMA regra
+  // de qualquer outro campo do cronograma (canEdit) — não fica restrito só a admin/GP.
+  return canEdit(projectKey);
 }
 // ── Duração (dias) nos modais de Etapa/Tarefa/Subtarefa ──
 // Atalho pra quem prefere digitar Início + quantos dias dura, em vez de calcular o Prazo exato
@@ -10043,9 +10041,9 @@ function renderRows(){
       subsOfTask.forEach((s,si)=>{
         const children4=subtasksAll.filter(x=>x.taskId===t.id&&x.parentSubId===s.id);
         const prevL3=si>0?subsOfTask[si-1]:null;
-        const isClS=buildSubRowEl(s,3,t,ms,canEd,cont,LW,subHidden,prevL3,children4.length>0,idToLabel[s.id]);
+        const isClS=buildSubRowEl(s,3,t,ms,canEd,canEdPrazo,cont,LW,subHidden,prevL3,children4.length>0,idToLabel[s.id]);
         const subSubHidden=subHidden||isClS;
-        children4.forEach(cs=>{buildSubRowEl(cs,4,t,ms,canEd,cont,LW,subSubHidden,null,false,idToLabel[cs.id]);});
+        children4.forEach(cs=>{buildSubRowEl(cs,4,t,ms,canEd,canEdPrazo,cont,LW,subSubHidden,null,false,idToLabel[cs.id]);});
       });
       // "Adicionar subtarefa"/"Adicionar item" saíram da barra fixa embaixo de cada Tarefa
       // (poluía demais com muitas Tarefas — pedido da Amanda) e viraram opção no menu lateral
@@ -10122,7 +10120,7 @@ function toggleMsMarco(msId,ev){
 // parametrizado por 'depth'. Nível 4 nunca tem filhos (limite de 4 níveis: Etapa→Tarefa→
 // Subtarefa→Sub-subtarefa), então só nível 3 pode mostrar seta de expandir/recolher e o botão
 // de indentar (indent). Retorna se a própria linha está colapsada (usado pra esconder os filhos).
-function buildSubRowEl(s,depth,t,ms,canEd,cont,LW,hidden,prevSibling,hasChildren4,label){
+function buildSubRowEl(s,depth,t,ms,canEd,canEdPrazo,cont,LW,hidden,prevSibling,hasChildren4,label){
   const prog3=taskProg(s);const de3=s.start&&s.deadline?diffD(pd(s.start),pd(s.deadline))+'d':'—';const dr3=s.start&&s.endReal?diffD(pd(s.start),pd(s.endReal))+'d':'—';
   const atraso3=subtaskAtraso(s);
   const aHtml3=(s.assignees||[]).map(a=>`<span class="atag ${a.type==='external'?'ext':''}">${a.name.split(' ')[0]}</span>`).join('');
