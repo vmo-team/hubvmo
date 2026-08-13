@@ -101,6 +101,9 @@ body{font-family:'Poppins',system-ui,sans-serif;font-size:11px;background:var(--
 .s-bkl{background:#cbd5e1;color:#1e293b}.s-can{background:#fee2e2;color:#b91c1c}
 .s-kick{background:#fce7f3;color:#be185d}
 .s-precom{background:#ede0d3;color:#7c4a23}.s-com{background:#e0c3a0;color:#6b4423}
+/* Amanda: status do Jira sempre em maiúsculas na ferramenta (padronização visual --
+   não altera o valor real de p.status, só a exibição do badge) */
+.s-novos,.s-neg,.s-ref,.s-doc,.s-dev,.s-hom,.s-pos,.s-pau,.s-agp,.s-roll,.s-bkl,.s-can,.s-kick,.s-precom,.s-com{text-transform:uppercase}
 .ts-not_started{background:#e2e8f0;color:#475569}.ts-in_progress{background:#fef9c3;color:#854d0e}
 .ts-done{background:#dcfce7;color:#166534}.ts-blocked{background:#fee2e2;color:#b91c1c}
 .ts-cancelled{background:#1e293b;color:#fff}
@@ -273,7 +276,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
 
 /* Impacto por Time (Visão Geral) */
 .team-impact-grid{display:flex;flex-direction:column;gap:14px;padding:12px 14px 14px}
-.team-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+.team-card-row{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
 .team-card-row .kc2{min-width:0;padding-left:4px;padding-right:4px}
 .status-card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px}
 .status-card-row .kc2{min-width:0;padding-left:4px;padding-right:4px}
@@ -4339,7 +4342,10 @@ function buildDD(ddId,menuId,lblId,filterKey,values,placeholder,labelMap){
   menu.appendChild(clearEl);
   const sep=document.createElement('div');sep.className='ms-dd-sep';menu.appendChild(sep);
   values.forEach(v=>{
-    const lbl=(labelMap&&labelMap.find(x=>x.v===v)?.l)||v;
+    let lbl=(labelMap&&labelMap.find(x=>x.v===v)?.l)||v;
+    // Status do Jira sempre em maiúsculas na lista do filtro, pra padronizar com os badges
+    // (Amanda não consegue renomear o status lá no Jira, então isso é só exibição aqui).
+    if(filterKey==='status')lbl=String(lbl||'').toUpperCase();
     const item=document.createElement('div');item.className='ms-dd-item';
     item.innerHTML=`<input type="checkbox" id="chk-${filterKey}-${v.replace(/[^a-z0-9]/gi,'_')}"><label for="chk-${filterKey}-${v.replace(/[^a-z0-9]/gi,'_')}" style="cursor:pointer;flex:1">${lbl.length>28?lbl.slice(0,28)+'…':lbl}</label>`;
     const cb=item.querySelector('input');
@@ -4366,7 +4372,7 @@ function updateDD(ddId,lblId,filterKey,placeholder){
     // re-check using msFilters
   });}
   if(sel.size===0){lbl.textContent=t(placeholder);btn.classList.remove('active');}
-  else if(sel.size===1){lbl.textContent=[...sel][0].length>16?[...sel][0].slice(0,16)+'…':[...sel][0];btn.classList.add('active');}
+  else if(sel.size===1){const v0=filterKey==='status'?[...sel][0].toUpperCase():[...sel][0];lbl.textContent=v0.length>16?v0.slice(0,16)+'…':v0;btn.classList.add('active');}
   else{lbl.textContent=fmtLog('prio_selecionados_tpl',{n:sel.size});btn.classList.add('active');}
 }
 
@@ -5036,7 +5042,7 @@ function openChangeStatusModal(key){
   if(!isEditorOrAbove()){alert(t('prio_alert_only_editor_status'));return;}
   const p=PROJECTS.find(x=>x.key===key);if(!p)return;
   getOrBuildModal('change-status-modal',fmtLog('prio_modal_title_change_status_tpl',{key}),`
-    <div class="info-box" style="margin-bottom:8px">${fmtLog('prio_cs_info_tpl',{status:'<b>'+escHtml(p.status)+'</b>'})}</div>
+    <div class="info-box" style="margin-bottom:8px">${fmtLog('prio_cs_info_tpl',{status:'<b>'+escHtml(String(p.status||'').toUpperCase())+'</b>'})}</div>
     <div id="cs-loading" style="font-size:10.5px;color:var(--text3)">${t('prio_cs_buscando')}</div>
     <div class="cs-dd" id="cs-dd" style="display:none">
       <button type="button" class="cs-dd-btn" onclick="toggleCsDD()"><span id="cs-dd-label"></span><i class="ti ti-chevron-down cs-dd-icon"></i></button>
@@ -5090,7 +5096,7 @@ async function applyStatusChange(key){
     if(!d.ok){alert(t('prio_cs_falha_mudar_status_prefix')+(d.error||'—'));btn.disabled=false;btn.textContent=t('prio_cs_aplicar_btn');return;}
     const p=PROJECTS.find(x=>x.key===key);
     if(p&&d.newStatus){
-      logChange(key,fmtLog('prio_lg_status_alterado_tpl',{status:d.newStatus}),'#0369a1');
+      logChange(key,fmtLog('prio_lg_status_alterado_tpl',{status:String(d.newStatus||'').toUpperCase()}),'#0369a1');
       p.status=d.newStatus;
       persistProjects();
     }
@@ -5197,7 +5203,7 @@ function renderPortfolio(){
     tr.innerHTML=`
       <td data-col="drag" style="text-align:center;padding:2px">${dragEnabled?`<i class="ti ti-grip-vertical prio-grip" title="${t('prio_drag_title')}"></i>`:''}</td>
       <td data-col="ultprio" style="text-align:center;font-size:9px;color:var(--text3)">${(!filtersActive)&&(p.lastPriority!=null)?Math.trunc(p.lastPriority):'—'}</td>
-      <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)" title="${bucketedPrio?fmtLog('prio_status_nao_participa_tpl',{status:p.status}):''}">${bucketedPrio?(p.priority!=null?Math.trunc(p.priority):'—'):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)))}</td>
+      <td data-col="novaprio" style="text-align:center;font-size:9px;font-weight:700;color:var(--text3)" title="${bucketedPrio?fmtLog('prio_status_nao_participa_tpl',{status:String(p.status||'').toUpperCase()}):''}">${bucketedPrio?(p.priority!=null?Math.trunc(p.priority):'—'):((filtersActive&&!scopedReorder)?rowNum:(scopedReorder?rowNum:(p.priority!=null&&p.priority!==9999?Math.trunc(p.priority):rowNum)))}</td>
       <td data-col="variacao" style="text-align:center;font-size:9px;font-weight:600;white-space:nowrap;color:${(!filtersActive)&&/⬆/.test(p.priorityVariation||'')?'var(--green)':(!filtersActive)&&/⬇/.test(p.priorityVariation||'')?'var(--red)':'var(--text3)'}" title="Variação de prioridade (Jira)">${(!filtersActive)&&p.priorityVariation?p.priorityVariation:'—'}</td>
       <td data-col="proj"><div style="display:flex;align-items:center;gap:5px;cursor:pointer;overflow:hidden" onclick="openProject('${p.key}')">
         <span style="font-size:9px;color:var(--blue);background:#e8ecfd;padding:1px 4px;border-radius:3px;font-weight:700;white-space:nowrap;flex-shrink:0">${p.key}</span>
@@ -5205,7 +5211,7 @@ function renderPortfolio(){
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
       </div></td>
       <td data-col="tipo"><span class="spill" style="background:${ib};color:${ic}">${p.type}</span></td>
-      <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?t('prio_status_change_title_editable'):p.status}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
+      <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?t('prio_status_change_title_editable'):String(p.status||'').toUpperCase()}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
       <td data-col="gp"><span class="gp-tag" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
       <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:9px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle;cursor:pointer" title="'+window.fmtLog('prio_ver_fila_time_title_tpl',{team:t.replace(/'/g,"\\'")})+'" onclick="event.stopPropagation();openTeamQueueModal(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:9px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
       <td data-col="exp"><span style="font-size:9.5px;color:${p.duedate&&pd(p.duedate)<TODAY?'var(--red)':'var(--text2)'};font-weight:${p.duedate?'500':'400'}">${fmtBR(p.duedate)}</span></td>
@@ -5248,7 +5254,7 @@ function renderPortfolio(){
     if(msFilters.tipo.size>0)msFilters.tipo.forEach(t=>filters2.push({label:window.fmtLog('prio_chip_tipo_tpl',{v:t}),clear:()=>{msFilters.tipo.delete(t);updateDD('dd-tipo','dd-tipo-lbl','tipo','prio_ph_tipo');renderPortfolio();},col:'#0369a1',bg:'#e0f2fe'}));
     if(segF.size>0)segF.forEach(s=>filters2.push({label:window.fmtLog('prio_chip_segmento_tpl',{v:s==='Produtos'?'TI/Produtos':s}),clear:()=>{msFilters.segment.delete(s);updateDD('dd-segment','dd-segment-lbl','segment','prio_ph_segment');renderPortfolio();},col:'#9d174d',bg:'#fce7f3'}));
     if(regF.size>0)regF.forEach(r=>filters2.push({label:window.fmtLog('prio_chip_regiao_tpl',{v:r}),clear:()=>{msFilters.region.delete(r);updateDD('dd-region','dd-region-lbl','region','prio_ph_region');renderPortfolio();},col:'#166534',bg:'#dcfce7'}));
-    if(statusF.size>0)statusF.forEach(s=>filters2.push({label:s.slice(0,14),clear:()=>{msFilters.status.delete(s);updateDD('dd-status','dd-status-lbl','status','prio_ph_status');renderPortfolio();},col:'#155e75',bg:'#cffafe'}));
+    if(statusF.size>0)statusF.forEach(s=>filters2.push({label:s.toUpperCase().slice(0,14),clear:()=>{msFilters.status.delete(s);updateDD('dd-status','dd-status-lbl','status','prio_ph_status');renderPortfolio();},col:'#155e75',bg:'#cffafe'}));
     if(gpF.size>0)gpF.forEach(g=>filters2.push({label:window.fmtLog('prio_chip_gp_tpl',{v:g.split(' ')[0]}),clear:()=>{msFilters.gp.delete(g);updateDD('dd-gp','dd-gp-lbl','gp','prio_ph_gp');renderPortfolio();},col:'#5b21b6',bg:'#ede9fe'}));
     if(healthF.size>0)healthF.forEach(h=>filters2.push({label:h==='on-track'?window.t('prio_chip_health_ontrack'):h==='alert'?window.t('prio_chip_health_alert'):h==='off-track'?window.t('prio_chip_health_offtrack'):window.t('prio_chip_health_none'),clear:()=>{msFilters.health.delete(h);updateDD('dd-health','dd-health-lbl','health','prio_ph_health');renderPortfolio();},col:'#166534',bg:'#dcfce7'}));
     if(timesF.size>0)timesF.forEach(t=>filters2.push({label:window.fmtLog('prio_chip_time_tpl',{v:t.slice(0,12)}),clear:()=>{msFilters.times.delete(t);updateDD('dd-times','dd-times-lbl','times','prio_ph_times');renderPortfolio();},col:'#0369a1',bg:'#e0f2fe'}));
@@ -5344,7 +5350,7 @@ function priorityRowToArray(r){
     r.variation,
     `${r.key} · ${r.summary}`,
     r.gp,
-    r.status,
+    String(r.status||'').toUpperCase(), // status do Jira sempre maiúsculo no Excel também, pra bater com a tela
     r.duedate?fmtBR(r.duedate):'',
     r.golive?fmtBR(r.golive):'',
     r.goLiveLocal?fmtBR(r.goLiveLocal):'',
@@ -7592,7 +7598,7 @@ function buildProjectEmailCardHtml(key){
     <div style="font-size:17px;font-weight:700;color:#0b1b73;margin-bottom:2px">${esc(p.summary)}</div>
     <div style="font-size:12px;color:#6924e1;font-weight:600;margin-bottom:12px">${esc(key)} · GP: ${esc(p.gp||'—')}</div>
     <div style="margin-bottom:12px">
-      <span style="display:inline-block;background:#f0f1fa;color:#0b1b73;font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${esc(p.status)}</span>
+      <span style="display:inline-block;background:#f0f1fa;color:#0b1b73;font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${esc(String(p.status||'').toUpperCase())}</span>
       <span style="display:inline-block;background:${hm.bg};color:${hm.fg};font-size:11px;font-weight:600;padding:5px 12px;border-radius:14px;margin:0 6px 6px 0">${hm.lbl}</span>
     </div>
     ${glDate?`<div style="font-size:13px;color:#4a5180;margin-bottom:6px"><b style="color:#0b1b73">Go Live:</b> ${esc(fmtBRFull(glDate))}</div>`:''}
@@ -13051,7 +13057,12 @@ async function persistSchedule(key) {
       });
       setSyncTxt('ok', '✓ Salvo');
       setTimeout(() => setSyncTxt('idle', ''), 2500);
-      syncToJira(key);
+      // Bug reportado pela Amanda: excluir etapa/tarefa (ou qualquer outro save genérico do
+      // cronograma) disparava esse sync automático, que recalcula getGoLive() do que sobrou no
+      // cronograma e empurra pro Jira -- mesmo em exclusões de teste. Removido o auto-sync daqui;
+      // cada fluxo que de fato pode mudar o Go Live de propósito (saveMs, saveTask, marcar
+      // concluído, edição inline de prazo) já chama syncToJira() explicitamente antes de
+      // persistSchedule(), então o sync legítimo continua funcionando igual.
     } else {
       // Fallback GAS
       await persistScheduleGAS(key);
