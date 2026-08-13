@@ -862,8 +862,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
     <div class="filter-sep"></div>
     <button class="fbtn on" onclick="setF('all',this)" id="fbtn-all" data-i18n="prio_todos">Todos</button>
     <div class="filter-sep"></div>
-    <button class="fbtn on" id="prio-view-unificada" onclick="setPrioViewUnificada()" data-i18n="prio_view_unificada">Lista Unificada</button>
-    <button class="fbtn" id="prio-view-segmento" onclick="setPrioViewSegmento()" data-i18n="prio_view_segmento">Por Segmento</button>
+    <span id="prio-view-indicator" style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);background:var(--bg2);border:1px solid var(--border2);border-radius:5px;padding:4px 9px;white-space:nowrap" title="Reflete o filtro de Segmento/Região abaixo — não é um botão de ação, só um indicador de qual visão está ativa agora"><i class="ti ti-list-details" style="font-size:11px;color:var(--text3)"></i><span id="prio-view-indicator-txt" data-i18n="prio_view_unificada">Lista Unificada</span><i class="ti ti-x" id="prio-view-indicator-clear" style="font-size:9px;cursor:pointer;display:none" onclick="setPrioViewUnificada()" title="Voltar pra lista unificada"></i></span>
     <div class="filter-sep"></div>
     <div class="ms-dd" id="dd-tipo"><button class="ms-dd-btn" onclick="toggleDD('dd-tipo')"><span id="dd-tipo-lbl">Tipo</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-tipo-menu"></div></div>
     <div class="ms-dd" id="dd-segment"><button class="ms-dd-btn" onclick="toggleDD('dd-segment')"><span id="dd-segment-lbl">Segmento</span><i class="ti ti-chevron-down ms-dd-icon"></i></button><div class="ms-dd-menu" id="dd-segment-menu"></div></div>
@@ -1308,9 +1307,9 @@ const I18N = {
     alert_no_perm_create_task:'Você não tem permissão para criar tarefas neste cronograma.',
     alert_no_perm_create_sub:'Você não tem permissão para criar subtarefas nesta tarefa.',
     alert_informe_nome:'Informe o nome',
-    alert_informe_prazo:'Informe o Prazo antes de salvar — ele só pode ser definido agora, na criação, e não poderá ser alterado depois.',
+    alert_informe_prazo:'Informe o Prazo (ou o Início + a Duração) antes de salvar.',
     confirm_excluir_etapa:'Excluir etapa?', confirm_excluir_tarefa:'Excluir tarefa?', confirm_excluir_subtarefa:'Excluir subtarefa?',
-    fld_nome:'Nome *', fld_inicio:'Início', fld_prazo:'Prazo', fld_data_conclusao:'Data de conclusão',
+    fld_nome:'Nome *', fld_inicio:'Início', fld_prazo:'Prazo', fld_duracao:'Duração (dias)', fld_data_conclusao:'Data de conclusão',
     lbl_responsaveis:'Responsáveis', fld_status:'Status', fld_progresso:'Progresso (%)', fld_cor:'Cor',
     chk_critica_tarefa:'Tarefa crítica — atraso pode impactar a data final do projeto', chk_critica_subtarefa:'Subtarefa crítica',
     chk_marco:'Marcar como Data Marco (aparece no Resumo do Projeto)',
@@ -1933,9 +1932,9 @@ const I18N = {
     alert_no_perm_create_task:'No tiene permiso para crear tareas en este cronograma.',
     alert_no_perm_create_sub:'No tiene permiso para crear subtareas en esta tarea.',
     alert_informe_nome:'Ingrese el nombre',
-    alert_informe_prazo:'Indique el Plazo antes de guardar — solo puede definirse ahora, al crear, y no podrá cambiarse después.',
+    alert_informe_prazo:'Indique el Plazo (o el Inicio + la Duración) antes de guardar.',
     confirm_excluir_etapa:'¿Eliminar etapa?', confirm_excluir_tarefa:'¿Eliminar tarea?', confirm_excluir_subtarefa:'¿Eliminar subtarea?',
-    fld_nome:'Nombre *', fld_inicio:'Inicio', fld_prazo:'Plazo', fld_data_conclusao:'Fecha de conclusión',
+    fld_nome:'Nombre *', fld_inicio:'Inicio', fld_prazo:'Plazo', fld_duracao:'Duración (días)', fld_data_conclusao:'Fecha de conclusión',
     lbl_responsaveis:'Responsables', fld_status:'Estado', fld_progresso:'Progreso (%)', fld_cor:'Color',
     chk_critica_tarefa:'Tarea crítica — el atraso puede impactar la fecha final del proyecto', chk_critica_subtarefa:'Subtarea crítica',
     chk_marco:'Marcar como Fecha Clave (aparece en el Resumen del Proyecto)',
@@ -2558,9 +2557,9 @@ const I18N = {
     alert_no_perm_create_task:'You do not have permission to create tasks in this schedule.',
     alert_no_perm_create_sub:'You do not have permission to create subtasks in this task.',
     alert_informe_nome:'Enter a name',
-    alert_informe_prazo:'Enter the Deadline before saving — it can only be set now, at creation, and cannot be changed afterward.',
+    alert_informe_prazo:'Enter the Deadline (or the Start + Duration) before saving.',
     confirm_excluir_etapa:'Delete milestone?', confirm_excluir_tarefa:'Delete task?', confirm_excluir_subtarefa:'Delete subtask?',
-    fld_nome:'Name *', fld_inicio:'Start', fld_prazo:'Deadline', fld_data_conclusao:'Completion date',
+    fld_nome:'Name *', fld_inicio:'Start', fld_prazo:'Deadline', fld_duracao:'Duration (days)', fld_data_conclusao:'Completion date',
     lbl_responsaveis:'Assignees', fld_status:'Status', fld_progresso:'Progress (%)', fld_cor:'Color',
     chk_critica_tarefa:'Critical task — a delay may impact the project\'s final date', chk_critica_subtarefa:'Critical subtask',
     chk_marco:'Mark as Key Date (shown in the Project Summary)',
@@ -3311,6 +3310,36 @@ function canEditPrazoField(projectKey) {
   const p = PROJECTS.find(x => x.key === projectKey);
   if (!p) return false;
   return isGPOfProject(currentUser, p);
+}
+// ── Duração (dias) nos modais de Etapa/Tarefa/Subtarefa ──
+// Atalho pra quem prefere digitar Início + quantos dias dura, em vez de calcular o Prazo exato
+// de cabeça: Duração = Prazo - Início, nos dois sentidos. Editar o Prazo direto continua
+// funcionando exatamente como antes (Duração só reflete a diferença calculada). O campo "Real"
+// (Início x Conclusão real, na tabela do cronograma) não tem nenhuma relação com isso — continua
+// calculado só a partir da Conclusão real, pedido explícito da Amanda.
+function syncDurationField(prefix){
+  const startEl=document.getElementById(prefix+'-start');
+  const dlEl=document.getElementById(prefix+'-deadline');
+  const durEl=document.getElementById(prefix+'-duration');
+  if(!startEl||!dlEl||!durEl)return;
+  if(startEl.value&&dlEl.value){const d=diffD(pd(startEl.value),pd(dlEl.value));durEl.value=d>=0?d:'';}
+  else durEl.value='';
+}
+function wireDurationLink(prefix){
+  const startEl=document.getElementById(prefix+'-start');
+  const dlEl=document.getElementById(prefix+'-deadline');
+  const durEl=document.getElementById(prefix+'-duration');
+  if(!startEl||!dlEl||!durEl||startEl._durWired)return;
+  startEl._durWired=true;
+  startEl.addEventListener('change',()=>{
+    if(durEl.value!==''&&!durEl.disabled&&startEl.value)dlEl.value=ds(addD(pd(startEl.value),parseInt(durEl.value,10)));
+    else syncDurationField(prefix);
+  });
+  dlEl.addEventListener('change',()=>syncDurationField(prefix));
+  durEl.addEventListener('input',()=>{
+    if(durEl.disabled)return;
+    if(startEl.value&&durEl.value!=='')dlEl.value=ds(addD(pd(startEl.value),parseInt(durEl.value,10)));
+  });
 }
 function canEdit(projectKey) {
   if (!currentUser) return false;
@@ -4753,10 +4782,10 @@ function setF(f,el){
 }
 // ── Toggle "Lista Unificada" / "Por Segmento" (aba Prioridades) ──
 // Não é um estado próprio: só reaproveita o filtro de Segmento que já existe (dd-segment),
-// então nunca desincroniza — o botão "Por Segmento" fica marcado sempre que exatamente esse
-// filtro está preenchendo a lista, sem duplicar lógica. "Unificada" limpa Segmento E Região
-// (os dois campos que hoje disparam o reorder "por segmento/região" — ver soloSeg/soloReg em
-// renderPortfolio) pra garantir que a lista volte a misturar tudo.
+// Feedback da Amanda: os 2 botões pareciam ação clicável (principalmente "Por Segmento", que só
+// abria o dropdown de Segmento sem fazer nada por si só) — trocado por um selo que só sinaliza
+// em qual visão você está agora, sem fingir ser um botão. A troca de fato continua sendo feita
+// pelo dropdown "Segmento" que já existia (só um "×" no selo pra voltar rápido pra unificada).
 function setPrioViewUnificada(){
   msFilters.segment.clear();
   document.querySelectorAll('#dd-segment-menu .ms-dd-item').forEach(item=>{item.classList.remove('checked');const cb=item.querySelector('input');if(cb)cb.checked=false;});
@@ -4766,14 +4795,18 @@ function setPrioViewUnificada(){
   updateDD('dd-region','dd-region-lbl','region','prio_ph_region');
   renderPortfolio();
 }
-function setPrioViewSegmento(){
-  toggleDD('dd-segment');
-}
-function updatePrioViewModeBtns(){
-  const segAtivo=msFilters.segment.size>0;
-  const uniBtn=document.getElementById('prio-view-unificada');const segBtn=document.getElementById('prio-view-segmento');
-  if(uniBtn)uniBtn.classList.toggle('on',!segAtivo);
-  if(segBtn)segBtn.classList.toggle('on',segAtivo);
+function updatePrioViewIndicator(){
+  const segF=msFilters.segment;
+  const txt=document.getElementById('prio-view-indicator-txt');const clr=document.getElementById('prio-view-indicator-clear');
+  if(!txt)return;
+  if(segF.size>0){
+    const labels=[...segF].map(s=>s==='Produtos'?'TI/Produtos':s);
+    txt.textContent=t('prio_view_segmento')+': '+labels.join(', ');
+    if(clr)clr.style.display='';
+  }else{
+    txt.textContent=t('prio_view_unificada');
+    if(clr)clr.style.display='none';
+  }
 }
 // ── Exportar um histórico de priorização já salvo, direto da aba Prioridades ──
 // (antes só dava pra baixar um histórico salvo entrando em Documentos Úteis e achando a
@@ -5121,6 +5154,10 @@ function renderPortfolio(){
       if(!matchSched&&!matchNoSched)return false;
     }
     if(msFilters.tipo.size>0&&!msFilters.tipo.has(p.type))return false;
+    // LATAM e REGIAO (p.region), nao Vertical (p.segment) -- mesmo criterio ja usado no
+    // agrupamento de Proximas Entregas da Visao Geral. Projeto de regiao LATAM nao deve
+    // aparecer quando um filtro de Segmento estiver ativo -- só aparece filtrando por Região: LATAM.
+    if(segF.size>0&&p.region==='LATAM')return false;
     if(segF.size>0&&!segF.has(p.segment||'Produtos'))return false;
     if(regF.size>0&&!regF.has(p.region))return false;
     if(statusF.size>0&&!statusF.has(p.status))return false;
@@ -5202,7 +5239,7 @@ function renderPortfolio(){
     }
     tbody.appendChild(tr);shown++;
   });
-  updatePrioViewModeBtns();
+  updatePrioViewIndicator();
   document.getElementById('badge-pf').textContent=carteiraTotal(); // badge da aba sempre bate com o total do card "Dados Gerais", nao com o filtro local da tabela de Prioridades
   const sub=document.getElementById('portfolio-subtitle');
   if(sub)sub.textContent=fmtLog('prio_ordenado_por_prioridade_shown_tpl',{n:shown,projetos:shown!==1?t('prio_projeto_plural'):t('prio_projeto_singular')});
@@ -5249,6 +5286,10 @@ function getPrioridadesExportRows(){
       if(!matchSched&&!matchNoSched)return false;
     }
     if(msFilters.tipo.size>0&&!msFilters.tipo.has(p.type))return false;
+    // LATAM e REGIAO (p.region), nao Vertical (p.segment) -- mesmo criterio ja usado no
+    // agrupamento de Proximas Entregas da Visao Geral. Projeto de regiao LATAM nao deve
+    // aparecer quando um filtro de Segmento estiver ativo -- só aparece filtrando por Região: LATAM.
+    if(segF.size>0&&p.region==='LATAM')return false;
     if(segF.size>0&&!segF.has(p.segment||'Produtos'))return false;
     if(regF.size>0&&!regF.has(p.region))return false;
     if(statusF.size>0&&!statusF.has(p.status))return false;
@@ -10877,7 +10918,7 @@ function getOrBuildModal(id,title,body,footer){
 
 // Milestone
 function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create_ms'));return;}editMsId=id;populateAssigneeDatalist();const sched=schedules[curKey];const ms=id?sched.milestones.find(m=>m.id===id):null;const autoEr=ms?computeMsEndReal(ms.id,curKey):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('ms-modal',t('ms_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="ms-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="ms-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">${t('lbl_responsaveis')}</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="${t('tt_apply_all_tasks')}"><i class="ti ti-copy" style="font-size:10px"></i> ${t('btn_apply_all_tasks')}</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>${t('fld_status')}</label><select id="ms-status"><option value="not_started">${t('opt_ns_ms')}</option><option value="in_progress">${t('opt_ip_ms')}</option><option value="done">${t('opt_done_ms')}</option><option value="blocked">${t('opt_bl_ms')}</option><option value="cancelled">${t('opt_can_ms')}</option></select></div><div class="fg"><label>${t('fld_cor2')}</label><select id="ms-color"><option value="#6366f1">${t('color_indigo')}</option><option value="#8b5cf6">${t('color_violet')}</option><option value="#06b6d4">${t('color_cyan')}</option><option value="#10b981">${t('color_green')}</option><option value="#f59e0b">${t('color_amber')}</option><option value="#ef4444">${t('color_red')}</option><option value="#3b82f6">${t('color_blue')}</option><option value="#ec4899">${t('color_pink')}</option></select></div></div>`,
+  const modal=getOrBuildModal('ms-modal',t('ms_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="ms-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="ms-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="ms-deadline"></div><div class="fg"><label>${t('fld_duracao')}</label><input type="number" id="ms-duration" min="0" step="1" placeholder="dias"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="ms-endreal"><div class="info-box" id="ms-er-info" style="margin-top:4px;font-size:10px"></div></div><div class="section-lbl" style="margin-top:3px">${t('lbl_responsaveis')}</div><div class="a-list" id="ms-a-list"></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="add-a" id="ms-add-resp-btn" onclick="addA('ms-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><button class="add-a" id="ms-apply-tasks-btn" style="display:none" onclick="applyMsAssigneesToTasks()" title="${t('tt_apply_all_tasks')}"><i class="ti ti-copy" style="font-size:10px"></i> ${t('btn_apply_all_tasks')}</button></div><div class="fg-row" style="margin-top:3px"><div class="fg"><label>${t('fld_status')}</label><select id="ms-status"><option value="not_started">${t('opt_ns_ms')}</option><option value="in_progress">${t('opt_ip_ms')}</option><option value="done">${t('opt_done_ms')}</option><option value="blocked">${t('opt_bl_ms')}</option><option value="cancelled">${t('opt_can_ms')}</option></select></div><div class="fg"><label>${t('fld_cor2')}</label><select id="ms-color"><option value="#6366f1">${t('color_indigo')}</option><option value="#8b5cf6">${t('color_violet')}</option><option value="#06b6d4">${t('color_cyan')}</option><option value="#10b981">${t('color_green')}</option><option value="#f59e0b">${t('color_amber')}</option><option value="#ef4444">${t('color_red')}</option><option value="#3b82f6">${t('color_blue')}</option><option value="#ec4899">${t('color_pink')}</option></select></div></div>`,
   `<button class="btn-d" id="ms-del-btn" onclick="deleteMs()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="ms-cancel-btn" onclick="closeM('ms-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="ms-save-btn" onclick="saveMs()">${t('btn_salvar')}</button>`);
   document.getElementById('ms-name').value=ms?ms.name:'';document.getElementById('ms-start').value=ms?ms.start:ds(TODAY);document.getElementById('ms-deadline').value=ms?ms.deadline:'';document.getElementById('ms-status').value=ms?ms.status:'not_started';document.getElementById('ms-color').value=ms?ms.color:'#6366f1';document.getElementById('ms-del-btn').style.display=(ms&&editable)?'':'none';document.getElementById('ms-apply-tasks-btn').style.display=(ms&&editable)?'':'none';setAs('ms-a-list',ms?ms.assignees:[]);const er=autoEr||ms?.endReal||'';document.getElementById('ms-endreal').value=er;document.getElementById('ms-endreal').disabled=!!autoEr||!editable;document.getElementById('ms-er-info').textContent=autoEr?`${t('ms_er_auto')} (${fmtBR(autoEr)}).`:t('ms_er_manual');document.getElementById('ms-er-info').className='info-box'+(autoEr?' good':'');
   ['ms-name','ms-start','ms-deadline','ms-status','ms-color'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!editable;});
@@ -10887,6 +10928,9 @@ function openMsModal(id){if(!id&&!canEdit(curKey)){alert(t('alert_no_perm_create
   const msCanEditPrazo=canEditPrazoField(curKey);
   const msDlInput=document.getElementById('ms-deadline');
   if(msDlInput){msDlInput.disabled=ms?!msCanEditPrazo:!editable;msDlInput.title=ms&&!msCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
+  const msDurInput=document.getElementById('ms-duration');
+  if(msDurInput)msDurInput.disabled=msDlInput?msDlInput.disabled:!editable;
+  syncDurationField('ms');wireDurationLink('ms');
   const msAddResp=document.getElementById('ms-add-resp-btn');if(msAddResp)msAddResp.style.display=editable?'':'none';
   document.getElementById('ms-save-btn').style.display=editable?'':'none';
   document.getElementById('ms-cancel-btn').textContent=editable?t('btn_cancelar'):t('btn_fechar');
@@ -11326,7 +11370,7 @@ function renderScoringView(){
 
 // Task
 function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t('alert_no_perm_create_task'));return;}editTaskMsId=msId;editTaskId=taskId;depModeVal2='blocked';progressTouched=false;populateAssigneeDatalist();const sched=schedules[curKey];const t=taskId?sched.tasks.find(x=>x.id===taskId):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('task-modal',window.t('task_title'),`<div class="fg"><label>${window.t('fld_nome')}</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_inicio')}</label><input type="date" id="t-start"></div><div class="fg"><label>${window.t('fld_prazo')}</label><input type="date" id="t-deadline"></div></div><div class="fg"><label>${window.t('fld_data_conclusao')}</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">${window.t('lbl_responsaveis')}</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_adicionar')}</button><div class="fg"><label>${window.t('fld_area')}</label><input type="text" id="t-area" list="area-suggestions" placeholder="${window.t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_status')}</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${window.t('fld_progresso')}</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${window.t('chk_critica_tarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="t-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${window.t('chk_marco')}</label></div><div class="fg"><label>${window.t('fld_depende_de')}</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>${window.t('fld_tipo_dep')}</label><select id="t-deptype"><option value="TI">${window.t('dep_ti_full')}</option><option value="II">${window.t('dep_ii_full')}</option><option value="TT">${window.t('dep_tt_full')}</option><option value="IT">${window.t('dep_it_full')}</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>${window.t('lbl_como_relaciona')}</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">${window.t('btn_bloqueia')}</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">${window.t('btn_paralelo')}</button></div></div></div><div class="fg"><label>${window.t('fld_links')}</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_add_link')}</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>${window.t('fld_observacoes')}</label><textarea id="t-notes" rows="2"></textarea></div>`,
+  const modal=getOrBuildModal('task-modal',window.t('task_title'),`<div class="fg"><label>${window.t('fld_nome')}</label><input type="text" id="t-name"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_inicio')}</label><input type="date" id="t-start"></div><div class="fg"><label>${window.t('fld_prazo')}</label><input type="date" id="t-deadline"></div><div class="fg"><label>${window.t('fld_duracao')}</label><input type="number" id="t-duration" min="0" step="1" placeholder="dias"></div></div><div class="fg"><label>${window.t('fld_data_conclusao')}</label><input type="date" id="t-endreal"><div id="t-timing-info" style="margin-top:2px"></div></div><div class="section-lbl">${window.t('lbl_responsaveis')}</div><div class="a-list" id="t-a-list"></div><button class="add-a" id="t-add-resp-btn" onclick="addA('t-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_adicionar')}</button><div class="fg"><label>${window.t('fld_area')}</label><input type="text" id="t-area" list="area-suggestions" placeholder="${window.t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${window.t('fld_status')}</label><select id="t-status" onchange="onStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${window.t('fld_progresso')}</label><input type="number" id="t-progress" min="0" max="100" step="1" oninput="onProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="t-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${window.t('chk_critica_tarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="t-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${window.t('chk_marco')}</label></div><div class="fg"><label>${window.t('fld_depende_de')}</label><input type="text" id="t-dep" placeholder="Ex: 3, 4, 7"><div id="t-dep-preview" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg" id="t-deptype-wrap" style="display:none"><label>${window.t('fld_tipo_dep')}</label><select id="t-deptype"><option value="TI">${window.t('dep_ti_full')}</option><option value="II">${window.t('dep_ii_full')}</option><option value="TT">${window.t('dep_tt_full')}</option><option value="IT">${window.t('dep_it_full')}</option></select><div class="info-box" id="t-dep-mode-wrap" style="margin-top:4px;display:none"><b>${window.t('lbl_como_relaciona')}</b><div style="display:flex;gap:6px;margin-top:6px"><button id="dep-block-btn" onclick="depModeVal2='blocked';document.getElementById('dep-block-btn').style.fontWeight='700';document.getElementById('dep-par-btn').style.fontWeight='400'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #dc2626;background:#fee2e2;color:#b91c1c;cursor:pointer">${window.t('btn_bloqueia')}</button><button id="dep-par-btn" onclick="depModeVal2='parallel';document.getElementById('dep-block-btn').style.fontWeight='400';document.getElementById('dep-par-btn').style.fontWeight='700'" style="flex:1;padding:4px 6px;font-size:10.5px;border-radius:5px;border:1px solid #d97706;background:#fef3c7;color:#92400e;cursor:pointer">${window.t('btn_paralelo')}</button></div></div></div><div class="fg"><label>${window.t('fld_links')}</label><div class="a-list" id="t-link-list"></div><button class="add-a" type="button" id="t-add-link-btn" onclick="addLinkRow('t-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${window.t('btn_add_link')}</button><div id="t-jiradesc-hint" style="font-size:9.5px;color:var(--text3);margin-top:3px"></div></div><div class="fg"><label>${window.t('fld_observacoes')}</label><textarea id="t-notes" rows="2"></textarea></div>`,
   `<button class="btn-d" id="t-del-btn" onclick="deleteTask()" style="display:none">${window.t('btn_excluir')}</button><button class="btn-c" id="t-cancel-btn" onclick="closeM('task-modal')">${window.t('btn_cancelar')}</button><button class="btn-s" id="t-save-btn" onclick="saveTask()">${window.t('btn_salvar')}</button>`);
   document.getElementById('t-name').value=t?t.name:'';document.getElementById('t-start').value=t?t.start:ds(TODAY);document.getElementById('t-deadline').value=t?t.deadline:'';document.getElementById('t-endreal').value=t?t.endReal:'';document.getElementById('t-status').value=t?t.status:'not_started';document.getElementById('t-notes').value=t?t.notes:'';setLinks('t-link-list',t?getTaskLinks(t):[]);document.getElementById('t-critical').checked=t?!!t.critical:false;document.getElementById('t-marco').checked=t?!!t.isMarco:false;document.getElementById('t-area').value=t?(t.area||''):'';document.getElementById('t-del-btn').style.display=(t&&editable)?'':'none';document.getElementById('t-timing-info').innerHTML='';setAs('t-a-list',t?t.assignees:[]);populateAreaDatalist();
   document.getElementById('t-progress').value=t?taskProg(t):0;
@@ -11354,6 +11398,9 @@ function openTaskModal(msId,taskId){if(!taskId&&!canEdit(curKey)){alert(window.t
   const tCanEditPrazo=canEditPrazoField(curKey);
   const tDlInput=document.getElementById('t-deadline');
   if(tDlInput){tDlInput.disabled=t?!tCanEditPrazo:!editable;tDlInput.title=t&&!tCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
+  const tDurInput=document.getElementById('t-duration');
+  if(tDurInput)tDurInput.disabled=tDlInput?tDlInput.disabled:!editable;
+  syncDurationField('t');wireDurationLink('t');
   const tAddResp=document.getElementById('t-add-resp-btn');if(tAddResp)tAddResp.style.display=editable?'':'none';
   const tAddLink=document.getElementById('t-add-link-btn');if(tAddLink)tAddLink.style.display=editable?'':'none';
   document.getElementById('t-save-btn').style.display=editable?'':'none';
@@ -11484,7 +11531,7 @@ function openSubtaskModal(taskId,subId,newParentSubId){
   if(!subId&&!canEdit(curKey)){alert(t('alert_no_perm_create_sub'));return;}
   editSubTaskId=taskId;editSubId=subId;editSubNewParentId=subId?null:(newParentSubId||null);subProgressTouched=false;populateAssigneeDatalist();
   const sched=schedules[curKey];const s=subId?(sched.subtasks||[]).find(x=>x.id===subId):null;const editable=canEdit(curKey);
-  const modal=getOrBuildModal('subtask-modal',t('sub_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="s-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="s-deadline"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="s-endreal"></div><div class="section-lbl">${t('lbl_responsaveis')}</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><div class="fg"><label>${t('fld_area')}</label><input type="text" id="s-area" list="area-suggestions" placeholder="${t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${t('fld_status')}</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${t('fld_progresso')}</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${t('chk_critica_subtarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="s-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${t('chk_marco')}</label></div><div class="fg"><label>${t('fld_links')}</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_add_link')}</button></div><div class="fg"><label>${t('fld_observacoes')}</label><textarea id="s-notes" rows="2"></textarea></div>`,
+  const modal=getOrBuildModal('subtask-modal',t('sub_title'),`<div class="fg"><label>${t('fld_nome')}</label><input type="text" id="s-name"></div><div class="fg-row"><div class="fg"><label>${t('fld_inicio')}</label><input type="date" id="s-start"></div><div class="fg"><label>${t('fld_prazo')}</label><input type="date" id="s-deadline"></div><div class="fg"><label>${t('fld_duracao')}</label><input type="number" id="s-duration" min="0" step="1" placeholder="dias"></div></div><div class="fg"><label>${t('fld_data_conclusao')}</label><input type="date" id="s-endreal"></div><div class="section-lbl">${t('lbl_responsaveis')}</div><div class="a-list" id="s-a-list"></div><button class="add-a" id="s-add-resp-btn" onclick="addA('s-a-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_adicionar')}</button><div class="fg"><label>${t('fld_area')}</label><input type="text" id="s-area" list="area-suggestions" placeholder="${t('fld_area_placeholder')}"></div><div class="fg-row"><div class="fg"><label>${t('fld_status')}</label><select id="s-status" onchange="onSubStatusChangeFromSelect()"><option value="not_started">${SL.not_started}</option><option value="in_progress">${SL.in_progress}</option><option value="done">${SL.done}</option><option value="blocked">${SL.blocked}</option><option value="cancelled">${SL.cancelled}</option></select></div><div class="fg"><label>${t('fld_progresso')}</label><input type="number" id="s-progress" min="0" max="100" step="1" oninput="onSubProgressInput()"></div></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#b91c1c"><input type="checkbox" id="s-critical" style="width:auto;margin:0;accent-color:#dc2626"> <i class="ti ti-bolt" style="font-size:11px"></i> ${t('chk_critica_subtarefa')}</label></div><div class="fg" style="margin-top:-2px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:#92400e"><input type="checkbox" id="s-marco" style="width:auto;margin:0;accent-color:#d97706"> <i class="ti ti-pin-filled" style="font-size:11px"></i> ${t('chk_marco')}</label></div><div class="fg"><label>${t('fld_links')}</label><div class="a-list" id="s-link-list"></div><button class="add-a" type="button" id="s-add-link-btn" onclick="addLinkRow('s-link-list')"><i class="ti ti-plus" style="font-size:10px"></i> ${t('btn_add_link')}</button></div><div class="fg"><label>${t('fld_observacoes')}</label><textarea id="s-notes" rows="2"></textarea></div>`,
   `<button class="btn-d" id="s-del-btn" onclick="deleteSubtask()" style="display:none">${t('btn_excluir')}</button><button class="btn-c" id="s-cancel-btn" onclick="closeM('subtask-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="s-save-btn" onclick="saveSubtask()">${t('btn_salvar')}</button>`);
   document.getElementById('s-name').value=s?s.name:'';document.getElementById('s-start').value=s?s.start:ds(TODAY);document.getElementById('s-deadline').value=s?s.deadline:'';document.getElementById('s-endreal').value=s?s.endReal:'';document.getElementById('s-status').value=s?s.status:'not_started';document.getElementById('s-notes').value=s?s.notes:'';setLinks('s-link-list',s?getTaskLinks(s):[]);document.getElementById('s-critical').checked=s?!!s.critical:false;document.getElementById('s-marco').checked=s?!!s.isMarco:false;document.getElementById('s-area').value=s?(s.area||''):'';document.getElementById('s-del-btn').style.display=(s&&editable)?'':'none';setAs('s-a-list',s?s.assignees:[]);populateAreaDatalist();
   document.getElementById('s-progress').value=s?taskProg(s):0;
@@ -11492,6 +11539,9 @@ function openSubtaskModal(taskId,subId,newParentSubId){
   const sCanEditPrazo=canEditPrazoField(curKey);
   const sDlInput=document.getElementById('s-deadline');
   if(sDlInput){sDlInput.disabled=s?!sCanEditPrazo:!editable;sDlInput.title=s&&!sCanEditPrazo?'Só o GP deste projeto ou um admin pode alterar o Prazo depois de criado.':'';}
+  const sDurInput=document.getElementById('s-duration');
+  if(sDurInput)sDurInput.disabled=sDlInput?sDlInput.disabled:!editable;
+  syncDurationField('s');wireDurationLink('s');
   const sAddResp=document.getElementById('s-add-resp-btn');if(sAddResp)sAddResp.style.display=editable?'':'none';
   const sAddLink=document.getElementById('s-add-link-btn');if(sAddLink)sAddLink.style.display=editable?'':'none';
   document.getElementById('s-save-btn').style.display=editable?'':'none';
