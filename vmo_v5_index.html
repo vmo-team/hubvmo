@@ -131,7 +131,7 @@ input[type=checkbox]{width:13px;height:13px;accent-color:var(--purple);cursor:po
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--purple)}
 .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .mftr{display:flex;gap:8px;justify-content:flex-end;padding:11px 18px;border-top:1px solid var(--border)}
-.btn-c{background:transparent;border:1px solid var(--border2);padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer;color:var(--text2)}
+.btn-c{background:transparent;border:1px solid var(--border2);padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer;color:var(--text2)}.btn-c:disabled{opacity:.35;cursor:not-allowed}
 .btn-s{background:linear-gradient(135deg,var(--purple),#027BFF);color:#fff;border:none;padding:6px 16px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer}
 .btn-d{background:transparent;border:1px solid #fca5a5;color:var(--red);padding:6px 13px;border-radius:6px;font-size:11px;cursor:pointer;margin-right:auto}
 .hint{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4}
@@ -964,6 +964,11 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
       <div class="upd-search"><i class="ti ti-search"></i><input type="text" id="rsm-search" placeholder="Buscar projeto..." data-i18n-placeholder="search_project" autocomplete="off" oninput="renderResumoProjectList()" onfocus="openResumoDropdown()" onkeydown="if(event.key==='Escape'){closeResumoDropdown();this.blur();}"></div>
       <div id="rsm-proj-dropdown"></div>
     </div>
+    <div id="rsm-prio-nav" style="display:none;align-items:center;gap:4px;flex-shrink:0" title="Navegar pela lista de Prioridades">
+      <button class="btn-c" id="rsm-prio-prev-btn" onclick="navResumoPriority(-1)" style="font-size:10px;padding:4px 7px"><i class="ti ti-chevron-left"></i></button>
+      <span id="rsm-prio-pos" style="font-size:9.5px;color:var(--text3);white-space:nowrap;padding:0 2px;font-weight:600"></span>
+      <button class="btn-c" id="rsm-prio-next-btn" onclick="navResumoPriority(1)" style="font-size:10px;padding:4px 7px"><i class="ti ti-chevron-right"></i></button>
+    </div>
   </div>
   <div id="rsm-main">
     <div id="rsm-hdr">
@@ -1008,6 +1013,7 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
         <div class="rsm-card">
           <div class="rsm-card-hdr"><i class="ti ti-timeline" style="font-size:11px;color:var(--text3)"></i><h4 data-i18n="rsm_datas_marco" style="flex:none">Datas Marco</h4><button class="btn-c" style="font-size:9px;padding:2px 7px;gap:3px;align-items:center;display:flex" onclick="goToCronograma()" data-i18n-title="rsm_ver_cronograma_title" title="Ver cronograma completo"><i class="ti ti-calendar-stats" style="font-size:9px"></i> <span data-i18n="rsm_cronograma_btn">Cronograma</span></button></div>
           <div class="rsm-card-body">
+            <div id="rsm-dates-legend" style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:7px"></div>
             <div id="rsm-dates-list" class="rsm-mini-list"></div>
             <div id="rsm-dates-empty" class="rsm-empty" style="display:none" data-i18n="rsm_nenhuma_etapa">Nenhuma etapa cadastrada ainda.</div>
           </div>
@@ -1511,7 +1517,7 @@ const I18N = {
     rsm_receita_liquida:'Receita Líquida Prevista',
     rsm_nenhum_time:'Nenhum time mapeado ainda.',
     rsm_kind_etapa:'Etapa',
-    rsm_kind_tarefa_marcada:'Tarefa marcada',
+    rsm_kind_tarefa_marcada:'Tarefa marcada', rsm_marco_leg_ns:'Não iniciada', rsm_marco_leg_ip:'Em andamento', rsm_marco_leg_at:'Com atraso', rsm_marco_leg_dn:'Entregue', rsm_marco_leg_pct:'% = progresso médio das tarefas da etapa',
     rsm_score_na:'Não se aplica',
     rsm_score_preencher:'Preencher',
     rsm_score_nao_preenchido:'Não preenchido',
@@ -1540,7 +1546,7 @@ const I18N = {
     rsm_follow_seguir:'Seguir',
     rsm_follow_title_following:'Você está seguindo este projeto — clique pra ajustar as preferências',
     rsm_sem_gp:'Sem GP definido',
-    rsm_gp_responsavel:'GP responsável',
+    rsm_gp_responsavel:'GP responsável', rsm_editar_gp_title:'Reatribuir GP (admin)', rsm_modal_title_editar_gp:'Reatribuir GP Alocado', rsm_info_editar_gp:'Informe o e-mail @bemobi.com da pessoa que vai assumir como GP deste projeto. Isso atualiza o campo de GP no Jira (busca o usuário pelo e-mail) e aqui no HUB.', rsm_ph_email_gp:'nome.sobrenome@bemobi.com', rsm_alert_email_gp_invalido:'Informe um e-mail válido.', rsm_lg_gp_alterado_tpl:'GP Alocado alterado para {name}', rsm_alert_gp_falha_jira_tpl:'Não foi possível atualizar o GP no Jira: {error}', rsm_alert_only_admin_gp:'Apenas administradores podem reatribuir o GP Alocado.',
     rsm_nenhum_stakeholder:'Nenhum stakeholder cadastrado ainda.',
     rsm_nenhuma_decisao:'Nenhuma decisão registrada ainda.',
     rsm_nenhuma_ata_cadastrada:'Nenhuma ata cadastrada ainda.',
@@ -1714,7 +1720,7 @@ const I18N = {
     prio_col_variacao:'Variação',
     prio_col_variacao_title:'Variação de prioridade (Jira)',
     prio_col_projeto:'Projeto',
-    prio_col_tipo:'Tipo',
+    prio_col_tipo:'Tipo', prio_col_classificacao:'Classificação', prio_modal_title_editar_classificacao:'Editar Classificação do Projeto', prio_info_classificacao:'Define a classificação comercial do projeto. Quando nenhuma opção comercial se aplica, use "Produto/TI".', rsm_lg_classificacao_alterada_tpl:'Classificação alterada para "{val}"', prio_alert_classificacao_falha_tpl:'Não foi possível atualizar a Classificação no Jira: {error}',
     prio_col_status_jira:'Status Jira',
     prio_col_gp_alocado:'GP Alocado',
     prio_col_times:'Times',
@@ -1917,14 +1923,14 @@ const I18N = {
     upd_alert_email_copiado:'Email copiado (versão texto)!',
     upd_alert_nenhum_destinatario:'Nenhum destinatário definido.',
     shared_envio_direto_nao_config:'Envio direto não configurado (GAS_URL). Fale com o time técnico.',
-    shared_status_enviado_dest_tpl:'✓ Enviado para {n} destinatário{s}.',
+    shared_status_enviado_dest_tpl:'✓ Enviado para {n} destinatário{s}.', shared_status_enviado_slack_tpl:'✓ DM enviada a {n} pessoa(s) no Slack.', shared_status_enviado_slack_parcial_tpl:'✓ DM enviada a {n} pessoa(s) · {skip} não encontrada(s) no Slack.', rsm_alert_nenhum_stakeholder_slack:'Nenhum stakeholder deste projeto tem o canal Slack ativado.',
     shared_envio_nao_configurado:'Envio não configurado (GAS_URL). Fale com o time técnico.',
     shared_enviando_slack:'Enviando para o Slack...',
     shared_enviado_slack:'✓ Enviado para o Slack.',
     shared_erro_enviar_slack_suffix:'não foi possível enviar ao Slack.',
     shared_erro_conectar_slack:'Erro ao conectar com o Slack.',
     sc_btn_com_score:'Com score', sc_btn_sem_score:'Sem score', sc_btn_todos_tipos:'Todos os tipos', sc_hint_clique_projeto:'Clique em um projeto para preencher/editar o scoring', sc_th_classificacao:'Classificação', sc_th_alerta:'Alerta', sc_cls_alta:'Alta', sc_cls_media:'Média', sc_cls_baixa:'Baixa', sc_alert_viab_critica:'⚠️ Viab. Crítica', sc_alert_obrigatoriedade:'⚠️ Obrigatoriedade Regulatória/Contratual', sc_info_title:'Como funciona o Score de Priorização', sc_info_intro:'O Score ajuda a priorizar os projetos combinando critérios em uma nota única, de <b>1,00 a 3,00</b> — a mesma escala e as mesmas bandas de classificação valem para os dois modelos abaixo, então dá pra comparar Comercial e Produtos/TI lado a lado. Ele existe pra tirar a priorização do "achismo" e deixar mais visível o que mais pesa na hora de decidir o que entra na fila primeiro.', sc_info_comercial_hdr:'Comercial — 4 critérios', sc_info_produtos_hdr:'Produtos/TI — 4 critérios', sc_info_crit_tpv:'TPV Previsto', sc_info_crit_tpv_desc:'Porte financeiro estimado do cliente/projeto.', sc_info_crit_receita:'Receita Mensal Média Prevista', sc_info_crit_receita_desc:'Quanto de receita recorrente o projeto deve gerar por mês.', sc_info_crit_risco:'Risco de Relacionamento', sc_info_crit_risco_desc:'Risco de perder o cliente, sofrer multa ou pressão competitiva se o projeto não avançar.', sc_info_crit_complex_com:'Complexidade de Implementação', sc_info_crit_complex_com_desc:'Quão pronta a Bemobi já está tecnicamente — soluções já existentes pontuam mais que soluções novas ou inéditas.', sc_info_crit_obrigatoriedade:'Obrigatoriedade Regulatória/Contratual', sc_info_crit_obrigatoriedade_desc:'Exigência legal, de bandeira ou de parceiro, com ou sem prazo/penalidade formal definidos.', sc_info_crit_abrangencia:'Abrangência no Portfólio', sc_info_crit_abrangencia_desc:'Quantos produtos, segmentos, clientes ou parceiros a mudança afeta.', sc_info_crit_riscotec:'Risco Técnico/Segurança', sc_info_crit_riscotec_desc:'Exposição a segurança, fraude ou dado sensível envolvida na implementação.', sc_info_crit_complex_prod_desc:'Aqui a lógica é invertida em relação ao Comercial: soluções novas ou de alta complexidade técnica pontuam mais, não menos.', sc_info_pontos_note:'Em cada modelo, todo critério recebe de 1 a 3 pontos (você escolhe a faixa no formulário de scoring do projeto); o score final é a soma desses pontos já ponderada pelos pesos do modelo aplicável ao tipo do projeto (Comercial ou Produtos/TI).', sc_info_cls_hdr:'Classificação automática (vale para os dois modelos)', sc_info_cls_alta:'🟢 <b>Alta</b> (2,50 a 3,00) — prioridade estratégica alta', sc_info_cls_media:'🟡 <b>Média</b> (1,80 a 2,49) — prioridade intermediária', sc_info_cls_baixa:'🔴 <b>Baixa</b> (abaixo de 1,80) — prioridade mais baixa', sc_info_alert_note:'⚠️ Um alerta aparece automaticamente quando o critério mais sensível de cada modelo indicar o cenário mais crítico — Complexidade alta no Comercial, ou Obrigatoriedade Regulatória/Contratual alta em Produtos/TI — mesmo com um score bom nos outros critérios, vale reforçar a atenção nesse ponto antes de comprometer prazo.', sc_alert_no_permission:'Você não tem permissão para editar o scoring deste projeto.', sc_alert_delivered_readonly:'Projeto entregue: disponível apenas para consulta histórica.', sc_alert_tipo_invalido:'Scoring disponível apenas para projetos Comerciais ou de Produtos/TI.', sc_modal_title:'Scoring do Projeto', sc_modal_title_prod:'Scoring do Projeto (Produtos/TI)', sc_modal_info:'Mesmos critérios e bandas da planilha de Scoring VMO. Score e classificação são calculados automaticamente.', sc_modal_info_prod:'Critérios próprios para priorização de projetos de Produtos/TI. Score e classificação são calculados automaticamente, na mesma escala (1,00 a 3,00) do scoring Comercial.', sc_fld_tpv:'TPV Previsto (peso 30%)', sc_fld_receita:'Receita Mensal Média Prevista (peso 30%)', sc_fld_risco:'Risco de Relacionamento (peso 20%)', sc_fld_complexidade:'Complexidade de Implementação (peso 20%)', sc_fld_complexidade_prod:'Complexidade de Implementação (peso 25%)', sc_fld_obrigatoriedade:'Obrigatoriedade Regulatória/Contratual (peso 35%)', sc_fld_abrangencia:'Abrangência no Portfólio (peso 20%)', sc_fld_riscotec:'Risco Técnico/Segurança (peso 20%)', sc_fld_obs:'Observações', sc_select_placeholder:'Selecione...', sc_btn_remover:'Remover Scoring', sc_preview_preencha:'Preencha os 4 critérios para calcular o score.', sc_alert_preencha_salvar:'Preencha os 4 critérios antes de salvar.', sc_lg_atualizado:'Scoring do projeto atualizado', sc_lg_atualizado_prod:'Scoring (Produtos/TI) do projeto atualizado', sc_lg_removido:'Scoring do projeto removido', sc_lg_removido_prod:'Scoring (Produtos/TI) do projeto removido', sc_confirm_remover:'Remover o scoring deste projeto? Essa ação não pode ser desfeita.', sc_title_editar:'Clique para editar o scoring', sc_title_preencher:'Clique para preencher o scoring',
-    docs_search_placeholder:'Buscar por título, descrição ou tag...', docs_link_confluence:'Ver página no Confluence', docs_btn_add_material:'Adicionar material', docs_btn_add_debriefing:'Nova Ata de Reunião', docs_btn_buscar_confluence:'Buscar do Confluence', docs_btn_config_pasta_confluence:'Configurar pasta do Confluence', docs_prompt_link_debriefing_confluence:'Link da PÁGINA ou PASTA do Confluence onde ficam as atas de debriefing (como sub-páginas ou itens da pasta) — o link precisa conter /pages/123456789/... ou /folder/123456789:', docs_ata_confluence_desc:'Ata cadastrada direto no Confluence.', docs_atas_confluence_carregando:'Buscando atas no Confluence…', docs_atas_confluence_erro_prefix:'Não foi possível buscar as atas no Confluence: ', docs_alert_only_editor_link_debriefing:'Apenas editores e administradores podem configurar o link do Confluence de atas.', docs_cat_apresentacoes:'🖼️ Apresentações', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planilhas', docs_cat_priorizacao:'📌 Histórico de Priorização', docs_cat_debriefing:'📝 Atas de Reunião', docs_cat_label_apresentacoes:'Apresentações', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planilhas', docs_cat_label_priorizacao:'Histórico de Priorização', docs_cat_label_debriefing:'Ata de Reunião', docs_month_filter_all:'Todos os meses', docs_priorizacao_sing:'priorização', docs_priorizacao_plural:'priorizações', docs_ata_sing:'ata', docs_ata_plural:'atas', docs_subfolder_unificada:'Priorização Unificada', docs_subfolder_segreg:'Por Segmento/Região', docs_empty_priorizacao:'Nenhuma priorização encontrada. Tente outro mês ou busca.', docs_empty_debriefing:'Nenhuma ata de reunião encontrada. Tente outro mês ou busca.', docs_empty_material:'Nenhum material encontrado. Tente outra busca ou categoria.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sem link cadastrado', docs_card_ver_ata:'Ver ata', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Remover', docs_priorizacao_titulo:'Priorização', docs_sem_notas:'Sem notas adicionais.', docs_alert_only_admin_material:'Apenas administradores podem cadastrar ou editar materiais.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descrição', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por vírgula', docs_alert_informe_titulo:'Informe o título do material.', docs_alert_informe_link:'Informe o link do material.', docs_alert_only_admin_remove:'Apenas administradores podem remover materiais.', docs_confirm_remover_material_tpl:'Remover "{title}" da biblioteca?', docs_alert_only_editor_debriefing:'Apenas editores e administradores podem cadastrar atas de reunião.', docs_deb_fld_titulo:'Título da reunião', docs_deb_fld_data:'Data da reunião', docs_deb_fld_link:'Link da ata (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumo (opcional)', docs_deb_fld_projetos:'Projetos discutidos', docs_deb_search_placeholder:'Buscar projeto por nome ou chave...', docs_deb_modal_title_new:'Nova ata de reunião', docs_deb_modal_title_edit:'Editar ata de reunião', docs_alert_informe_titulo_reuniao:'Informe o título da reunião.', docs_alert_informe_data_reuniao:'Informe a data da reunião.', docs_alert_only_admin_remove_ata:'Apenas administradores podem remover atas de reunião.', docs_confirm_remover_ata_tpl:'Remover a ata "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · salvo por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · salvo por {name} em {datetime}', docs_btn_baixar_excel:'Baixar Excel', docs_alert_only_admin_remove_hist:'Apenas administradores podem remover históricos de priorização.', docs_confirm_remover_hist_tpl:'Remover o histórico de priorização de {date}?', upd_tt_inserir_link:'Inserir link', upd_tt_inserir_arquivo:'Inserir arquivo ou imagem', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Texto do link (opcional):', upd_alert_arquivo_grande:'Arquivo muito grande (máx. 600 KB). Para arquivos maiores, compartilhe um link (Google Drive, Confluence etc.) no texto da atualização.', upd_alert_falha_salvar:'Não foi possível salvar esta atualização no servidor (pode ser um arquivo/imagem grande demais ou falta de conexão). A atualização ficou visível só nesta tela — recarregue a página com cuidado.', upd_tt_ver_imagem:'Clique para ver a imagem em tamanho completo', rsm_data_alvo_label:'Data Alvo:', rsm_ver_todas_atualizacoes:'Ver todas as atualizações', rsm_nova_atualizacao_btn:'Nova atualização', rsm_modal_todas_atualizacoes_title:'Todas as Atualizações', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Cronograma', kpi_group_saude_cronograma:'Saúde do Cronograma', sch_mais:'Mais detalhes', sec_alertas_subtitle_tpl:'Pontos de atenção do portfólio ativo · {n} projetos ativos', vg_filtrar_por_time:'Filtrar por time:', vg_time_vmo:'Time VMO', vg_time_transformacao:'Time Transformação', vg_outras_areas:'Outras Áreas', vg_sem_gp_tbd:'Sem GP (TBD)', kpi_card_novos_projetos:'🆕 Novos projetos', sec_status_portfolio_subtitle:'Top 10 projetos por fase (ativos)', sec_dados_gerais_subtitle_tpl:'{n} projetos na carteira VMO', sec_impacto_subtitle_tpl:'Quantidade de projetos ativos que cada time está tocando · {n} times', sec_carga_subtitle:'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa', sec_carga_info_title:'Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Entregue e Presales são filtrados dessa contagem', sec_proximas_entregas_subtitle:'Datas de Go Live cadastradas no Jira', sec_historico_subtitle_tpl:'Consulta apenas leitura · {n} projetos em Entregue', hist_btn_entregues:'Projetos entregues', hist_btn_cancelados:'Projetos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} projetos em Entregue', hist_count_cancelados_tpl:'{n} projetos cancelados', hist_count_backlog_tpl:'{n} projetos em Backlog', hist_count_pausado_tpl:'{n} projetos pausados', hist_empty_entregues:'Nenhum projeto entregue ainda.', hist_empty_cancelados:'Nenhum projeto cancelado ainda.', hist_empty_backlog:'Nenhum projeto no Backlog ainda.', hist_empty_pausado:'Nenhum projeto pausado ainda.', hist_btn_ver_historico:'Ver histórico', shared_mais_n_tpl:'+{n} mais', docs_btn_ver_tour:'Tour de boas-vindas', tour_step_welcome_title:'Bem-vindo(a) ao HUB VMO!', tour_step_welcome_desc:'Este é um tour rápido pelas principais áreas da ferramenta. Você pode pular a qualquer momento e revê-lo depois no menu do seu perfil, no canto superior direito.', tour_step_portfolio_title:'Visão Geral', tour_step_portfolio_desc:'Painel com a saúde do cronograma de todos os projetos, próximas entregas e calendário de marcos — seu ponto de partida no dia a dia.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abra o cronograma detalhado de cada projeto: marcos, tarefas, subtarefas e, se precisar, o gráfico de Gantt.', tour_step_resumo_title:'Resumo dos Projetos', tour_step_resumo_desc:'Um dashboard executivo por projeto, com os principais indicadores e status num só lugar.', tour_step_updates_title:'Atualizações', tour_step_updates_desc:'Publique atualizações de status e gere o email executivo semanal para stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'A fila priorizada do portfólio, com filtros por saúde, status e time.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projetos ordenados por critérios de avaliação específicos por tipo de projeto (TI/Produto ou Comercial).', tour_step_docs_title:'Documentos Úteis', tour_step_docs_desc:'Materiais, atas de reunião e histórico de priorização.', tour_btn_pular:'Pular', tour_btn_proximo:'Próximo', tour_btn_concluir:'Concluir', sch_undo_title:'Desfazer última alteração (Ctrl+Z)', sch_redo_title:'Refazer (Ctrl+Shift+Z)', sch_save_btn:'Salvar Alterações', sch_dirty_count_tpl:'{n} alteração(ões) desde a última confirmação', sch_saved_toast:'Alterações confirmadas', sch_confirm_leave_title:'Alterações não confirmadas', sch_confirm_leave_desc_tpl:'Você fez {n} alteração(ões) neste cronograma que ainda não foram confirmadas com "Salvar Alterações". Elas já foram salvas automaticamente, mas vale revisar antes de continuar. O que deseja fazer?', sch_confirm_leave_stay_btn:'Continuar editando', sch_confirm_leave_btn:'Confirmar e sair', sch_confirm_leave_discard_btn:'Não salvar', docs_title_ocultar:'Ocultar', docs_confirm_ocultar_ata_confluence:'Ocultar esta ata desta lista? Ela continua existindo no Confluence, só não vai aparecer mais aqui.', rsm_lg_ata_confluence_ocultada:'Ata do Confluence ocultada da lista', docs_confluence_edit_modal_title:'Editar ata do Confluence', docs_confluence_edit_desc_label:'Descrição (opcional — por padrão usa o conteúdo real da página)', docs_confluence_edit_desc_placeholder:'Deixe em branco para usar o conteúdo trazido do Confluence', 
+    docs_search_placeholder:'Buscar por título, descrição ou tag...', docs_link_confluence:'Ver página no Confluence', docs_btn_add_material:'Adicionar material', docs_btn_add_debriefing:'Nova Ata de Reunião', docs_btn_buscar_confluence:'Buscar do Confluence', docs_btn_config_pasta_confluence:'Configurar pasta do Confluence', docs_prompt_link_debriefing_confluence:'Link da PÁGINA ou PASTA do Confluence onde ficam as atas de debriefing (como sub-páginas ou itens da pasta) — o link precisa conter /pages/123456789/... ou /folder/123456789:', docs_ata_confluence_desc:'Ata cadastrada direto no Confluence.', docs_atas_confluence_carregando:'Buscando atas no Confluence…', docs_atas_confluence_erro_prefix:'Não foi possível buscar as atas no Confluence: ', docs_alert_only_editor_link_debriefing:'Apenas editores e administradores podem configurar o link do Confluence de atas.', docs_cat_apresentacoes:'🖼️ Apresentações', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planilhas', docs_cat_priorizacao:'📌 Histórico de Priorização', docs_cat_debriefing:'📝 Atas de Reunião', docs_cat_label_apresentacoes:'Apresentações', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planilhas', docs_cat_label_priorizacao:'Histórico de Priorização', docs_cat_label_debriefing:'Ata de Reunião', docs_month_filter_all:'Todos os meses', docs_priorizacao_sing:'priorização', docs_priorizacao_plural:'priorizações', docs_ata_sing:'ata', docs_ata_plural:'atas', docs_subfolder_unificada:'Priorização Unificada', docs_subfolder_segreg:'Por Segmento/Região', docs_empty_priorizacao:'Nenhuma priorização encontrada. Tente outro mês ou busca.', docs_empty_debriefing:'Nenhuma ata de reunião encontrada. Tente outro mês ou busca.', docs_empty_material:'Nenhum material encontrado. Tente outra busca ou categoria.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sem link cadastrado', docs_card_ver_ata:'Ver ata', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Remover', docs_priorizacao_titulo:'Priorização', docs_sem_notas:'Sem notas adicionais.', docs_alert_only_admin_material:'Apenas administradores podem cadastrar ou editar materiais.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descrição', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por vírgula', docs_alert_informe_titulo:'Informe o título do material.', docs_alert_informe_link:'Informe o link do material.', docs_alert_only_admin_remove:'Apenas administradores podem remover materiais.', docs_confirm_remover_material_tpl:'Remover "{title}" da biblioteca?', docs_alert_only_editor_debriefing:'Apenas editores e administradores podem cadastrar atas de reunião.', docs_deb_fld_titulo:'Título da reunião', docs_deb_fld_data:'Data da reunião', docs_deb_fld_link:'Link da ata (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumo (opcional)', docs_deb_fld_projetos:'Projetos discutidos', docs_deb_search_placeholder:'Buscar projeto por nome ou chave...', docs_deb_modal_title_new:'Nova ata de reunião', docs_deb_modal_title_edit:'Editar ata de reunião', docs_alert_informe_titulo_reuniao:'Informe o título da reunião.', docs_alert_informe_data_reuniao:'Informe a data da reunião.', docs_alert_only_admin_remove_ata:'Apenas administradores podem remover atas de reunião.', docs_confirm_remover_ata_tpl:'Remover a ata "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · salvo por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · salvo por {name} em {datetime}', docs_btn_baixar_excel:'Baixar Excel', docs_alert_only_admin_remove_hist:'Apenas administradores podem remover históricos de priorização.', docs_confirm_remover_hist_tpl:'Remover o histórico de priorização de {date}?', upd_tt_inserir_link:'Inserir link', upd_tt_inserir_arquivo:'Inserir arquivo ou imagem', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Texto do link (opcional):', upd_alert_arquivo_grande:'Arquivo muito grande (máx. 600 KB). Para arquivos maiores, compartilhe um link (Google Drive, Confluence etc.) no texto da atualização.', upd_alert_falha_salvar:'Não foi possível salvar esta atualização no servidor (pode ser um arquivo/imagem grande demais ou falta de conexão). A atualização ficou visível só nesta tela — recarregue a página com cuidado.', upd_tt_ver_imagem:'Clique para ver a imagem em tamanho completo', rsm_data_alvo_label:'Data Alvo:', rsm_ver_todas_atualizacoes:'Ver todas as atualizações', rsm_nova_atualizacao_btn:'Nova atualização', rsm_modal_todas_atualizacoes_title:'Todas as Atualizações', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Projetos Ativos', kpi_group_saude_cronograma:'Saúde do Cronograma', sch_mais:'Mais detalhes', sec_alertas_subtitle_tpl:'Pontos de atenção do portfólio ativo · {n} projetos ativos', vg_filtrar_por_time:'Filtrar por time:', vg_time_vmo:'Time VMO', vg_time_transformacao:'Time Transformação', vg_outras_areas:'Outras Áreas', vg_sem_gp_tbd:'Sem GP (TBD)', kpi_card_novos_projetos:'🆕 Novos projetos', sec_status_portfolio_subtitle:'Top 10 projetos por fase (ativos)', sec_dados_gerais_subtitle_tpl:'{n} projetos na carteira VMO', sec_impacto_subtitle_tpl:'Quantidade de projetos ativos que cada time está tocando · {n} times', sec_carga_subtitle:'Alocação e sobrecarga dos times, comparando demanda (projetos ativos) com a capacidade de cada pessoa', sec_carga_info_title:'Considera apenas projetos ativos. Os projetos que estão com o status de Cancelados, Backlog, Pausados, Entregue e Presales são filtrados dessa contagem', sec_proximas_entregas_subtitle:'Datas de Go Live cadastradas no Jira', sec_historico_subtitle_tpl:'Consulta apenas leitura · {n} projetos em Entregue', hist_btn_entregues:'Projetos entregues', hist_btn_cancelados:'Projetos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} projetos em Entregue', hist_count_cancelados_tpl:'{n} projetos cancelados', hist_count_backlog_tpl:'{n} projetos em Backlog', hist_count_pausado_tpl:'{n} projetos pausados', hist_empty_entregues:'Nenhum projeto entregue ainda.', hist_empty_cancelados:'Nenhum projeto cancelado ainda.', hist_empty_backlog:'Nenhum projeto no Backlog ainda.', hist_empty_pausado:'Nenhum projeto pausado ainda.', hist_btn_ver_historico:'Ver histórico', shared_mais_n_tpl:'+{n} mais', docs_btn_ver_tour:'Tour de boas-vindas', tour_step_welcome_title:'Bem-vindo(a) ao HUB VMO!', tour_step_welcome_desc:'Este é um tour rápido pelas principais áreas da ferramenta. Você pode pular a qualquer momento e revê-lo depois no menu do seu perfil, no canto superior direito.', tour_step_portfolio_title:'Visão Geral', tour_step_portfolio_desc:'Painel com a saúde do cronograma de todos os projetos, próximas entregas e calendário de marcos — seu ponto de partida no dia a dia.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abra o cronograma detalhado de cada projeto: marcos, tarefas, subtarefas e, se precisar, o gráfico de Gantt.', tour_step_resumo_title:'Resumo dos Projetos', tour_step_resumo_desc:'Um dashboard executivo por projeto, com os principais indicadores e status num só lugar.', tour_step_updates_title:'Atualizações', tour_step_updates_desc:'Publique atualizações de status e gere o email executivo semanal para stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'A fila priorizada do portfólio, com filtros por saúde, status e time.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projetos ordenados por critérios de avaliação específicos por tipo de projeto (TI/Produto ou Comercial).', tour_step_docs_title:'Documentos Úteis', tour_step_docs_desc:'Materiais, atas de reunião e histórico de priorização.', tour_btn_pular:'Pular', tour_btn_proximo:'Próximo', tour_btn_concluir:'Concluir', sch_undo_title:'Desfazer última alteração (Ctrl+Z)', sch_redo_title:'Refazer (Ctrl+Shift+Z)', sch_save_btn:'Salvar Alterações', sch_dirty_count_tpl:'{n} alteração(ões) desde a última confirmação', sch_saved_toast:'Alterações confirmadas', sch_confirm_leave_title:'Alterações não confirmadas', sch_confirm_leave_desc_tpl:'Você fez {n} alteração(ões) neste cronograma que ainda não foram confirmadas com "Salvar Alterações". Elas já foram salvas automaticamente, mas vale revisar antes de continuar. O que deseja fazer?', sch_confirm_leave_stay_btn:'Continuar editando', sch_confirm_leave_btn:'Confirmar e sair', sch_confirm_leave_discard_btn:'Não salvar', docs_title_ocultar:'Ocultar', docs_confirm_ocultar_ata_confluence:'Ocultar esta ata desta lista? Ela continua existindo no Confluence, só não vai aparecer mais aqui.', rsm_lg_ata_confluence_ocultada:'Ata do Confluence ocultada da lista', docs_confluence_edit_modal_title:'Editar ata do Confluence', docs_confluence_edit_desc_label:'Descrição (opcional — por padrão usa o conteúdo real da página)', docs_confluence_edit_desc_placeholder:'Deixe em branco para usar o conteúdo trazido do Confluence', 
     upd_alert_selecione_projeto_slack:'Selecione ao menos um projeto para enviar ao Slack.',
   },
   es: {
@@ -2136,7 +2142,7 @@ const I18N = {
     rsm_receita_liquida:'Ingreso Neto Previsto',
     rsm_nenhum_time:'Ningún equipo mapeado todavía.',
     rsm_kind_etapa:'Etapa',
-    rsm_kind_tarefa_marcada:'Tarea marcada',
+    rsm_kind_tarefa_marcada:'Tarea marcada', rsm_marco_leg_ns:'No iniciada', rsm_marco_leg_ip:'En curso', rsm_marco_leg_at:'Con atraso', rsm_marco_leg_dn:'Entregada', rsm_marco_leg_pct:'% = progreso promedio de las tareas de la etapa',
     rsm_score_na:'No aplica',
     rsm_score_preencher:'Completar',
     rsm_score_nao_preenchido:'No completado',
@@ -2165,7 +2171,7 @@ const I18N = {
     rsm_follow_seguir:'Seguir',
     rsm_follow_title_following:'Estás siguiendo este proyecto — haz clic para ajustar las preferencias',
     rsm_sem_gp:'Sin GP definido',
-    rsm_gp_responsavel:'GP responsable',
+    rsm_gp_responsavel:'GP responsable', rsm_editar_gp_title:'Reasignar GP (admin)', rsm_modal_title_editar_gp:'Reasignar GP Asignado', rsm_info_editar_gp:'Indique el correo @bemobi.com de la persona que asumirá como GP de este proyecto. Esto actualiza el campo de GP en Jira (busca al usuario por correo) y aquí en el HUB.', rsm_ph_email_gp:'nombre.apellido@bemobi.com', rsm_alert_email_gp_invalido:'Indique un correo válido.', rsm_lg_gp_alterado_tpl:'GP Asignado cambiado a {name}', rsm_alert_gp_falha_jira_tpl:'No fue posible actualizar el GP en Jira: {error}', rsm_alert_only_admin_gp:'Solo los administradores pueden reasignar el GP Asignado.',
     rsm_nenhum_stakeholder:'Ningún stakeholder registrado todavía.',
     rsm_nenhuma_decisao:'Ninguna decisión registrada todavía.',
     rsm_nenhuma_ata_cadastrada:'Ninguna acta registrada todavía.',
@@ -2339,7 +2345,7 @@ const I18N = {
     prio_col_variacao:'Variación',
     prio_col_variacao_title:'Variación de prioridad (Jira)',
     prio_col_projeto:'Proyecto',
-    prio_col_tipo:'Tipo',
+    prio_col_tipo:'Tipo', prio_col_classificacao:'Clasificación', prio_modal_title_editar_classificacao:'Editar Clasificación del Proyecto', prio_info_classificacao:'Define la clasificación comercial del proyecto. Cuando ninguna opción comercial aplica, use "Producto/TI".', rsm_lg_classificacao_alterada_tpl:'Clasificación cambiada a "{val}"', prio_alert_classificacao_falha_tpl:'No fue posible actualizar la Clasificación en Jira: {error}',
     prio_col_status_jira:'Estado Jira',
     prio_col_gp_alocado:'GP Asignado',
     prio_col_times:'Equipos',
@@ -2542,14 +2548,14 @@ const I18N = {
     upd_alert_email_copiado:'¡Email copiado (versión texto)!',
     upd_alert_nenhum_destinatario:'Ningún destinatario definido.',
     shared_envio_direto_nao_config:'Envío directo no configurado (GAS_URL). Habla con el equipo técnico.',
-    shared_status_enviado_dest_tpl:'✓ Enviado a {n} destinatario{s}.',
+    shared_status_enviado_dest_tpl:'✓ Enviado a {n} destinatario{s}.', shared_status_enviado_slack_tpl:'✓ DM enviado a {n} persona(s) en Slack.', shared_status_enviado_slack_parcial_tpl:'✓ DM enviado a {n} persona(s) · {skip} no encontrada(s) en Slack.', rsm_alert_nenhum_stakeholder_slack:'Ningún stakeholder de este proyecto tiene el canal de Slack activado.',
     shared_envio_nao_configurado:'Envío no configurado (GAS_URL). Habla con el equipo técnico.',
     shared_enviando_slack:'Enviando a Slack...',
     shared_enviado_slack:'✓ Enviado a Slack.',
     shared_erro_enviar_slack_suffix:'no fue posible enviar a Slack.',
     shared_erro_conectar_slack:'Error al conectar con Slack.',
     sc_btn_com_score:'Con score', sc_btn_sem_score:'Sin score', sc_btn_todos_tipos:'Todos los tipos', sc_hint_clique_projeto:'Haz clic en un proyecto para completar/editar el scoring', sc_th_classificacao:'Clasificación', sc_th_alerta:'Alerta', sc_cls_alta:'Alta', sc_cls_media:'Media', sc_cls_baixa:'Baja', sc_alert_viab_critica:'⚠️ Viab. Crítica', sc_alert_obrigatoriedade:'⚠️ Obligatoriedad Regulatoria/Contractual', sc_info_title:'Cómo funciona el Score de Priorización', sc_info_intro:'El Score ayuda a priorizar los proyectos combinando criterios en una nota única, de <b>1,00 a 3,00</b> — la misma escala y las mismas bandas de clasificación valen para los dos modelos abajo, así se puede comparar Comercial y Productos/TI lado a lado. Existe para sacar la priorización del "me parece" y dejar más visible lo que más pesa al decidir qué entra primero en la fila.', sc_info_comercial_hdr:'Comercial — 4 criterios', sc_info_produtos_hdr:'Productos/TI — 4 criterios', sc_info_crit_tpv:'TPV Previsto', sc_info_crit_tpv_desc:'Porte financiero estimado del cliente/proyecto.', sc_info_crit_receita:'Ingreso Mensual Promedio Previsto', sc_info_crit_receita_desc:'Cuánto ingreso recurrente debe generar el proyecto por mes.', sc_info_crit_risco:'Riesgo de Relación', sc_info_crit_risco_desc:'Riesgo de perder al cliente, sufrir multa o presión competitiva si el proyecto no avanza.', sc_info_crit_complex_com:'Complejidad de Implementación', sc_info_crit_complex_com_desc:'Qué tan lista está Bemobi técnicamente — soluciones ya existentes puntúan más que soluciones nuevas o inéditas.', sc_info_crit_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual', sc_info_crit_obrigatoriedade_desc:'Exigencia legal, de marca o de socio, con o sin plazo/penalidad formal definidos.', sc_info_crit_abrangencia:'Alcance en el Portafolio', sc_info_crit_abrangencia_desc:'Cuántos productos, segmentos, clientes o socios afecta el cambio.', sc_info_crit_riscotec:'Riesgo Técnico/Seguridad', sc_info_crit_riscotec_desc:'Exposición a seguridad, fraude o dato sensible involucrada en la implementación.', sc_info_crit_complex_prod_desc:'Aquí la lógica es invertida respecto al Comercial: soluciones nuevas o de alta complejidad técnica puntúan más, no menos.', sc_info_pontos_note:'En cada modelo, todo criterio recibe de 1 a 3 puntos (usted elige el rango en el formulario de scoring del proyecto); el score final es la suma de esos puntos ya ponderada por los pesos del modelo aplicable al tipo del proyecto (Comercial o Productos/TI).', sc_info_cls_hdr:'Clasificación automática (vale para los dos modelos)', sc_info_cls_alta:'🟢 <b>Alta</b> (2,50 a 3,00) — prioridad estratégica alta', sc_info_cls_media:'🟡 <b>Media</b> (1,80 a 2,49) — prioridad intermedia', sc_info_cls_baixa:'🔴 <b>Baja</b> (por debajo de 1,80) — prioridad más baja', sc_info_alert_note:'⚠️ Un alerta aparece automáticamente cuando el criterio más sensible de cada modelo indica el escenario más crítico — Complejidad alta en Comercial, u Obligatoriedad Regulatoria/Contractual alta en Productos/TI — incluso con un buen score en los demás criterios, vale la pena reforzar la atención en ese punto antes de comprometer el plazo.', sc_alert_no_permission:'No tiene permiso para editar el scoring de este proyecto.', sc_alert_delivered_readonly:'Proyecto entregado: disponible solo para consulta histórica.', sc_alert_tipo_invalido:'Scoring disponible solo para proyectos Comerciales o de Productos/TI.', sc_modal_title:'Scoring del Proyecto', sc_modal_title_prod:'Scoring del Proyecto (Productos/TI)', sc_modal_info:'Mismos criterios y bandas de la planilla de Scoring VMO. Score y clasificación se calculan automáticamente.', sc_modal_info_prod:'Criterios propios para priorización de proyectos de Productos/TI. Score y clasificación se calculan automáticamente, en la misma escala (1,00 a 3,00) del scoring Comercial.', sc_fld_tpv:'TPV Previsto (peso 30%)', sc_fld_receita:'Ingreso Mensual Promedio Previsto (peso 30%)', sc_fld_risco:'Riesgo de Relación (peso 20%)', sc_fld_complexidade:'Complejidad de Implementación (peso 20%)', sc_fld_complexidade_prod:'Complejidad de Implementación (peso 25%)', sc_fld_obrigatoriedade:'Obligatoriedad Regulatoria/Contractual (peso 35%)', sc_fld_abrangencia:'Alcance en el Portafolio (peso 20%)', sc_fld_riscotec:'Riesgo Técnico/Seguridad (peso 20%)', sc_fld_obs:'Observaciones', sc_select_placeholder:'Seleccione...', sc_btn_remover:'Eliminar Scoring', sc_preview_preencha:'Complete los 4 criterios para calcular el score.', sc_alert_preencha_salvar:'Complete los 4 criterios antes de guardar.', sc_lg_atualizado:'Scoring del proyecto actualizado', sc_lg_atualizado_prod:'Scoring (Productos/TI) del proyecto actualizado', sc_lg_removido:'Scoring del proyecto eliminado', sc_lg_removido_prod:'Scoring (Productos/TI) del proyecto eliminado', sc_confirm_remover:'¿Eliminar el scoring de este proyecto? Esta acción no se puede deshacer.', sc_title_editar:'Haz clic para editar el scoring', sc_title_preencher:'Haz clic para completar el scoring',
-    docs_search_placeholder:'Buscar por título, descripción o tag...', docs_link_confluence:'Ver página en Confluence', docs_btn_add_material:'Agregar material', docs_btn_add_debriefing:'Nueva Acta de Reunión', docs_btn_buscar_confluence:'Buscar en Confluence', docs_btn_config_pasta_confluence:'Configurar carpeta de Confluence', docs_prompt_link_debriefing_confluence:'Enlace de la PÁGINA o CARPETA de Confluence donde están las actas de debriefing (como subpáginas o elementos de la carpeta) — el enlace debe contener /pages/123456789/... o /folder/123456789:', docs_ata_confluence_desc:'Acta registrada directamente en Confluence.', docs_atas_confluence_carregando:'Buscando actas en Confluence…', docs_atas_confluence_erro_prefix:'No fue posible buscar las actas en Confluence: ', docs_alert_only_editor_link_debriefing:'Solo los editores y administradores pueden configurar el enlace de Confluence de actas.', docs_cat_apresentacoes:'🖼️ Presentaciones', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planillas', docs_cat_priorizacao:'📌 Historial de Priorización', docs_cat_debriefing:'📝 Actas de Reunión', docs_cat_label_apresentacoes:'Presentaciones', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planillas', docs_cat_label_priorizacao:'Historial de Priorización', docs_cat_label_debriefing:'Acta de Reunión', docs_month_filter_all:'Todos los meses', docs_priorizacao_sing:'priorización', docs_priorizacao_plural:'priorizaciones', docs_ata_sing:'acta', docs_ata_plural:'actas', docs_subfolder_unificada:'Priorización Unificada', docs_subfolder_segreg:'Por Segmento/Región', docs_empty_priorizacao:'No se encontró ninguna priorización. Intente otro mes o búsqueda.', docs_empty_debriefing:'No se encontró ninguna acta de reunión. Intente otro mes o búsqueda.', docs_empty_material:'No se encontró ningún material. Intente otra búsqueda o categoría.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sin link registrado', docs_card_ver_ata:'Ver acta', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Eliminar', docs_priorizacao_titulo:'Priorización', docs_sem_notas:'Sin notas adicionales.', docs_alert_only_admin_material:'Solo los administradores pueden registrar o editar materiales.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descripción', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por coma', docs_alert_informe_titulo:'Indique el título del material.', docs_alert_informe_link:'Indique el link del material.', docs_alert_only_admin_remove:'Solo los administradores pueden eliminar materiales.', docs_confirm_remover_material_tpl:'¿Eliminar "{title}" de la biblioteca?', docs_alert_only_editor_debriefing:'Solo los editores y administradores pueden registrar actas de reunión.', docs_deb_fld_titulo:'Título de la reunión', docs_deb_fld_data:'Fecha de la reunión', docs_deb_fld_link:'Link del acta (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumen (opcional)', docs_deb_fld_projetos:'Proyectos discutidos', docs_deb_search_placeholder:'Buscar proyecto por nombre o clave...', docs_deb_modal_title_new:'Nueva acta de reunión', docs_deb_modal_title_edit:'Editar acta de reunión', docs_alert_informe_titulo_reuniao:'Indique el título de la reunión.', docs_alert_informe_data_reuniao:'Indique la fecha de la reunión.', docs_alert_only_admin_remove_ata:'Solo los administradores pueden eliminar actas de reunión.', docs_confirm_remover_ata_tpl:'¿Eliminar el acta "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · guardado por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · guardado por {name} el {datetime}', docs_btn_baixar_excel:'Descargar Excel', docs_alert_only_admin_remove_hist:'Solo los administradores pueden eliminar historiales de priorización.', docs_confirm_remover_hist_tpl:'¿Eliminar el historial de priorización de {date}?', upd_tt_inserir_link:'Insertar enlace', upd_tt_inserir_arquivo:'Insertar archivo o imagen', upd_prompt_link_url:'Enlace (URL):', upd_prompt_link_text:'Texto del enlace (opcional):', upd_alert_arquivo_grande:'Archivo demasiado grande (máx. 600 KB). Para archivos más grandes, comparta un link (Google Drive, Confluence, etc.) en el texto de la actualización.', upd_alert_falha_salvar:'No se pudo guardar esta actualización en el servidor (puede ser un archivo/imagen demasiado grande o falta de conexión). La actualización quedó visible solo en esta pantalla — recargue la página con cuidado.', upd_tt_ver_imagem:'Haz clic para ver la imagen en tamaño completo', rsm_data_alvo_label:'Fecha Objetivo:', rsm_ver_todas_atualizacoes:'Ver todas las actualizaciones', rsm_nova_atualizacao_btn:'Nueva actualización', rsm_modal_todas_atualizacoes_title:'Todas las Actualizaciones', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Cronograma', kpi_group_saude_cronograma:'Salud del Cronograma', sch_mais:'Más detalles', sec_alertas_subtitle_tpl:'Puntos de atención del portafolio activo · {n} proyectos activos', vg_filtrar_por_time:'Filtrar por equipo:', vg_time_vmo:'Equipo VMO', vg_time_transformacao:'Equipo Transformación', vg_outras_areas:'Otras Áreas', vg_sem_gp_tbd:'Sin GP (TBD)', kpi_card_novos_projetos:'🆕 Proyectos nuevos', sec_status_portfolio_subtitle:'Top 10 proyectos por fase (activos)', sec_dados_gerais_subtitle_tpl:'{n} proyectos en la cartera VMO', sec_impacto_subtitle_tpl:'Cantidad de proyectos activos que cada equipo está tocando · {n} equipos', sec_carga_subtitle:'Asignación y sobrecarga de los equipos, comparando demanda (proyectos activos) con la capacidad de cada persona', sec_carga_info_title:'Considera solo proyectos activos. Los proyectos con estado Cancelados, Backlog, Pausados, Entregado y Presales se filtran de este conteo', sec_proximas_entregas_subtitle:'Fechas de Go Live registradas en Jira', sec_historico_subtitle_tpl:'Consulta solo de lectura · {n} proyectos en Entregado', hist_btn_entregues:'Proyectos entregados', hist_btn_cancelados:'Proyectos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} proyectos en Entregado', hist_count_cancelados_tpl:'{n} proyectos cancelados', hist_count_backlog_tpl:'{n} proyectos en Backlog', hist_count_pausado_tpl:'{n} proyectos pausados', hist_empty_entregues:'Ningún proyecto entregado todavía.', hist_empty_cancelados:'Ningún proyecto cancelado todavía.', hist_empty_backlog:'Ningún proyecto en Backlog todavía.', hist_empty_pausado:'Ningún proyecto pausado todavía.', hist_btn_ver_historico:'Ver historial', shared_mais_n_tpl:'+{n} más', docs_btn_ver_tour:'Tour de bienvenida', tour_step_welcome_title:'¡Bienvenido(a) al HUB VMO!', tour_step_welcome_desc:'Este es un recorrido rápido por las principales áreas de la herramienta. Puedes saltarlo en cualquier momento y volver a verlo después en el menú de tu perfil, en la esquina superior derecha.', tour_step_portfolio_title:'Visión General', tour_step_portfolio_desc:'Panel con la salud del cronograma de todos los proyectos, próximas entregas y calendario de hitos — tu punto de partida en el día a día.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abre el cronograma detallado de cada proyecto: hitos, tareas, subtareas y, si lo necesitas, el gráfico de Gantt.', tour_step_resumo_title:'Resumen de Proyectos', tour_step_resumo_desc:'Un dashboard ejecutivo por proyecto, con los principales indicadores y estado en un solo lugar.', tour_step_updates_title:'Actualizaciones', tour_step_updates_desc:'Publica actualizaciones de estado y genera el email ejecutivo semanal para los stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'La fila priorizada del portafolio, con filtros por salud, estado y equipo.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Proyectos ordenados por criterios de evaluación específicos según el tipo de proyecto (TI/Producto o Comercial).', tour_step_docs_title:'Documentos Útiles', tour_step_docs_desc:'Materiales, actas de reunión e historial de priorización.', tour_btn_pular:'Saltar', tour_btn_proximo:'Siguiente', tour_btn_concluir:'Finalizar', sch_undo_title:'Deshacer el último cambio (Ctrl+Z)', sch_redo_title:'Rehacer (Ctrl+Shift+Z)', sch_save_btn:'Guardar Cambios', sch_dirty_count_tpl:'{n} cambio(s) desde la última confirmación', sch_saved_toast:'Cambios confirmados', sch_confirm_leave_title:'Cambios sin confirmar', sch_confirm_leave_desc_tpl:'Hiciste {n} cambio(s) en este cronograma que aún no han sido confirmados con "Guardar Cambios". Ya se guardaron automáticamente, pero vale la pena revisarlos antes de continuar. ¿Qué deseas hacer?', sch_confirm_leave_stay_btn:'Seguir editando', sch_confirm_leave_btn:'Confirmar y salir', sch_confirm_leave_discard_btn:'No guardar', docs_title_ocultar:'Ocultar', docs_confirm_ocultar_ata_confluence:'¿Ocultar esta acta de esta lista? Sigue existiendo en Confluence, solo no aparecerá más aquí.', rsm_lg_ata_confluence_ocultada:'Acta de Confluence ocultada de la lista', docs_confluence_edit_modal_title:'Editar acta de Confluence', docs_confluence_edit_desc_label:'Descripción (opcional — por defecto usa el contenido real de la página)', docs_confluence_edit_desc_placeholder:'Deja en blanco para usar el contenido traído de Confluence', 
+    docs_search_placeholder:'Buscar por título, descripción o tag...', docs_link_confluence:'Ver página en Confluence', docs_btn_add_material:'Agregar material', docs_btn_add_debriefing:'Nueva Acta de Reunión', docs_btn_buscar_confluence:'Buscar en Confluence', docs_btn_config_pasta_confluence:'Configurar carpeta de Confluence', docs_prompt_link_debriefing_confluence:'Enlace de la PÁGINA o CARPETA de Confluence donde están las actas de debriefing (como subpáginas o elementos de la carpeta) — el enlace debe contener /pages/123456789/... o /folder/123456789:', docs_ata_confluence_desc:'Acta registrada directamente en Confluence.', docs_atas_confluence_carregando:'Buscando actas en Confluence…', docs_atas_confluence_erro_prefix:'No fue posible buscar las actas en Confluence: ', docs_alert_only_editor_link_debriefing:'Solo los editores y administradores pueden configurar el enlace de Confluence de actas.', docs_cat_apresentacoes:'🖼️ Presentaciones', docs_cat_documentos:'📄 Documentos', docs_cat_planilhas:'📊 Planillas', docs_cat_priorizacao:'📌 Historial de Priorización', docs_cat_debriefing:'📝 Actas de Reunión', docs_cat_label_apresentacoes:'Presentaciones', docs_cat_label_documentos:'Documentos', docs_cat_label_planilhas:'Planillas', docs_cat_label_priorizacao:'Historial de Priorización', docs_cat_label_debriefing:'Acta de Reunión', docs_month_filter_all:'Todos los meses', docs_priorizacao_sing:'priorización', docs_priorizacao_plural:'priorizaciones', docs_ata_sing:'acta', docs_ata_plural:'actas', docs_subfolder_unificada:'Priorización Unificada', docs_subfolder_segreg:'Por Segmento/Región', docs_empty_priorizacao:'No se encontró ninguna priorización. Intente otro mes o búsqueda.', docs_empty_debriefing:'No se encontró ninguna acta de reunión. Intente otro mes o búsqueda.', docs_empty_material:'No se encontró ningún material. Intente otra búsqueda o categoría.', docs_card_ver_lista:'Ver lista', docs_card_sem_link:'Sin link registrado', docs_card_ver_ata:'Ver acta', docs_card_abrir:'Abrir', docs_title_editar:'Editar', docs_title_remover:'Eliminar', docs_priorizacao_titulo:'Priorización', docs_sem_notas:'Sin notas adicionales.', docs_alert_only_admin_material:'Solo los administradores pueden registrar o editar materiales.', docs_modal_title_edit_material:'Editar material', docs_fld_titulo:'Título', docs_fld_descricao:'Descripción', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separadas por coma', docs_alert_informe_titulo:'Indique el título del material.', docs_alert_informe_link:'Indique el link del material.', docs_alert_only_admin_remove:'Solo los administradores pueden eliminar materiales.', docs_confirm_remover_material_tpl:'¿Eliminar "{title}" de la biblioteca?', docs_alert_only_editor_debriefing:'Solo los editores y administradores pueden registrar actas de reunión.', docs_deb_fld_titulo:'Título de la reunión', docs_deb_fld_data:'Fecha de la reunión', docs_deb_fld_link:'Link del acta (Confluence/Google Docs) — opcional', docs_deb_fld_notas:'Notas/resumen (opcional)', docs_deb_fld_projetos:'Proyectos discutidos', docs_deb_search_placeholder:'Buscar proyecto por nombre o clave...', docs_deb_modal_title_new:'Nueva acta de reunión', docs_deb_modal_title_edit:'Editar acta de reunión', docs_alert_informe_titulo_reuniao:'Indique el título de la reunión.', docs_alert_informe_data_reuniao:'Indique la fecha de la reunión.', docs_alert_only_admin_remove_ata:'Solo los administradores pueden eliminar actas de reunión.', docs_confirm_remover_ata_tpl:'¿Eliminar el acta "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · guardado por {name}', docs_salvo_por_em_tpl:'{n} {projeto} · guardado por {name} el {datetime}', docs_btn_baixar_excel:'Descargar Excel', docs_alert_only_admin_remove_hist:'Solo los administradores pueden eliminar historiales de priorización.', docs_confirm_remover_hist_tpl:'¿Eliminar el historial de priorización de {date}?', upd_tt_inserir_link:'Insertar enlace', upd_tt_inserir_arquivo:'Insertar archivo o imagen', upd_prompt_link_url:'Enlace (URL):', upd_prompt_link_text:'Texto del enlace (opcional):', upd_alert_arquivo_grande:'Archivo demasiado grande (máx. 600 KB). Para archivos más grandes, comparta un link (Google Drive, Confluence, etc.) en el texto de la actualización.', upd_alert_falha_salvar:'No se pudo guardar esta actualización en el servidor (puede ser un archivo/imagen demasiado grande o falta de conexión). La actualización quedó visible solo en esta pantalla — recargue la página con cuidado.', upd_tt_ver_imagem:'Haz clic para ver la imagen en tamaño completo', rsm_data_alvo_label:'Fecha Objetivo:', rsm_ver_todas_atualizacoes:'Ver todas las actualizaciones', rsm_nova_atualizacao_btn:'Nueva actualización', rsm_modal_todas_atualizacoes_title:'Todas las Actualizaciones', sch_menu_exportar:'Exportar', kpi_group_cronograma:'Proyectos Activos', kpi_group_saude_cronograma:'Salud del Cronograma', sch_mais:'Más detalles', sec_alertas_subtitle_tpl:'Puntos de atención del portafolio activo · {n} proyectos activos', vg_filtrar_por_time:'Filtrar por equipo:', vg_time_vmo:'Equipo VMO', vg_time_transformacao:'Equipo Transformación', vg_outras_areas:'Otras Áreas', vg_sem_gp_tbd:'Sin GP (TBD)', kpi_card_novos_projetos:'🆕 Proyectos nuevos', sec_status_portfolio_subtitle:'Top 10 proyectos por fase (activos)', sec_dados_gerais_subtitle_tpl:'{n} proyectos en la cartera VMO', sec_impacto_subtitle_tpl:'Cantidad de proyectos activos que cada equipo está tocando · {n} equipos', sec_carga_subtitle:'Asignación y sobrecarga de los equipos, comparando demanda (proyectos activos) con la capacidad de cada persona', sec_carga_info_title:'Considera solo proyectos activos. Los proyectos con estado Cancelados, Backlog, Pausados, Entregado y Presales se filtran de este conteo', sec_proximas_entregas_subtitle:'Fechas de Go Live registradas en Jira', sec_historico_subtitle_tpl:'Consulta solo de lectura · {n} proyectos en Entregado', hist_btn_entregues:'Proyectos entregados', hist_btn_cancelados:'Proyectos cancelados', hist_btn_backlog:'Backlog', hist_btn_pausados:'Pausados', hist_count_entregues_tpl:'{n} proyectos en Entregado', hist_count_cancelados_tpl:'{n} proyectos cancelados', hist_count_backlog_tpl:'{n} proyectos en Backlog', hist_count_pausado_tpl:'{n} proyectos pausados', hist_empty_entregues:'Ningún proyecto entregado todavía.', hist_empty_cancelados:'Ningún proyecto cancelado todavía.', hist_empty_backlog:'Ningún proyecto en Backlog todavía.', hist_empty_pausado:'Ningún proyecto pausado todavía.', hist_btn_ver_historico:'Ver historial', shared_mais_n_tpl:'+{n} más', docs_btn_ver_tour:'Tour de bienvenida', tour_step_welcome_title:'¡Bienvenido(a) al HUB VMO!', tour_step_welcome_desc:'Este es un recorrido rápido por las principales áreas de la herramienta. Puedes saltarlo en cualquier momento y volver a verlo después en el menú de tu perfil, en la esquina superior derecha.', tour_step_portfolio_title:'Visión General', tour_step_portfolio_desc:'Panel con la salud del cronograma de todos los proyectos, próximas entregas y calendario de hitos — tu punto de partida en el día a día.', tour_step_schedule_title:'Cronogramas', tour_step_schedule_desc:'Abre el cronograma detallado de cada proyecto: hitos, tareas, subtareas y, si lo necesitas, el gráfico de Gantt.', tour_step_resumo_title:'Resumen de Proyectos', tour_step_resumo_desc:'Un dashboard ejecutivo por proyecto, con los principales indicadores y estado en un solo lugar.', tour_step_updates_title:'Actualizaciones', tour_step_updates_desc:'Publica actualizaciones de estado y genera el email ejecutivo semanal para los stakeholders.', tour_step_prioridades_title:'Prioridades', tour_step_prioridades_desc:'La fila priorizada del portafolio, con filtros por salud, estado y equipo.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Proyectos ordenados por criterios de evaluación específicos según el tipo de proyecto (TI/Producto o Comercial).', tour_step_docs_title:'Documentos Útiles', tour_step_docs_desc:'Materiales, actas de reunión e historial de priorización.', tour_btn_pular:'Saltar', tour_btn_proximo:'Siguiente', tour_btn_concluir:'Finalizar', sch_undo_title:'Deshacer el último cambio (Ctrl+Z)', sch_redo_title:'Rehacer (Ctrl+Shift+Z)', sch_save_btn:'Guardar Cambios', sch_dirty_count_tpl:'{n} cambio(s) desde la última confirmación', sch_saved_toast:'Cambios confirmados', sch_confirm_leave_title:'Cambios sin confirmar', sch_confirm_leave_desc_tpl:'Hiciste {n} cambio(s) en este cronograma que aún no han sido confirmados con "Guardar Cambios". Ya se guardaron automáticamente, pero vale la pena revisarlos antes de continuar. ¿Qué deseas hacer?', sch_confirm_leave_stay_btn:'Seguir editando', sch_confirm_leave_btn:'Confirmar y salir', sch_confirm_leave_discard_btn:'No guardar', docs_title_ocultar:'Ocultar', docs_confirm_ocultar_ata_confluence:'¿Ocultar esta acta de esta lista? Sigue existiendo en Confluence, solo no aparecerá más aquí.', rsm_lg_ata_confluence_ocultada:'Acta de Confluence ocultada de la lista', docs_confluence_edit_modal_title:'Editar acta de Confluence', docs_confluence_edit_desc_label:'Descripción (opcional — por defecto usa el contenido real de la página)', docs_confluence_edit_desc_placeholder:'Deja en blanco para usar el contenido traído de Confluence', 
     upd_alert_selecione_projeto_slack:'Selecciona al menos un proyecto para enviar a Slack.',
   },
   en: {
@@ -2761,7 +2767,7 @@ const I18N = {
     rsm_receita_liquida:'Forecasted Net Revenue',
     rsm_nenhum_time:'No teams mapped yet.',
     rsm_kind_etapa:'Milestone',
-    rsm_kind_tarefa_marcada:'Marked task',
+    rsm_kind_tarefa_marcada:'Marked task', rsm_marco_leg_ns:'Not started', rsm_marco_leg_ip:'In progress', rsm_marco_leg_at:'Delayed', rsm_marco_leg_dn:'Delivered', rsm_marco_leg_pct:'% = average progress of the milestone\'s tasks',
     rsm_score_na:'Not applicable',
     rsm_score_preencher:'Fill in',
     rsm_score_nao_preenchido:'Not filled in',
@@ -2790,7 +2796,7 @@ const I18N = {
     rsm_follow_seguir:'Follow',
     rsm_follow_title_following:'You\'re following this project — click to adjust preferences',
     rsm_sem_gp:'No PM assigned',
-    rsm_gp_responsavel:'Responsible PM',
+    rsm_gp_responsavel:'Responsible PM', rsm_editar_gp_title:'Reassign PM (admin)', rsm_modal_title_editar_gp:'Reassign Allocated PM', rsm_info_editar_gp:'Enter the @bemobi.com email of the person who will take over as PM for this project. This updates the PM field in Jira (looks up the user by email) and here in the HUB.', rsm_ph_email_gp:'first.last@bemobi.com', rsm_alert_email_gp_invalido:'Enter a valid email.', rsm_lg_gp_alterado_tpl:'Allocated PM changed to {name}', rsm_alert_gp_falha_jira_tpl:'Could not update the PM in Jira: {error}', rsm_alert_only_admin_gp:'Only administrators can reassign the Allocated PM.',
     rsm_nenhum_stakeholder:'No stakeholders added yet.',
     rsm_nenhuma_decisao:'No decisions logged yet.',
     rsm_nenhuma_ata_cadastrada:'No minutes added yet.',
@@ -2964,7 +2970,7 @@ const I18N = {
     prio_col_variacao:'Variation',
     prio_col_variacao_title:'Priority variation (Jira)',
     prio_col_projeto:'Project',
-    prio_col_tipo:'Type',
+    prio_col_tipo:'Type', prio_col_classificacao:'Classification', prio_modal_title_editar_classificacao:'Edit Project Classification', prio_info_classificacao:'Defines the project\'s commercial classification. When no commercial option applies, use "Product/IT".', rsm_lg_classificacao_alterada_tpl:'Classification changed to "{val}"', prio_alert_classificacao_falha_tpl:'Could not update the Classification in Jira: {error}',
     prio_col_status_jira:'Jira Status',
     prio_col_gp_alocado:'Assigned PM',
     prio_col_times:'Teams',
@@ -3167,14 +3173,14 @@ const I18N = {
     upd_alert_email_copiado:'Email copied (text version)!',
     upd_alert_nenhum_destinatario:'No recipient defined.',
     shared_envio_direto_nao_config:'Direct sending is not configured (GAS_URL). Contact the tech team.',
-    shared_status_enviado_dest_tpl:'✓ Sent to {n} recipient{s}.',
+    shared_status_enviado_dest_tpl:'✓ Sent to {n} recipient{s}.', shared_status_enviado_slack_tpl:'✓ DM sent to {n} people on Slack.', shared_status_enviado_slack_parcial_tpl:'✓ DM sent to {n} people · {skip} not found on Slack.', rsm_alert_nenhum_stakeholder_slack:'No stakeholder of this project has the Slack channel enabled.',
     shared_envio_nao_configurado:'Sending is not configured (GAS_URL). Contact the tech team.',
     shared_enviando_slack:'Sending to Slack...',
     shared_enviado_slack:'✓ Sent to Slack.',
     shared_erro_enviar_slack_suffix:'could not be sent to Slack.',
     shared_erro_conectar_slack:'Error connecting to Slack.',
     sc_btn_com_score:'Scored', sc_btn_sem_score:'Unscored', sc_btn_todos_tipos:'All types', sc_hint_clique_projeto:'Click a project to fill in/edit the scoring', sc_th_classificacao:'Classification', sc_th_alerta:'Alert', sc_cls_alta:'High', sc_cls_media:'Medium', sc_cls_baixa:'Low', sc_alert_viab_critica:'⚠️ Critical Feasibility', sc_alert_obrigatoriedade:'⚠️ Regulatory/Contractual Requirement', sc_info_title:'How the Priority Score works', sc_info_intro:'The Score helps prioritize projects by combining criteria into a single rating, from <b>1.00 to 3.00</b> — the same scale and classification bands apply to both models below, so you can compare Commercial and Products/IT side by side. It exists to take prioritization out of "gut feeling" and make clearer what weighs most when deciding what gets in line first.', sc_info_comercial_hdr:'Commercial — 4 criteria', sc_info_produtos_hdr:'Products/IT — 4 criteria', sc_info_crit_tpv:'Expected TPV', sc_info_crit_tpv_desc:'Estimated financial size of the client/project.', sc_info_crit_receita:'Expected Average Monthly Revenue', sc_info_crit_receita_desc:'How much recurring revenue the project should generate per month.', sc_info_crit_risco:'Relationship Risk', sc_info_crit_risco_desc:'Risk of losing the client, incurring a penalty, or facing competitive pressure if the project doesn\'t move forward.', sc_info_crit_complex_com:'Implementation Complexity', sc_info_crit_complex_com_desc:'How technically ready Bemobi already is — existing solutions score higher than new or unprecedented ones.', sc_info_crit_obrigatoriedade:'Regulatory/Contractual Requirement', sc_info_crit_obrigatoriedade_desc:'Legal, card-network, or partner requirement, with or without a formally defined deadline/penalty.', sc_info_crit_abrangencia:'Portfolio Reach', sc_info_crit_abrangencia_desc:'How many products, segments, clients, or partners the change affects.', sc_info_crit_riscotec:'Technical/Security Risk', sc_info_crit_riscotec_desc:'Exposure to security, fraud, or sensitive data involved in the implementation.', sc_info_crit_complex_prod_desc:'Here the logic is inverted compared to Commercial: new or highly technically complex solutions score higher, not lower.', sc_info_pontos_note:'In each model, every criterion receives 1 to 3 points (you choose the range in the project\'s scoring form); the final score is the sum of those points already weighted by the model applicable to the project type (Commercial or Products/IT).', sc_info_cls_hdr:'Automatic classification (applies to both models)', sc_info_cls_alta:'🟢 <b>High</b> (2.50 to 3.00) — high strategic priority', sc_info_cls_media:'🟡 <b>Medium</b> (1.80 to 2.49) — intermediate priority', sc_info_cls_baixa:'🔴 <b>Low</b> (below 1.80) — lower priority', sc_info_alert_note:'⚠️ An alert appears automatically when the most sensitive criterion of each model indicates the most critical scenario — high Complexity in Commercial, or high Regulatory/Contractual Requirement in Products/IT — even with a good score on the other criteria, it\'s worth paying extra attention to that point before committing to a deadline.', sc_alert_no_permission:'You don\'t have permission to edit this project\'s scoring.', sc_alert_delivered_readonly:'Delivered project: available for historical reference only.', sc_alert_tipo_invalido:'Scoring is only available for Commercial or Products/IT projects.', sc_modal_title:'Project Scoring', sc_modal_title_prod:'Project Scoring (Products/IT)', sc_modal_info:'Same criteria and bands as the VMO Scoring spreadsheet. Score and classification are calculated automatically.', sc_modal_info_prod:'Its own criteria for prioritizing Products/IT projects. Score and classification are calculated automatically, on the same scale (1.00 to 3.00) as Commercial scoring.', sc_fld_tpv:'Expected TPV (weight 30%)', sc_fld_receita:'Expected Average Monthly Revenue (weight 30%)', sc_fld_risco:'Relationship Risk (weight 20%)', sc_fld_complexidade:'Implementation Complexity (weight 20%)', sc_fld_complexidade_prod:'Implementation Complexity (weight 25%)', sc_fld_obrigatoriedade:'Regulatory/Contractual Requirement (weight 35%)', sc_fld_abrangencia:'Portfolio Reach (weight 20%)', sc_fld_riscotec:'Technical/Security Risk (weight 20%)', sc_fld_obs:'Notes', sc_select_placeholder:'Select...', sc_btn_remover:'Remove Scoring', sc_preview_preencha:'Fill in all 4 criteria to calculate the score.', sc_alert_preencha_salvar:'Fill in all 4 criteria before saving.', sc_lg_atualizado:'Project scoring updated', sc_lg_atualizado_prod:'Project scoring (Products/IT) updated', sc_lg_removido:'Project scoring removed', sc_lg_removido_prod:'Project scoring (Products/IT) removed', sc_confirm_remover:'Remove this project\'s scoring? This action cannot be undone.', sc_title_editar:'Click to edit the scoring', sc_title_preencher:'Click to fill in the scoring',
-    docs_search_placeholder:'Search by title, description, or tag...', docs_link_confluence:'View page on Confluence', docs_btn_add_material:'Add material', docs_btn_add_debriefing:'New Meeting Minutes', docs_btn_buscar_confluence:'Fetch from Confluence', docs_btn_config_pasta_confluence:'Configure Confluence folder', docs_prompt_link_debriefing_confluence:'Link to the Confluence PAGE or FOLDER where debriefing minutes live (as sub-pages or folder items) — the link must contain /pages/123456789/... or /folder/123456789:', docs_ata_confluence_desc:'Minutes registered directly on Confluence.', docs_atas_confluence_carregando:'Fetching minutes from Confluence…', docs_atas_confluence_erro_prefix:'Could not fetch minutes from Confluence: ', docs_alert_only_editor_link_debriefing:'Only editors and administrators can configure the Confluence minutes link.', docs_cat_apresentacoes:'🖼️ Presentations', docs_cat_documentos:'📄 Documents', docs_cat_planilhas:'📊 Spreadsheets', docs_cat_priorizacao:'📌 Prioritization History', docs_cat_debriefing:'📝 Meeting Minutes', docs_cat_label_apresentacoes:'Presentations', docs_cat_label_documentos:'Documents', docs_cat_label_planilhas:'Spreadsheets', docs_cat_label_priorizacao:'Prioritization History', docs_cat_label_debriefing:'Meeting Minutes', docs_month_filter_all:'All months', docs_priorizacao_sing:'prioritization', docs_priorizacao_plural:'prioritizations', docs_ata_sing:'minutes entry', docs_ata_plural:'minutes entries', docs_subfolder_unificada:'Unified Prioritization', docs_subfolder_segreg:'By Segment/Region', docs_empty_priorizacao:'No prioritization found. Try another month or search.', docs_empty_debriefing:'No meeting minutes found. Try another month or search.', docs_empty_material:'No material found. Try another search or category.', docs_card_ver_lista:'View list', docs_card_sem_link:'No link on file', docs_card_ver_ata:'View minutes', docs_card_abrir:'Open', docs_title_editar:'Edit', docs_title_remover:'Remove', docs_priorizacao_titulo:'Prioritization', docs_sem_notas:'No additional notes.', docs_alert_only_admin_material:'Only administrators can register or edit materials.', docs_modal_title_edit_material:'Edit material', docs_fld_titulo:'Title', docs_fld_descricao:'Description', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separated by comma', docs_alert_informe_titulo:'Enter the material\'s title.', docs_alert_informe_link:'Enter the material\'s link.', docs_alert_only_admin_remove:'Only administrators can remove materials.', docs_confirm_remover_material_tpl:'Remove "{title}" from the library?', docs_alert_only_editor_debriefing:'Only editors and administrators can register meeting minutes.', docs_deb_fld_titulo:'Meeting title', docs_deb_fld_data:'Meeting date', docs_deb_fld_link:'Minutes link (Confluence/Google Docs) — optional', docs_deb_fld_notas:'Notes/summary (optional)', docs_deb_fld_projetos:'Projects discussed', docs_deb_search_placeholder:'Search project by name or key...', docs_deb_modal_title_new:'New meeting minutes', docs_deb_modal_title_edit:'Edit meeting minutes', docs_alert_informe_titulo_reuniao:'Enter the meeting title.', docs_alert_informe_data_reuniao:'Enter the meeting date.', docs_alert_only_admin_remove_ata:'Only administrators can remove meeting minutes.', docs_confirm_remover_ata_tpl:'Remove the minutes "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · saved by {name}', docs_salvo_por_em_tpl:'{n} {projeto} · saved by {name} on {datetime}', docs_btn_baixar_excel:'Download Excel', docs_alert_only_admin_remove_hist:'Only administrators can remove prioritization history.', docs_confirm_remover_hist_tpl:'Remove the prioritization history from {date}?', upd_tt_inserir_link:'Insert link', upd_tt_inserir_arquivo:'Insert file or image', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Link text (optional):', upd_alert_arquivo_grande:'File too large (max. 600 KB). For larger files, share a link (Google Drive, Confluence, etc.) in the update text.', upd_alert_falha_salvar:'Could not save this update to the server (it may be too large a file/image, or a connection issue). The update is only visible on this screen for now — reload the page with caution.', upd_tt_ver_imagem:'Click to view the image at full size', rsm_data_alvo_label:'Target Date:', rsm_ver_todas_atualizacoes:'View all updates', rsm_nova_atualizacao_btn:'New update', rsm_modal_todas_atualizacoes_title:'All Updates', sch_menu_exportar:'Export', kpi_group_cronograma:'Schedule', kpi_group_saude_cronograma:'Schedule Health', sch_mais:'More details', sec_alertas_subtitle_tpl:'Attention points of the active portfolio · {n} active projects', vg_filtrar_por_time:'Filter by team:', vg_time_vmo:'VMO Team', vg_time_transformacao:'Transformation Team', vg_outras_areas:'Other Areas', vg_sem_gp_tbd:'No PM (TBD)', kpi_card_novos_projetos:'🆕 New projects', sec_status_portfolio_subtitle:'Top 10 projects by phase (active)', sec_dados_gerais_subtitle_tpl:'{n} projects in the VMO portfolio', sec_impacto_subtitle_tpl:'Number of active projects each team is touching · {n} teams', sec_carga_subtitle:'Team allocation and overload, comparing demand (active projects) with each person\'s capacity', sec_carga_info_title:'Considers active projects only. Projects with status Cancelled, Backlog, Paused, Delivered and Presales are filtered out of this count', sec_proximas_entregas_subtitle:'Go Live dates registered in Jira', sec_historico_subtitle_tpl:'Read-only view · {n} projects in Delivered', hist_btn_entregues:'Delivered projects', hist_btn_cancelados:'Cancelled projects', hist_btn_backlog:'Backlog', hist_btn_pausados:'Paused', hist_count_entregues_tpl:'{n} projects in Delivered', hist_count_cancelados_tpl:'{n} cancelled projects', hist_count_backlog_tpl:'{n} projects in Backlog', hist_count_pausado_tpl:'{n} paused projects', hist_empty_entregues:'No delivered projects yet.', hist_empty_cancelados:'No cancelled projects yet.', hist_empty_backlog:'No projects in Backlog yet.', hist_empty_pausado:'No paused projects yet.', hist_btn_ver_historico:'View history', shared_mais_n_tpl:'+{n} more', docs_btn_ver_tour:'Welcome tour', tour_step_welcome_title:'Welcome to HUB VMO!', tour_step_welcome_desc:'This is a quick tour of the main areas of the tool. You can skip it at any time and revisit it later from your profile menu, in the top-right corner.', tour_step_portfolio_title:'Overview', tour_step_portfolio_desc:'A dashboard with the schedule health of every project, upcoming deliveries, and a milestone calendar — your daily starting point.', tour_step_schedule_title:'Schedules', tour_step_schedule_desc:'Open the detailed schedule for each project: milestones, tasks, subtasks and, if needed, the Gantt chart.', tour_step_resumo_title:'Project Summary', tour_step_resumo_desc:'An executive dashboard per project, with the main indicators and status in one place.', tour_step_updates_title:'Updates', tour_step_updates_desc:'Post status updates and generate the weekly executive email for stakeholders.', tour_step_prioridades_title:'Priorities', tour_step_prioridades_desc:'The portfolio\'s prioritized queue, with filters by health, status and team.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projects ranked by evaluation criteria specific to each project type (IT/Product or Commercial).', tour_step_docs_title:'Useful Documents', tour_step_docs_desc:'Materials, meeting minutes and prioritization history.', tour_btn_pular:'Skip', tour_btn_proximo:'Next', tour_btn_concluir:'Finish', sch_undo_title:'Undo last change (Ctrl+Z)', sch_redo_title:'Redo (Ctrl+Shift+Z)', sch_save_btn:'Save Changes', sch_dirty_count_tpl:'{n} change(s) since last confirmation', sch_saved_toast:'Changes confirmed', sch_confirm_leave_title:'Unconfirmed changes', sch_confirm_leave_desc_tpl:'You made {n} change(s) to this schedule that haven\'t been confirmed with "Save Changes" yet. They were already auto-saved, but it\'s worth reviewing them before continuing. What would you like to do?', sch_confirm_leave_stay_btn:'Keep editing', sch_confirm_leave_btn:'Confirm and leave', sch_confirm_leave_discard_btn:'Don\'t save', docs_title_ocultar:'Hide', docs_confirm_ocultar_ata_confluence:'Hide these minutes from this list? It will still exist on Confluence, it just won\'t show up here anymore.', rsm_lg_ata_confluence_ocultada:'Confluence minutes hidden from the list', docs_confluence_edit_modal_title:'Edit Confluence minutes', docs_confluence_edit_desc_label:'Description (optional — defaults to the page\'s real content)', docs_confluence_edit_desc_placeholder:'Leave blank to use the content fetched from Confluence', 
+    docs_search_placeholder:'Search by title, description, or tag...', docs_link_confluence:'View page on Confluence', docs_btn_add_material:'Add material', docs_btn_add_debriefing:'New Meeting Minutes', docs_btn_buscar_confluence:'Fetch from Confluence', docs_btn_config_pasta_confluence:'Configure Confluence folder', docs_prompt_link_debriefing_confluence:'Link to the Confluence PAGE or FOLDER where debriefing minutes live (as sub-pages or folder items) — the link must contain /pages/123456789/... or /folder/123456789:', docs_ata_confluence_desc:'Minutes registered directly on Confluence.', docs_atas_confluence_carregando:'Fetching minutes from Confluence…', docs_atas_confluence_erro_prefix:'Could not fetch minutes from Confluence: ', docs_alert_only_editor_link_debriefing:'Only editors and administrators can configure the Confluence minutes link.', docs_cat_apresentacoes:'🖼️ Presentations', docs_cat_documentos:'📄 Documents', docs_cat_planilhas:'📊 Spreadsheets', docs_cat_priorizacao:'📌 Prioritization History', docs_cat_debriefing:'📝 Meeting Minutes', docs_cat_label_apresentacoes:'Presentations', docs_cat_label_documentos:'Documents', docs_cat_label_planilhas:'Spreadsheets', docs_cat_label_priorizacao:'Prioritization History', docs_cat_label_debriefing:'Meeting Minutes', docs_month_filter_all:'All months', docs_priorizacao_sing:'prioritization', docs_priorizacao_plural:'prioritizations', docs_ata_sing:'minutes entry', docs_ata_plural:'minutes entries', docs_subfolder_unificada:'Unified Prioritization', docs_subfolder_segreg:'By Segment/Region', docs_empty_priorizacao:'No prioritization found. Try another month or search.', docs_empty_debriefing:'No meeting minutes found. Try another month or search.', docs_empty_material:'No material found. Try another search or category.', docs_card_ver_lista:'View list', docs_card_sem_link:'No link on file', docs_card_ver_ata:'View minutes', docs_card_abrir:'Open', docs_title_editar:'Edit', docs_title_remover:'Remove', docs_priorizacao_titulo:'Prioritization', docs_sem_notas:'No additional notes.', docs_alert_only_admin_material:'Only administrators can register or edit materials.', docs_modal_title_edit_material:'Edit material', docs_fld_titulo:'Title', docs_fld_descricao:'Description', docs_fld_link_docs:'Link (Google Docs/Slides/Sheets)', docs_fld_tags:'Tags separated by comma', docs_alert_informe_titulo:'Enter the material\'s title.', docs_alert_informe_link:'Enter the material\'s link.', docs_alert_only_admin_remove:'Only administrators can remove materials.', docs_confirm_remover_material_tpl:'Remove "{title}" from the library?', docs_alert_only_editor_debriefing:'Only editors and administrators can register meeting minutes.', docs_deb_fld_titulo:'Meeting title', docs_deb_fld_data:'Meeting date', docs_deb_fld_link:'Minutes link (Confluence/Google Docs) — optional', docs_deb_fld_notas:'Notes/summary (optional)', docs_deb_fld_projetos:'Projects discussed', docs_deb_search_placeholder:'Search project by name or key...', docs_deb_modal_title_new:'New meeting minutes', docs_deb_modal_title_edit:'Edit meeting minutes', docs_alert_informe_titulo_reuniao:'Enter the meeting title.', docs_alert_informe_data_reuniao:'Enter the meeting date.', docs_alert_only_admin_remove_ata:'Only administrators can remove meeting minutes.', docs_confirm_remover_ata_tpl:'Remove the minutes "{title}"?', docs_salvo_por_tpl:'{n} {projeto} · saved by {name}', docs_salvo_por_em_tpl:'{n} {projeto} · saved by {name} on {datetime}', docs_btn_baixar_excel:'Download Excel', docs_alert_only_admin_remove_hist:'Only administrators can remove prioritization history.', docs_confirm_remover_hist_tpl:'Remove the prioritization history from {date}?', upd_tt_inserir_link:'Insert link', upd_tt_inserir_arquivo:'Insert file or image', upd_prompt_link_url:'Link (URL):', upd_prompt_link_text:'Link text (optional):', upd_alert_arquivo_grande:'File too large (max. 600 KB). For larger files, share a link (Google Drive, Confluence, etc.) in the update text.', upd_alert_falha_salvar:'Could not save this update to the server (it may be too large a file/image, or a connection issue). The update is only visible on this screen for now — reload the page with caution.', upd_tt_ver_imagem:'Click to view the image at full size', rsm_data_alvo_label:'Target Date:', rsm_ver_todas_atualizacoes:'View all updates', rsm_nova_atualizacao_btn:'New update', rsm_modal_todas_atualizacoes_title:'All Updates', sch_menu_exportar:'Export', kpi_group_cronograma:'Active Projects', kpi_group_saude_cronograma:'Schedule Health', sch_mais:'More details', sec_alertas_subtitle_tpl:'Attention points of the active portfolio · {n} active projects', vg_filtrar_por_time:'Filter by team:', vg_time_vmo:'VMO Team', vg_time_transformacao:'Transformation Team', vg_outras_areas:'Other Areas', vg_sem_gp_tbd:'No PM (TBD)', kpi_card_novos_projetos:'🆕 New projects', sec_status_portfolio_subtitle:'Top 10 projects by phase (active)', sec_dados_gerais_subtitle_tpl:'{n} projects in the VMO portfolio', sec_impacto_subtitle_tpl:'Number of active projects each team is touching · {n} teams', sec_carga_subtitle:'Team allocation and overload, comparing demand (active projects) with each person\'s capacity', sec_carga_info_title:'Considers active projects only. Projects with status Cancelled, Backlog, Paused, Delivered and Presales are filtered out of this count', sec_proximas_entregas_subtitle:'Go Live dates registered in Jira', sec_historico_subtitle_tpl:'Read-only view · {n} projects in Delivered', hist_btn_entregues:'Delivered projects', hist_btn_cancelados:'Cancelled projects', hist_btn_backlog:'Backlog', hist_btn_pausados:'Paused', hist_count_entregues_tpl:'{n} projects in Delivered', hist_count_cancelados_tpl:'{n} cancelled projects', hist_count_backlog_tpl:'{n} projects in Backlog', hist_count_pausado_tpl:'{n} paused projects', hist_empty_entregues:'No delivered projects yet.', hist_empty_cancelados:'No cancelled projects yet.', hist_empty_backlog:'No projects in Backlog yet.', hist_empty_pausado:'No paused projects yet.', hist_btn_ver_historico:'View history', shared_mais_n_tpl:'+{n} more', docs_btn_ver_tour:'Welcome tour', tour_step_welcome_title:'Welcome to HUB VMO!', tour_step_welcome_desc:'This is a quick tour of the main areas of the tool. You can skip it at any time and revisit it later from your profile menu, in the top-right corner.', tour_step_portfolio_title:'Overview', tour_step_portfolio_desc:'A dashboard with the schedule health of every project, upcoming deliveries, and a milestone calendar — your daily starting point.', tour_step_schedule_title:'Schedules', tour_step_schedule_desc:'Open the detailed schedule for each project: milestones, tasks, subtasks and, if needed, the Gantt chart.', tour_step_resumo_title:'Project Summary', tour_step_resumo_desc:'An executive dashboard per project, with the main indicators and status in one place.', tour_step_updates_title:'Updates', tour_step_updates_desc:'Post status updates and generate the weekly executive email for stakeholders.', tour_step_prioridades_title:'Priorities', tour_step_prioridades_desc:'The portfolio\'s prioritized queue, with filters by health, status and team.', tour_step_scoring_title:'Scoring', tour_step_scoring_desc:'Projects ranked by evaluation criteria specific to each project type (IT/Product or Commercial).', tour_step_docs_title:'Useful Documents', tour_step_docs_desc:'Materials, meeting minutes and prioritization history.', tour_btn_pular:'Skip', tour_btn_proximo:'Next', tour_btn_concluir:'Finish', sch_undo_title:'Undo last change (Ctrl+Z)', sch_redo_title:'Redo (Ctrl+Shift+Z)', sch_save_btn:'Save Changes', sch_dirty_count_tpl:'{n} change(s) since last confirmation', sch_saved_toast:'Changes confirmed', sch_confirm_leave_title:'Unconfirmed changes', sch_confirm_leave_desc_tpl:'You made {n} change(s) to this schedule that haven\'t been confirmed with "Save Changes" yet. They were already auto-saved, but it\'s worth reviewing them before continuing. What would you like to do?', sch_confirm_leave_stay_btn:'Keep editing', sch_confirm_leave_btn:'Confirm and leave', sch_confirm_leave_discard_btn:'Don\'t save', docs_title_ocultar:'Hide', docs_confirm_ocultar_ata_confluence:'Hide these minutes from this list? It will still exist on Confluence, it just won\'t show up here anymore.', rsm_lg_ata_confluence_ocultada:'Confluence minutes hidden from the list', docs_confluence_edit_modal_title:'Edit Confluence minutes', docs_confluence_edit_desc_label:'Description (optional — defaults to the page\'s real content)', docs_confluence_edit_desc_placeholder:'Leave blank to use the content fetched from Confluence', 
     upd_alert_selecione_projeto_slack:'Select at least one project to send to Slack.',
   },
 };
@@ -3426,6 +3432,10 @@ function canViewTab(tab) {
   // como visível pra editor/viewer, fora de sincronia com o que a barra lateral já escondia —
   // bug reportado pela Amanda ("o tour não está personalizado por acesso").
   if (tab === 'scoring' && r !== 'admin') return false;
+  // Visualizador: só Cronogramas, Resumo dos Projetos, Atualizações e Prioridades (nesta,
+  // sempre a Visão Estática — já garantido em renderPortfolio() checando isAdmin()). Sem
+  // Visão Geral nem Documentos Úteis, pedido explícito da Amanda.
+  if (r === 'viewer') return ['schedule','resumo','updates','prioridades'].includes(tab);
   if (r !== 'external' && r !== 'stakeholder' && r !== 'consulta') return true;
   return tab === 'schedule' || tab === 'resumo';
 }
@@ -3524,7 +3534,7 @@ function finalizeLogin(email, name, picture, persist=true) {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('tn-uname').textContent = name.split(' ')[0];
   document.getElementById('tn-avatar').textContent = name.charAt(0).toUpperCase();
-  const roleLabels = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consulta' };
+  const roleLabels = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consultor' };
   document.getElementById('tn-role').textContent = roleLabels[role] || role;
   // Fill profile menu
   const pmName = document.getElementById('pm-name');
@@ -3575,6 +3585,12 @@ function applyRoleUI() {
     });
     if (sb) sb.style.display = 'none';
   } else if (r === 'viewer') {
+    // Vê Cronogramas, Resumo dos Projetos, Atualizações e Prioridades (Visão Estática) — sem
+    // Visão Geral nem Documentos Úteis, pedido explícito da Amanda.
+    document.querySelectorAll('.nav-tab').forEach(t => {
+      const view = t.dataset.view;
+      if (!['schedule','resumo','updates','prioridades'].includes(view)) t.style.display = 'none';
+    });
     if (sb) sb.style.display = 'none';
   } else {
     if (sb) sb.style.display = '';
@@ -3716,13 +3732,20 @@ window.addEventListener('load', async function() {
 });
 
 // ── USER MANAGEMENT (admin only) ──────────────────────────────────────────
-function openUserMgmtModal() {
+async function openUserMgmtModal() {
   if (!isAdmin()) { alert('Apenas administradores podem gerenciar usuários.'); return; }
+  // Espera o registro de usuários terminar de carregar do Firestore ANTES de abrir a tela —
+  // sem isso, um admin que abre "Gerenciar Usuários" rápido demais (antes desse fetch
+  // terminar) vê/edita a lista ainda com o snapshot hardcoded local, e o próximo
+  // addUserToRegistry/toggleUserActive/removeUser/etc. chama persistUsers(), que faz um
+  // set() (sobrescreve, não mescla) do documento inteiro no Firestore — apagando de vez
+  // qualquer usuário cadastrado anteriormente que ainda não tinha sido puxado pra essa aba.
+  if (userRegistryLoadPromise) { try { await userRegistryLoadPromise; } catch(e) {} }
   const modal = getOrBuildModal('user-mgmt-modal', 'Gerenciar Usuários', `
     <div class="info-box" style="margin-bottom:8px">
       Adicione usuários com email <b>@bemobi.com</b>.<br>
       Senha padrão inicial: <code>bemobi@2026</code> — oriente o usuário a trocar após primeiro acesso.<br>
-      <span style="color:var(--text3)">Papel <b>Consulta</b>: só vê Cronogramas + Resumo dos Projetos, sem editar nada.</span>
+      <span style="color:var(--text3)">Papel <b>Consultor</b>: só vê Cronogramas + Resumo dos Projetos, sem editar nada.</span>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
       <input type="email" id="new-user-email" placeholder="email@bemobi.com" style="flex:2;min-width:150px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px;box-sizing:border-box">
@@ -3730,7 +3753,7 @@ function openUserMgmtModal() {
       <input type="password" id="new-user-pwd" placeholder="Senha"           style="flex:1;min-width:90px;border:1px solid var(--border2);border-radius:5px;padding:5px 8px;font-size:10.5px;box-sizing:border-box" value="bemobi@2026">
       <select id="new-user-role" style="flex-shrink:0;border:1px solid var(--border2);border-radius:5px;padding:5px;font-size:10.5px">
         <option value="viewer">Visualizador</option>
-        <option value="consulta">Consulta</option>
+        <option value="consulta">Consultor</option>
         <option value="editor">Editor</option>
         <option value="admin">Admin</option>
       </select>
@@ -3756,14 +3779,14 @@ function renderUserRegistry() {
   sortedIdx.forEach((i) => {
     const u = USER_REGISTRY[i];
     const role = resolveRole(u.email);
-    const roleLabel = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consulta' }[role] || role;
+    const roleLabel = { admin:'Admin', editor:'Editor', viewer:'Visualizador', external:'Externo', stakeholder:'Stakeholder', consulta:'Consultor' }[role] || role;
     const div = document.createElement('div');
     div.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px;background:var(--bg2);border-radius:6px;font-size:10.5px';
     const editableRoles = ['admin','editor','viewer','consulta'];
     const roleSelectHtml = editableRoles.includes(role)
       ? `<select onchange="changeUserRole(${i},this.value)" style="flex-shrink:0;font-size:9px;border:1px solid var(--border2);border-radius:4px;background:${role==='admin'?'#ede9fe':role==='editor'?'#dbeafe':role==='consulta'?'#fef3c7':'#f1f5f9'};color:${role==='admin'?'#6d28d9':role==='editor'?'#1d4ed8':role==='consulta'?'#92400e':'#475569'};padding:2px 4px;font-weight:600">
            <option value="viewer" ${role==='viewer'?'selected':''}>Visualizador</option>
-           <option value="consulta" ${role==='consulta'?'selected':''}>Consulta</option>
+           <option value="consulta" ${role==='consulta'?'selected':''}>Consultor</option>
            <option value="editor" ${role==='editor'?'selected':''}>Editor</option>
            <option value="admin"  ${role==='admin' ?'selected':''}>Admin</option>
          </select>`
@@ -4220,6 +4243,7 @@ function resetResumoHeaderToEmpty(){
   const gcb_=document.getElementById('rsm-goto-cronograma-btn');if(gcb_)gcb_.style.display='none';
   const re_=document.getElementById('rsm-empty');if(re_)re_.style.display='flex';
   const rb_=document.getElementById('rsm-body');if(rb_)rb_.style.display='none';
+  const rpn_=document.getElementById('rsm-prio-nav');if(rpn_)rpn_.style.display='none';
 }
 function showView(v,resetSelection){
   // Block tab access based on role
@@ -4296,19 +4320,14 @@ const PRIO_HIDEABLE_COLS=[
   {key:'driverdata',labelKey:'prio_col_driver_data'},
   {key:'acao',labelKey:'prio_col_acao'},
 ];
-const PRIO_HIDDEN_COLS_KEY='vmo_prio_hidden_cols_v2';
-let prioHiddenCols=new Set();
-// Visão padrão pedida pela Amanda: mais compacta, escondendo colunas secundárias na primeira
-// vez que a pessoa abre a ferramenta (sem localStorage salvo ainda) — quem já personalizou as
-// colunas continua exatamente como deixou, isso só define o ponto de partida de quem nunca tocou.
+// Visão padrão pedida pela Amanda: mais compacta, escondendo colunas secundárias — e, por
+// pedido explícito dela, essa visão NÃO deve ser lembrada entre sessões. Toda vez que a
+// ferramenta é aberta (ou recarregada), começa sempre nas 5 colunas ocultas combinadas, mesmo
+// que a pessoa tenha ocultado/mostrado colunas manualmente na sessão anterior (isso inclui usar
+// "Mostrar todas" — o efeito dura só até a próxima vez que a página for carregada).
 const PRIO_DEFAULT_HIDDEN_COLS=['times','prog','score','driverdata','acao'];
-if(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)==null){
-  prioHiddenCols=new Set(PRIO_DEFAULT_HIDDEN_COLS);
-  try{localStorage.setItem(PRIO_HIDDEN_COLS_KEY,JSON.stringify([...prioHiddenCols]));}catch(e){}
-}else{
-  try{prioHiddenCols=new Set(JSON.parse(localStorage.getItem(PRIO_HIDDEN_COLS_KEY)||'[]'));}catch(e){}
-}
-function savePrioHiddenCols(){try{localStorage.setItem(PRIO_HIDDEN_COLS_KEY,JSON.stringify([...prioHiddenCols]));}catch(e){}}
+let prioHiddenCols=new Set(PRIO_DEFAULT_HIDDEN_COLS);
+function savePrioHiddenCols(){/* intencional: não persiste em localStorage — ver comentário acima */}
 function applyPrioColVisibility(){
   let styleEl=document.getElementById('prio-col-vis-style');
   if(!styleEl){styleEl=document.createElement('style');styleEl.id='prio-col-vis-style';document.head.appendChild(styleEl);}
@@ -5037,6 +5056,108 @@ function saveHealthThreshold(key){
   if(key===curKey){renderResumoDashboard();renderProjSum();}
   renderPortfolio();
 }
+// ── Classificação do Projeto (Prioridades) ─────────────────────────────────
+// Pedido da Amanda: customfield_29852 (Select List) saiu de vez da jogada — restringia demais
+// (qualquer opção nova, tipo "Projeto Autocontido", exigiria cadastrar no Jira antes). A partir
+// de agora a gravação é sempre em customfield_27943, que é TEXTO LIVRE — aceita qualquer opção
+// do dropdown abaixo sem precisar mexer no Jira. Continua lendo customfield_29857 (Select, dados
+// antigos) como fallback só pra não perder classificação já preenchida por lá antes dessa mudança.
+const CLASSIFICACAO_OPTIONS=['Produto/TI','Novo Cliente/New Client','Nova Solução em Cliente Já Existente/New Solution in Existing Client','Outros/Others','Projeto Autocontido'];
+// Reconhece por PALAVRA-CHAVE (case-insensitive, em qualquer ordem PT/EN) em vez de igualdade
+// exata, porque o texto que já existia no Jira antes dessa mudança é bilíngue e não segue
+// necessariamente as opções acima ao pé da letra — e mostra o texto ORIGINAL como label.
+function classificacaoMeta(val){
+  const v=(val||'').trim();
+  if(!v)return{label:'Produto/TI',bg:'#111827',fg:'#ffffff'};
+  const vl=v.toLowerCase();
+  if(vl.includes('autocontido'))return{label:v,bg:'#fee2e2',fg:'#b91c1c'};
+  if(vl.includes('novo cliente')||vl.includes('new client'))return{label:v,bg:'#1e3a8a',fg:'#ffffff'};
+  if(vl.includes('nova solu')||vl.includes('new solution'))return{label:v,bg:'#dbeafe',fg:'#1d4ed8'};
+  if(vl.includes('outro')||vl.includes('other'))return{label:v,bg:'#fef9c3',fg:'#854d0e'};
+  return{label:v,bg:'#111827',fg:'#ffffff'}; // preenchido mas não reconhecido — mostra o texto real do Jira, cor neutra
+}
+function editClassificacao(key){
+  if(!isEditorOrAbove()){alert(t('upd_alert_only_editor_publicar'));return;}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  const optsHtml=CLASSIFICACAO_OPTIONS.map(o=>`<option value="${escHtml(o)}" ${(p.classificacao||'Produto/TI')===o?'selected':''}>${escHtml(o)}</option>`).join('');
+  getOrBuildModal('edit-classificacao-modal',t('prio_modal_title_editar_classificacao'),`
+    <div class="info-box" style="margin-bottom:8px">${t('prio_info_classificacao')}</div>
+    <select id="edit-classificacao-input" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">${optsHtml}</select>
+    <div id="edit-classificacao-err" style="display:none;color:var(--red);font-size:10.5px;margin-top:6px"></div>
+  `,`<button class="btn-c" onclick="closeM('edit-classificacao-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="edit-classificacao-save-btn" onclick="saveClassificacao('${key}')">${t('btn_salvar')}</button>`);
+  openM('edit-classificacao-modal');
+}
+async function saveClassificacao(key){
+  const val=document.getElementById('edit-classificacao-input').value;
+  // "Produto/TI" não é uma opção real — representa "nenhuma classificação comercial", então
+  // salvar isso LIMPA o campo no Jira (customfield_27943:null) em vez de gravar o texto lá.
+  const isClear=val==='Produto/TI';
+  const err=document.getElementById('edit-classificacao-err');err.style.display='none';
+  const btn=document.getElementById('edit-classificacao-save-btn');if(btn){btn.disabled=true;btn.innerHTML='...';}
+  try{
+    const r=await gasFetch({action:'updateClassificacao',issueKey:key,value:isClear?'':val,clear:isClear});
+    const d=await r.json();
+    if(!d.ok){
+      err.textContent=fmtLog('prio_alert_classificacao_falha_tpl',{error:d.error||'erro desconhecido'});
+      err.style.display='';
+      if(btn){btn.disabled=false;btn.innerHTML=t('btn_salvar');}
+      return;
+    }
+    const p=PROJECTS.find(x=>x.key===key);
+    if(p){p.classificacao=isClear?'':val;p.classificacaoManual=true;}
+    logChange(key,fmtLog('rsm_lg_classificacao_alterada_tpl',{val}),'#6924E1');
+    persistProjects();
+    closeM('edit-classificacao-modal');
+    renderPortfolio();
+  }catch(e){
+    err.textContent=fmtLog('prio_alert_classificacao_falha_tpl',{error:e.message});
+    err.style.display='';
+    if(btn){btn.disabled=false;btn.innerHTML=t('btn_salvar');}
+  }
+}
+// ── Reatribuir GP Alocado (só admin) ──────────────────────────────────────
+// customfield_28494 é um campo de "pessoa" no Jira (user picker) — não aceita texto livre
+// como os campos manuais genéricos (MANUAL_FIELD_JIRA_MAP), precisa do accountId do usuário.
+// Por isso usa uma action própria no GAS ('updateGP') que resolve o e-mail digitado pro
+// accountId via busca de usuário do Jira, em vez do pushManualFieldToJira genérico.
+function editGP(key){
+  if(!isAdmin()){alert(t('rsm_alert_only_admin_gp'));return;}
+  const p=PROJECTS.find(x=>x.key===key);if(!p)return;
+  getOrBuildModal('edit-gp-modal',t('rsm_modal_title_editar_gp'),`
+    <div class="info-box" style="margin-bottom:8px">${t('rsm_info_editar_gp')}</div>
+    <input id="edit-gp-input" type="email" placeholder="${t('rsm_ph_email_gp')}" style="width:100%;border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
+    <div id="edit-gp-err" style="display:none;color:var(--red);font-size:10.5px;margin-top:6px"></div>
+  `,`<button class="btn-c" onclick="closeM('edit-gp-modal')">${t('btn_cancelar')}</button><button class="btn-s" id="edit-gp-save-btn" onclick="saveGP('${key}')">${t('btn_salvar')}</button>`);
+  openM('edit-gp-modal');
+  setTimeout(()=>document.getElementById('edit-gp-input')?.focus(),50);
+}
+async function saveGP(key){
+  const email=(document.getElementById('edit-gp-input').value||'').trim().toLowerCase();
+  const err=document.getElementById('edit-gp-err');err.style.display='none';
+  if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){err.textContent=t('rsm_alert_email_gp_invalido');err.style.display='';return;}
+  const btn=document.getElementById('edit-gp-save-btn');if(btn){btn.disabled=true;btn.innerHTML='...';}
+  try{
+    const r=await gasFetch({action:'updateGP',issueKey:key,email});
+    const d=await r.json();
+    if(!d.ok){
+      err.textContent=fmtLog('rsm_alert_gp_falha_jira_tpl',{error:d.error||'erro desconhecido'});
+      err.style.display='';
+      if(btn){btn.disabled=false;btn.innerHTML=t('btn_salvar');}
+      return;
+    }
+    const p=PROJECTS.find(x=>x.key===key);
+    if(p&&d.gp)p.gp=d.gp;
+    logChange(key,fmtLog('rsm_lg_gp_alterado_tpl',{name:d.gp||email}),'#0369a1');
+    persistProjects();
+    closeM('edit-gp-modal');
+    if(key===curKey)renderResumoDashboard();
+    renderPortfolio();
+  }catch(e){
+    err.textContent=fmtLog('rsm_alert_gp_falha_jira_tpl',{error:e.message});
+    err.style.display='';
+    if(btn){btn.disabled=false;btn.innerHTML=t('btn_salvar');}
+  }
+}
 function editDataAlvo(key){
   if(!canEditDataAlvo(key)){alert(t('rsm_alert_only_gp_data_alvo'));return;}
   const p=PROJECTS.find(x=>x.key===key);if(!p)return;
@@ -5304,6 +5425,7 @@ function renderPortfolio(){
         ${alertBadges?`<span style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">${alertBadges}</span>`:''}
       </div></td>
       <td data-col="tipo"><span class="spill" style="background:${ib};color:${ic};text-transform:uppercase">${p.type}</span></td>
+      <td data-col="classificacao">${(()=>{const cm=classificacaoMeta(p.classificacao);return `<span class="spill" ${isEditorOrAbove()?`style="cursor:pointer;background:${cm.bg};color:${cm.fg}" onclick="event.stopPropagation();editClassificacao('${p.key}')" title="${t('prio_status_change_title_editable')}"`:`style="background:${cm.bg};color:${cm.fg}"`}>${cm.label}</span>`;})()}</td>
       <td data-col="status"><div style="display:flex;align-items:center;gap:3px;overflow:hidden"><span class="spill ${JIRA_SC[p.status]||'s-bkl'}" title="${isEditorOrAbove()?t('prio_status_change_title_editable'):String(p.status||'').toUpperCase()}" ${isEditorOrAbove()?`style="cursor:pointer" onclick="event.stopPropagation();openChangeStatusModal('${p.key}')"`:''}>${p.status}</span></div></td>
       <td data-col="gp"><span class="gp-tag" style="text-transform:uppercase" title="${p.gp}">${p.gp&&p.gp!=='—'?p.gp.split(',')[0].slice(0,20):'—'}</span></td>
       <td data-col="times"><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:100%;overflow:hidden">${(p.times||[]).slice(0,3).map(t=>'<span style="font-size:9px;background:#f0f1fa;color:#4b5675;padding:1px 5px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px;display:inline-block;vertical-align:middle;cursor:pointer" title="'+window.fmtLog('prio_ver_fila_time_title_tpl',{team:t.replace(/'/g,"\\'")})+'" onclick="event.stopPropagation();openTeamQueueModal(\''+t.replace(/'/g,"\\'")+'\')">'+t+'</span>').join('')}${p.times&&p.times.length>3?'<span style="font-size:9px;color:var(--text3)">+'+( p.times.length-3)+'</span>':''}</div></td>
@@ -6627,6 +6749,7 @@ function renderPrioridadesShell(activeCount){
       <th style="width:80px" data-col="variacao" title="${t('prio_col_variacao_title')}">${t('prio_col_variacao')}</th>
       <th style="width:330px" data-col="proj">${t('prio_col_projeto')}</th>
       <th style="width:75px" data-col="tipo">${t('prio_col_tipo')}</th>
+      <th style="width:150px" data-col="classificacao">${t('prio_col_classificacao')}</th>
       <th style="width:130px" data-col="status">${t('prio_col_status_jira')}</th>
       <th style="width:90px" data-col="gp">${t('prio_col_gp_alocado')}</th>
       <th style="width:115px" data-col="times">${t('prio_col_times')}</th>
@@ -7830,6 +7953,9 @@ function collectEmailProjectsData(){
     };
   }).filter(Boolean);
 }
+// Pedido da Amanda: TODO envio por Slack no HUB agora é DM individual via Bot (chat.postMessage
+// pro e-mail da pessoa), nunca mais post fixo num canal via Incoming Webhook — usa a mesma action
+// "sendSlackFollowerDM" já usada pelas notificações automáticas de seguidores (ver notifyFollowers).
 async function sendExecutiveSlack(){
   const statusEl=document.getElementById('email-send-status');
   const btn=document.getElementById('email-slack-btn');
@@ -7839,17 +7965,30 @@ async function sendExecutiveSlack(){
     if(statusEl){statusEl.textContent=t('shared_envio_nao_configurado');statusEl.style.color='var(--red)';}
     return;
   }
+  // Mesmos destinatários do envio por e-mail deste modal (pré-configurados + stakeholders dos
+  // projetos marcados + extra) — o modal não tem um toggle de canal por pessoa, então o Slack
+  // usa a lista inteira escolhida ali, só entregue por DM em vez de e-mail.
+  const extra=document.getElementById('email-extra').value.trim();
+  const preconf=Array.from(document.querySelectorAll('.email-preconf-cb:checked')).map(x=>x.value);
+  const recipients=[...preconf,...collectEmailStakeholderRecipients()];
+  if(extra&&/^[^@]+@[^@]+\.[^@]+$/.test(extra))recipients.push(extra);
+  const uniqueRecipients=[...new Set(recipients)];
+  if(!uniqueRecipients.length){if(statusEl){statusEl.textContent=t('upd_alert_nenhum_destinatario');statusEl.style.color='var(--red)';}return;}
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('shared_enviando_slack');statusEl.style.color='var(--text3)';}
   try{
-    const r=await gasFetch({
-      action:'sendSlackExecutive',
-      dateLabel:`${TODAY.getDate()} de ${MONTHS_FULL[TODAY.getMonth()]} de ${TODAY.getFullYear()}`,
-      author:currentUser?.name||'VMO Tool',
-      projects,
-    });
+    const r=await gasFetch({action:'sendSlackFollowerDM',recipients:uniqueRecipients,message:buildEmailBody()});
     const d=await r.json();
-    if(d.ok){if(statusEl){statusEl.textContent=t('shared_enviado_slack');statusEl.style.color='var(--green)';}}
+    if(d.ok){
+      const skippedN=(d.skipped||[]).length;
+      if(statusEl){
+        // Mostra o motivo real do 1º pulado (ex: "Slack: users_not_found") em vez de só a
+        // contagem — evita ter que abrir o Executions no Apps Script pra descobrir a causa.
+        const reason=skippedN?(d.skipped[0].reason||''):'';
+        statusEl.textContent=skippedN?fmtLog('shared_status_enviado_slack_parcial_tpl',{n:d.sent,skip:skippedN})+(reason?` (${reason})`:''):fmtLog('shared_status_enviado_slack_tpl',{n:d.sent});
+        statusEl.style.color=d.sent?'var(--green)':'var(--red)';
+      }
+    }
     else{if(statusEl){statusEl.textContent=t('rsm_erro_prefix')+(d.error||t('shared_erro_enviar_slack_suffix'));statusEl.style.color='var(--red)';}}
   }catch(e){
     if(statusEl){statusEl.textContent=t('shared_erro_conectar_slack');statusEl.style.color='var(--red)';}
@@ -7864,29 +8003,39 @@ async function sendStakeholderSlack(){
     if(statusEl){statusEl.textContent=t('shared_envio_nao_configurado');statusEl.style.color='var(--red)';}
     return;
   }
+  // DM só pra quem tem o canal Slack marcado no cadastro de stakeholders deste projeto (mesmo
+  // filtro que notifyFollowers usa pro aviso automático) — evita tentar mandar DM pra quem nunca
+  // pediu pra ser avisado por lá.
+  const recipients=(sched.stakeholders||[]).filter(s=>s.channels?.slack).map(s=>s.email);
+  if(!recipients.length){if(statusEl){statusEl.textContent=t('rsm_alert_nenhum_stakeholder_slack');statusEl.style.color='var(--red)';}return;}
   const p=PROJECTS.find(x=>x.key===curKey);
   const st=getStats(curKey);
   const customMsg=(document.getElementById('sh-message')?.value||'').trim();
   const scheduleUrl=window.location.href.split('?')[0]+'?project='+curKey;
-  const payload={
-    action:'sendSlackUpdate',
-    issueKey:curKey,
-    projectName:p?p.summary:curKey,
-    status:p?p.status:'',
-    progress:st.prog,
-    health:st.health,
-    goLive:(p&&p.golive)||st.goLiveLocal||null,
-    scopeLink:sched.scopeLink||null,
-    message:customMsg,
-    scheduleUrl,
-  };
+  const healthLbl={'on-track':'✓ Nos trilhos','alert':'⚠ Em risco','off-track':'✗ Fora dos trilhos','none':'Sem cronograma'}[st.health]||'';
+  const glDate=(p&&p.golive)||st.goLiveLocal;
+  let bodyText=`${p?p.summary:curKey} (${curKey})\nStatus: ${p?p.status:''} | Progresso: ${st.prog}% | ${healthLbl}\n`;
+  if(glDate)bodyText+=`Go Live: ${fmtBRFull(glDate)}\n`;
+  if(sched.scopeLink)bodyText+=`Escopo: ${sched.scopeLink}\n`;
+  bodyText+=`Cronograma completo: ${scheduleUrl}`;
+  if(customMsg)bodyText+=`\n\n${customMsg}`;
   if(btn){btn.disabled=true;btn.style.opacity='.6';}
   if(statusEl){statusEl.textContent=t('shared_enviando_slack');statusEl.style.color='var(--text3)';}
   try{
-    const r=await gasFetch(payload);
+    const r=await gasFetch({action:'sendSlackFollowerDM',recipients,message:bodyText,issueKey:curKey});
     const d=await r.json();
-    if(d.ok){if(statusEl){statusEl.textContent=t('shared_enviado_slack');statusEl.style.color='var(--green)';}}
-    else{if(statusEl){statusEl.textContent=t('rsm_erro_prefix')+(d.error||t('shared_erro_enviar_slack_suffix'));statusEl.style.color='var(--red)';}}
+    if(d.ok){
+      const skippedN=(d.skipped||[]).length;
+      if(statusEl){
+        // Mostra o motivo real do 1º pulado (ex: "Slack: users_not_found") em vez de só a
+        // contagem — evita ter que abrir o Executions no Apps Script pra descobrir a causa.
+        const reason=skippedN?(d.skipped[0].reason||''):'';
+        statusEl.textContent=skippedN?fmtLog('shared_status_enviado_slack_parcial_tpl',{n:d.sent,skip:skippedN})+(reason?` (${reason})`:''):fmtLog('shared_status_enviado_slack_tpl',{n:d.sent});
+        statusEl.style.color=d.sent?'var(--green)':'var(--red)';
+      }
+    } else {
+      if(statusEl){statusEl.textContent=t('rsm_erro_prefix')+(d.error||t('shared_erro_enviar_slack_suffix'));statusEl.style.color='var(--red)';}
+    }
   }catch(e){
     if(statusEl){statusEl.textContent=t('shared_erro_conectar_slack');statusEl.style.color='var(--red)';}
   }
@@ -8075,6 +8224,41 @@ document.addEventListener('click',function(e){
   const dd=document.getElementById('se-proj-dropdown');
   if(dd&&dd.classList.contains('open')&&wrap&&!wrap.contains(e.target))closeScheduleSearchDropdown();
 });
+// Navegação anterior/próximo pela mesma ordem de prioridade usada na aba Prioridades —
+// pedido da Amanda pra poder passear pelos projetos da fila sem ter que voltar pra lá toda hora.
+// Reaproveita canViewProject pra nunca oferecer navegar pra um projeto que a pessoa não pode ver.
+// Só entram na navegação os projetos que de fato participam da fila de prioridade — os
+// mesmos excluídos da numeração "real" na própria aba Prioridades (Backlog/Pausado/Cancelado/
+// Presales/Entregue nunca têm uma posição individual de verdade, só um valor "balde" fixo).
+function getPriorityOrderedProjects(){
+  return PROJECTS.filter(p=>canViewProject(p.key)&&!PRIORITY_LIST_EXCLUDED_STATUS.has(p.status)).slice().sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+}
+function updateResumoPrioNav(){
+  const nav=document.getElementById('rsm-prio-nav');if(!nav)return;
+  const list=getPriorityOrderedProjects();
+  const idx=list.findIndex(p=>p.key===curKey);
+  if(!curKey||idx<0){nav.style.display='none';return;}
+  nav.style.display='flex';
+  const cur=list[idx];
+  // Mostra a prioridade REAL (p.priority, a mesma da coluna "Nova" em Prioridades) — não a
+  // posição recalculada no array — pra bater exatamente com o que a Amanda vê lá.
+  document.getElementById('rsm-prio-pos').textContent=`#${cur.priority!=null?Math.trunc(cur.priority):(idx+1)}/${list.length}`;
+  const prevBtn=document.getElementById('rsm-prio-prev-btn');
+  const nextBtn=document.getElementById('rsm-prio-next-btn');
+  const prevP=list[idx-1];const nextP=list[idx+1];
+  prevBtn.disabled=!prevP;
+  nextBtn.disabled=!nextP;
+  prevBtn.title=prevP?`#${prevP.priority!=null?Math.trunc(prevP.priority):idx} · ${prevP.summary}`:'';
+  nextBtn.title=nextP?`#${nextP.priority!=null?Math.trunc(nextP.priority):idx+2} · ${nextP.summary}`:'';
+}
+function navResumoPriority(dir){
+  const list=getPriorityOrderedProjects();
+  const idx=list.findIndex(p=>p.key===curKey);
+  if(idx<0)return;
+  const target=list[idx+dir];
+  if(!target)return;
+  openProject(target.key);
+}
 function renderResumoDashboard(){
   if(!curKey)return;
   const p=PROJECTS.find(x=>x.key===curKey);const sched=schedules[curKey];
@@ -8082,6 +8266,7 @@ function renderResumoDashboard(){
   document.getElementById('rsm-empty').style.display='none';
   document.getElementById('rsm-body').style.display='grid';
   document.getElementById('rsm-title').textContent=p.summary;
+  updateResumoPrioNav();
   const jl=document.getElementById('rsm-jira-lnk');jl.style.display='';
   document.getElementById('rsm-jira-key').textContent=curKey;jl.href=`https://one-bemobi.atlassian.net/browse/${curKey}`;
   const st=getStats(curKey);
@@ -8213,28 +8398,50 @@ function renderResumoTimesEnvolvidos(){
     ?`<div style="display:flex;flex-wrap:wrap;gap:5px">${times.map(tm=>`<span class="atag" style="font-size:9.5px;padding:3px 8px">${escHtml(tm)}</span>`).join('')}</div>`
     :`<div class="rsm-empty">${t('rsm_nenhum_time')}</div>`;
 }
+// Cor da bolinha das Datas Marco reflete a SAÚDE do item (não a cor de categoria da Etapa,
+// que já aparece em outros lugares como o Gantt) — pedido da Amanda: cinza=não iniciada,
+// amarelo=em andamento, vermelho=com atraso (tem prioridade sobre as outras, mesmo se ainda não
+// iniciada), verde=entregue.
+function rsmMarcoDotColor(status,atraso){
+  if(status==='done')return 'var(--green)';
+  if(atraso!=null&&atraso>0)return 'var(--red)';
+  if(status==='in_progress')return 'var(--amber)';
+  return 'var(--gray)'; // cinza — não iniciada (ou bloqueada/cancelada, tratadas como neutras aqui)
+}
+function renderResumoDatesLegend(){
+  const wrap=document.getElementById('rsm-dates-legend');if(!wrap)return;
+  const items=[['var(--gray)','rsm_marco_leg_ns'],['var(--amber)','rsm_marco_leg_ip'],['var(--red)','rsm_marco_leg_at'],['var(--green)','rsm_marco_leg_dn']];
+  const dots=items.map(([color,key])=>`<div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></div><span style="font-size:9px;color:var(--text3)">${window.t(key)}</span></div>`).join('');
+  // Legenda extra explicando o % em negrito ao lado das datas (pedido da Amanda) — mesma linha,
+  // separada por um traço, pra não precisar de outra div/quebra de layout.
+  const pctNote=`<div style="display:flex;align-items:center;gap:4px"><span style="font-size:9px;color:var(--text3)">${window.t('rsm_marco_leg_pct')}</span></div>`;
+  wrap.innerHTML=dots+pctNote;
+}
 // Datas Marco = todas as Etapas (sempre) + qualquer Tarefa que o GP marcou explicitamente
 // como marco (t.isMarco — ver toggleTaskMarco()). Etapa é marco por padrão, tarefa só entra
 // se alguém marcar de propósito.
 function renderResumoDatesList(){
   const sched=schedules[curKey];const list=document.getElementById('rsm-dates-list');if(!list)return;
-  const msItems=(sched.milestones||[]).filter(m=>!m.marcoOff).map(m=>({name:m.name,start:m.start,deadline:m.deadline,color:m.color||'var(--purple)',icon:'ti-flag-2',kind:window.t('rsm_kind_etapa')}));
+  renderResumoDatesLegend();
+  const msItems=(sched.milestones||[]).filter(m=>!m.marcoOff).map(m=>{
+    const msTasks=(sched.tasks||[]).filter(t=>t.msId===m.id);
+    const doneCount=msTasks.filter(t=>t.status==='done').length;
+    const progress=m.status==='done'?100:(msTasks.length?Math.round(msTasks.reduce((a,t)=>a+taskProg(t),0)/msTasks.length):(m.status==='in_progress'?50:0));
+    return {name:m.name,start:m.start,deadline:m.deadline,icon:'ti-flag-2',kind:window.t('rsm_kind_etapa'),status:m.status,progress,atraso:msAtraso(m,curKey)};
+  });
   const taskItems=(sched.tasks||[]).filter(t=>t.isMarco).map(t=>{
-    const ms=(sched.milestones||[]).find(x=>x.id===t.msId);
-    return {name:t.name,start:t.start,deadline:t.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
+    return {name:t.name,start:t.start,deadline:t.deadline,icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada'),status:t.status,progress:taskProg(t),atraso:taskAtraso(t)};
   });
   // Se uma tarefa marcada como marco for indentada e virar subtarefa (ver indentTask), o isMarco
   // é preservado no objeto — precisa continuar aparecendo aqui, senão "desaparece" sem aviso.
   const subItems=(sched.subtasks||[]).filter(s=>s.isMarco).map(s=>{
-    const tk=(sched.tasks||[]).find(x=>x.id===s.taskId);
-    const ms=tk?(sched.milestones||[]).find(x=>x.id===tk.msId):null;
-    return {name:s.name,start:s.start,deadline:s.deadline,color:(ms&&ms.color)||'var(--blue)',icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada')};
+    return {name:s.name,start:s.start,deadline:s.deadline,icon:'ti-pin',kind:window.t('rsm_kind_tarefa_marcada'),status:s.status,progress:taskProg(s),atraso:subtaskAtraso(s)};
   });
   const all=[...msItems,...taskItems,...subItems].sort((a,b)=>(a.deadline||'').localeCompare(b.deadline||''));
   document.getElementById('rsm-dates-empty').style.display=all.length?'none':'block';
   // Ícone de bandeira/pin entre nome e bolinha removido (pedido da Amanda — a bolinha colorida
-  // já identifica a etapa) e adicionado o período completo (Início → Fim), não só a data final.
-  list.innerHTML=all.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${m.color}"></div><div style="min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:1"><span style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.kind}">${m.name}</span><span style="font-size:9.5px;color:var(--text3);white-space:nowrap;flex-shrink:0">${window.t('col_inicio')}: ${fmtBR(m.start)} · ${window.t('col_prazo')}: ${fmtBRFull(m.deadline)}</span></div></div>`).join('');
+  // já identifica a etapa) e adicionado o período completo (Início → Fim) + % de progresso.
+  list.innerHTML=all.map(m=>`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:${rsmMarcoDotColor(m.status,m.atraso)}"></div><div style="min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:1"><span style="font-size:10.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.kind}">${m.name}</span><span style="font-size:9.5px;color:var(--text3);white-space:nowrap;flex-shrink:0">${window.t('col_inicio')}: ${fmtBR(m.start)} · ${window.t('col_prazo')}: ${fmtBRFull(m.deadline)} · <b style="color:var(--text);font-weight:700" title="${window.t('rsm_marco_leg_pct')}">${m.progress}%</b></span></div></div>`).join('');
 }
 // Combina Scoring + as duas notas de Complexidade num único card "Score & Complexidade",
 // com 3 caixinhas lado a lado (ver .rsm-stat-row) — antes eram 2 cards/listas separados
@@ -8902,7 +9109,7 @@ function renderAllUpdatesModalList(){
 function renderContactCard(){
   const p=PROJECTS.find(x=>x.key===curKey);const sched=schedules[curKey];
   const body=document.getElementById('rsm-contact-body');if(!body)return;
-  let html=`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:var(--purple)"></div><div style="min-width:0"><div style="font-weight:600;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:t('rsm_sem_gp')}</div><div style="font-size:9.5px;color:var(--text3)">${t('rsm_gp_responsavel')}</div></div></div>`;
+  let html=`<div class="rsm-mini-item"><div class="rsm-mini-dot" style="background:var(--purple)"></div><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.gp&&p.gp!=='—'?p.gp.split(',')[0]:t('rsm_sem_gp')}</div><div style="font-size:9.5px;color:var(--text3)">${t('rsm_gp_responsavel')}</div></div>${isAdmin()?`<button class="btn-c" style="font-size:8px;padding:1px 5px;border:none;flex-shrink:0" onclick="editGP('${curKey}')" title="${t('rsm_editar_gp_title')}"><i class="ti ti-pencil" style="font-size:8px"></i></button>`:''}</div>`;
   const stakeholders=(sched.stakeholders||[]);
   // Pedido da Amanda: com Seguindo e Pontos de Contato unificados numa lista só, ela pode
   // crescer bastante (qualquer um pode clicar em "Seguir projeto"). Na aba do projeto (fora do
@@ -12065,8 +12272,8 @@ function openPermissionDocsModal(){
   <div class="section-lbl" style="margin-top:10px">✏️ Editor</div>
   <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Vê todas as abas e todos os projetos. Só pode <b>editar</b> cronograma, atualizações e a maioria dos campos nos projetos onde está cadastrado como GP Alocado — em projetos de outros GPs, o acesso é de leitura.</div>
   <div class="section-lbl" style="margin-top:10px">👁️ Visualizador</div>
-  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Vê todas as abas e todos os projetos, mas em modo somente leitura — não edita nada. É o papel padrão de quem tem e-mail @bemobi.com e ainda não foi promovido a Editor/Admin/Consulta.</div>
-  <div class="section-lbl" style="margin-top:10px">🔍 Consulta</div>
+  <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Vê as abas <b>Cronogramas</b>, <b>Resumo dos Projetos</b>, <b>Atualizações</b> e <b>Prioridades</b> (nesta, só a Visão Estática — sem a Simulação VMO), todos os projetos, sempre em modo somente leitura. Não vê Visão Geral nem Documentos Úteis. É o papel padrão de quem tem e-mail @bemobi.com e ainda não foi promovido a Editor/Admin/Consultor.</div>
+  <div class="section-lbl" style="margin-top:10px">🔍 Consultor</div>
   <div style="font-size:10.5px;color:var(--text2);line-height:1.5">Acesso restrito só às abas <b>Cronogramas</b> e <b>Resumo dos Projetos</b>, sempre em modo leitura — não vê Visão Geral, Prioridades, Atualizações, Scoring nem Documentos Úteis. Pensado pra quem só precisa acompanhar o andamento sem participar de decisões de portfólio.</div>
   <div class="section-lbl" style="margin-top:12px">🔒 Acessos de convidado (por projeto, não pelo cadastro geral)</div>
   <div style="font-size:10.5px;color:var(--text2);line-height:1.5"><b>Stakeholder</b> — pessoa cadastrada em "Stakeholders" dentro de um projeto específico; só vê Cronograma+Resumo <i>daquele</i> projeto, sempre em leitura.<br><br><b>Externo</b> — acesso dado por um admin em "Gerenciar Acessos" pra alguém de fora da Bemobi; só vê Cronograma+Resumo do projeto liberado, podendo ou não editar o cronograma dependendo do nível concedido (Editor/Visualizador/Externo).</div>
@@ -13249,7 +13456,7 @@ function gasFetch(bodyObj,extraOpts){
 // Script (GAS) que atende essa action ('syncProjects') também devolva esse campo no JSON de
 // resposta como "duedate" de cada projeto (ou um novo campo dedicado, ex. "dataAlvo") — sem
 // esse ajuste no GAS, incluir aqui na lista de fields não basta pra fazer a leitura funcionar.
-const JIRA_SYNC_FIELDS='summary,status,issuetype,duedate,created,customfield_28494,customfield_28488,customfield_28489,customfield_28594,customfield_29150,customfield_27831,customfield_29719,customfield_29858,customfield_29851,customfield_28200,customfield_28025,customfield_28026,customfield_31229';
+const JIRA_SYNC_FIELDS='summary,status,issuetype,duedate,created,customfield_28494,customfield_28488,customfield_28489,customfield_28594,customfield_29150,customfield_27831,customfield_29719,customfield_29858,customfield_29851,customfield_28200,customfield_28025,customfield_28026,customfield_31229,customfield_29857,customfield_27943';
 // Campos manuais do Resumo que também existem como campo real no Jira e sincronizam nos dois
 // sentidos (igual à Prioridade): puxa do Jira no sync, e ao editar no HUB grava de volta lá.
 const MANUAL_FIELD_JIRA_MAP={tpvPrevisto:'customfield_28025',receitaLiquidaPrevista:'customfield_28026'};
@@ -13519,7 +13726,7 @@ async function autoLoadOnLogin() {
     } else if (currentUser?.role === 'external' || currentUser?.role === 'stakeholder') {
       const myProjects = PROJECTS.filter(p => canViewProject(p.key));
       if (myProjects.length === 1) openProject(myProjects[0].key);
-    } else if (currentUser?.role === 'consulta') {
+    } else if (currentUser?.role === 'consulta' || currentUser?.role === 'viewer') {
       showView('resumo');
     }
   } else if (currentUser?.role === 'external' || currentUser?.role === 'stakeholder') {
@@ -13527,9 +13734,9 @@ async function autoLoadOnLogin() {
     // pousar na Visão Geral, que eles nem conseguem ver.
     const myProjects = PROJECTS.filter(p => canViewProject(p.key));
     if (myProjects.length === 1) openProject(myProjects[0].key);
-  } else if (currentUser?.role === 'consulta') {
-    // Idem: "Consulta" não vê Visão Geral — manda direto pro Resumo dos Projetos (sem
-    // pré-selecionar nenhum, já que enxerga a carteira inteira, não um projeto só).
+  } else if (currentUser?.role === 'consulta' || currentUser?.role === 'viewer') {
+    // Idem: "Consulta"/Visualizador não veem Visão Geral — manda direto pro Resumo dos
+    // Projetos (sem pré-selecionar nenhum, já que enxergam a carteira inteira, não um projeto só).
     showView('resumo');
   }
   // Tour de onboarding automático no primeiro login — só para perfis internos (admin, editor,
@@ -13841,6 +14048,10 @@ function applyJiraSync(freshProjects,opts={}){
       PROJECTS[idx].golive   = fp.golive   ?? null;
       PROJECTS[idx].tpvPrevisto = fp.tpvPrevisto ?? PROJECTS[idx].tpvPrevisto;
       PROJECTS[idx].receitaLiquidaPrevista = fp.receitaLiquidaPrevista ?? PROJECTS[idx].receitaLiquidaPrevista;
+      // Classificação: só sobrescreve com o que veio do Jira se a pessoa não tiver editado
+      // manualmente aqui no HUB (mesmo padrão de segment/region acima) — senão um Sync Jira
+      // desfazia a escolha manual feita na aba Prioridades.
+      if(!PROJECTS[idx].classificacaoManual) PROJECTS[idx].classificacao = fp.classificacao ?? PROJECTS[idx].classificacao;
     } else {
       PROJECTS.push(fp);
     }
