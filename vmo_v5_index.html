@@ -13473,7 +13473,16 @@ async function previewImport(){
       // parseInt() nesse valor: cai no fallback e trata toda linha como Etapa, "com sucesso"
       // (silenciosamente errado) em vez de devolver vazio e disparar os fallbacks abaixo. Em
       // qualquer outra planilha (sem cabeçalho "Etapa" exato) isso devolve vazio e não interfere.
-      importedData=parseBemobiPaymentTemplateXlsx(wb);
+      // Tenta reconhecer PRIMEIRO o formato nativo gerado pelo próprio botão "Exportar → Excel"
+      // desta ferramenta (cabeçalho exato Etapa/Tarefa/Subtarefa/Início/Fim Estimado/Data de
+      // Conclusão/.../Status/Link Jira) — usado, por ex., pra RESTAURAR um cronograma a partir
+      // de um backup exportado antes de um problema (bug crítico "todos os cronogramas
+      // sumiram" corrigido nesta mesma versão). Vem antes do template Bemobi porque é uma
+      // correspondência exata e mais específica, sem ambiguidade quando bate.
+      importedData=parseNativeVmoExportXlsx(wb);
+      if(!importedData||(!importedData.milestones.length&&!importedData.tasks.length&&!importedData.subtasks.length)){
+        importedData=parseBemobiPaymentTemplateXlsx(wb);
+      }
       if(!importedData||(!importedData.milestones.length&&!importedData.tasks.length)){
         // Acha a linha de cabeçalho de verdade em vez de assumir que é sempre a primeira linha da
         // planilha — muita planilha real tem 1-2 linhas de título do projeto antes do cabeçalho
@@ -13550,6 +13559,107 @@ function cronoToISODate_(v){
 // (gera uma etapa bogus por linha, sem hierarquia) em vez de cair no "sem dados" que dispara
 // os fallbacks. Esta função só reconhece algo se achar um cabeçalho "Etapa" exato — em
 // qualquer outra planilha (sem esse layout) devolve listas vazias e não interfere em nada.
+// ── IMPORT: reconhecimento do formato NATIVO gerado pelo botão "Exportar → Excel (.xlsx)"
+// desta própria ferramenta (função exportXlsx() — cabeçalho fixo Etapa/Tarefa/Subtarefa/
+// Início/Fim Estimado/Data de Conclusão/Est.(d)/Real(d)/Responsáveis/Dep./Tipo Dep./Status/
+// Link Jira). Existe principalmente pra permitir RESTAURAR um cronograma inteiro a partir de
+// um backup exportado antes de algum problema — caso real que motivou isso: bug crítico na
+// trava de conflito de versão que, em raras condições de corrida com o sync automático do
+// Jira, sobrescrevia silenciosamente cronogramas reais por objetos vazios ("todos os
+// cronogramas sumiram", corrigido nesta mesma versão). A hierarquia Etapa/Tarefa/Subtarefa
+// nesse formato é 100% posicional (cada linha preenche EXATAMENTE uma das três colunas, na
+// ordem em que aparecem na planilha), então a reconstrução segue simplesmente a ordem das
+// linhas. Dependências são gravadas no export como o NOME da tarefa (não um ID/número), então
+// a resolução aqui é por nome — na mesma aba, best-effort (nomes duplicados usam a última
+// ocorrência). Exige bater EXATAMENTE as 13 colunas do cabeçalho pra evitar qualquer confusão
+// com outros templates (Bemobi, genérico etc.).
+const NATIVE_VMO_EXPORT_HEADER_=['ETAPA','TAREFA','SUBTAREFA','INICIO','FIM ESTIMADO','DATA DE CONCLUSAO','EST.(D)','REAL(D)','RESPONSAVEIS','DEP.','TIPO DEP.','STATUS','LINK JIRA'];
+function parseNativeVmoExportXlsxHeaderMatch_(row){
+  if(!row||row.length<NATIVE_VMO_EXPORT_HEADER_.length)return false;
+  for(let i=0;i<NATIVE_VMO_EXPORT_HEADER_.length;i++){
+    if(normHeaderTxt_(row[i])!==NATIVE_VMO_EXPORT_HEADER_[i])return false;
+  }
+  return true;
+}
+function nativeDepTypeToCode_(raw){
+  const n=normHeaderTxt_(raw);
+  if(!n)return 'TI';
+  if(/TERMINO.*INICIO/.test(n))return 'TI';
+  if(/INICIO.*INICIO/.test(n))return 'II';
+  if(/TERMINO.*TERMINO/.test(n))return 'TT';
+  if(/INICIO.*TERMINO/.test(n))return 'IT';
+  return 'TI';
+}
+function parseNativeVmoExportXlsx(wb){
+  const allMilestones=[],allTasks=[],allSubtasks=[];
+  wb.SheetNames.forEach(sheetName=>{
+    const ws=wb.Sheets[sheetName];
+    if(!ws['!ref'])return;
+    const range=XLSX.utils.decode_range(ws['!ref']);
+    let headerRow=-1;
+    for(let r=range.s.r;r<=Math.min(range.s.r+5,range.e.r);r++){
+      const row=[];
+      for(let c=0;c<13;c++)row.push(cronoCellVal_(ws,r,c));
+      if(parseNativeVmoExportXlsxHeaderMatch_(row)){headerRow=r;break;}
+    }
+    if(headerRow<0)return;
+    const milestones=[],tasks=[],subtasks=[];
+    const nameToTaskId={};
+    const pendingDeps=[];
+    let curMsId=null,curTaskId=null,msIdx=0;
+    for(let r=headerRow+1;r<=range.e.r;r++){
+      const etapa=String(cronoCellVal_(ws,r,0)||'').trim();
+      const tarefa=String(cronoCellVal_(ws,r,1)||'').trim();
+      const subtarefa=String(cronoCellVal_(ws,r,2)||'').trim();
+      if(!etapa&&!tarefa&&!subtarefa)continue; // linha em branco
+      const start=cronoToISODate_(cronoCellVal_(ws,r,3));
+      const fimEst=cronoToISODate_(cronoCellVal_(ws,r,4));
+      const dataConclusao=cronoToISODate_(cronoCellVal_(ws,r,5));
+      const respRaw=String(cronoCellVal_(ws,r,8)||'').trim();
+      const assignees=respRaw?respRaw.split(/;\s*/).map(n=>n.trim()).filter(Boolean).map(n=>({name:n,type:'internal'})):[];
+      const depRaw=String(cronoCellVal_(ws,r,9)||'').trim();
+      const depTypeRaw=cronoCellVal_(ws,r,10);
+      const statusRaw=cronoCellVal_(ws,r,11);
+      const status=cronoMapStatus_(statusRaw);
+      const linkRaw=String(cronoCellVal_(ws,r,12)||'').trim();
+      const links=linkRaw?linkRaw.split(/;\s*/).map(u=>u.trim()).filter(Boolean).map(u=>({url:u,status:'',internal:isInternalLink(u)})):[];
+      if(etapa&&!tarefa&&!subtarefa){
+        curMsId=uid();msIdx++;curTaskId=null;
+        milestones.push({id:curMsId,name:etapa,start,deadline:fimEst,endReal:dataConclusao,
+          color:['#6366f1','#06b6d4','#10b981','#f59e0b','#8b5cf6','#ef4444'][msIdx%6],
+          status,assignees});
+      } else if(tarefa&&!subtarefa){
+        if(!curMsId){curMsId=uid();milestones.push({id:curMsId,name:'Importado',start:'',deadline:'',endReal:'',color:'#6366f1',status:'not_started',assignees:[]});}
+        const taskId=uid();curTaskId=taskId;
+        nameToTaskId[tarefa]=taskId;
+        tasks.push({id:taskId,msId:curMsId,name:tarefa,start,deadline:fimEst,origDeadline:fimEst,endReal:dataConclusao,
+          assignees,depId:'',depIds:[],depType:nativeDepTypeToCode_(depTypeRaw),depMode:'blocked',
+          status,notes:'',links,jiraLink:links[0]?links[0].url:'',jiraLinkStatus:''});
+        if(depRaw)pendingDeps.push({taskId,depName:depRaw});
+      } else if(subtarefa){
+        if(!curTaskId){
+          // Subtarefa sem tarefa-pai visível na planilha (não deveria acontecer no formato
+          // nativo, mas protege contra perda de dado em vez de descartar a linha).
+          const fallbackTaskId=uid();curTaskId=fallbackTaskId;
+          if(!curMsId){curMsId=uid();milestones.push({id:curMsId,name:'Importado',start:'',deadline:'',endReal:'',color:'#6366f1',status:'not_started',assignees:[]});}
+          tasks.push({id:fallbackTaskId,msId:curMsId,name:'(tarefa recuperada)',start:'',deadline:'',origDeadline:'',endReal:'',assignees:[],depId:'',depIds:[],depType:'TI',depMode:'blocked',status:'not_started',notes:'',links:[],jiraLink:'',jiraLinkStatus:''});
+        }
+        subtasks.push({id:uid(),taskId:curTaskId,name:subtarefa,start,deadline:fimEst,origDeadline:fimEst,endReal:dataConclusao,
+          assignees,area:'',status,progress:status==='done'?100:0,notes:'',links,critical:false,isMarco:false,
+          depId:'',depIds:[]});
+      }
+    }
+    pendingDeps.forEach(({taskId,depName})=>{
+      const depId=nameToTaskId[depName];
+      if(depId){
+        const tsk=tasks.find(x=>x.id===taskId);
+        if(tsk){tsk.depId=depId;tsk.depIds=[depId];}
+      }
+    });
+    allMilestones.push(...milestones);allTasks.push(...tasks);allSubtasks.push(...subtasks);
+  });
+  return{milestones:allMilestones,tasks:allTasks,subtasks:allSubtasks};
+}
 function bemobiTemplateStatusToHub_(raw){
   const n=normHeaderTxt_(raw);
   if(!n)return 'not_started';
