@@ -1226,9 +1226,6 @@ table.pft tr.pf-row-gray:hover td{background:#e2e6ee}
   </div>
   <div id="docs-filters">
     <button class="fbtn on" data-doccat="all" onclick="setDocCat('all',this)" data-i18n="prio_todos">Todos</button>
-    <button class="fbtn" data-doccat="apresentacoes" onclick="setDocCat('apresentacoes',this)" data-i18n="docs_cat_apresentacoes">🖼️ Apresentações</button>
-    <button class="fbtn" data-doccat="documentos" onclick="setDocCat('documentos',this)" data-i18n="docs_cat_documentos">📄 Documentos</button>
-    <button class="fbtn" data-doccat="planilhas" onclick="setDocCat('planilhas',this)" data-i18n="docs_cat_planilhas">📊 Planilhas</button>
     <button class="fbtn" data-doccat="priorizacao" onclick="setDocCat('priorizacao',this)" data-i18n="docs_cat_priorizacao">📌 Histórico de Priorização</button>
     <button class="fbtn" data-doccat="debriefing" onclick="setDocCat('debriefing',this)" data-i18n="docs_cat_debriefing">📝 Atas de Reunião</button>
     <select id="docs-month-filter" class="fbtn" style="display:none;cursor:pointer" onchange="docsMonthFilter=this.value;renderDocsLibrary()"></select>
@@ -9868,14 +9865,14 @@ function renderDebriefingFolders(items){
 // agrupa por mês por dentro (reaproveita renderDebriefingFolders), então dá pra separar por
 // segmento E por mês ao mesmo tempo.
 let docUserFolderOpen=new Set();
-let docUserFolderOpenInit=false;
+let docUserFolderOpenInitCats=new Set();
 function toggleDocUserFolder(id){
   if(docUserFolderOpen.has(id))docUserFolderOpen.delete(id);else docUserFolderOpen.add(id);
   renderDocsLibrary();
 }
 function renderDocFolderActionsRow(){
   const bar=document.getElementById('docs-folder-filters');if(!bar)return;
-  const applicable=['all','apresentacoes','documentos','planilhas','debriefing'].includes(curDocCat);
+  const applicable=curDocCat==='all';
   if(!applicable||!isEditorOrAbove()){bar.style.display='none';bar.innerHTML='';return;}
   bar.style.display='flex';
   bar.innerHTML=`<button class="fbtn" onclick="createDocFolder()"><i class="ti ti-folder-plus" style="font-size:10px"></i> ${t('docs_folder_nova')}</button>`;
@@ -9883,7 +9880,6 @@ function renderDocFolderActionsRow(){
 function docUserFolderGroupHtml(folder,items,isDebriefing){
   const isUnassigned=!folder;
   const gid=isUnassigned?'__sem_pasta__':folder.id;
-  if(!docUserFolderOpenInit){docUserFolderOpenInit=true;docUserFolderOpen.add(gid);}
   const open=docUserFolderOpen.has(gid);
   const name=isUnassigned?t('docs_folder_sem_pasta'):escHtml(folder.name);
   const canManage=!isUnassigned&&isEditorOrAbove();
@@ -9908,6 +9904,19 @@ function renderDocUserFolders(items,isDebriefing){
   // opção mas não salva" — na verdade salvava certo, só não aparecia por estar vazia).
   const groups=DOC_FOLDERS.map(f=>({folder:f,items:items.filter(it=>it.folderId===f.id)}));
   const unassigned=items.filter(it=>!it.folderId);
+  // Abre por padrão TODAS as pastas com conteúdo na primeira vez que essa aba/categoria é
+  // vista (não só a primeira pasta cadastrada) — bug reportado pela Amanda: como pastas novas
+  // ficam vazias no início, a pasta "Sem pasta" (que concentra os itens já existentes, como as
+  // atas de reunião salvas antes de pastas existirem) acabava sendo a única com conteúdo mas
+  // ficava fechada, dando a impressão de que os itens tinham sumido. Controlado por categoria
+  // (curDocCat) pra cada aba (Todos/Apresentações/Documentos/Planilhas/Atas) ter seu próprio
+  // estado inicial, já que os IDs de pasta são compartilhados entre abas.
+  const initKey=curDocCat;
+  if(!docUserFolderOpenInitCats.has(initKey)){
+    docUserFolderOpenInitCats.add(initKey);
+    groups.forEach(g=>{if(g.items.length)docUserFolderOpen.add(g.folder.id);});
+    if(unassigned.length)docUserFolderOpen.add('__sem_pasta__');
+  }
   let html=groups.map(g=>docUserFolderGroupHtml(g.folder,g.items,isDebriefing)).join('');
   if(unassigned.length)html+=docUserFolderGroupHtml(null,unassigned,isDebriefing);
   return html;
@@ -10005,7 +10014,7 @@ function renderDocsLibrary(){
     const statusNote=debriefingConfluenceCache.status==='loading'?`<div class="doc-empty" style="padding:6px 0">${window.t('docs_atas_confluence_carregando')}</div>`
       :debriefingConfluenceCache.status==='error'?`<div class="doc-empty" style="padding:6px 0;color:#b91c1c">${escHtml(debriefingConfluenceCache.error||'')}</div>`:'';
     if(!items.length){grid.innerHTML=(statusNote||'<div class="doc-empty">'+window.t('docs_empty_debriefing')+'</div>');return;}
-    grid.innerHTML=statusNote+renderDocUserFolders(items,true);
+    grid.innerHTML=statusNote+renderDebriefingFolders(items);
     return;
   }
   let items;
@@ -10084,10 +10093,6 @@ function openDebriefingModal(id){
       </label>
       <input type="text" id="deb-link" placeholder="${t('docs_deb_fld_link')}" value="${m?(m.link||''):''}" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
       <textarea id="deb-notes" rows="2" placeholder="${t('docs_deb_fld_notas')}" style="border:1px solid var(--border2);border-radius:6px;padding:6px 8px;font-size:10.5px;font-family:inherit;resize:vertical">${m?(m.notes||''):''}</textarea>
-      <select id="deb-folder" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px">
-        <option value="">${t('docs_folder_sem_pasta')}</option>
-        ${DOC_FOLDERS.map(f=>`<option value="${f.id}"${m&&m.folderId===f.id?' selected':''}>${escHtml(f.name)}</option>`).join('')}
-      </select>
       <div>
         <label style="font-size:9px;color:var(--text3);display:block;margin-bottom:3px">${t('docs_deb_fld_projetos')}</label>
         <input type="text" id="deb-proj-search" placeholder="${t('docs_deb_search_placeholder')}" oninput="renderDebProjectPicker()" style="border:1px solid var(--border2);border-radius:5px;padding:6px 8px;font-size:10.5px;width:100%;margin-bottom:5px">
@@ -10121,15 +10126,14 @@ function saveDebriefingItem(){
   const date=document.getElementById('deb-date').value;
   const link=document.getElementById('deb-link').value.trim();
   const notes=document.getElementById('deb-notes').value.trim();
-  const folderId=document.getElementById('deb-folder')?.value||null;
   if(!title){alert(t('docs_alert_informe_titulo_reuniao'));return;}
   if(!date){alert(t('docs_alert_informe_data_reuniao'));return;}
   const projectKeys=Array.from(debSelectedKeys);
   if(editDebriefingId){
     const m=DEBRIEFING_MINUTES.find(x=>x.id===editDebriefingId);
-    if(m)Object.assign(m,{title,date,link:link||null,notes:notes||'',projectKeys,folderId});
+    if(m)Object.assign(m,{title,date,link:link||null,notes:notes||'',projectKeys});
   } else {
-    DEBRIEFING_MINUTES.push({id:uid(),title,date,link:link||null,notes:notes||'',projectKeys,folderId,createdBy:currentUser?.name||currentUser?.email||'—',createdAt:new Date().toISOString()});
+    DEBRIEFING_MINUTES.push({id:uid(),title,date,link:link||null,notes:notes||'',projectKeys,createdBy:currentUser?.name||currentUser?.email||'—',createdAt:new Date().toISOString()});
   }
   closeM('debriefing-modal');
   renderDocsLibrary();
@@ -14145,13 +14149,14 @@ let scheduleSaveQueue = {};
 // a primeira terminar antes de checar a versão — sem isso, as duas fariam a checagem de versão
 // "ao mesmo tempo" e uma delas se bloquearia falsamente, achando (errado) que outra PESSOA
 // tinha gravado por cima, quando era só ela mesma um instante antes.
-function persistSchedule(key) {
+function persistSchedule(key, opts) {
   const prev = scheduleSaveQueue[key] || Promise.resolve();
-  const next = prev.then(() => _persistScheduleOnce(key)).catch(e => console.error('persistSchedule queue error:', e));
+  const next = prev.then(() => _persistScheduleOnce(key, opts)).catch(e => console.error('persistSchedule queue error:', e));
   scheduleSaveQueue[key] = next;
   return next;
 }
-async function _persistScheduleOnce(key) {
+async function _persistScheduleOnce(key, opts) {
+  opts = opts || {};
   if (!schedules[key]) return;
   // Trava final contra duplicidade: mesmo que algum caminho tenha deixado passar um e-mail
   // repetido na lista de stakeholders (ex.: corrida entre duas abas), nunca escreve isso de
@@ -14176,6 +14181,21 @@ async function _persistScheduleOnce(key) {
         serverVersion = knownVersion; // não bloqueia o save por causa de uma falha na checagem em si
       }
       if (serverVersion !== knownVersion) {
+        // Escritas "silenciosas" (ex.: sincronização automática do Jira ajustando só o
+        // clientName em segundo plano, sem que a pessoa esteja nem olhando a página do
+        // projeto) não devem interromper a pessoa com um alert() — ela nem estava editando
+        // nada. Bug reportado pela Amanda: o alerta de conflito aparecia "direto", mesmo sem
+        // ela estar numa página de projeto, porque o auto-sync do Jira ao logar roda
+        // persistSchedule() em segundo plano pra cada projeto cujo Nome do Cliente mudou, e
+        // qualquer descompasso de versão (outra aba/sessão salvando ao mesmo tempo) disparava
+        // o mesmo alerta pensado para conflitos de EDIÇÃO real. Continua bloqueando a
+        // gravação (não sobrescreve por cima), só não incomoda com o popup — na próxima
+        // sincronização ou no próximo save de verdade, o dado se resolve sozinho.
+        if (opts.silent) {
+          console.warn(`persistSchedule: conflito de versão silencioso para "${key}" (provável sincronização em segundo plano) — gravação pulada, sem alertar a pessoa.`);
+          setSyncTxt('idle', '');
+          return;
+        }
         setSyncTxt('error', 'Erro ao salvar');
         if (!scheduleConflictWarned[key]) {
           scheduleConflictWarned[key] = true;
@@ -14820,7 +14840,7 @@ function applyJiraSync(freshProjects,opts={}){
   document.getElementById('badge-pf').textContent=carteiraTotal();
   showSyncSuccess(freshProjects.length);
   persistProjects();
-  clientNameTouched.forEach(k=>persistSchedule(k));
+  clientNameTouched.forEach(k=>persistSchedule(k,{silent:true}));
   if(interactive&&staleProjects.length){
     const list=staleProjects.map(p=>`${p.key} — ${p.summary}`).join('\n');
     if(confirm(`${staleProjects.length} projeto(s) não foram encontrados na busca mais recente do Jira (provavelmente excluído(s) lá):\n\n${list}\n\nDeseja remover esses projetos do HUB VMO também?`)){
