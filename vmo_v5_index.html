@@ -3993,6 +3993,23 @@ let schedules = {};
 // atual do servidor antes de gravar; se não bater mais com o que esta aba tem, é sinal de que
 // alguém gravou por cima nesse meio tempo — bloqueia a gravação e avisa a pessoa a recarregar,
 // em vez de sobrescrever silenciosamente.
+// IMPORTANTE (bug crítico de perda de dados encontrado e corrigido — "todos os cronogramas
+// sumiram"): esta chave só deve existir aqui DEPOIS que autoLoadOnLogin confirma com o servidor
+// o estado real daquele projeto. Uma key AUSENTE (undefined) significa "nunca confirmei este
+// projeto com o servidor nesta sessão" — isso é DIFERENTE de "o servidor confirmou versão 0".
+// Antes, o código tratava os dois casos como iguais (`scheduleServerVersion[key] || 0`), o que
+// abria uma brecha grave: se o cronograma de um projeto por qualquer motivo não carregasse na
+// memória desta aba (ex.: um erro pontual no carregamento daquele documento específico), E o
+// sync automático do Jira em segundo plano tocasse o "Nome do Cliente" desse mesmo projeto, o
+// código criava um objeto de cronograma NOVO E VAZIO na memória (achando que o projeto não
+// tinha cronograma ainda) e tentava salvá-lo. Como documentos antigos (de antes deste campo de
+// versão existir) não têm "version" salvo, tanto o valor "conhecido" quanto o valor real do
+// servidor caíam no mesmo fallback (0), a guarda de conflito enxergava "bate certinho" e
+// deixava a gravação passar — sobrescrevendo o cronograma REAL (com marcos e tarefas) por essa
+// cópia vazia, em silêncio, sem nenhum alerta (porque nenhum conflito chegou a ser detectado).
+// Agora, "nunca confirmado com o servidor" bloqueia a gravação por padrão, mesmo quando os
+// números por acaso bateriam em 0 — só escreve sem checagem extra quando o servidor confirma
+// que o documento realmente NÃO EXISTE ainda (projeto genuinamente novo, sem nada a perder).
 let scheduleServerVersion = {};
 let scheduleConflictWarned = {};
 let curKey = null;
@@ -14171,16 +14188,44 @@ async function _persistScheduleOnce(key, opts) {
       // scheduleServerVersion): relê a versão atual do servidor ANTES de gravar. Se não bater
       // com a última versão que esta aba conhece, alguém gravou por cima nesse meio tempo —
       // bloqueia esta gravação (não sobrescreve silenciosamente) e avisa a pessoa a recarregar.
-      const knownVersion = scheduleServerVersion[key] || 0;
+      // knownVersion fica undefined (não 0) quando esta aba NUNCA confirmou o estado real
+      // deste projeto com o servidor — ver comentário na declaração de scheduleServerVersion
+      // sobre o bug crítico que isso corrige ("todos os cronogramas sumiram").
+      const hasKnownVersion = Object.prototype.hasOwnProperty.call(scheduleServerVersion, key);
+      const knownVersion = hasKnownVersion ? scheduleServerVersion[key] : undefined;
       let serverVersion = 0;
+      let serverExists = false;
+      let versionCheckFailed = false;
       try {
         const freshSnap = await docRef.get();
+        serverExists = freshSnap.exists;
         serverVersion = (freshSnap.exists && freshSnap.data().version) || 0;
       } catch(verErr) {
-        console.warn('persistSchedule: falha ao checar versão, prosseguindo sem a guarda:', verErr);
-        serverVersion = knownVersion; // não bloqueia o save por causa de uma falha na checagem em si
+        console.warn('persistSchedule: falha ao checar versão:', verErr);
+        versionCheckFailed = true;
+        // Se esta aba JÁ tinha confirmado este projeto com o servidor antes (edição normal em
+        // andamento), não bloqueia o save por causa de uma falha pontual nesta checagem — seria
+        // pior travar uma edição real por uma instabilidade de rede momentânea. Mas se esta aba
+        // NUNCA confirmou este projeto (ver bug "todos os cronogramas sumiram" acima), não dá
+        // pra assumir que é seguro escrever sem saber se já existe algo real lá — bloqueia.
+        serverVersion = knownVersion || 0;
+        serverExists = hasKnownVersion;
       }
-      if (serverVersion !== knownVersion) {
+      if (!hasKnownVersion && versionCheckFailed) {
+        console.warn(`persistSchedule: cronograma "${key}" nunca foi confirmado com o servidor nesta aba, e a checagem de versão falhou agora — gravação bloqueada por segurança.`);
+        setSyncTxt('idle', '');
+        return;
+      }
+      // Nunca confirmamos este projeto com o servidor nesta sessão E o servidor diz que o
+      // documento JÁ EXISTE — não é seguro assumir "bate" só porque os dois lados caíram no
+      // fallback numérico de 0. Bloqueia (sem alertar, silenciosamente é o suficiente aqui:
+      // não é um conflito de EDIÇÃO real, é a aba não tendo certeza do estado do servidor).
+      if (!hasKnownVersion && serverExists) {
+        console.warn(`persistSchedule: cronograma "${key}" nunca foi confirmado com o servidor nesta aba, mas o documento já existe lá — gravação bloqueada por segurança para não sobrescrever dados reais com um objeto local incompleto.`);
+        setSyncTxt('idle', '');
+        return;
+      }
+      if (hasKnownVersion && serverVersion !== knownVersion) {
         // Escritas "silenciosas" (ex.: sincronização automática do Jira ajustando só o
         // clientName em segundo plano, sem que a pessoa esteja nem olhando a página do
         // projeto) não devem interromper a pessoa com um alert() — ela nem estava editando
@@ -14203,7 +14248,7 @@ async function _persistScheduleOnce(key, opts) {
         }
         return;
       }
-      const newVersion = knownVersion + 1;
+      const newVersion = (knownVersion || 0) + 1;
       await docRef.set({
         milestones:    schedules[key].milestones    || [],
         tasks:         schedules[key].tasks         || [],
