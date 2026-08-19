@@ -3276,6 +3276,23 @@ let USER_REGISTRY = [
 // login continuaria aceitando a senha antiga porque USER_REGISTRY ainda estaria com o
 // snapshot hardcoded (com a senha padrão) no momento em que a senha é conferida.
 let userRegistryLoadPromise = null;
+// userRegistryServerVersion: mesmo padrão de segurança usado em scheduleServerVersion (ver
+// comentário lá) — undefined significa "esta aba nunca confirmou com o servidor o estado real
+// do registro de usuários". persistUsers() usa isso pra nunca sobrescrever cegamente um
+// documento que já existe no Firestore sem antes ter certeza do que tinha lá. Bug crítico
+// encontrado e corrigido: antes, persistUsers() fazia um .set() sem NENHUMA checagem — se um
+// admin adicionava usuários numa aba, e outro admin (ou a mesma pessoa numa aba mais antiga,
+// sem reload) fizesse qualquer ação de gerenciamento depois (resetar senha, desativar etc.),
+// a segunda gravação sobrescrevia o documento inteiro com a cópia desatualizada em memória
+// daquela aba — apagando silenciosamente usuários cadastrados por outra sessão nesse meio
+// tempo. Reportado pela Amanda como "não consigo visualizar os acessos do restante".
+let userRegistryServerVersion = undefined;
+// Mesmo padrão de segurança (ver comentário acima) aplicado aos outros 3 documentos
+// compartilhados que também faziam .set() sem nenhuma trava: Documentos Úteis, Histórico de
+// Priorização e Atas de Reunião — mesma classe de bug, mesma correção.
+let docsLibraryServerVersion = undefined;
+let priorityHistoryServerVersion = undefined;
+let debriefingMinutesServerVersion = undefined;
 async function loadUserRegistryFromFirestore() {
   if (!(firebaseReady && db)) return;
   try {
@@ -3288,6 +3305,8 @@ async function loadUserRegistryFromFirestore() {
         if (idx >= 0) USER_REGISTRY[idx] = { ...USER_REGISTRY[idx], ...u };
         else USER_REGISTRY.push(u);
       });
+      // Confirma com o servidor — ver comentário na declaração de userRegistryServerVersion.
+      userRegistryServerVersion = data.version || 0;
       // Sincroniza (não só "soma") com o que foi persistido em qualquer sessão anterior. Antes
       // isso só ADICIONAVA e-mails vindos do Firestore, nunca removia — então revogar alguém
       // (inclusive um dos admins pré-configurados abaixo, que sempre voltam a existir no array
@@ -3297,6 +3316,9 @@ async function loadUserRegistryFromFirestore() {
       if (Array.isArray(data.editorEmails)) { EDITOR_EMAILS.length = 0; data.editorEmails.forEach(e => { if (!EDITOR_EMAILS.includes(e)) EDITOR_EMAILS.push(e); }); }
       if (Array.isArray(data.adminEmails))  { ADMIN_EMAILS.length = 0;  data.adminEmails.forEach(e  => { if (!ADMIN_EMAILS.includes(e))  ADMIN_EMAILS.push(e);  }); }
       if (Array.isArray(data.consultaEmails)) { CONSULTA_EMAILS.length = 0; data.consultaEmails.forEach(e => { if (!CONSULTA_EMAILS.includes(e)) CONSULTA_EMAILS.push(e); }); }
+    } else {
+      // Documento confirmadamente inexistente ainda (não é "nunca verificamos") — seguro criar.
+      userRegistryServerVersion = 0;
     }
   } catch(e) { console.error('loadUserRegistryFromFirestore error:', e); }
 }
@@ -14545,18 +14567,27 @@ async function autoLoadOnLogin() {
         const savedDocs = snapDocs.data().items || [];
         if (savedDocs.length) DOCS_LIBRARY = savedDocs;
         DOC_FOLDERS = snapDocs.data().folders || [];
+        docsLibraryServerVersion = snapDocs.data().version || 0;
+      } else {
+        docsLibraryServerVersion = 0;
       }
       // Load priority history
       const snapPrioHist = await db.collection('app_config').doc('priority_history').get();
       if (snapPrioHist.exists) {
         const savedHist = snapPrioHist.data().items || [];
         if (savedHist.length) PRIORITY_HISTORY = savedHist;
+        priorityHistoryServerVersion = snapPrioHist.data().version || 0;
+      } else {
+        priorityHistoryServerVersion = 0;
       }
       // Load debriefing minutes
       const snapDebMin = await db.collection('app_config').doc('debriefing_minutes').get();
       if (snapDebMin.exists) {
         const savedDebMin = snapDebMin.data().items || [];
         if (savedDebMin.length) DEBRIEFING_MINUTES = savedDebMin;
+        debriefingMinutesServerVersion = snapDebMin.data().version || 0;
+      } else {
+        debriefingMinutesServerVersion = 0;
       }
       // Load debriefing Confluence folder link (pasta única, compartilhada pelo time todo)
       const snapDebConfLink = await db.collection('app_config').doc('debriefing_confluence_link').get();
@@ -14775,43 +14806,94 @@ async function persistUsers() {
     // aberta naquele momento. Sem persistir aqui, o papel "voltava" pra Visualizador (ou pior,
     // Externo) assim que a pessoa cadastrada dava reload/logava numa aba nova, mesmo com o
     // usuário certinho no registro — o role vinha desses arrays, não do registro em si.
-    await db.collection('app_config').doc('users').set({
+    const docRef = db.collection('app_config').doc('users');
+    // Mesma trava de segurança usada em persistSchedule (ver comentário na declaração de
+    // userRegistryServerVersion) — sem isso, esta gravação sobrescrevia o documento inteiro
+    // às cegas, apagando usuários cadastrados por outra sessão nesse meio tempo.
+    const hasKnownVersion = userRegistryServerVersion !== undefined;
+    let serverVersion = 0, serverExists = false, versionCheckFailed = false;
+    try {
+      const freshSnap = await docRef.get();
+      serverExists = freshSnap.exists;
+      serverVersion = (freshSnap.exists && freshSnap.data().version) || 0;
+    } catch(verErr) {
+      console.warn('persistUsers: falha ao checar versão:', verErr);
+      versionCheckFailed = true;
+      serverVersion = userRegistryServerVersion || 0;
+      serverExists = hasKnownVersion;
+    }
+    if (!hasKnownVersion && (serverExists || versionCheckFailed)) {
+      console.warn('persistUsers: registro de usuários nunca foi confirmado com o servidor nesta aba — gravação bloqueada por segurança.');
+      alert('Não foi possível salvar: recarregue a página (F5) antes de gerenciar usuários, pra garantir que você está vendo a lista mais atual.');
+      return false;
+    }
+    if (hasKnownVersion && serverVersion !== userRegistryServerVersion) {
+      alert('A lista de usuários foi alterada por outra pessoa/sessão enquanto esta tela estava aberta. Recarregue a página (F5) para ver a versão mais recente antes de tentar de novo — assim não se apaga o que a outra pessoa acabou de adicionar.');
+      return false;
+    }
+    const newVersion = (userRegistryServerVersion || 0) + 1;
+    await docRef.set({
       registry:       USER_REGISTRY,
       editorEmails:   EDITOR_EMAILS,
       adminEmails:    ADMIN_EMAILS,
       consultaEmails: CONSULTA_EMAILS,
       updatedAt:      firebase.firestore.FieldValue.serverTimestamp(),
+      version:        newVersion,
     });
+    userRegistryServerVersion = newVersion;
     return true;
   } catch(e) { console.error('persistUsers error:', e); return false; }
 }
-async function persistDocsLibrary() {
-  if (!firebaseReady || !db) return;
+// Grava protegida contra sobrescrita — mesma trava de scheduleServerVersion/persistUsers,
+// só que parametrizada pra reaproveitar nos 3 documentos compartilhados de app_config que
+// também faziam .set() sem NENHUMA checagem (bug real: qualquer aba com uma cópia desatualizada
+// podia apagar silenciosamente o que outra pessoa tivesse acabado de salvar). getKnown/setKnown
+// leem e atualizam a variável de versão específica de cada documento (ex.:
+// docsLibraryServerVersion) — undefined nelas significa "esta aba nunca confirmou com o
+// servidor", o mesmo sentido usado em scheduleServerVersion/userRegistryServerVersion.
+async function guardedConfigSet_(docId, payload, getKnown, setKnown, label) {
+  if (!firebaseReady || !db) { console.warn(`${label}: Firebase indisponível — nada foi salvo.`); return false; }
   try {
-    await db.collection('app_config').doc('docs_library').set({
-      items:     DOCS_LIBRARY,
-      folders:   DOC_FOLDERS,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-  } catch(e) { console.error('persistDocsLibrary error:', e); }
+    const docRef = db.collection('app_config').doc(docId);
+    const knownVersion = getKnown();
+    const hasKnownVersion = knownVersion !== undefined;
+    let serverVersion = 0, serverExists = false, versionCheckFailed = false;
+    try {
+      const freshSnap = await docRef.get();
+      serverExists = freshSnap.exists;
+      serverVersion = (freshSnap.exists && freshSnap.data().version) || 0;
+    } catch(verErr) {
+      console.warn(`${label}: falha ao checar versão:`, verErr);
+      versionCheckFailed = true;
+      serverVersion = knownVersion || 0;
+      serverExists = hasKnownVersion;
+    }
+    if (!hasKnownVersion && (serverExists || versionCheckFailed)) {
+      console.warn(`${label}: nunca confirmado com o servidor nesta aba — gravação bloqueada por segurança.`);
+      alert('Não foi possível salvar: recarregue a página (F5) antes de continuar, pra garantir que você está vendo a versão mais atual.');
+      return false;
+    }
+    if (hasKnownVersion && serverVersion !== knownVersion) {
+      alert('Isso foi alterado por outra pessoa/sessão enquanto esta tela estava aberta. Recarregue a página (F5) para ver a versão mais recente antes de tentar de novo — assim não se apaga o que a outra pessoa acabou de adicionar.');
+      return false;
+    }
+    const newVersion = (knownVersion || 0) + 1;
+    await docRef.set(Object.assign({}, payload, { updatedAt: firebase.firestore.FieldValue.serverTimestamp(), version: newVersion }));
+    setKnown(newVersion);
+    return true;
+  } catch(e) { console.error(`${label} error:`, e); return false; }
+}
+async function persistDocsLibrary() {
+  return guardedConfigSet_('docs_library', { items: DOCS_LIBRARY, folders: DOC_FOLDERS },
+    () => docsLibraryServerVersion, v => { docsLibraryServerVersion = v; }, 'persistDocsLibrary');
 }
 async function persistPriorityHistory() {
-  if (!firebaseReady || !db) return;
-  try {
-    await db.collection('app_config').doc('priority_history').set({
-      items:     PRIORITY_HISTORY,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-  } catch(e) { console.error('persistPriorityHistory error:', e); }
+  return guardedConfigSet_('priority_history', { items: PRIORITY_HISTORY },
+    () => priorityHistoryServerVersion, v => { priorityHistoryServerVersion = v; }, 'persistPriorityHistory');
 }
 async function persistDebriefingMinutes() {
-  if (!firebaseReady || !db) return;
-  try {
-    await db.collection('app_config').doc('debriefing_minutes').set({
-      items:     DEBRIEFING_MINUTES,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-  } catch(e) { console.error('persistDebriefingMinutes error:', e); }
+  return guardedConfigSet_('debriefing_minutes', { items: DEBRIEFING_MINUTES },
+    () => debriefingMinutesServerVersion, v => { debriefingMinutesServerVersion = v; }, 'persistDebriefingMinutes');
 }
 
 async function syncFromJira(){
