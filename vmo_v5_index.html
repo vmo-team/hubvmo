@@ -11521,7 +11521,16 @@ function inlineEditField(el,field,kind,id,msId,ev){
     const finish=()=>{if(done)return;done=true;commit(inp.value);};
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
     inp.addEventListener('blur',finish);
-    inp.addEventListener('change',finish);
+    // Bug reportado pela Amanda: mudar só o ANO (ou qualquer segmento) de um <input type="date">
+    // pelas setinhas do próprio campo dispara 'change' IMEDIATAMENTE, no meio do clique (antes do
+    // mouseup terminar de ser processado). Como finish() chama renderSchedule() e isso troca todo
+    // o HTML da tabela na hora, a célula muda de largura/posição NO MEIO do clique — o navegador
+    // então entrega o resto daquele mesmo clique pra o que quer que esteja embaixo do cursor
+    // DEPOIS da troca, que na maioria das vezes é a coluna "Prazo" da mesma linha (ela abre o
+    // modal de editar a Etapa/Tarefa direto). Adiar o commit disparado por 'change' pro próximo
+    // ciclo do event loop (setTimeout 0) deixa o clique original terminar de ser processado ANTES
+    // da tabela ser reconstruída, então não sobra clique nenhum pra "vazar" pra célula vizinha.
+    inp.addEventListener('change',()=>{if(done)return;setTimeout(finish,0);});
     return;
   }
   if(field==='dep'&&kind==='task'){
@@ -11556,7 +11565,16 @@ function inlineEditField(el,field,kind,id,msId,ev){
     const finish=()=>{if(done)return;done=true;commit(inp.value);};
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
     inp.addEventListener('blur',finish);
-    inp.addEventListener('change',finish);
+    // Bug reportado pela Amanda: mudar só o ANO (ou qualquer segmento) de um <input type="date">
+    // pelas setinhas do próprio campo dispara 'change' IMEDIATAMENTE, no meio do clique (antes do
+    // mouseup terminar de ser processado). Como finish() chama renderSchedule() e isso troca todo
+    // o HTML da tabela na hora, a célula muda de largura/posição NO MEIO do clique — o navegador
+    // então entrega o resto daquele mesmo clique pra o que quer que esteja embaixo do cursor
+    // DEPOIS da troca, que na maioria das vezes é a coluna "Prazo" da mesma linha (ela abre o
+    // modal de editar a Etapa/Tarefa direto). Adiar o commit disparado por 'change' pro próximo
+    // ciclo do event loop (setTimeout 0) deixa o clique original terminar de ser processado ANTES
+    // da tabela ser reconstruída, então não sobra clique nenhum pra "vazar" pra célula vizinha.
+    inp.addEventListener('change',()=>{if(done)return;setTimeout(finish,0);});
     return;
   }
   if(field==='deadline'){
@@ -11567,7 +11585,16 @@ function inlineEditField(el,field,kind,id,msId,ev){
     const finish=()=>{if(done)return;done=true;commit(inp.value);};
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish();}else if(e.key==='Escape'){done=true;cancel();}});
     inp.addEventListener('blur',finish);
-    inp.addEventListener('change',finish);
+    // Bug reportado pela Amanda: mudar só o ANO (ou qualquer segmento) de um <input type="date">
+    // pelas setinhas do próprio campo dispara 'change' IMEDIATAMENTE, no meio do clique (antes do
+    // mouseup terminar de ser processado). Como finish() chama renderSchedule() e isso troca todo
+    // o HTML da tabela na hora, a célula muda de largura/posição NO MEIO do clique — o navegador
+    // então entrega o resto daquele mesmo clique pra o que quer que esteja embaixo do cursor
+    // DEPOIS da troca, que na maioria das vezes é a coluna "Prazo" da mesma linha (ela abre o
+    // modal de editar a Etapa/Tarefa direto). Adiar o commit disparado por 'change' pro próximo
+    // ciclo do event loop (setTimeout 0) deixa o clique original terminar de ser processado ANTES
+    // da tabela ser reconstruída, então não sobra clique nenhum pra "vazar" pra célula vizinha.
+    inp.addEventListener('change',()=>{if(done)return;setTimeout(finish,0);});
     return;
   }
   if(field==='progress'&&(kind==='task'||kind==='subtask')){
